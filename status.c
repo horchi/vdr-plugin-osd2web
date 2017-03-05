@@ -19,271 +19,6 @@
 #include "update.h"
 
 //***************************************************************************
-// Osd Status Message
-//***************************************************************************
-
-void cUpdate::OsdStatusMessage(const char* message)
-{
-   tell(3, "OsdStatusMessage: %s", message);
-
-   json_t* obj = json_object();
-   addToJson(obj, "message", message);
-
-   pushMessage(obj, "statusmessage");
-}
-
-//***************************************************************************
-// Osd Help Keys
-//***************************************************************************
-
-void cUpdate::OsdHelpKeys(const char* red, const char* green,
-                          const char* yellow, const char* blue)
-{
-   tell(3, "OsdHelpKeys: '%s' '%s' '%s' '%s'",
-        notNull(red), notNull(green), notNull(yellow), notNull(blue));
-
-   return ;
-
-   json_t* buttons = json_object();
-
-   if (!isEmpty(red))    addToJson(buttons, "red", red);
-   if (!isEmpty(green))  addToJson(buttons, "green", green);
-   if (!isEmpty(yellow)) addToJson(buttons, "yellow", yellow);
-   if (!isEmpty(blue))   addToJson(buttons, "blue", blue);
-
-   pushMessage(buttons, "colorbuttons");
-}
-
-//***************************************************************************
-// Osd Title
-//***************************************************************************
-
-void cUpdate::OsdTitle(const char* title)
-{
-   tell(3, "OsdTitle: %s", title);
-
-   osdTitle = title;
-}
-
-//***************************************************************************
-// Osd Text Item
-//***************************************************************************
-
-void cUpdate::OsdTextItem(const char* text, bool scroll)
-{
-   tell(3, "OsdTextItem: '%s' scroll: %d", text, scroll);
-
-   json_t* menuText = json_object();
-
-   addToJson(menuText, "category", menuCategory);
-   addToJson(menuText, "text", text ? text : "");
-
-   pushMessage(menuText, "menutext");
-}
-
-//***************************************************************************
-// Osd Menu Display
-//***************************************************************************
-
-void cUpdate::OsdMenuDisplay(eMenuCategory category)
-{
-   tell(3, "OsdMenuDisplay: category: %d", category);
-   menuCategory = category;
-}
-
-//***************************************************************************
-// Osd Menu Destroy
-//***************************************************************************
-
-void cUpdate::OsdMenuDestroy()
-{
-   tell(3, "OsdMenuDestroy:");
-
-   json_t* obj = json_object();
-   addToJson(obj, "close", yes);
-   pushMessage(obj, "closemenu");
-
-   menuCategory = mcUndefined;
-   osdTitle = "";
-
-   while (!menuItems.empty())
-      menuItems.pop();
-}
-
-//***************************************************************************
-// Osd Item
-//***************************************************************************
-
-void cUpdate::OsdItem(const char* text, int index)
-{
-   tell(2, "OsdItem: text: %s index: %d", text, index);
-   return ;
-   menuItems.push(text);
-}
-
-//***************************************************************************
-// Osd Current Item at Index
-//***************************************************************************
-
-void cUpdate::OsdCurrentItemIndex(const char* text, int index)
-{
-   tell(3, "OsdCurrentItemIndex: text %s, index: %d", text, index);
-
-   return ;
-
-   if (index == -1)
-      return ;    // '#TODO ?? used by cMenuEditItem::SetValue()
-
-   json_t* oCurrent = json_object();
-
-   addToJson(oCurrent, "category", menuCategory);
-   addToJson(oCurrent, "index", index);
-   addToJson(oCurrent, "row", text);
-
-   // #TODO update current at the the 'menuItems' list object
-
-   pushMessage(oCurrent, "textmenucurrent");
-}
-
-//***************************************************************************
-// Osd Event Item
-//  - called after OsdItems are finished and after OsdMenuReady
-//***************************************************************************
-
-void cUpdate::OsdEventItem(const cEvent* event, const char* text,
-                           int index, int count)
-{
-   tell(3, "OsdEventItem: '%s' at index (%d), count (%d)",
-        event ? event->Title() : "<null>", index, count);
-
-   return ;
-
-   if (index == 0)
-   {
-      while (!menuEventItems.empty())
-      {
-         json_decref(menuEventItems.front());
-         menuEventItems.pop();
-      }
-   }
-
-   json_t* oEvent = json_object();
-
-   event2Json(oEvent, event, 0);
-   menuEventItems.push(oEvent);
-
-   if (menuEventItems.size() == (unsigned int)count)
-      eventMenuReady();
-}
-
-//***************************************************************************
-// Event Menu Ready
-//***************************************************************************
-
-void cUpdate::eventMenuReady()
-{
-   return ;
-   json_t* oMenu = json_object();
-   json_t* oEvents = json_array();
-
-   while (!menuEventItems.empty())
-   {
-      json_array_append_new(oEvents, menuEventItems.front());
-      menuEventItems.pop();
-   }
-
-   addToJson(oMenu, "category", menuCategory);
-   addToJson(oMenu, "title", osdTitle.c_str());
-   json_object_set_new(oMenu, "events", oEvents);
-
-   pushMessage(oMenu, "eventmenu");
-}
-
-//***************************************************************************
-// Osd Menu Ready
-//***************************************************************************
-
-void cUpdate::OsdRecordingItem(const cRecording* recording, int index, int count)
-{
-   tell(3, "OsdRecordingItem: '%s' at index (%d), count (%d)",
-        recording ? recording->Title() : "<null>", index, count);
-
-   return ;
-
-   if (index == 0)
-   {
-      while (!menuRecordingItems.empty())
-      {
-         json_decref(menuRecordingItems.front());
-         menuRecordingItems.pop();
-      }
-   }
-
-   json_t* oRecording = json_object();
-
-   recording2Json(oRecording, recording);
-   menuRecordingItems.push(oRecording);
-
-   if (menuRecordingItems.size() == (unsigned int)count)
-      recordingMenuReady();
-}
-
-//***************************************************************************
-// Event Recording Ready
-//***************************************************************************
-
-void cUpdate::recordingMenuReady()
-{
-   json_t* oMenu = json_object();
-   json_t* oRecordings = json_array();
-
-   return ;
-
-   while (!menuEventItems.empty())
-   {
-      json_array_append_new(oRecordings, menuRecordingItems.front());
-      menuRecordingItems.pop();
-   }
-
-   addToJson(oMenu, "category", menuCategory);
-   addToJson(oMenu, "title", osdTitle.c_str());
-   json_object_set_new(oMenu, "recordings", oRecordings);
-
-   pushMessage(oMenu, "recordingmenu");
-}
-
-//***************************************************************************
-// Osd Menu Ready
-//***************************************************************************
-
-void cUpdate::OsdMenuReady(int count)
-{
-   tell(3, "OsdMenuReady: count: %d", count);
-
-   return ;
-
-   size_t colCount = 0;
-   json_t* oMenu = json_object();
-   json_t* oRows = json_array();
-
-   while (!menuItems.empty())
-   {
-      colCount = std::max(colCount, (size_t)std::count(menuItems.front().begin(), menuItems.front().end(), '\t'));
-
-      json_array_append_new(oRows, json_string(menuItems.front().c_str()));
-      menuItems.pop();
-   }
-
-   addToJson(oMenu, "category", menuCategory);
-   addToJson(oMenu, "title", osdTitle.c_str());
-   addToJson(oMenu, "colcount", colCount);
-   addToJson(oMenu, "rowcount", count);
-   json_object_set_new(oMenu, "rows", oRows);
-
-   pushMessage(oMenu, "textmenu");
-}
-
-//***************************************************************************
 // Osd Channel Switch
 //***************************************************************************
 
@@ -306,14 +41,6 @@ void cUpdate::OsdChannel(const char* text)
 }
 
 //***************************************************************************
-// Osd Set Event
-//***************************************************************************
-
-void cUpdate::OsdSetEvent(const cEvent* event)
-{
-}
-
-//***************************************************************************
 // Osd Set Recording
 //***************************************************************************
 
@@ -331,14 +58,6 @@ void cUpdate::OsdProgramme(time_t PresentTime, const char* PresentTitle,
                            const char* FollowingTitle, const char* FollowingSubtitle)
 {
    tell(5, "OsdProgramme: ");
-}
-
-//***************************************************************************
-// Set Volume
-//***************************************************************************
-
-void cUpdate::SetVolume(int, bool)
-{
 }
 
 //***************************************************************************
@@ -364,14 +83,6 @@ void cUpdate::TimerChange(const cTimer *Timer, eTimerChange Change)
 
 void cUpdate::Replaying(const cControl* Control, const char* Name,
                         const char* FileName, bool On)
-{
-}
-
-//***************************************************************************
-// Osd Clear
-//***************************************************************************
-
-void cUpdate::OsdClear()
 {
 }
 
@@ -426,7 +137,7 @@ void cUpdate::updatePresentFollowing()
          json_object_set_new(obj, "present", oPresent);
          json_object_set_new(obj, "following", oFollowing);
 
-         pushMessage(obj, "actual");
+         cUpdate::pushMessage(obj, "actual");
 
          // we need a trigger on start of following event
 

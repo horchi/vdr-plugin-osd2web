@@ -83,6 +83,10 @@ class cSkinOsd2WebDisplayMenu : public cSkinDisplayMenu
       virtual int GetTextAreaWidth() const;
       virtual const cFont* GetTextAreaFont(bool FixedFont) const;
       virtual void Flush();
+
+   private:
+
+      eMenuCategory menuCategory;
 };
 
 cSkinOsd2WebDisplayMenu::cSkinOsd2WebDisplayMenu()
@@ -97,6 +101,7 @@ void cSkinOsd2WebDisplayMenu::SetMenuCategory(eMenuCategory MenuCategory)
 {
    tell(0, "DEB: cSkinOsd2WebDisplayMenu::SetMenuCategory(%d)", MenuCategory);
    cSkinDisplayMenu::SetMenuCategory(MenuCategory);
+   menuCategory = MenuCategory;
 }
 
 void cSkinOsd2WebDisplayMenu::Scroll(bool Up, bool Page)
@@ -113,26 +118,68 @@ int cSkinOsd2WebDisplayMenu::MaxItems()
 void cSkinOsd2WebDisplayMenu::Clear()
 {
    tell(0, "DEB: cSkinOsd2WebDisplayMenu::Clear()");
+
+   json_t* obj = json_object();
+
+   addToJson(obj, "clear", yes);
+   cUpdate::pushMessage(obj, "clearmenu");
+
+   menuCategory = mcUndefined;
 }
 
 void cSkinOsd2WebDisplayMenu::SetTitle(const char *Title)
 {
    tell(0, "DEB: cSkinOsd2WebDisplayMenu::SetTitle(%s)", Title);
+
+   json_t* oMenu = json_object();
+
+   addToJson(oMenu, "category", menuCategory);
+   addToJson(oMenu, "title", Title);
+
+   cUpdate::pushMessage(oMenu, "menu");
 }
 
-void cSkinOsd2WebDisplayMenu::SetButtons(const char *Red, const char *Green, const char *Yellow, const char *Blue)
+void cSkinOsd2WebDisplayMenu::SetButtons(const char *red, const char *green, const char *yellow, const char *blue)
 {
    tell(0, "DEB: cSkinOsd2WebDisplayMenu::SetButtons()");
+   json_t* buttons = json_object();
+
+   if (!isEmpty(red))    addToJson(buttons, "red", red);
+   if (!isEmpty(green))  addToJson(buttons, "green", green);
+   if (!isEmpty(yellow)) addToJson(buttons, "yellow", yellow);
+   if (!isEmpty(blue))   addToJson(buttons, "blue", blue);
+
+   cUpdate::pushMessage(buttons, "buttons");
+
 }
 
 void cSkinOsd2WebDisplayMenu::SetMessage(eMessageType Type, const char *Text)
 {
    tell(0, "DEB: cSkinOsd2WebDisplayMenu::SetMessage(%d, %s)", Type, Text);
+
+   json_t* obj = json_object();
+
+   addToJson(obj, "type", Type);
+   addToJson(obj, "message", Text);
+
+   cUpdate::pushMessage(obj, "message");
+
 }
 
 void cSkinOsd2WebDisplayMenu::SetItem(const char *Text, int Index, bool Current, bool Selectable)
 {
-   tell(0, "DEB: cSkinOsd2WebDisplayMenu::SetItem(%s, %d, %d, %d)", Text, Index, Current, Selectable);
+   tell(0, "DEB: cSkinOsd2WebDisplayMenu::SetItem(%s, %d, %d, %d)",
+        Text, Index, Current, Selectable);
+
+   json_t* oMenuItem = json_object();
+
+   addToJson(oMenuItem, "category", menuCategory);
+   addToJson(oMenuItem, "text", Text);
+   addToJson(oMenuItem, "index", Index);
+   addToJson(oMenuItem, "current", Current);
+   addToJson(oMenuItem, "selectable", Selectable);
+
+   cUpdate::pushMessage(oMenuItem, "menuitem");
 }
 
 void cSkinOsd2WebDisplayMenu::SetScrollbar(int Total, int Offset)
@@ -153,6 +200,13 @@ void cSkinOsd2WebDisplayMenu::SetRecording(const cRecording *Recording)
 void cSkinOsd2WebDisplayMenu::SetText(const char *Text, bool FixedFont)
 {
    tell(0, "DEB: cSkinOsd2WebDisplayMenu::SetText(%s, %d)", Text, FixedFont);
+
+   json_t* oMenuText = json_object();
+
+   addToJson(oMenuText, "text", Text);
+
+   cUpdate::pushMessage(oMenuText, "menutext");
+
 }
 
 int cSkinOsd2WebDisplayMenu::GetTextAreaWidth() const

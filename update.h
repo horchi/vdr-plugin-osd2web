@@ -179,32 +179,16 @@ class cUpdate : public cStatus, cThread, public cOsdService
       // status interface
 
       virtual void ChannelSwitch(const cDevice* Device, int ChannelNumber, bool LiveView);
-      virtual void OsdSetEvent(const cEvent* event);
       virtual void OsdSetRecording(const cRecording* recording);
       virtual void OsdProgramme(time_t PresentTime, const char* PresentTitle, const char *PresentSubtitle, time_t FollowingTime, const char *FollowingTitle, const char *FollowingSubtitle);
       virtual void OsdChannel(const char* text);
 
-      virtual void SetVolume(int Volume, bool Absolute);
       virtual void Replaying(const cControl *Control, const char *Name, const char *FileName, bool On);
       virtual void Recording(const cDevice *Device, const char *Name, const char *FileName, bool On);
       virtual void TimerChange(const cTimer *Timer, eTimerChange Change);
-      virtual void OsdStatusMessage(const char *Message);
-      virtual void OsdTitle(const char* Title);
-      virtual void OsdItem(const char* Text, int Index);
-      virtual void OsdMenuReady(int Count);
-      virtual void OsdRecordingItem(const cRecording* Recording, int Index, int Count);
-      virtual void OsdEventItem(const cEvent* Event, const char* Text, int Index, int Count);
-      virtual void OsdCurrentItemIndex(const char *Text, int Index);
-      virtual void OsdClear();
-      virtual void OsdHelpKeys(const char* Red, const char* Green, const char* Yellow, const char* Blue);
-      virtual void OsdTextItem(const char* Text, bool Scroll);
-      virtual void OsdMenuDestroy();
-      virtual void OsdMenuDisplay(eMenuCategory category);
 
    private:
 
-      void eventMenuReady();
-      void recordingMenuReady();
       void updatePresentFollowing();
       int event2Json(json_t* obj, const cEvent* event, const cChannel* channel = 0);
       int recording2Json(json_t* obj, const cRecording* recording);
@@ -221,11 +205,6 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
       // osd status
 
-      eMenuCategory menuCategory;
-      std::string osdTitle;
-      std::queue<std::string> menuItems;
-      std::queue<json_t*> menuEventItems;
-      std::queue<json_t*> menuRecordingItems;
       int currentChannelNr;
 
       // trigger
