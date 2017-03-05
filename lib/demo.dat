@@ -1,0 +1,17 @@
+
+
+Table _test
+{
+   ID                   ""                                 id                   UInt         0 Primary|Autoinc,
+   VDRUUID              ""                                 vdruuid              Ascii       40 Primary,
+
+   INSSP                ""                                 inssp                Int          0 Meta,
+   UPDSP                ""                                 updsp                Int          0 Meta,
+
+   EVENTID              ""                                 eventid              UInt         0 Data,
+   CHANNELID            ""                                 channelid            Ascii       50 Data default none,
+
+   SOURCE               ""                                 source               Ascii       20 Data default WEB filter osd|webif|10,
+   STATE                "'D'eleted, 'R'unning, 'F'inished" state                Ascii        1 Data default -,
+   INFO                 "error reason if state is failed"  info                 Ascii      255 Data,
+}
