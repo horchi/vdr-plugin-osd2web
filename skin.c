@@ -133,6 +133,7 @@ void cSkinOsd2WebDisplayMenu::SetTitle(const char *Title)
 
    addToJson(oMenu, "category", menuCategory);
    addToJson(oMenu, "title", Title);
+   addToJson(oMenu, "editable", menuCategory >= mcSetup && menuCategory <= mcSetupPlugins);
 
    cUpdate::pushMessage(oMenu, "menu");
 }
