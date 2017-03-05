@@ -187,7 +187,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi,
    {
       case LWS_CALLBACK_RECEIVE_PONG:
       {
-         tell(0, "DEBUG: Got 'PONG'");
+         tell(1, "DEBUG: Got 'PONG'");
 
          if (timeout)
             lws_set_timeout(wsi, PENDING_TIMEOUT_AWAITING_PING, timeout);
@@ -201,7 +201,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi,
          {
             char buffer[sizeLwsFrame];
 
-            tell(0, "DEBUG: Write 'PING'");
+            tell(1, "DEBUG: Write 'PING'");
             lws_write(wsi, (unsigned char*)buffer + sizeLwsPreFrame, 0, LWS_WRITE_PING);
          }
 

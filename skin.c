@@ -99,37 +99,35 @@ cSkinOsd2WebDisplayMenu::~cSkinOsd2WebDisplayMenu()
 
 void cSkinOsd2WebDisplayMenu::SetMenuCategory(eMenuCategory MenuCategory)
 {
-   tell(0, "DEB: cSkinOsd2WebDisplayMenu::SetMenuCategory(%d)", MenuCategory);
+   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetMenuCategory(%d)", MenuCategory);
    cSkinDisplayMenu::SetMenuCategory(MenuCategory);
    menuCategory = MenuCategory;
 }
 
 void cSkinOsd2WebDisplayMenu::Scroll(bool Up, bool Page)
 {
-   tell(0, "DEB: cSkinOsd2WebDisplayMenu::Scroll(%d, %d)", Up, Page);
+   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::Scroll(%d, %d)", Up, Page);
 }
 
 int cSkinOsd2WebDisplayMenu::MaxItems()
 {
-   tell(0, "DEB: cSkinOsd2WebDisplayMenu::MaxItems()");
+   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::MaxItems()");
    return 11; // count of visible lines
 }
 
 void cSkinOsd2WebDisplayMenu::Clear()
 {
-   tell(0, "DEB: cSkinOsd2WebDisplayMenu::Clear()");
+   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::Clear()");
 
    json_t* obj = json_object();
 
    addToJson(obj, "clear", yes);
    cUpdate::pushMessage(obj, "clearmenu");
-
-   menuCategory = mcUndefined;
 }
 
 void cSkinOsd2WebDisplayMenu::SetTitle(const char *Title)
 {
-   tell(0, "DEB: cSkinOsd2WebDisplayMenu::SetTitle(%s)", Title);
+   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetTitle(%s)", Title);
 
    json_t* oMenu = json_object();
 
@@ -141,7 +139,7 @@ void cSkinOsd2WebDisplayMenu::SetTitle(const char *Title)
 
 void cSkinOsd2WebDisplayMenu::SetButtons(const char *red, const char *green, const char *yellow, const char *blue)
 {
-   tell(0, "DEB: cSkinOsd2WebDisplayMenu::SetButtons()");
+   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetButtons()");
    json_t* buttons = json_object();
 
    if (!isEmpty(red))    addToJson(buttons, "red", red);
@@ -155,7 +153,7 @@ void cSkinOsd2WebDisplayMenu::SetButtons(const char *red, const char *green, con
 
 void cSkinOsd2WebDisplayMenu::SetMessage(eMessageType Type, const char *Text)
 {
-   tell(0, "DEB: cSkinOsd2WebDisplayMenu::SetMessage(%d, %s)", Type, Text);
+   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetMessage(%d, %s)", Type, Text);
 
    json_t* obj = json_object();
 
@@ -168,12 +166,11 @@ void cSkinOsd2WebDisplayMenu::SetMessage(eMessageType Type, const char *Text)
 
 void cSkinOsd2WebDisplayMenu::SetItem(const char *Text, int Index, bool Current, bool Selectable)
 {
-   tell(0, "DEB: cSkinOsd2WebDisplayMenu::SetItem(%s, %d, %d, %d)",
+   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetItem(%s, %d, %d, %d)",
         Text, Index, Current, Selectable);
 
    json_t* oMenuItem = json_object();
 
-   addToJson(oMenuItem, "category", menuCategory);
    addToJson(oMenuItem, "text", Text);
    addToJson(oMenuItem, "index", Index);
    addToJson(oMenuItem, "current", Current);
@@ -184,22 +181,22 @@ void cSkinOsd2WebDisplayMenu::SetItem(const char *Text, int Index, bool Current,
 
 void cSkinOsd2WebDisplayMenu::SetScrollbar(int Total, int Offset)
 {
-   tell(0, "DEB: cSkinOsd2WebDisplayMenu::SetScrollbar(%d, %d)", Total, Offset);
+   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetScrollbar(%d, %d)", Total, Offset);
 }
 
 void cSkinOsd2WebDisplayMenu::SetEvent(const cEvent *Event)
 {
-   tell(0, "DEB: cSkinOsd2WebDisplayMenu::SetEvent()");
+   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetEvent()");
 }
 
 void cSkinOsd2WebDisplayMenu::SetRecording(const cRecording *Recording)
 {
-   tell(0, "DEB: cSkinOsd2WebDisplayMenu::SetRecording()");
+   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetRecording()");
 }
 
 void cSkinOsd2WebDisplayMenu::SetText(const char *Text, bool FixedFont)
 {
-   tell(0, "DEB: cSkinOsd2WebDisplayMenu::SetText(%s, %d)", Text, FixedFont);
+   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetText(%s, %d)", Text, FixedFont);
 
    json_t* oMenuText = json_object();
 
@@ -211,7 +208,7 @@ void cSkinOsd2WebDisplayMenu::SetText(const char *Text, bool FixedFont)
 
 int cSkinOsd2WebDisplayMenu::GetTextAreaWidth() const
 {
-   tell(0, "DEB: cSkinOsd2WebDisplayMenu::GetTextAreaWidth()");
+   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::GetTextAreaWidth()");
    return 600;  // pixels
 }
 

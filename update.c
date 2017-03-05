@@ -97,7 +97,7 @@ int cUpdate::pushMessage(json_t* oContents, const char* title)
       messagesOut.push(p);
    }
 
-   tell(0, "DEBUG: [%s]", p);
+   tell(4, "DEBUG: PushMessage [%s]", p);
    free(p);
 
    return done;
