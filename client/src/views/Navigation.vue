@@ -20,7 +20,7 @@ export default {
       'items': Array,
     },
     methods: {
-        setHeight(){
+        checkHeight(){
            let topnav= document.getElementById('topnav');
            topnav.style.height= topnav.firstChild.offsetHeight + 'px';
         },
@@ -44,7 +44,7 @@ export default {
         }
     },
     updated() {
-        this.setHeight();
+        this.checkHeight();
     },
     created() {
         this.keys = {};
@@ -55,7 +55,7 @@ export default {
                 ev.stopPropagation()
             }
         });
-        window.addEventListener('resize', this.setHeight);
+        window.addEventListener('resize', this.checkHeight);
     }
 }
 </script>

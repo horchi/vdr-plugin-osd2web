@@ -1,8 +1,5 @@
 <template>
 <div v-if="colCount > 0" class="uk-overflow-container">
-   <div class="uk-button-group">
-      <button v-for="(button,index) in buttons" @click="sendKey(button.color)" :class="'but-' + button.color" class="uk-button uk-margin-small-top" >{{button.label}}</button>
-   </div>
    <table class="uk-table uk-table-hover">
         <thead>
             <tr>
@@ -15,6 +12,12 @@
             </tr>
         </tbody>
     </table>
+    <div class="uk-button-group" id="buttons" style="position:fixed;bottom:0">
+      <button v-for="(button,index) in buttons"
+         @click="sendKey(button.color)"
+         :class="'but-' + button.color" class="uk-button uk-margin-small-top"
+         type="button">{{button.label}}</button>
+   </div>
 </div>
 
 </template>
@@ -58,6 +61,10 @@ export default {
             for (let color in data)
                this.buttons.push({'color':color, label:data[color]});
         })
+        window.addEventListener('resize', this.checkButtonHeight);
+    },
+    updated(){
+      this.checkButtonHeight();
     },
     methods: {
         sendKey(key) {
@@ -69,9 +76,16 @@ export default {
                this.$root.sendKey(delta > 0 ? "Down" : "Up", Math.abs(delta));
                else
             this.$root.sendKey("Ok");
+        },
+        checkButtonHeight(){
+           let buttons= document.getElementById('buttons');
+           if (buttons)
+               buttons.parentNode.style.paddingBottom= buttons.offsetHeight + 'px';
         }
     }
 }
+//      const char *charMap = tr("CharMap$ 0\t-.,1#~\\^$[]|()*+?{}/:%@&\tabc2\tdef3\tghi4\tjkl5\tmno6\tpqrs7\ttuv8\twxyz9");
+//       msgstr " 0\t-.,1#~\\^$[]|()*+?{}/:%@&\tabcä2\tdef3\tghi4\tjkl5\tmnoö6\tpqrsß7\ttuvü8\twxyz9" 
 
 /*
 enum eMenuCategory {
