@@ -138,7 +138,8 @@ void cSkinOsd2WebDisplayMenu::SetTitle(const char *Title)
    cUpdate::pushMessage(oMenu, "menu");
 }
 
-void cSkinOsd2WebDisplayMenu::SetButtons(const char *red, const char *green, const char *yellow, const char *blue)
+void cSkinOsd2WebDisplayMenu::SetButtons(const char *red, const char *green,
+                                         const char *yellow, const char *blue)
 {
    tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetButtons()");
    json_t* buttons = json_object();
@@ -162,7 +163,6 @@ void cSkinOsd2WebDisplayMenu::SetMessage(eMessageType Type, const char *Text)
    addToJson(obj, "message", Text);
 
    cUpdate::pushMessage(obj, "message");
-
 }
 
 void cSkinOsd2WebDisplayMenu::SetItem(const char *Text, int Index, bool Current, bool Selectable)
