@@ -1,6 +1,6 @@
 <template>
 <div v-show="menuItem.on" style="padding:10px 30px 10px 10px">
-    <img src="../assets/remotecontrol.jpg" width="162" height="378" border="0" style="max-width: initial; max-height: initial;" usemap="#remote" alt="">
+    <img src="../assets/remotecontrol.jpg" width="162" height="378" border="0" class="uk-img-preserve" usemap="#remote" alt="">
     <map name="remote" @click="handleClick($event)">
    	  <area shape="circle" coords="37,36,10" alt="Power" />
    	  <area shape="rect" coords="27,60,59,75" alt="1" />

@@ -1,12 +1,15 @@
 <template>
-<nav class="uk-navbar">
-    <a @click="show_level0= !show_level0" class="uk-navbar-toggle uk-visible-small"></a>
-    <ul class="uk-navbar-nav" :class="{'uk-hidden-small':!show_level0}">
-        <li v-for="item in items" @click="handleSelect(item)" :class="{'uk-active':item.on}">
-            <a v-html="renderLabel(item)"></a>
-        </li>
-    </ul>
-</nav>
+   <div id="topnav" style="width:100%">
+      <nav class="uk-navbar" style="position:fixed; z-index:9999;width:100%;">
+          <!--a @click="show_level0= !show_level0" class="uk-navbar-toggle uk-visible-small"></a>
+          <ul class="uk-navbar-nav" :class="{'uk-hidden-small':!show_level0}">-->
+          <ul class="uk-navbar-nav">
+              <li v-for="item in items" @click="handleSelect(item)" :class="{'uk-active':item.on}">
+                  <a v-html="renderLabel(item)"></a>
+              </li>
+          </ul>
+      </nav>
+   </div>
 </template>
 
 <script>
@@ -17,6 +20,10 @@ export default {
       'items': Array,
     },
     methods: {
+        setHeight(){
+           let topnav= document.getElementById('topnav');
+           topnav.style.height= topnav.firstChild.offsetHeight + 'px';
+        },
         handleSelect(item) {
             if (item) {
                 if (item.func)
@@ -36,8 +43,8 @@ export default {
             return (item.iconClass ? '<i class="' + item.iconClass + '"></i>' : '') + label;
         }
     },
-    beforeUpdate() {
-        //this.keys = {};
+    updated() {
+        this.setHeight();
     },
     created() {
         this.keys = {};
@@ -48,6 +55,7 @@ export default {
                 ev.stopPropagation()
             }
         });
+        window.addEventListener('resize', this.setHeight);
     }
 }
 </script>
