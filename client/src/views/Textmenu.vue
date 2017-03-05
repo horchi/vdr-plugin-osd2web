@@ -10,8 +10,8 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="(row, index) in rows" :key="index" :class="{'uk-active': index == textmenucurrent}" v-on:click="doAction(index)">
-                <td v-for="(col, index) in row" :key="index">{{col}}</td>
+            <tr v-for="(row, index) in rows" :key="index" :class="{'uk-active': index == textmenucurrent}" v-on:click="row.selectable && doAction(index)">
+                <td v-for="(col, index) in row.cols" :key="index">{{col}}</td>
             </tr>
         </tbody>
     </table>
@@ -37,27 +37,23 @@ export default {
             label: '_O_SD',
             key:  'menu'
         });
-        this.$root.$on("textmenu", (data) => {
-            if (!data.rows.length && data.rowcount > 0)
-                return; // Falsche Daten
-            this.title = data.title;
-            this.colCount = parseInt(data.colcount || 0, 10) + 1;
-            this.category = data.category;
-            this.rows = [];
-            for (let i = 0; i < data.rows.length; i++) {
-                this.rows[i] = data.rows[i].split('\t');
-            }
-        })
-        this.$root.$on("textmenucurrent", (data) => {
-            if (this.category == data.category){
-                this.$set(this.rows, data.index, data.row.split('\t'));
-                this.textmenucurrent = data.index;
-            }
-        })
-        this.$root.$on("closemenu", (data) => {
-            this.colCount = this.textmenucurrent = 0;
-        })
-        this.$root.$on("colorbuttons", (data) => {
+        this.$root.$on("clearmenu", (data) => {
+           this.colCount = 0;
+           this.category = null;
+           this.rows = [];
+        });
+        this.$root.$on("menu", (data) => {
+           this.category = data.category;
+           this.title = data.title;
+        });
+        this.$root.$on("menuitem", (data) => {
+           if (!this.colCount)
+               this.colCount= data.text.split('\t').length;
+           this.$set(this.rows, data.index, {cols:data.text.split('\t'), selectable: data.selectable});
+           if (data.current)
+               this.textmenucurrent = data.index;
+        });
+        this.$root.$on("buttons", (data) => {
             this.buttons = [];
             for (let color in data)
                this.buttons.push({'color':color, label:data[color]});
