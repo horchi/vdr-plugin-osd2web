@@ -104,7 +104,7 @@ class cOsdService
       {
          evUnknown,
          evTakeFocus,
-         evDropFocus,
+         evLeaveFocus,
          evKeyPress,
          evChannels,
          evMaxLines,

@@ -32,7 +32,7 @@ const char* cOsdService::events[] =
 {
    "unknown",
    "takefocus",
-   "dropfocus",
+   "leavefocus",
    "keypress",
    "channels",
    "maxlines",
@@ -208,11 +208,11 @@ int cUpdate::dispatchClientRequest()
 
    switch (event)
    {
-      case evTakeFocus: status = performFocusRequest(oObject, yes);  break;
-      case evDropFocus: status = performFocusRequest(oObject, no);   break;
-      case evKeyPress:  status = performKeyPressRequest(oObject);    break;
-      case evChannels:  status = performChannelsRequest(oObject);    break;
-      case evMaxLines:  status = performMaxLineRequest(oObject);     break;
+      case evTakeFocus:  status = performFocusRequest(oObject, yes);  break;
+      case evLeaveFocus: status = performFocusRequest(oObject, no);   break;
+      case evKeyPress:   status = performKeyPressRequest(oObject);    break;
+      case evChannels:   status = performChannelsRequest(oObject);    break;
+      case evMaxLines:   status = performMaxLineRequest(oObject);     break;
 
       default:
          tell(0, "Error: Received unexpected client request '%s' at [%s]",
