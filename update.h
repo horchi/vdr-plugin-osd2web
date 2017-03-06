@@ -152,7 +152,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
       // object
 
-      cUpdate();
+      cUpdate(int aWebPort);
       ~cUpdate();
 
       // interface

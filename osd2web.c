@@ -16,6 +16,7 @@
 #include "lib/common.h"
 
 #include "osd2web.h"
+#include "service.h"
 
 const char* logPrefix = LOG_PREFIX;
 
@@ -26,11 +27,40 @@ const char* logPrefix = LOG_PREFIX;
 cPluginOsd2Web::cPluginOsd2Web()
 {
    update = 0;
+   webPort = 4444;
 }
 
 cPluginOsd2Web::~cPluginOsd2Web()
 {
    delete update;
+}
+
+//***************************************************************************
+// Process Args
+//***************************************************************************
+
+bool cPluginOsd2Web::ProcessArgs(int argc, char* argv[])
+{
+   int c;
+
+   static option long_options[] =
+   {
+      { "port",     required_argument, 0, 'p' },
+      { 0, 0, 0, 0 }
+   };
+
+   // check the arguments
+
+   while ((c = getopt_long(argc, argv, "p", long_options, 0)) != -1)
+   {
+      switch (c)
+      {
+         case 'p': webPort = atoi(optarg);     break;
+         default:  tell(0, "Ignoring unknown argument '%s'", optarg);
+      }
+   }
+
+   return true;
 }
 
 //***************************************************************************
@@ -43,6 +73,27 @@ bool cPluginOsd2Web::Initialize()
 }
 
 //***************************************************************************
+// Service
+//***************************************************************************
+
+bool cPluginOsd2Web::Service(const char* id, void* data)
+{
+   if (!data)
+      return fail;
+
+   if (strcmp(id, OSD2WEB_PORT_SERVICE) == 0)
+   {
+      Osd2Web_Port_v1_0* req = (Osd2Web_Port_v1_0*)data;
+
+      req->webPort = webPort;
+
+      return true;
+   }
+
+   return false;
+}
+
+//***************************************************************************
 // Start
 //***************************************************************************
 
@@ -51,7 +102,7 @@ bool cPluginOsd2Web::Start()
    // init
 
    skin = new cOsd2WebSkin();
-   update = new cUpdate();
+   update = new cUpdate(webPort);
    update->Start();                 // start plugin thread
 
    return true;
