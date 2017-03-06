@@ -14,7 +14,7 @@ export default {
         }
     },
     created() {
-        this.$root.$on("statusmessage", (data) => {
+        this.$root.$on("message", (data) => {
             this.msg = data.message;
         })
     }

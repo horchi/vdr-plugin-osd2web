@@ -1,6 +1,6 @@
 <template>
 <div id="app-view">
-    <o2v-navigation :items="$root.menuItems"></o2v-navigation>
+    <o2v-navigation :items="$root.menuItems" :itemsRight="$root.menuItemsRight"></o2v-navigation>
     <o2c-Statusmessage></o2c-Statusmessage>
     <div class="uk-flex uk-flex-wrap-space-around">
         <o2v-remote></o2v-remote>

@@ -5,7 +5,16 @@ import "../vuikit-theme/dist/css/uikit.css"
 
 window.v = new Vue({
     data: {
-        menuItems: []
+        menuItems: [],
+        menuItemsRight: [{
+           label: '',
+           on:false,
+           iconClass: 'uk-icon-desktop',
+           func: function(navComp){
+              this.on= !this.on;
+              navComp.$root.$emit("send",{"event": (this.on ? "takefocus" : "leavefocus")});
+           }
+       }]
     },
     render: h => h(App),
     methods: {
@@ -42,7 +51,6 @@ window.v = new Vue({
                 } catch (e) {
                     console.log(e);
                 }
-                console.log(msg.data);
             }
 
             this.$socket.onclose = function() {
@@ -77,7 +85,6 @@ window.v = new Vue({
             }
 
             window.addEventListener('keyup', (ev) => {
-               console.log(ev);
                 this.mapKey((ev.altKey ? 'alt.' : '') + (ev.ctrlKey ? 'ctrl.' : '') + (ev.shiftKey ? 'shift.' : '') + ev.keyCode)
             });
 

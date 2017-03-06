@@ -8,6 +8,11 @@
                   <a v-html="renderLabel(item)"></a>
               </li>
           </ul>
+          <ul class="uk-navbar-nav uk-navbar-flip">
+             <li v-for="item in itemsRight" @click="handleSelect(item)" :class="{'uk-active':item.on}">
+                  <a v-html="renderLabel(item)"></a>
+             </li>
+          </ul>
       </nav>
    </div>
 </template>
@@ -18,6 +23,7 @@ export default {
     props: {
       show_level0: true,
       'items': Array,
+      'itemsRight': Array,
     },
     methods: {
         checkHeight(){
