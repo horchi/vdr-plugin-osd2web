@@ -175,6 +175,11 @@ void cSkinOsd2WebDisplayMenu::SetScrollbar(int Total, int Offset)
 void cSkinOsd2WebDisplayMenu::SetEvent(const cEvent *Event)
 {
    tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetEvent()");
+
+   json_t* oEvent = json_object();
+   cUpdate::event2Json(oEvent, Event);
+
+   cUpdate::pushMessage(oEvent, "event");
 }
 
 void cSkinOsd2WebDisplayMenu::SetRecording(const cRecording *Recording)

@@ -166,6 +166,12 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
       // static message interface to web thread
 
+      static int event2Json(json_t* obj, const cEvent* event, const cChannel* channel = 0);
+      static int recording2Json(json_t* obj, const cRecording* recording);
+      static int channel2Json(json_t* obj, const cChannel* channel);
+      static int stream2Json(json_t* obj, const cChannel* channel);
+      static int channels2Json(json_t* obj);
+
       static int pushMessage(json_t* obj, const char* title);
 
       // static data
@@ -194,11 +200,6 @@ class cUpdate : public cStatus, cThread, public cOsdService
    private:
 
       void updatePresentFollowing();
-      int event2Json(json_t* obj, const cEvent* event, const cChannel* channel = 0);
-      int recording2Json(json_t* obj, const cRecording* recording);
-      int channel2Json(json_t* obj, const cChannel* channel);
-      int stream2Json(json_t* obj, const cChannel* channel);
-      int channels2Json(json_t* obj);
 
       int dispatchClientRequest();
       int performServerData();
