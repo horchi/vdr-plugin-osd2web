@@ -4,7 +4,7 @@
           <!--a @click="show_level0= !show_level0" class="uk-navbar-toggle uk-visible-small"></a>
           <ul class="uk-navbar-nav" :class="{'uk-hidden-small':!show_level0}">-->
           <ul class="uk-navbar-nav">
-              <li v-for="item in items" @click="handleSelect(item)" :class="{'uk-active':item.on}">
+              <li v-for="item in items" @click="handleSelect(item)" v-if="!item.hidden" :class="{'uk-active':item.on}">
                   <a v-html="renderLabel(item)"></a>
               </li>
           </ul>

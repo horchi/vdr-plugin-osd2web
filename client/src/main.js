@@ -3,8 +3,42 @@ import App from './App.vue'
 
 import "../vuikit-theme/dist/css/uikit.css"
 
+const eMenuCategory =[
+   'mcUnknown',
+   'mcMain',
+   'mcSchedule',
+   'mcScheduleNow',
+   'mcScheduleNext',
+   'mcChannel',
+   'mcChannelEdit',
+   'mcTimer',
+   'mcTimerEdit',
+   'mcRecording',
+   'mcRecordingInfo',
+   'mcRecordingEdit',
+   'mcPlugin',
+   'mcPluginSetup',
+   'mcSetup',
+   'mcSetupOsd',
+   'mcSetupEpg',
+   'mcSetupDvb',
+   'mcSetupLnb',
+   'mcSetupCam',
+   'mcSetupRecord',
+   'mcSetupReplay',
+   'mcSetupMisc',
+   'mcSetupPlugins',
+   'mcCommand',
+   'mcEvent',
+   'mcText',
+   'mcFolder',
+   'mcCam'
+];
+eMenuCategory['-1']= 'mcUndefined';
+
 window.v = new Vue({
     data: {
+        onlyRemote: null,
         menuItems: [],
         menuItemsRight: [{
            label: '',
@@ -14,7 +48,26 @@ window.v = new Vue({
               this.on= !this.on;
               navComp.$root.$emit("send",{"event": (this.on ? "takefocus" : "leavefocus")});
            }
-       }]
+       },{
+          label: '',
+          on:true,
+          iconClass: 'uk-icon-mouse-pointer',
+          func: function(navComp){
+             this.on= !this.on;
+             this.iconClass= this.on ? 'uk-icon-mouse-pointer' : 'uk-icon-calculator';
+             navComp.$root.$set(navComp.$root, "onlyRemote", !this.on);
+          }
+      }]
+    },
+    watch: {
+      onlyRemote(val) {
+         this.onlyRemote= val;
+         let max= this.onlyRemote ? 10: 100;
+         let data= [];
+         for (let i=0; i < eMenuCategory.length; i++)
+           data.push({ "category" : i, "maxlines" : max});
+         this.$emit("send",{"event": "maxlines", object: { "categories" : data } });
+      }
     },
     render: h => h(App),
     methods: {
@@ -40,8 +93,9 @@ window.v = new Vue({
         this.$socket = new WebSocket("ws://" + location.host, "osd2vdr");
 
         try {
-            this.$socket.onopen = function() {
+            this.$socket.onopen = () =>{
                 console.log("websocket connection opened");
+                this.onlyRemote= false; //todo: automatisch ermitteln
             }
 
             this.$socket.onmessage = (msg) => {

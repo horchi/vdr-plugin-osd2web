@@ -55,6 +55,11 @@ export default {
         }
     },
     created() {
+       var menuItem= this.menuItem;
+       this.$root.$watch('onlyRemote', function(onlyRemote){
+          this.$set(menuItem, "hidden",onlyRemote);
+          this.$set(menuItem, "on",false);
+       });
         this.$root.$data.menuItems.push(this.menuItem);
     }
 }
