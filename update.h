@@ -103,6 +103,8 @@ class cOsdService
       enum Event
       {
          evUnknown,
+         evTakeFocus,
+         evDropFocus,
          evKeyPress,
          evChannels,
          evMaxLines,
@@ -201,6 +203,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       int dispatchClientRequest();
       int performServerData();
       int performPing();
+      int performFocusRequest(json_t* oRequest, int focus);
       int performKeyPressRequest(json_t* oRequest);
       int performChannelsRequest(json_t* oRequest);
       int performMaxLineRequest(json_t* oRequest);

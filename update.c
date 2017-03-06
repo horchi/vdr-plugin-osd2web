@@ -31,6 +31,8 @@ int cUpdate::menuMaxLines[mcCam+1] = {};
 const char* cOsdService::events[] =
 {
    "unknown",
+   "takefocus",
+   "dropfocus",
    "keypress",
    "channels",
    "maxlines",
@@ -147,6 +149,8 @@ void cUpdate::Action()
 {
    tell(0, "osd2web plugin thread started (pid=%d)", getpid());
 
+   // performFocusRequest(0, yes);
+
    // init web socket
 
    webSock->init(webPort, pingTime);
@@ -204,9 +208,11 @@ int cUpdate::dispatchClientRequest()
 
    switch (event)
    {
-      case evKeyPress:  status = performKeyPressRequest(oObject);  break;
-      case evChannels:  status = performChannelsRequest(oObject);  break;
-      case evMaxLines:  status = performMaxLineRequest(oObject);   break;
+      case evTakeFocus: status = performFocusRequest(oObject, yes);  break;
+      case evDropFocus: status = performFocusRequest(oObject, no);   break;
+      case evKeyPress:  status = performKeyPressRequest(oObject);    break;
+      case evChannels:  status = performChannelsRequest(oObject);    break;
+      case evMaxLines:  status = performMaxLineRequest(oObject);     break;
 
       default:
          tell(0, "Error: Received unexpected client request '%s' at [%s]",
@@ -220,7 +226,30 @@ int cUpdate::dispatchClientRequest()
 }
 
 //***************************************************************************
-// Perform Key Press
+// Perform Focus Request
+//***************************************************************************
+
+int cUpdate::performFocusRequest(json_t* oRequest, int focus)
+{
+   cSkin* currentSkin = Skins.Current();
+
+   if (focus && (!currentSkin || strcmp(currentSkin->Name(), "osd2web") != 0))
+   {
+      Skins.SetCurrent("osd2web");
+      tell(0, "Changed skin to '%s'", Skins.Current()->Name());
+   }
+   else if (!focus && (!currentSkin || strcmp(currentSkin->Name(), Setup.OSDSkin) != 0))
+   {
+      Skins.SetCurrent(Setup.OSDSkin);
+      cThemes::Load(Skins.Current()->Name(), Setup.OSDTheme, Skins.Current()->Theme());
+      tell(0, "Changed skin to '%s'", Skins.Current()->Name());
+   }
+
+   return done;
+}
+
+//***************************************************************************
+// Perform Key Press Request
 //***************************************************************************
 
 int cUpdate::performKeyPressRequest(json_t* oRequest)
