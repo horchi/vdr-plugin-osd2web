@@ -61,7 +61,8 @@ class cPluginOsd2Web : public cPlugin
       const char* Version()                     { return VERSION; }
       const char* Description()                 { return tr(DESCRIPTION); }
       const char* CommandLineHelp()             { return ""; }
-      bool ProcessArgs(int argc, char* argv[])  { return true; }
+      bool ProcessArgs(int argc, char* argv[]);
+      bool Service(const char* id, void* data);
 
       bool Initialize();
       bool Start();
@@ -78,6 +79,7 @@ class cPluginOsd2Web : public cPlugin
 
       cOsd2WebSkin* skin;
       cUpdate* update;
+      int webPort;
 };
 
 //***************************************************************************

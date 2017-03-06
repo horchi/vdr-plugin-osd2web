@@ -60,12 +60,12 @@ cOsdService::Event cOsdService::toEvent(const char* name)
 // Object
 //***************************************************************************
 
-cUpdate::cUpdate()
+cUpdate::cUpdate(int aWebPort)
 {
    active = no;
    currentChannelNr = 0;
    pingTime = 60;
-   webPort = 4444;
+   webPort = aWebPort;
    nextPing = time(0);
    nextPresentUpdateAt = time(0);
 
