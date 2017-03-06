@@ -84,6 +84,13 @@ void cSkinOsd2WebDisplayMenu::SetMenuCategory(eMenuCategory MenuCategory)
 void cSkinOsd2WebDisplayMenu::Scroll(bool Up, bool Page)
 {
    tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::Scroll(%d, %d)", Up, Page);
+
+   json_t* obj = json_object();
+
+   addToJson(obj, "up", Up);
+   addToJson(obj, "page", Page);
+
+   cUpdate::pushMessage(obj, "textscroll");
 }
 
 int cSkinOsd2WebDisplayMenu::MaxItems()

@@ -184,9 +184,9 @@ vcheck:
 
 push: vcheck
 	echo "tagging git with $(VERSION)"
+	git push
 	git tag $(VERSION)
 	git push --tags
-	git push
 
 commit: vcheck
 	git commit -m "$(LASTCOMMENT)" -a
