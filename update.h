@@ -105,6 +105,7 @@ class cOsdService
          evUnknown,
          evKeyPress,
          evChannels,
+         evMaxLines,
 
          evCount
       };
@@ -170,6 +171,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       static std::queue<std::string> messagesOut;
       static cMutex messagesOutMutex;
       static std::queue<std::string> messagesIn;
+      static int menuMaxLines[mcCam+1];
 
    protected:
 
@@ -201,6 +203,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       int performPing();
       int performKeyPressRequest(json_t* oRequest);
       int performChannelsRequest(json_t* oRequest);
+      int performMaxLineRequest(json_t* oRequest);
       int cleanupMessages();
 
       // osd status

@@ -18,44 +18,22 @@
 
 //***************************************************************************
 // cSkinOsd2WebDisplayChannel
+//   - unused since wie need this information also when the skin
+//     is atttached to the 'real' OSD
 //***************************************************************************
 
 class cSkinOsd2WebDisplayChannel : public cSkinDisplayChannel
 {
     public:
 
-      cSkinOsd2WebDisplayChannel(bool WithInfo);
-      virtual ~cSkinOsd2WebDisplayChannel();
+      cSkinOsd2WebDisplayChannel(bool WithInfo) {}
+      virtual ~cSkinOsd2WebDisplayChannel()  {}
 
-      virtual void SetChannel(const cChannel *Channel, int Number);
-      virtual void SetEvents(const cEvent *Present, const cEvent *Following);
-      virtual void SetMessage(eMessageType Type, const char *Text);
-      virtual void Flush();
+      virtual void SetChannel(const cChannel *Channel, int Number) {}
+      virtual void SetEvents(const cEvent *Present, const cEvent *Following) {}
+      virtual void SetMessage(eMessageType Type, const char *Text) {}
+      virtual void Flush() {}
 };
-
-cSkinOsd2WebDisplayChannel::cSkinOsd2WebDisplayChannel(bool WithInfo)
-{
-}
-
-cSkinOsd2WebDisplayChannel::~cSkinOsd2WebDisplayChannel()
-{
-}
-
-void cSkinOsd2WebDisplayChannel::SetChannel(const cChannel *Channel, int Number)
-{
-}
-
-void cSkinOsd2WebDisplayChannel::SetEvents(const cEvent *Present, const cEvent *Following)
-{
-}
-
-void cSkinOsd2WebDisplayChannel::SetMessage(eMessageType Type, const char *Text)
-{
-}
-
-void cSkinOsd2WebDisplayChannel::Flush()
-{
-}
 
 //***************************************************************************
 // cSkinOsd2WebDisplayMenu
@@ -86,7 +64,7 @@ class cSkinOsd2WebDisplayMenu : public cSkinDisplayMenu
 
    private:
 
-      eMenuCategory menuCategory;
+      // nothing yet
 };
 
 cSkinOsd2WebDisplayMenu::cSkinOsd2WebDisplayMenu()
@@ -101,7 +79,6 @@ void cSkinOsd2WebDisplayMenu::SetMenuCategory(eMenuCategory MenuCategory)
 {
    tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetMenuCategory(%d)", MenuCategory);
    cSkinDisplayMenu::SetMenuCategory(MenuCategory);
-   menuCategory = MenuCategory;
 }
 
 void cSkinOsd2WebDisplayMenu::Scroll(bool Up, bool Page)
@@ -112,7 +89,11 @@ void cSkinOsd2WebDisplayMenu::Scroll(bool Up, bool Page)
 int cSkinOsd2WebDisplayMenu::MaxItems()
 {
    tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::MaxItems()");
-   return 11; // count of visible lines
+
+   if (MenuCategory() >= mcUnknown && MenuCategory() <= mcCam)
+      return cUpdate::menuMaxLines[MenuCategory()];
+
+   return 10;
 }
 
 void cSkinOsd2WebDisplayMenu::Clear()
@@ -131,9 +112,9 @@ void cSkinOsd2WebDisplayMenu::SetTitle(const char *Title)
 
    json_t* oMenu = json_object();
 
-   addToJson(oMenu, "category", menuCategory);
+   addToJson(oMenu, "category", MenuCategory());
    addToJson(oMenu, "title", Title);
-   addToJson(oMenu, "editable", menuCategory >= mcSetup && menuCategory <= mcSetupPlugins);
+   addToJson(oMenu, "editable", MenuCategory() >= mcSetup && MenuCategory() <= mcSetupPlugins);
 
    cUpdate::pushMessage(oMenu, "menu");
 }
@@ -150,7 +131,6 @@ void cSkinOsd2WebDisplayMenu::SetButtons(const char *red, const char *green,
    if (!isEmpty(blue))   addToJson(buttons, "blue", blue);
 
    cUpdate::pushMessage(buttons, "buttons");
-
 }
 
 void cSkinOsd2WebDisplayMenu::SetMessage(eMessageType Type, const char *Text)
@@ -204,18 +184,16 @@ void cSkinOsd2WebDisplayMenu::SetText(const char *Text, bool FixedFont)
    addToJson(oMenuText, "text", Text);
 
    cUpdate::pushMessage(oMenuText, "menutext");
-
 }
 
 int cSkinOsd2WebDisplayMenu::GetTextAreaWidth() const
 {
-   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::GetTextAreaWidth()");
-   return 600;  // pixels
+   return 600;  // pixels dummy code
 }
 
 const cFont *cSkinOsd2WebDisplayMenu::GetTextAreaFont(bool FixedFont) const
 {
-   return cFont::GetFont(FixedFont ? fontFix : fontOsd);
+   return cFont::GetFont(FixedFont ? fontFix : fontOsd);    // dummy code
 }
 
 void cSkinOsd2WebDisplayMenu::Flush()
@@ -224,64 +202,26 @@ void cSkinOsd2WebDisplayMenu::Flush()
 
 //***************************************************************************
 // cSkinOsd2WebDisplayReplay
+//   - unused since wie need this information also when the skin
+//     is atttached to the 'real' OSD
 //***************************************************************************
 
 class cSkinOsd2WebDisplayReplay : public cSkinDisplayReplay
 {
     public:
 
-      cSkinOsd2WebDisplayReplay(bool ModeOnly);
-      virtual ~cSkinOsd2WebDisplayReplay();
+      cSkinOsd2WebDisplayReplay(bool ModeOnly) {}
+      virtual ~cSkinOsd2WebDisplayReplay() {}
 
-      virtual void SetTitle(const char *Title);
-      virtual void SetMode(bool Play, bool Forward, int Speed);
-      virtual void SetProgress(int Current, int Total);
-      virtual void SetCurrent(const char *Current);
-      virtual void SetTotal(const char *Total);
-      virtual void SetJump(const char *Jump);
-      virtual void SetMessage(eMessageType Type, const char *Text);
-      virtual void Flush();
+      virtual void SetTitle(const char *Title) {}
+      virtual void SetMode(bool Play, bool Forward, int Speed) {}
+      virtual void SetProgress(int Current, int Total) {}
+      virtual void SetCurrent(const char *Current) {}
+      virtual void SetTotal(const char *Total) {}
+      virtual void SetJump(const char *Jump) {}
+      virtual void SetMessage(eMessageType Type, const char *Text) {}
+      virtual void Flush() {}
 };
-
-cSkinOsd2WebDisplayReplay::cSkinOsd2WebDisplayReplay(bool ModeOnly)
-{
-}
-
-cSkinOsd2WebDisplayReplay::~cSkinOsd2WebDisplayReplay()
-{
-}
-
-void cSkinOsd2WebDisplayReplay::SetTitle(const char *Title)
-{
-}
-
-void cSkinOsd2WebDisplayReplay::SetMode(bool Play, bool Forward, int Speed)
-{
-}
-
-void cSkinOsd2WebDisplayReplay::SetProgress(int Current, int Total)
-{
-}
-
-void cSkinOsd2WebDisplayReplay::SetCurrent(const char *Current)
-{
-}
-
-void cSkinOsd2WebDisplayReplay::SetTotal(const char *Total)
-{
-}
-
-void cSkinOsd2WebDisplayReplay::SetJump(const char *Jump)
-{
-}
-
-void cSkinOsd2WebDisplayReplay::SetMessage(eMessageType Type, const char *Text)
-{
-}
-
-void cSkinOsd2WebDisplayReplay::Flush()
-{
-}
 
 //***************************************************************************
 // cSkinOsd2WebDisplayVolume
@@ -289,11 +229,13 @@ void cSkinOsd2WebDisplayReplay::Flush()
 
 class cSkinOsd2WebDisplayVolume : public cSkinDisplayVolume
 {
-public:
-  cSkinOsd2WebDisplayVolume();
-  virtual ~cSkinOsd2WebDisplayVolume();
-  virtual void SetVolume(int Current, int Total, bool Mute);
-  virtual void Flush();
+   public:
+
+     cSkinOsd2WebDisplayVolume();
+     virtual ~cSkinOsd2WebDisplayVolume();
+
+     virtual void SetVolume(int Current, int Total, bool Mute);
+     virtual void Flush() {}
 };
 
 cSkinOsd2WebDisplayVolume::cSkinOsd2WebDisplayVolume()
@@ -306,10 +248,15 @@ cSkinOsd2WebDisplayVolume::~cSkinOsd2WebDisplayVolume()
 
 void cSkinOsd2WebDisplayVolume::SetVolume(int Current, int Total, bool Mute)
 {
-}
+   tell(1, "DEB: Skin:cSkinOsd2WebDisplayVolume::SetVolume(%d, %d, %d)", Current, Total, Mute);
 
-void cSkinOsd2WebDisplayVolume::Flush()
-{
+   json_t* oVolume = json_object();
+
+   addToJson(oVolume, "current", Current);
+   addToJson(oVolume, "total", Total);
+   addToJson(oVolume, "mute", Mute);
+
+   cUpdate::pushMessage(oVolume, "volume");
 }
 
 //***************************************************************************
@@ -318,15 +265,17 @@ void cSkinOsd2WebDisplayVolume::Flush()
 
 class cSkinOsd2WebDisplayTracks : public cSkinDisplayTracks
 {
-public:
-  cSkinOsd2WebDisplayTracks(const char *Title, int NumTracks, const char * const *Tracks);
-  virtual ~cSkinOsd2WebDisplayTracks();
-  virtual void SetTrack(int Index, const char * const *Tracks);
-  virtual void SetAudioChannel(int AudioChannel) {}
-  virtual void Flush();
+   public:
+
+      cSkinOsd2WebDisplayTracks(const char* Title, int NumTracks, const char* const* Tracks);
+      virtual ~cSkinOsd2WebDisplayTracks();
+
+      virtual void SetTrack(int Index, const char* const* Tracks);
+      virtual void SetAudioChannel(int AudioChannel) {}
+      virtual void Flush();
 };
 
-cSkinOsd2WebDisplayTracks::cSkinOsd2WebDisplayTracks(const char *Title, int NumTracks, const char * const *Tracks)
+cSkinOsd2WebDisplayTracks::cSkinOsd2WebDisplayTracks(const char *Title, int NumTracks, const char* const* Tracks)
 {
 }
 
@@ -348,11 +297,13 @@ void cSkinOsd2WebDisplayTracks::Flush()
 
 class cSkinOsd2WebDisplayMessage : public cSkinDisplayMessage
 {
-public:
-  cSkinOsd2WebDisplayMessage();
-  virtual ~cSkinOsd2WebDisplayMessage();
-  virtual void SetMessage(eMessageType Type, const char *Text);
-  virtual void Flush();
+    public:
+
+      cSkinOsd2WebDisplayMessage();
+      virtual ~cSkinOsd2WebDisplayMessage();
+
+      virtual void SetMessage(eMessageType Type, const char *Text);
+      virtual void Flush();
 };
 
 cSkinOsd2WebDisplayMessage::cSkinOsd2WebDisplayMessage()
@@ -365,6 +316,14 @@ cSkinOsd2WebDisplayMessage::~cSkinOsd2WebDisplayMessage()
 
 void cSkinOsd2WebDisplayMessage::SetMessage(eMessageType Type, const char *Text)
 {
+   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMessage::SetMessage(%d, %s)", Type, Text);
+
+   json_t* obj = json_object();
+
+   addToJson(obj, "type", Type);
+   addToJson(obj, "message", Text);
+
+   cUpdate::pushMessage(obj, "message");
 }
 
 void cSkinOsd2WebDisplayMessage::Flush()

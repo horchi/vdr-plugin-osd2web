@@ -22,6 +22,8 @@ std::queue<std::string> cUpdate::messagesOut;
 cMutex cUpdate::messagesOutMutex;
 std::queue<std::string> cUpdate::messagesIn;
 
+int cUpdate::menuMaxLines[mcCam+1] = {};
+
 //***************************************************************************
 // OSD Service
 //***************************************************************************
@@ -31,6 +33,7 @@ const char* cOsdService::events[] =
    "unknown",
    "keypress",
    "channels",
+   "maxlines",
    0
 };
 
@@ -63,6 +66,9 @@ cUpdate::cUpdate()
    webPort = 4444;
    nextPing = time(0);
    nextPresentUpdateAt = time(0);
+
+   for (int i = 0; i <= mcCam; i++)
+      menuMaxLines[i] = 10;
 
    webSock = new cWebSock();
 }
@@ -198,8 +204,9 @@ int cUpdate::dispatchClientRequest()
 
    switch (event)
    {
-      case evKeyPress:  status = performKeyPressRequest(oObject);   break;
-      case evChannels:  status = performChannelsRequest(oObject);   break;
+      case evKeyPress:  status = performKeyPressRequest(oObject);  break;
+      case evChannels:  status = performChannelsRequest(oObject);  break;
+      case evMaxLines:  status = performMaxLineRequest(oObject);   break;
 
       default:
          tell(0, "Error: Received unexpected client request '%s' at [%s]",
@@ -252,6 +259,38 @@ int cUpdate::performChannelsRequest(json_t* oRequest)
 
    if (channels2Json(oChannels) == success)
       pushMessage(oChannels, "channels");
+
+   return done;
+}
+
+//***************************************************************************
+// Perform MaxLine Request
+//***************************************************************************
+
+int cUpdate::performMaxLineRequest(json_t* oRequest)
+{
+   // client set maxlines for the menu categories
+
+   // { "event" : "maxlines", "object" : { "categories" : [ { "category" : "0", "maxlines" : "12",
+   //                                                       { "category" : "1", "maxlines" : "10",
+   //                                                       { "category" : "2", "maxlines" : "20",
+   //                                                     ] } }
+
+   json_t* objMaxLines = json_object_get(oRequest, "categories");
+
+   if (!objMaxLines || !json_is_array(objMaxLines))
+      return fail;
+
+   int count = json_array_size(objMaxLines);
+
+   for (int i = 0; i < count; ++i)
+   {
+      json_t* obj = json_array_get(objMaxLines, i);
+      int category = getIntFromJson(obj, "category");
+
+      if (category <= mcCam)
+         menuMaxLines[i] = getIntFromJson(obj, "maxlines");
+   }
 
    return done;
 }
