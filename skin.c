@@ -16,6 +16,14 @@
 
 #include "update.h"
 
+int isEditable(eMenuCategory category)
+{
+   return
+      category >= mcPluginSetup &&
+      category <= mcSetupMisc &&
+      category != mcSetup;
+}
+
 //***************************************************************************
 // cSkinOsd2WebDisplayChannel
 //   - unused since wie need this information also when the skin
@@ -121,7 +129,7 @@ void cSkinOsd2WebDisplayMenu::SetTitle(const char *Title)
 
    addToJson(oMenu, "category", MenuCategory());
    addToJson(oMenu, "title", Title);
-   addToJson(oMenu, "editable", MenuCategory() >= mcSetup && MenuCategory() <= mcSetupPlugins);
+   addToJson(oMenu, "editable", isEditable(MenuCategory()));
 
    cUpdate::pushMessage(oMenu, "menu");
 }
@@ -156,6 +164,9 @@ void cSkinOsd2WebDisplayMenu::SetItem(const char *Text, int Index, bool Current,
 {
    tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetItem(%s, %d, %d, %d)",
         Text, Index, Current, Selectable);
+
+   // if (isEditable(MenuCategory()))
+   //    SetEditableWidth(200);
 
    json_t* oMenuItem = json_object();
 
