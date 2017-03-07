@@ -335,6 +335,14 @@ cSkinOsd2WebDisplayMessage::cSkinOsd2WebDisplayMessage()
 
 cSkinOsd2WebDisplayMessage::~cSkinOsd2WebDisplayMessage()
 {
+   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMessage~cSkinOsd2WebDisplayMessage()");
+
+   json_t* obj = json_object();
+
+   addToJson(obj, "message", "");
+
+   cUpdate::pushMessage(obj, "message");
+
 }
 
 void cSkinOsd2WebDisplayMessage::SetMessage(eMessageType Type, const char *Text)
