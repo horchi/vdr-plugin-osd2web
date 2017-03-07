@@ -1,13 +1,11 @@
 <template>
-<div class="uk-overflow-container" id="osdCon">
-    <table v-show="title" class="uk-table uk-table-hover">
-        <thead>
-            <tr>
-                <th :colspan="colCount || 1"><a class="uk-button" @click="sendKey('Back')"><i class="uk-icon-mail-reply-all"></i> {{ title }}</a></th>
-            </tr>
-        </thead>
+<div v-show="title" class="uk-overflow-container uk-flex-space-between uk-width-1" :class="{'uk-text-nowrap':$root.onlyRemote}" id="osdCon">
+    <div class="uk-panel uk-panel-hover" @click="sendKey('Back')">
+        <h3 class="uk-panel-title"><i class="uk-icon-mail-reply-all"></i> {{ title }}</h3>
+    </div>
+    <table v-show="colCount" class="uk-table uk-table-hover">
         <tbody>
-            <tr v-for="(row, rowIndex) in rows" :key="rowIndex" :class="{'uk-active': rowIndex == textmenucurrent}" @click="row.selectable && doAction(rowIndex)">
+            <tr v-for="(row, rowIndex) in rows" :key="rowIndex" :class="{'uk-form-success': rowIndex == textmenucurrent}" @click="row.selectable && doAction(rowIndex)">
                 <td v-for="(col, index) in row.cols" :key="index" :class="{'uk-placeholder': rowIndex == textmenucurrent && index== 1 && canEdit == 1}">{{col}}</td>
                 <td v-if="row.selectable && canEdit==1" class="uk-button-group">
                     <a class="uk-button" @click.stop="doAction(rowIndex,'Left')"><i class="uk-icon-caret-square-o-left"></i></a>
@@ -18,6 +16,21 @@
             </tr>
         </tbody>
     </table>
+    <div v-show="event.title" class="uk-panel">
+        <h3 class="uk-panel-title">{{event.title}}</h3>
+        <div class="uk-panel-teaser">{{event.shorttext}}</div>
+        <div class="uk-progress">
+            <div class="uk-progress-bar" :style="event.progress"></div>
+        </div>
+        <div class="uk-flex uk-flex-space-between">
+          <div class="uk-width-2-3 uk-panel">
+             {{formatDateTime(event.starttime)}}&nbsp;-&nbsp;{{formatTime(event.endtime)}}
+          </div>
+          <div class="uk-width-1-3 uk-panel uk-float-right">
+             {{event.duration/60}} min</div>
+        </div>
+
+    </div>
     <div v-show="text" class="uk-panel-box uk-grid-margin" v-html="text"></div>
     <div class="uk-button-group" id="buttons" style="position:fixed;bottom:0">
         <button v-for="(button,index) in buttons" @click="sendKey(button.color)" :class="'but-' + button.color" class="uk-button uk-margin-small-top" type="button">{{button.label}}</button>
@@ -26,19 +39,23 @@
 </template>
 
 <script>
+function getClearData(){
+  return {
+      title: '',
+      rows: [],
+      colCount: 0,
+      textmenucurrent: 0,
+      canEdit: 0,
+      category: -1,
+      text: '',
+      event:{},
+      buttons: []
+  }
+}
 export default {
     name: 'o2vOsd',
     data: function() {
-        return {
-            title: '',
-            rows: [],
-            colCount: 0,
-            textmenucurrent: 0,
-            canEdit: 0,
-            category: -1,
-            text: '',
-            buttons: []
-        };
+        return getClearData();
     },
     created() {
         this.$root.$data.menuItems.push({
@@ -46,23 +63,23 @@ export default {
             key: 'menu'
         });
         this.$root.$on("clearmenu", (data) => {
-            this.colCount = 0;
-            this.category = null;
-            this.rows = [];
+           let clearData= getClearData();
+           for (let key in clearData)
+            this[key]= clearData[key];
         });
         this.$root.$on("menu", (data) => {
             this.category = data.category;
-            this.canEdit= data.editable || 0;
+            this.canEdit = data.editable || 0;
             this.title = data.title;
         });
         this.$root.$on("menuitem", (data) => {
-            if (!this.colCount){
+            if (!this.colCount) {
                 this.colCount = data.text.split('\t').length;
                 if (this.colCount == 2 && this.canEdit)
-                  this.colCount++;
+                    this.colCount++;
                 else
-                   this.canEdit= 0;
-             }
+                    this.canEdit = 0;
+            }
             this.$set(this.rows, data.index, {
                 cols: data.text.split('\t'),
                 selectable: data.selectable,
@@ -75,20 +92,22 @@ export default {
             this.text = data.text.replace(/\n/g, '<br />');
         });
         this.$root.$on("textscroll", (data) => {
-            let con = document.getElementById('osdCon');
-            if (con) {
-                if (data.page) {
-                    if (data.up)
-                        con.srcrollLeft = Math.max(0, con.srcrollLeft - con.clientWidth);
-                    else
-                        con.srcrollLeft += con.clientWidth;
-                } else {
-                    if (data.up)
-                        con.srcrollTop = Math.max(0, con.srcrollTop - con.clientHeight);
-                    else
-                        con.srcrollTop += con.clientHeight;
-                }
-            }
+             if (data.page) {
+                 if (data.up)
+                     document.body.scrollLeft = Math.max(0, document.body.scrollLeft - document.body.clientWidth);
+                 else
+                     document.body.scrollLeft += document.body.clientWidth;
+             } else {
+                 if (data.up)
+                     document.body.scrollTop = Math.max(0, document.body.scrollTop - document.body.clientHeight);
+                 else
+                     document.body.scrollTop = document.body.scrollTop + document.body.clientHeight;
+             }
+        });
+        this.$root.$on("event", (data) => {
+            this.event = data;
+            this.text = data.description.replace(/\n/g, '<br />');
+            this.event.progress= 'width:' + ((parseInt(new Date().getTime() / 1000, 10) - data.starttime) / data.duration * 100) + '%';
         });
         this.$root.$on("buttons", (data) => {
             this.buttons = [];
@@ -118,7 +137,20 @@ export default {
             let buttons = document.getElementById('buttons');
             if (buttons)
                 buttons.parentNode.style.paddingBottom = buttons.offsetHeight + 'px';
-        }
+        },
+        formatDateTime(unixTime) {
+           var d = new Date(unixTime * 1000); // - this.timeOffset
+           return d.toLocaleDateString('de-DE', { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' })
+               + ' ' + new String(100 + d.getHours()).slice(1) + ':' + new String(100 + d.getMinutes()).slice(1);
+        },
+        formatTime(unixTime) {
+            var d = new Date(unixTime * 1000); // - this.timeOffset
+            return new String(100 + d.getHours()).slice(1) + ':' + new String(100 + d.getMinutes()).slice(1);
+        }/*,
+        formatDate(unixTime) {
+            var d = new Date(unixTime * 1000); // - this.timeOffset
+            return d.toLocaleDateString('de-DE', { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' });
+        }*/
     }
 }
 //      const char *charMap = tr("CharMap$ 0\t-.,1#~\\^$[]|()*+?{}/:%@&\tabc2\tdef3\tghi4\tjkl5\tmno6\tpqrs7\ttuv8\twxyz9");
@@ -195,16 +227,22 @@ button.but-red {
 }
 
 
+
+
 button.but-green {
     background-color: green;
     color: #fff;
 }
 
 
+
+
 button.but-blue {
     background-color: blue;
     color: #fff;
 }
+
+
 
 
 button.but-yellow {

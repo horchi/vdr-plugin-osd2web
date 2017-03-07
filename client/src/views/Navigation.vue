@@ -55,7 +55,6 @@ export default {
     created() {
         this.keys = {};
         window.addEventListener('keyup', (ev) => {
-           console.log(this.keys)
             if (ev.altKey && this.keys[ev.key]) {
                 this.handleSelect(this.keys[ev.key]);
                 ev.stopPropagation()

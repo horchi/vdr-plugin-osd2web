@@ -62,11 +62,13 @@ window.v = new Vue({
     watch: {
       onlyRemote(val) {
          this.onlyRemote= val;
-         let max= this.onlyRemote ? 10: 100;
-         let data= [];
-         for (let i=0; i < eMenuCategory.length; i++)
-           data.push({ "category" : i, "maxlines" : max});
-         this.$emit("send",{"event": "maxlines", object: { "categories" : data } });
+         if (this.onlyRemote){
+            window.addEventListener('resize', this.sendMaxLines);
+            this.sendMaxLines(null);
+         } else{
+            window.removeEventListener('resize', this.sendMaxLines);
+            this.sendMaxLines(null,100);
+         }
       }
     },
     render: h => h(App),
@@ -84,6 +86,13 @@ window.v = new Vue({
             let key = this.$keyMap[keyString];
             if (key)
                 this.sendKey(key);
+        },
+        sendMaxLines(ev, maxLines){                      //  header - buttons
+           let max= maxLines || parseInt((window.innerHeight - 128 - 40 ) / 38,10)
+           let data= [];
+           for (let i=0; i < eMenuCategory.length; i++)
+             data.push({ "category" : i, "maxlines" : max});
+           this.$emit("send",{"event": "maxlines", object: { "categories" : data } });
         }
     },
     created() {
