@@ -12,7 +12,7 @@ module.exports = (options = {}) => ({
     index: './src/main.js'
   },
   output: {
-      path: options.dev ? '/var/lib/vdr/plugins/osd2web/http/dev' : resolve(__dirname, 'dist'),
+    path: options.dev ? '/var/lib/vdr/plugins/osd2web/http/dev' : resolve(__dirname, 'dist'),
     filename: options.dev ? '[name].js' : '[name].js?[chunkhash]',
     chunkFilename: '[id].js?[chunkhash]',
     publicPath: publicPath
@@ -42,17 +42,7 @@ module.exports = (options = {}) => ({
         use: ['style-loader', 'css-loader', 'postcss-loader']
       },
       {
-        test: /favicon\.png$/,
-        use: [{
-          loader: 'file-loader',
-          options: {
-            name: '[name].[ext]?[hash]'
-          }
-        }]
-      },
-      {
         test: /\.(png|jpg|jpeg|gif|eot|ttf|woff|woff2|svg|svgz)(\?.+)?$/,
-        exclude: /favicon\.png$/,
         use: [{
           loader: 'url-loader',
           options: {

@@ -8,8 +8,7 @@
     "build": "rimraf dist && webpack -p --progress --hide-modules"
   },
   "dependencies": {
-    "vue": "^2.1.8",
-    "vuikit": "^0.6.2"
+    "vue": "^2.1.8"
   },
   "engines": {
     "node": ">=6"

@@ -16,21 +16,7 @@
             </tr>
         </tbody>
     </table>
-    <div v-show="event.title" class="uk-panel">
-        <h3 class="uk-panel-title">{{event.title}}</h3>
-        <div class="uk-panel-teaser">{{event.shorttext}}</div>
-        <div class="uk-progress">
-            <div class="uk-progress-bar" :style="event.progress"></div>
-        </div>
-        <div class="uk-flex uk-flex-space-between">
-          <div class="uk-width-2-3 uk-panel">
-             {{formatDateTime(event.starttime)}}&nbsp;-&nbsp;{{formatTime(event.endtime)}}
-          </div>
-          <div class="uk-width-1-3 uk-panel uk-float-right">
-             {{event.duration/60}} min</div>
-        </div>
-
-    </div>
+    <o2v-event :event="event"></o2v-event>
     <div v-show="text" class="uk-panel-box uk-grid-margin" v-html="text"></div>
     <div class="uk-button-group" id="buttons" style="position:fixed;bottom:0">
         <button v-for="(button,index) in buttons" @click="sendKey(button.color)" :class="'but-' + button.color" class="uk-button uk-margin-small-top" type="button">{{button.label}}</button>
@@ -39,6 +25,8 @@
 </template>
 
 <script>
+import o2vEvent from './Event.vue';
+
 function getClearData(){
   return {
       title: '',
@@ -106,8 +94,8 @@ export default {
         });
         this.$root.$on("event", (data) => {
             this.event = data;
-            this.text = data.description.replace(/\n/g, '<br />');
-            this.event.progress= 'width:' + ((parseInt(new Date().getTime() / 1000, 10) - data.starttime) / data.duration * 100) + '%';
+            //this.text = data.description.replace(/\n/g, '<br />');
+            //this.event.progress= 'width:' + ((parseInt(new Date().getTime() / 1000, 10) - data.starttime) / data.duration * 100) + '%';
         });
         this.$root.$on("buttons", (data) => {
             this.buttons = [];
@@ -120,6 +108,7 @@ export default {
         window.addEventListener('resize', this.checkButtonHeight);
     },
     updated() {
+        document.getElementById('o2vContent').style.display= this.title ? "none" : '';
         this.checkButtonHeight();
     },
     methods: {
@@ -137,20 +126,10 @@ export default {
             let buttons = document.getElementById('buttons');
             if (buttons)
                 buttons.parentNode.style.paddingBottom = buttons.offsetHeight + 'px';
-        },
-        formatDateTime(unixTime) {
-           var d = new Date(unixTime * 1000); // - this.timeOffset
-           return d.toLocaleDateString('de-DE', { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' })
-               + ' ' + new String(100 + d.getHours()).slice(1) + ':' + new String(100 + d.getMinutes()).slice(1);
-        },
-        formatTime(unixTime) {
-            var d = new Date(unixTime * 1000); // - this.timeOffset
-            return new String(100 + d.getHours()).slice(1) + ':' + new String(100 + d.getMinutes()).slice(1);
-        }/*,
-        formatDate(unixTime) {
-            var d = new Date(unixTime * 1000); // - this.timeOffset
-            return d.toLocaleDateString('de-DE', { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' });
-        }*/
+        }
+    },
+    components: {
+        'o2v-event': o2vEvent
     }
 }
 //      const char *charMap = tr("CharMap$ 0\t-.,1#~\\^$[]|()*+?{}/:%@&\tabc2\tdef3\tghi4\tjkl5\tmno6\tpqrs7\ttuv8\twxyz9");

@@ -93,7 +93,20 @@ window.v = new Vue({
            for (let i=0; i < eMenuCategory.length; i++)
              data.push({ "category" : i, "maxlines" : max});
            this.$emit("send",{"event": "maxlines", object: { "categories" : data } });
-        }
+        },
+        formatDateTime(unixTime) {
+           var d = new Date(unixTime * 1000); // - this.timeOffset
+           return d.toLocaleDateString('de-DE', { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' })
+               + ' ' + new String(100 + d.getHours()).slice(1) + ':' + new String(100 + d.getMinutes()).slice(1);
+        },
+        formatTime(unixTime) {
+            var d = new Date(unixTime * 1000); // - this.timeOffset
+            return new String(100 + d.getHours()).slice(1) + ':' + new String(100 + d.getMinutes()).slice(1);
+        }/*,
+        formatDate(unixTime) {
+            var d = new Date(unixTime * 1000); // - this.timeOffset
+            return d.toLocaleDateString('de-DE', { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' });
+        }*/
     },
     created() {
 
