@@ -221,10 +221,17 @@ int cWebSock::callbackOsd2Vdr(lws* wsi,
 
                int msgSize = strlen(msg.c_str());
                int neededSize = sizeLwsFrame + msgSize;
+               char* newBuffer = 0;
 
                if (neededSize > msgBufferSize)
                {
-                  msgBuffer = (char*)realloc(msgBuffer, neededSize);
+                  if (!(newBuffer = (char*)realloc(msgBuffer, neededSize)))
+                  {
+                     tell(0, "Fatal: Can't allocate memory!");
+                     break;
+                  }
+
+                  msgBuffer = newBuffer;
                   msgBufferSize = neededSize;
                }
 

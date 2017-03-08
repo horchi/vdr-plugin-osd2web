@@ -100,6 +100,12 @@ class cOsdService
 {
    public:
 
+      enum SkinMode
+      {
+         smManual,
+         smAuto
+      };
+
       enum Event
       {
          evUnknown,
@@ -226,6 +232,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       cOsd2WebSkin* skin;
       bool active;
       int webPort;
+      SkinMode skinMode;
 };
 
 //***************************************************************************

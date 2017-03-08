@@ -56,12 +56,17 @@ cOsdService::Event cOsdService::toEvent(const char* name)
    return evUnknown;
 }
 
+
+//***************************************************************************
+// Class cUpdate
+//***************************************************************************
 //***************************************************************************
 // Object
 //***************************************************************************
 
 cUpdate::cUpdate(int aWebPort)
 {
+   skinMode = smAuto;
    active = no;
    currentChannelNr = 0;
    pingTime = 60;
@@ -137,8 +142,17 @@ void cUpdate::atMeanwhile()
 
    // cleanup messages in case no client connected
 
-   if (!webSock->getClientCount() && !messagesOut.empty())
-      cleanupMessages();
+   if (!webSock->getClientCount())
+   {
+      if (!messagesOut.empty())
+         cleanupMessages();
+
+      if (skinMode == smAuto && (Skins.Current() || strcmp(Skins.Current()->Name(), "osd2web") == 0))
+      {
+         tell(0, "Info: No client connected, detaching fron skin interface");
+         performFocusRequest(0, no);
+      }
+   }
 }
 
 //***************************************************************************
@@ -320,6 +334,8 @@ int cUpdate::performMaxLineRequest(json_t* oRequest)
       if (category <= mcCam)
          menuMaxLines[i] = getIntFromJson(obj, "maxlines");
    }
+
+   cOsdProvider::UpdateOsdSize(true);
 
    return done;
 }
