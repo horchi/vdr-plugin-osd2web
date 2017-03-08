@@ -14,10 +14,25 @@
 // Config
 //***************************************************************************
 
-struct cEpgConfig
+struct cConfigBase
 {
    public:
-      
+
+      cConfigBase();
+
+      // static stuff
+
+      static int logstdout;
+      static int loglevel;
+      static int argLoglevel;
+      static int logFacility;
+      static const char* logName;   // filename if we aren't a plugin
+};
+
+struct cEpgConfig : public cConfigBase
+{
+   public:
+
       cEpgConfig();
 
       // database connection
@@ -34,14 +49,6 @@ struct cEpgConfig
       char uuid[sizeUuid+TB];
 
       int getepgimages;
-
-      // static stuff 
-
-      static int logstdout;
-      static int loglevel;
-      static int argLoglevel;
-      static int logFacility;
-      static const char* logName;
 };
 
-#endif // __EPG_CONFIG_H 
+#endif // __EPG_CONFIG_H

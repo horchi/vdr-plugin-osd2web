@@ -89,7 +89,7 @@ clean:
 	rm -f *.o *~ core $(TEST) $(DEMO) $(LIBTARGET).a
 
 cppchk:
-	cppcheck --template="{file}:{line}:{severity}:{message}" --quiet --force *.c *.h
+	cppcheck --language=c++ --template="{file}:{line}:{severity}:{message}" --quiet --force *.c *.h
 
 %.o: %.c
 	@echo Compile "$(*F)" ...

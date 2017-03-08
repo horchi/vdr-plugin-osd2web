@@ -15,5 +15,4 @@ cOsd2WebConfig config;
 
 cOsd2WebConfig::cOsd2WebConfig()
 {
-   logLevel = 1;
 }

@@ -66,6 +66,7 @@ cOsdService::Event cOsdService::toEvent(const char* name)
 
 cUpdate::cUpdate(int aWebPort)
 {
+   actualClientCount = 0;
    skinMode = smAuto;
    active = no;
    currentChannelNr = 0;
@@ -140,18 +141,27 @@ void cUpdate::atMeanwhile()
    if (nextPresentUpdateAt < time(0))
       updatePresentFollowing();
 
-   // cleanup messages in case no client connected
-
    if (!webSock->getClientCount())
    {
+      // cleanup messages in case no client connected
+
       if (!messagesOut.empty())
          cleanupMessages();
 
-      if (skinMode == smAuto && (Skins.Current() || strcmp(Skins.Current()->Name(), "osd2web") == 0))
+      // detach from Skin interface?
+
+      if (skinMode == smAuto && isSkinAttached() && !isDefault())
       {
-         tell(0, "Info: No client connected, detaching fron skin interface");
+         tell(0, "Info: No client connected, detaching from skin interface");
          performFocusRequest(0, no);
       }
+   }
+   else if (webSock->getClientCount() != actualClientCount)
+   {
+      // client count changed ...
+
+      actualClientCount = webSock->getClientCount();
+      updatePresentFollowing();  // trigger update of present/following
    }
 }
 
@@ -245,14 +255,12 @@ int cUpdate::dispatchClientRequest()
 
 int cUpdate::performFocusRequest(json_t* oRequest, int focus)
 {
-   cSkin* currentSkin = Skins.Current();
-
-   if (focus && (!currentSkin || strcmp(currentSkin->Name(), "osd2web") != 0))
+   if (focus && !isSkinAttached(SKIN_NAME))
    {
-      Skins.SetCurrent("osd2web");
+      Skins.SetCurrent(SKIN_NAME);
       tell(0, "Changed skin to '%s'", Skins.Current()->Name());
    }
-   else if (!focus && (!currentSkin || strcmp(currentSkin->Name(), Setup.OSDSkin) != 0))
+   else if (!focus && !isSkinAttached(Setup.OSDSkin))
    {
       Skins.SetCurrent(Setup.OSDSkin);
       cThemes::Load(Skins.Current()->Name(), Setup.OSDTheme, Skins.Current()->Theme());
@@ -277,7 +285,7 @@ int cUpdate::performKeyPressRequest(json_t* oRequest)
 
    if (key == kNone)
    {
-      tell(0, "Info: Recevied unknown key '%s'", keyName);
+      tell(0, "Info: Received unknown key '%s'", keyName);
       return fail;
    }
 

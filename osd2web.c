@@ -114,7 +114,7 @@ bool cPluginOsd2Web::Start()
 
 void cPluginOsd2Web::Store()
 {
-   SetupStore("LogLevel", config.logLevel);
+   SetupStore("LogLevel", config.loglevel);
 }
 
 //***************************************************************************
@@ -123,7 +123,7 @@ void cPluginOsd2Web::Store()
 
 bool cPluginOsd2Web::SetupParse(const char* name, const char* value)
 {
-   if      (!strcasecmp(name, "LogLevel"))     config.logLevel = atoi(value);
+   if      (!strcasecmp(name, "LogLevel"))     config.loglevel = atoi(value);
 
    else
       return false;

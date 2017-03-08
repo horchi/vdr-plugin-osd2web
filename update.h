@@ -29,12 +29,21 @@
 #include "lib/json.h"
 #include "lib/common.h"
 
+#define SKIN_NAME "osd2web"
+
 //***************************************************************************
 // Tools
 //***************************************************************************
 
 eTimerMatch Matches(const cTimer* ti, const cEvent* event);
 const cTimer* getTimerMatch(const cTimers* timers, const cEvent* event, eTimerMatch* match);
+
+int event2Json(json_t* obj, const cEvent* event, const cChannel* channel = 0, eTimerMatch TimerMatch = (eTimerMatch)na);
+int recording2Json(json_t* obj, const cRecording* recording);
+int channel2Json(json_t* obj, const cChannel* channel);
+int timer2Json(json_t* obj, const cTimer* timer);
+int stream2Json(json_t* obj, const cChannel* channel);
+int channels2Json(json_t* obj);
 
 //***************************************************************************
 // Class cWebSock
@@ -136,7 +145,7 @@ class cOsd2WebSkin : public cSkin
 
       cOsd2WebSkin();
 
-      virtual const char* Description()  { return tr("osd2web"); }
+      virtual const char* Description()  { return tr(SKIN_NAME); }
 
       // display
 
@@ -172,15 +181,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
       // static message interface to web thread
 
-      static int event2Json(json_t* obj, const cEvent* event, const cChannel* channel = 0);
-      static int recording2Json(json_t* obj, const cRecording* recording);
-      static int channel2Json(json_t* obj, const cChannel* channel);
-      static int stream2Json(json_t* obj, const cChannel* channel);
-      static int channels2Json(json_t* obj);
-
       static int pushMessage(json_t* obj, const char* title);
-
-      // static data
 
       static std::queue<std::string> messagesOut;
       static cMutex messagesOutMutex;
@@ -195,10 +196,6 @@ class cUpdate : public cStatus, cThread, public cOsdService
       // status interface
 
       virtual void ChannelSwitch(const cDevice* Device, int ChannelNumber, bool LiveView);
-      virtual void OsdSetRecording(const cRecording* recording);
-      virtual void OsdProgramme(time_t PresentTime, const char* PresentTitle, const char *PresentSubtitle, time_t FollowingTime, const char *FollowingTitle, const char *FollowingSubtitle);
-      virtual void OsdChannel(const char* text);
-
       virtual void Replaying(const cControl *Control, const char *Name, const char *FileName, bool On);
       virtual void Recording(const cDevice *Device, const char *Name, const char *FileName, bool On);
       virtual void TimerChange(const cTimer *Timer, eTimerChange Change);
@@ -216,6 +213,9 @@ class cUpdate : public cStatus, cThread, public cOsdService
       int performMaxLineRequest(json_t* oRequest);
       int cleanupMessages();
 
+      int isDefault(const char* name = SKIN_NAME)      { return strcmp(Skins.Current()->Name(), name) == 0; }
+      int isSkinAttached(const char* name = SKIN_NAME) { return Skins.Current() && strcmp(Skins.Current()->Name(), name) == 0; }
+
       // osd status
 
       int currentChannelNr;
@@ -229,10 +229,10 @@ class cUpdate : public cStatus, cThread, public cOsdService
       // ...
 
       cWebSock* webSock;
-      cOsd2WebSkin* skin;
       bool active;
       int webPort;
       SkinMode skinMode;
+      int actualClientCount;
 };
 
 //***************************************************************************

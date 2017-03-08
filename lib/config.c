@@ -13,17 +13,25 @@
 // Statics
 //***************************************************************************
 
-int cEpgConfig::logstdout = no;
-int cEpgConfig::loglevel = 1;
-int cEpgConfig::argLoglevel = na;
-int cEpgConfig::logFacility = LOG_USER;
-const char* cEpgConfig::logName = "unknown";
+int cConfigBase::logstdout = no;
+int cConfigBase::loglevel = 1;
+int cConfigBase::argLoglevel = na;
+int cConfigBase::logFacility = LOG_USER;
+const char* cConfigBase::logName = "unknown";
+
+//***************************************************************************
+// Common Configuration
+//***************************************************************************
+
+cConfigBase::cConfigBase()
+{
+}
 
 //***************************************************************************
 // Common EPG Service Configuration
 //***************************************************************************
 
-cEpgConfig::cEpgConfig() 
+cEpgConfig::cEpgConfig()
 {
    // database connection
 
@@ -38,7 +46,7 @@ cEpgConfig::cEpgConfig()
    uuid[0] = 0;
 
    getepgimages = yes;
-} 
+}
 
 //***************************************************************************
 // Has DB Login Changed
@@ -46,14 +54,14 @@ cEpgConfig::cEpgConfig()
 
 int cEpgConfig::hasDbLoginChanged(cEpgConfig* old)
 {
-   if (old->dbPort != dbPort || 
-       strcmp(old->dbHost, dbHost) != 0 || 
-       strcmp(old->dbName, dbName) != 0 || 
-       strcmp(old->dbUser, dbUser) != 0 || 
+   if (old->dbPort != dbPort ||
+       strcmp(old->dbHost, dbHost) != 0 ||
+       strcmp(old->dbName, dbName) != 0 ||
+       strcmp(old->dbUser, dbUser) != 0 ||
        strcmp(old->dbPass, dbPass) != 0)
    {
       return yes;
-   }    
-   
+   }
+
    return no;
 }

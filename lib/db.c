@@ -221,6 +221,7 @@ int cDbStatement::build(const char* format, ...)
 
       stmtTxt += tmp;
       free(tmp);
+      va_end(more);
    }
 
    return success;

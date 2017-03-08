@@ -142,6 +142,8 @@ int cSystemNotification::notify(int event, const char* format, ...)
       }
    }
 
+   va_end(ap);
+
    return done;
 }
 

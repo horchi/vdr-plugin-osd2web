@@ -20,6 +20,7 @@
 #include <vdr/config.h>
 
 #include "lib/common.h"
+#include "lib/config.h"
 
 #include "update.h"
 #include "HISTORY.h"
@@ -36,13 +37,11 @@ static const char* DESCRIPTION = trNOOP("osd2web plugin");
 // Config
 //***************************************************************************
 
-class cOsd2WebConfig
+struct cOsd2WebConfig : public cConfigBase
 {
    public:
 
       cOsd2WebConfig();
-
-      int logLevel;
 };
 
 extern cOsd2WebConfig config;
