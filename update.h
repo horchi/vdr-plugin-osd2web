@@ -32,13 +32,54 @@
 #define SKIN_NAME "osd2web"
 
 //***************************************************************************
+// Class OSD Service
+//***************************************************************************
+
+class cOsdService
+{
+   public:
+
+      enum ObjectShape
+      {
+         osText   = 0x01,
+         osSmall  = 0x02,
+         osLarge  = 0x04,
+      };
+
+      enum SkinMode
+      {
+         smManual,
+         smAuto
+      };
+
+      enum Event
+      {
+         evUnknown,
+         evTakeFocus,
+         evLeaveFocus,
+         evKeyPress,
+         evChannels,
+         evMaxLines,
+
+         evCount
+      };
+
+      const char* toName(Event event);
+      Event toEvent(const char* name);
+
+      static const char* events[];
+};
+
+//***************************************************************************
 // Tools
 //***************************************************************************
 
 eTimerMatch Matches(const cTimer* ti, const cEvent* event);
 const cTimer* getTimerMatch(const cTimers* timers, const cEvent* event, eTimerMatch* match);
 
-int event2Json(json_t* obj, const cEvent* event, const cChannel* channel = 0, eTimerMatch TimerMatch = (eTimerMatch)na);
+int event2Json(json_t* obj, const cEvent* event, const cChannel* channel = 0,
+               eTimerMatch TimerMatch = (eTimerMatch)na, int Current = no,
+               cOsdService::ObjectShape shape = cOsdService::osText);
 int recording2Json(json_t* obj, const cRecording* recording);
 int channel2Json(json_t* obj, const cChannel* channel);
 int timer2Json(json_t* obj, const cTimer* timer);
@@ -101,38 +142,6 @@ class cWebSock
       static int msgBufferSize;
 };
 
-//***************************************************************************
-// Class OSD Service
-//***************************************************************************
-
-class cOsdService
-{
-   public:
-
-      enum SkinMode
-      {
-         smManual,
-         smAuto
-      };
-
-      enum Event
-      {
-         evUnknown,
-         evTakeFocus,
-         evLeaveFocus,
-         evKeyPress,
-         evChannels,
-         evMaxLines,
-
-         evCount
-      };
-
-      const char* toName(Event event);
-      Event toEvent(const char* name);
-
-      static const char* events[];
-};
-
 #include <vdr/skins.h>
 
 //***************************************************************************
@@ -165,6 +174,12 @@ class cUpdate : public cStatus, cThread, public cOsdService
 {
    public:
 
+      struct CategoryConfig
+      {
+         int maxLines;
+         ObjectShape shape;
+      };
+
       // object
 
       cUpdate(int aWebPort);
@@ -186,7 +201,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       static std::queue<std::string> messagesOut;
       static cMutex messagesOutMutex;
       static std::queue<std::string> messagesIn;
-      static int menuMaxLines[mcCam+1];
+      static std::map<int,CategoryConfig> menuMaxLines;
 
    protected:
 

@@ -20,8 +20,8 @@
 // Event To Json
 //***************************************************************************
 
-int event2Json(json_t* obj, const cEvent* event,
-                        const cChannel* channel, eTimerMatch timerMatch)
+int event2Json(json_t* obj, const cEvent* event, const cChannel* channel,
+               eTimerMatch timerMatch, int current, cOsdService::ObjectShape shape)
 {
    if (channel && event)
    {
@@ -40,7 +40,6 @@ int event2Json(json_t* obj, const cEvent* event,
    addToJson(obj, "channelid", event->ChannelID().ToString());
    addToJson(obj, "title", event->Title());
    addToJson(obj, "shorttext", event->ShortText());
-   addToJson(obj, "description", event->Description());
    addToJson(obj, "starttime", event->StartTime());
    addToJson(obj, "endtime", event->EndTime());
    addToJson(obj, "duration", event->Duration());
@@ -50,6 +49,11 @@ int event2Json(json_t* obj, const cEvent* event,
    addToJson(obj, "vps", event->Vps());
    addToJson(obj, "hastimer", event->HasTimer());
    addToJson(obj, "seen", event->Seen());
+
+   if (current || shape & cOsdService::osLarge)
+   {
+      addToJson(obj, "description", event->Description());
+   }
 
    // #TODO add components
    // const cComponents *Components(void) const { return components; }

@@ -22,7 +22,7 @@ std::queue<std::string> cUpdate::messagesOut;
 cMutex cUpdate::messagesOutMutex;
 std::queue<std::string> cUpdate::messagesIn;
 
-int cUpdate::menuMaxLines[mcCam+1] = {};
+std::map<int,cUpdate::CategoryConfig> cUpdate::menuMaxLines;
 
 //***************************************************************************
 // OSD Service
@@ -76,7 +76,10 @@ cUpdate::cUpdate(int aWebPort)
    nextPresentUpdateAt = time(0);
 
    for (int i = 0; i <= mcCam; i++)
-      menuMaxLines[i] = 10;
+   {
+      menuMaxLines[i].maxLines = 10;
+      menuMaxLines[i].shape = osText;
+   }
 
    webSock = new cWebSock();
 }
@@ -323,9 +326,9 @@ int cUpdate::performMaxLineRequest(json_t* oRequest)
 {
    // client set maxlines for the menu categories
 
-   // { "event" : "maxlines", "object" : { "categories" : [ { "category" : "0", "maxlines" : "12",
-   //                                                       { "category" : "1", "maxlines" : "10",
-   //                                                       { "category" : "2", "maxlines" : "20",
+   // { "event" : "maxlines", "object" : { "categories" : [ { "category" : "0", "maxlines" : "12", "shape" : "1" },
+   //                                                       { "category" : "1", "maxlines" : "10", "shape" : "1" },
+   //                                                       { "category" : "2", "maxlines" : "20", "shape" : "1" },
    //                                                     ] } }
 
    json_t* objMaxLines = json_object_get(oRequest, "categories");
@@ -341,7 +344,10 @@ int cUpdate::performMaxLineRequest(json_t* oRequest)
       int category = getIntFromJson(obj, "category");
 
       if (category <= mcCam)
-         menuMaxLines[i] = getIntFromJson(obj, "maxlines");
+      {
+         menuMaxLines[i].maxLines = getIntFromJson(obj, "maxlines");
+         menuMaxLines[i].shape = (ObjectShape)getIntFromJson(obj, "shape");
+      }
    }
 
    cOsdProvider::UpdateOsdSize(true);

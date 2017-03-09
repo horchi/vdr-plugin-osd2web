@@ -73,18 +73,18 @@ class cSkinOsd2WebDisplayMenu : public cSkinDisplayMenu
       virtual void Scroll(bool Up, bool Page);
       virtual int MaxItems();
       virtual void Clear();
-      virtual void SetTitle(const char *Title);
-      virtual void SetButtons(const char *Red, const char *Green = NULL, const char *Yellow = NULL, const char *Blue = NULL);
-      virtual void SetMessage(eMessageType Type, const char *Text);
-      virtual void SetItem(const char *Text, int Index, bool Current, bool Selectable);
-      virtual bool SetItemEvent(const cEvent *Event, int Index, bool Current, bool Selectable, const cChannel *Channel, bool WithDate, eTimerMatch TimerMatch);
-      virtual bool SetItemChannel(const cChannel *Channel, int Index, bool Current, bool Selectable, bool WithProvider);
-      virtual bool SetItemRecording(const cRecording *Recording, int Index, bool Current, bool Selectable, int Level, int Total, int New);
-      virtual bool SetItemTimer(const cTimer *Timer, int Index, bool Current, bool Selectable);
+      virtual void SetTitle(const char* Title);
+      virtual void SetButtons(const char* Red, const char* Green = NULL, const char* Yellow = NULL, const char* Blue = NULL);
+      virtual void SetMessage(eMessageType Type, const char* Text);
+      virtual void SetItem(const char* Text, int Index, bool Current, bool Selectable);
+      virtual bool SetItemEvent(const cEvent* Event, int Index, bool Current, bool Selectable, const cChannel *Channel, bool WithDate, eTimerMatch TimerMatch);
+      virtual bool SetItemChannel(const cChannel* Channel, int Index, bool Current, bool Selectable, bool WithProvider);
+      virtual bool SetItemRecording(const cRecording* Recording, int Index, bool Current, bool Selectable, int Level, int Total, int New);
+      virtual bool SetItemTimer(const cTimer* Timer, int Index, bool Current, bool Selectable);
       virtual void SetScrollbar(int Total, int Offset);
-      virtual void SetEvent(const cEvent *Event);
-      virtual void SetRecording(const cRecording *Recording);
-      virtual void SetText(const char *Text, bool FixedFont);
+      virtual void SetEvent(const cEvent* Event);
+      virtual void SetRecording(const cRecording* Recording);
+      virtual void SetText(const char* Text, bool FixedFont);
       virtual int GetTextAreaWidth() const;
       virtual const cFont* GetTextAreaFont(bool FixedFont) const;
       virtual void Flush();
@@ -125,7 +125,7 @@ int cSkinOsd2WebDisplayMenu::MaxItems()
    tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::MaxItems()");
 
    if (MenuCategory() >= mcUnknown && MenuCategory() <= mcCam)
-      return cUpdate::menuMaxLines[MenuCategory()];
+      return cUpdate::menuMaxLines[MenuCategory()].maxLines;
 
    return 10;
 }
@@ -179,7 +179,7 @@ void cSkinOsd2WebDisplayMenu::SetMessage(eMessageType Type, const char *Text)
    cUpdate::pushMessage(obj, "message");
 }
 
-void cSkinOsd2WebDisplayMenu::SetItem(const char *Text, int Index, bool Current, bool Selectable)
+void cSkinOsd2WebDisplayMenu::SetItem(const char* Text, int Index, bool Current, bool Selectable)
 {
    tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetItem(%s, %d, %d, %d)",
         Text, Index, Current, Selectable);
@@ -203,10 +203,13 @@ bool cSkinOsd2WebDisplayMenu::SetItemEvent(const cEvent* Event, int Index, bool 
 {
    tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetItemEvent()");
 
+   if (cUpdate::menuMaxLines[MenuCategory()].shape & cOsdService::osText)
+      return false;
+
    json_t* oMenuItem = json_object();
    json_t* oEvent = json_object();
 
-   event2Json(oEvent, Event, Channel, TimerMatch);
+   event2Json(oEvent, Event, Channel, TimerMatch, Current, cUpdate::menuMaxLines[MenuCategory()].shape);
 
    addToJson(oMenuItem, "index", Index);
    addToJson(oMenuItem, "current", Current);
@@ -216,13 +219,16 @@ bool cSkinOsd2WebDisplayMenu::SetItemEvent(const cEvent* Event, int Index, bool 
 
    cUpdate::pushMessage(oMenuItem, "eventitem");
 
-   return false;  // #todo change to 'true' as soon as the client can handle the "eventitem" object
+   return true;
 }
 
 bool cSkinOsd2WebDisplayMenu::SetItemChannel(const cChannel* Channel, int Index, bool Current,
                                              bool Selectable, bool WithProvider)
 {
    tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetItemChannel()");
+
+   if (cUpdate::menuMaxLines[MenuCategory()].shape & cOsdService::osText)
+      return false;
 
    json_t* oMenuItem = json_object();
    json_t* oChannel = json_object();
@@ -237,13 +243,16 @@ bool cSkinOsd2WebDisplayMenu::SetItemChannel(const cChannel* Channel, int Index,
 
    cUpdate::pushMessage(oMenuItem, "channelitem");
 
-   return false;  // #todo change to 'true' as soon as the client can handle the "eventitem" object
+   return true;
 }
 
 bool cSkinOsd2WebDisplayMenu::SetItemRecording(const cRecording *Recording, int Index, bool Current,
                                                bool Selectable, int Level, int Total, int New)
 {
    tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetItemRecording()");
+
+   if (cUpdate::menuMaxLines[MenuCategory()].shape & cOsdService::osText)
+      return false;
 
    json_t* oMenuItem = json_object();
    json_t* oRecording = json_object();
@@ -260,12 +269,15 @@ bool cSkinOsd2WebDisplayMenu::SetItemRecording(const cRecording *Recording, int 
 
    cUpdate::pushMessage(oMenuItem, "recordingitem");
 
-   return false;  // #todo change to 'true' as soon as the client can handle the "eventitem" object
+   return true;
 }
 
 bool cSkinOsd2WebDisplayMenu::SetItemTimer(const cTimer *Timer, int Index, bool Current, bool Selectable)
 {
    tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetItemTimer()");
+
+   if (cUpdate::menuMaxLines[MenuCategory()].shape & cOsdService::osText)
+      return false;
 
    json_t* oMenuItem = json_object();
    json_t* oTimer = json_object();
@@ -279,12 +291,20 @@ bool cSkinOsd2WebDisplayMenu::SetItemTimer(const cTimer *Timer, int Index, bool 
 
    cUpdate::pushMessage(oMenuItem, "timeritem");
 
-   return false;  // #todo change to 'true' as soon as the client can handle the "eventitem" object
+   return true;
 }
 
 void cSkinOsd2WebDisplayMenu::SetScrollbar(int Total, int Offset)
 {
    tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetScrollbar(%d, %d)", Total, Offset);
+
+   json_t* oBar = json_object();
+
+   addToJson(oBar, "Total", Total);
+   addToJson(oBar, "Offset", Offset);
+
+   cUpdate::pushMessage(oBar, "scrollbar");
+
 }
 
 void cSkinOsd2WebDisplayMenu::SetEvent(const cEvent *Event)
@@ -316,7 +336,7 @@ void cSkinOsd2WebDisplayMenu::SetText(const char *Text, bool FixedFont)
 int cSkinOsd2WebDisplayMenu::GetTextAreaWidth() const
 {
    tell(0, "DEB: Skin:cSkinOsd2WebDisplayMenu::GetTextAreaWidth() = 1024");
-   return 1024;  // dummy code?
+   return 1024;  // pixels dummy code
 }
 
 const cFont* cSkinOsd2WebDisplayMenu::GetTextAreaFont(bool FixedFont) const
