@@ -3,38 +3,56 @@ import App from './App.vue'
 
 import "../vuikit-theme/dist/css/uikit.css"
 
+/*
+enum ObjectShape
+     {
+        osText   = 0x01,
+        osSmall  = 0x02,
+        osLarge  = 0x04,
+     };
+
+mögliche largeobjekte:
+     5 -> Kanäle
+     3 -> Programm 'Jetzt'
+     4 -> Programm 'Next'
+     2 -> Programm
+     7 -> Timer
+     9 -> Aufzeichnungen
+
+*/
+
 const eMenuCategory =[
-   'mcUnknown',
-   'mcMain',
-   'mcSchedule',
-   'mcScheduleNow',
-   'mcScheduleNext',
-   'mcChannel',
-   'mcChannelEdit',
-   'mcTimer',
-   'mcTimerEdit',
-   'mcRecording',
-   'mcRecordingInfo',
-   'mcRecordingEdit',
-   'mcPlugin',
-   'mcPluginSetup',
-   'mcSetup',
-   'mcSetupOsd',
-   'mcSetupEpg',
-   'mcSetupDvb',
-   'mcSetupLnb',
-   'mcSetupCam',
-   'mcSetupRecord',
-   'mcSetupReplay',
-   'mcSetupMisc',
-   'mcSetupPlugins',
-   'mcCommand',
-   'mcEvent',
-   'mcText',
-   'mcFolder',
-   'mcCam'
+   { "category" : 'mcUnknown', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcMain', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcSchedule', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcScheduleNow', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcScheduleNext', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcChannel', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcChannelEdit', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcTimer', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcTimerEdit', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcRecording', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcRecordingInfo', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcRecordingEdit', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcPlugin', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcPluginSetup', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcSetup', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcSetupOsd', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcSetupEpg', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcSetupDvb', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcSetupLnb', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcSetupCam', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcSetupRecord', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcSetupReplay', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcSetupMisc', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcSetupPlugins', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcCommand', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcEvent', "maxlines" : 100, "shape": 4},
+   { "category" : 'mcText', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcFolder', "maxlines" : 100, "shape": 1},
+   { "category" : 'mcCam', "maxlines" : 100, "shape": 1}
 ];
-eMenuCategory['-1']= 'mcUndefined';
+eMenuCategory['-1']= { "category" : 'mcUndefined', "maxlines" : 100, "shape": 1};
 
 window.v = new Vue({
     data: {
@@ -91,7 +109,7 @@ window.v = new Vue({
            let max= maxLines || parseInt((window.innerHeight - 128 - 40 ) / 38,10)
            let data= [];
            for (let i=0; i < eMenuCategory.length; i++)
-             data.push({ "category" : i, "maxlines" : max});
+             data.push({ "category" : i, "maxlines" : max, "shape": eMenuCategory[i].shape});
            this.$emit("send",{"event": "maxlines", object: { "categories" : data } });
         },
         formatDateTime(unixTime) {

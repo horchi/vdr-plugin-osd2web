@@ -187,14 +187,16 @@ int timer2Json(json_t* obj, const cTimer* timer)
       return done;
    }
 
+#if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
    addToJson(obj, "id", timer->Id());
+   addToJson(obj, "remote", timer->Remote());
+#endif   
    addToJson(obj, "recording", timer->Recording());
    addToJson(obj, "pending", timer->Pending());
    addToJson(obj, "invpsmargin", timer->InVpsMargin());
    addToJson(obj, "day", timer->Day());
    addToJson(obj, "file", timer->File());
    addToJson(obj, "aux", timer->Aux());
-   addToJson(obj, "remote", timer->Remote());
    addToJson(obj, "expired", timer->Expired());
    addToJson(obj, "starttime", timer->StartTime());
    addToJson(obj, "stoptime", timer->StopTime());

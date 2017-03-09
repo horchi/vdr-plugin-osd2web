@@ -117,8 +117,25 @@ export default {
         },
         doAction(rowIndex, key) {
             let delta = rowIndex - this.textmenucurrent;
-            if (delta != 0)
-                this.$root.sendKey(delta > 0 ? "Down" : "Up", Math.abs(delta));
+            if (delta != 0){
+               let rep=0;
+               let row;
+               if (delta > 0){
+                  for(delta= this.textmenucurrent; delta < rowIndex; delta++){
+                     row= this.rows[delta];
+                     if (row && row.selectable)
+                        rep++;
+                  }
+                  this.$root.sendKey("Down", rep);
+               } else {
+                  for(delta= rowIndex; delta < this.textmenucurrent; delta++){
+                     row= this.rows[delta];
+                     if (row && row.selectable)
+                        rep++;
+                  }
+                  this.$root.sendKey("Up", rep);
+               }
+            }
             else
                 this.$root.sendKey(key || "Ok");
         },
