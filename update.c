@@ -160,9 +160,10 @@ void cUpdate::atMeanwhile()
    {
       // client count changed ...
 
-      actualClientCount = webSock->getClientCount();
       updatePresentFollowing();  // trigger update of present/following
    }
+
+   actualClientCount = webSock->getClientCount();
 }
 
 //***************************************************************************

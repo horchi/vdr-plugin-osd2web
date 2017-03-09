@@ -27,8 +27,9 @@ int isEditable(eMenuCategory category)
 //***************************************************************************
 // cSkinOsd2WebDisplayChannel
 //   - normally used to display present/following
-//   - here unused since we need this information also when the skin
-//     is atttached to the 'real' OSD
+//   - here only used for channel groups while zapping (key left/right)
+//   - not used to display present/following since wie need this information
+//     also when the skin is atttached to the 'real' OSD
 //***************************************************************************
 
 class cSkinOsd2WebDisplayChannel : public cSkinDisplayChannel
@@ -36,13 +37,26 @@ class cSkinOsd2WebDisplayChannel : public cSkinDisplayChannel
     public:
 
       cSkinOsd2WebDisplayChannel(bool WithInfo) {}
-      virtual ~cSkinOsd2WebDisplayChannel()  {}
+      virtual ~cSkinOsd2WebDisplayChannel() {}
 
-      virtual void SetChannel(const cChannel *Channel, int Number) {}
+      virtual void SetChannel(const cChannel *Channel, int Number);
       virtual void SetEvents(const cEvent *Present, const cEvent *Following) {}
       virtual void SetMessage(eMessageType Type, const char *Text) {}
       virtual void Flush() {}
 };
+
+void cSkinOsd2WebDisplayChannel::SetChannel(const cChannel *Channel, int /*Number*/)
+{
+   tell(1, "DEB: Skin:cSkinOsd2WebDisplayChannel::DisplayChannel(%s, %d)",
+        Channel ? Channel->Name() : "<null>", Channel ? Channel->Number() : na);
+
+   if (Channel && Channel->Number() == 0)
+   {
+      json_t* obj = json_object();
+      addToJson(obj, "name", Channel->Name());
+      cUpdate::pushMessage(obj, "channelgroup");
+   }
+}
 
 //***************************************************************************
 // cSkinOsd2WebDisplayMenu
@@ -301,10 +315,11 @@ void cSkinOsd2WebDisplayMenu::SetText(const char *Text, bool FixedFont)
 
 int cSkinOsd2WebDisplayMenu::GetTextAreaWidth() const
 {
-   return 6000;  // pixels dummy code
+   tell(0, "DEB: Skin:cSkinOsd2WebDisplayMenu::GetTextAreaWidth() = 1024");
+   return 1024;  // dummy code?
 }
 
-const cFont *cSkinOsd2WebDisplayMenu::GetTextAreaFont(bool FixedFont) const
+const cFont* cSkinOsd2WebDisplayMenu::GetTextAreaFont(bool FixedFont) const
 {
    return cFont::GetFont(FixedFont ? fontFix : fontOsd);    // dummy code
 }
