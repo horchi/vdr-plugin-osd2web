@@ -15,6 +15,7 @@
 char* cWebSock::msgBuffer = 0;
 int cWebSock::msgBufferSize = 0;
 int cWebSock::clientCount = 0;
+void* cWebSock::activeClient = 0;
 int cWebSock::timeout = 0;
 cWebSock::MsgType cWebSock::msgType = mtNone;
 
@@ -160,12 +161,12 @@ int cWebSock::callbackHttp(lws* wsi,
          }
 
          lws_serve_http_file(wsi, file, mime, 0, 0);
-         // #TODO - needed? ->  libwebsocket_close_reason(wsi, LWS_CLOSE_STATUS_NORMAL, 0, 0);
 
          break;
       }
 
-      case LWS_CALLBACK_GET_THREAD_ID: break;
+      case LWS_CALLBACK_GET_THREAD_ID:
+         break;
 
       default:
          tell(2, "DEBUG: 'callbackHttp' got (%d)", reason);
@@ -179,24 +180,16 @@ int cWebSock::callbackHttp(lws* wsi,
 // Callback for osd2vdr protocol
 //***************************************************************************
 
-int cWebSock::callbackOsd2Vdr(lws* wsi,
-                              lws_callback_reasons reason, void* user,
-                              void* in, size_t len)
+int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
+                              void* user, void* in, size_t len)
 {
    switch (reason)
    {
-      case LWS_CALLBACK_RECEIVE_PONG:
+      case LWS_CALLBACK_SERVER_WRITEABLE:         // data to client
       {
-         tell(1, "DEBUG: Got 'PONG'");
+         if (activeClient && activeClient != wsi) // send data only to active client
+            break;
 
-         if (timeout)
-            lws_set_timeout(wsi, PENDING_TIMEOUT_AWAITING_PING, timeout);
-
-         break;
-      }
-
-      case LWS_CALLBACK_SERVER_WRITEABLE:
-      {
          if (msgType == mtPing)
          {
             char buffer[sizeLwsFrame];
@@ -252,31 +245,51 @@ int cWebSock::callbackOsd2Vdr(lws* wsi,
          break;
       }
 
-      case LWS_CALLBACK_ESTABLISHED:           // someone is connecting
+      case LWS_CALLBACK_RECEIVE:                  // data from client
+      {
+         const char* message = (const char*)in;
+
+         if (activeClient && activeClient != wsi) // take data only to active client
+            break;
+
+         tell(3, "DEBUG: 'LWS_CALLBACK_RECEIVE' [%s]", message);
+         cUpdate::messagesIn.push(message);
+
+         break;
+      }
+
+      case LWS_CALLBACK_ESTABLISHED:              // someone is connecting
       {
          if (timeout)
             lws_set_timeout(wsi, PENDING_TIMEOUT_AWAITING_PING, timeout);
 
          tell(0, "Client connected (%p)", (void*)wsi);
          clientCount++;
+         activeClient = (void*)wsi;
 
          break;
       }
 
-      case LWS_CALLBACK_CLOSED:
+      case LWS_CALLBACK_CLOSED:                   // someone is dis-connecting
       {
          tell(0, "Client disconnected (%p)", (void*)wsi);
          clientCount--;
 
+         if (activeClient && activeClient == wsi)
+            activeClient = 0;
+
          break;
       }
 
-      case LWS_CALLBACK_RECEIVE:
+      case LWS_CALLBACK_RECEIVE_PONG:             // ping / pong
       {
-         const char* message = (const char*)in;
+         if (activeClient && activeClient != wsi) // send pong only to active client!
+            break;
 
-         tell(3, "DEBUG: 'LWS_CALLBACK_RECEIVE' [%s]", message);
-         cUpdate::messagesIn.push(message);
+         tell(1, "DEBUG: Got 'PONG'");
+
+         if (timeout)
+            lws_set_timeout(wsi, PENDING_TIMEOUT_AWAITING_PING, timeout);
 
          break;
       }

@@ -104,8 +104,8 @@ void cUpdate::updatePresentFollowing()
 
          channel2Json(oChannel, channel);
          stream2Json(oStreamInfo, channel);
-         event2Json(oPresent, present);
-         event2Json(oFollowing, following);
+         event2Json(oPresent, present, 0, (eTimerMatch)na, no, cOsdService::osLarge);
+         event2Json(oFollowing, following, 0, (eTimerMatch)na, no, cOsdService::osLarge);
 
          json_object_set_new(obj, "channel", oChannel);
          json_object_set_new(obj, "streaminfo", oStreamInfo);

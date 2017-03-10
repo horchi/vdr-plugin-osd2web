@@ -190,7 +190,7 @@ int timer2Json(json_t* obj, const cTimer* timer)
 #if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
    addToJson(obj, "id", timer->Id());
    addToJson(obj, "remote", timer->Remote());
-#endif   
+#endif
    addToJson(obj, "recording", timer->Recording());
    addToJson(obj, "pending", timer->Pending());
    addToJson(obj, "invpsmargin", timer->InVpsMargin());
@@ -214,7 +214,7 @@ int timer2Json(json_t* obj, const cTimer* timer)
    if (timer->Event())
    {
       json_t* oEvent = json_object();
-      event2Json(oEvent, timer->Event());
+      event2Json(oEvent, timer->Event(), 0, (eTimerMatch)na, no, cOsdService::osLarge);
       addToJson(obj, "event", oEvent);
    }
 

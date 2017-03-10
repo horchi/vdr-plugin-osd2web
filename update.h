@@ -122,7 +122,8 @@ class cWebSock
       static int callbackHttp(lws* wsi, lws_callback_reasons reason, void* user, void* in, size_t len);
       static int callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason, void* user, void* in, size_t len);
 
-      static int getClientCount() { return clientCount; }
+      static int getClientCount()    { return clientCount; }
+      static void* getActiveClient() { return activeClient; }  // the last connected client
 
    private:
 
@@ -134,6 +135,7 @@ class cWebSock
 
       static int timeout;
       static int clientCount;
+      static void* activeClient;
       static MsgType msgType;
 
       // only used in callback

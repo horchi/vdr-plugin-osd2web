@@ -1,243 +1,56 @@
---- ../vdr-2.3.2.plain//menu.c	2016-12-22 12:00:13.000000000 +0100
-+++ menu.c	2017-02-17 09:50:20.682839828 +0100
-@@ -1466,6 +1466,7 @@
+--- ../vdr-2.3.2.plain//./osd.c	2015-09-10 16:12:06.000000000 +0200
++++ ./osd.c	2017-03-10 10:46:11.152029953 +0100
+@@ -2000,6 +2000,7 @@
+ double cOsdProvider::oldAspect = 1.0;
+ cImage *cOsdProvider::images[MAXOSDIMAGES] = { NULL };
+ int cOsdProvider::osdState = 0;
++bool cOsdProvider::triggerRecalcAndRefresh = false;
+
+ cOsdProvider::cOsdProvider(void)
  {
-   cOsdMenu::Display();
-   DisplayMenu()->SetEvent(event);
-+  cStatus::MsgOsdSetEvent(event);
-   if (event->Description())
-      cStatus::MsgOsdTextItem(event->Description());
+@@ -2067,6 +2068,13 @@
+   return Result;
  }
-@@ -1595,6 +1596,7 @@
-   static void SetCurrentChannel(int ChannelNr) { currentChannel = ChannelNr; }
-   static const cEvent *ScheduleEvent(void);
-   virtual eOSState ProcessKey(eKeys Key);
-+  virtual void Display(void);
-   };
- 
- int cMenuWhatsOn::currentChannel = 0;
-@@ -1620,6 +1622,18 @@
-   SetHelpKeys();
- }
- 
-+void cMenuWhatsOn::Display(void)
+
++bool cOsdProvider::GetTriggerRecalcAndRefresh()
 +{
-+   cOsdMenu::Display();
-+   
-+   if (Count() > 0) {
-+      int ni = 0;
-+      for (cOsdItem *item = First(); item; item = Next(item)) {
-+         cStatus::MsgOsdEventItem(((cMenuScheduleItem*)item)->event, item->Text(), ni++, Count());
-+      }
-+   }
++   bool trg = triggerRecalcAndRefresh;
++   triggerRecalcAndRefresh = false;
++   return trg;
 +}
 +
- bool cMenuWhatsOn::Update(void)
+ bool cOsdProvider::SupportsTrueColor(void)
  {
-   bool result = false;
-@@ -1789,6 +1803,7 @@
-   cMenuSchedule(void);
-   virtual ~cMenuSchedule();
-   virtual eOSState ProcessKey(eKeys Key);
-+  virtual void Display(void);
-   };
- 
- cMenuSchedule::cMenuSchedule(void)
-@@ -1847,6 +1862,18 @@
-      }
- }
- 
-+void cMenuSchedule::Display(void)
-+{
-+   cOsdMenu::Display();
-+   
-+   if (Count() > 0) {
-+      int ni = 0;
-+      for (cOsdItem *item = First(); item; item = Next(item)) {
-+         cStatus::MsgOsdEventItem(((cMenuScheduleItem*)item)->event, item->Text(), ni++, Count());
-+      }
-+   }
-+}
-+
- bool cMenuSchedule::PrepareScheduleAllThis(const cTimers *Timers, const cSchedules *Schedules, const cEvent *Event, const cChannel *Channel)
- {
-   if (const cSchedule *Schedule = Schedules->GetSchedule(Channel)) {
-@@ -2795,6 +2822,7 @@
-      }
-   cOsdMenu::Display();
-   DisplayMenu()->SetRecording(recording);
-+  cStatus::MsgOsdSetRecording(recording);
-   if (recording->Info()->Description())
-      cStatus::MsgOsdTextItem(recording->Info()->Description());
- }
---- ../vdr-2.3.2.plain//menuitems.c	2015-09-08 12:25:23.000000000 +0200
-+++ menuitems.c	2017-02-20 08:55:26.135550350 +0100
-@@ -39,6 +39,7 @@
-   cString buffer = cString::sprintf("%s:\t%s", name, Value);
-   SetText(buffer);
-   cStatus::MsgOsdCurrentItem(buffer);
-+  cStatus::MsgOsdCurrentItemIndex(buffer, -1);
- }
- 
- void cMenuEditItem::SetHelp(const char *Red, const char *Green, const char *Yellow, const char *Blue)
---- ../vdr-2.3.2.plain//osdbase.c	2015-09-10 13:23:07.000000000 +0200
-+++ osdbase.c	2017-02-20 09:15:27.175524867 +0100
-@@ -107,6 +107,7 @@
-   free(status);
-   displayMenu->Clear();
-   cStatus::MsgOsdClear();
-+  cStatus::MsgOsdMenuDestroy();
-   if (!--displayMenuCount)
-      DELETENULL(displayMenu);
- }
-@@ -236,6 +237,7 @@
-   displayMenuItems = displayMenu->MaxItems();
-   displayMenu->SetTabs(cols[0], cols[1], cols[2], cols[3], cols[4]);//XXX
-   displayMenu->SetTitle(title);
-+  cStatus::MsgOsdMenuDisplay(menuCategory);
-   cStatus::MsgOsdTitle(title);
-   DisplayHelp(true);
-   int count = Count();
-@@ -261,13 +263,16 @@
-      for (cOsdItem *item = Get(first); item; item = Next(item)) {
-          bool CurrentSelectable = (i == current) && item->Selectable();
-          item->SetMenuItem(displayMenu, i - first, CurrentSelectable, item->Selectable());
--         if (CurrentSelectable)
-+         if (CurrentSelectable) {
-             cStatus::MsgOsdCurrentItem(item->Text());
-+            cStatus::MsgOsdCurrentItemIndex(item->Text(), current);
-+            }
-          if (++n == displayMenuItems)
-             break;
-          i++;
-          }
-      }
-+  cStatus::MsgOsdMenuReady(Count());
-   displayMenu->SetScrollbar(count, first);
-   if (!isempty(status))
-      displayMenu->SetMessage(mtStatus, status);
-@@ -290,8 +295,10 @@
-   cOsdItem *item = Get(current);
-   if (item) {
-      item->SetMenuItem(displayMenu, current - first, Current && item->Selectable(), item->Selectable());
--     if (Current && item->Selectable())
-+     if (Current && item->Selectable()) {
-         cStatus::MsgOsdCurrentItem(item->Text());
-+        cStatus::MsgOsdCurrentItemIndex(item->Text(), current);
-+        }
-      if (!Current)
-         item->SetFresh(true); // leaving the current item resets 'fresh'
-      if (cMenuEditItem *MenuEditItem = dynamic_cast<cMenuEditItem *>(item)) {
-@@ -311,8 +318,10 @@
-      if (Offset >= 0 && Offset < first + displayMenuItems) {
-         bool Current = Index == current;
-         Item->SetMenuItem(displayMenu, Offset, Current && Item->Selectable(), Item->Selectable());
--        if (Current && Item->Selectable())
-+        if (Current && Item->Selectable()) {
-            cStatus::MsgOsdCurrentItem(Item->Text());
-+           cStatus::MsgOsdCurrentItemIndex(Item->Text(), current);
-+           }
+   if (osdProvider) {
+--- ../vdr-2.3.2.plain/vdr.c    2016-12-23 15:34:37.000000000 +0100
++++ vdr.c       2017-03-10 11:35:06.018052006 +0100
+@@ -983,6 +983,8 @@
+           if (Now != lastOsdSizeUpdate) { // once per second
+              cOsdProvider::UpdateOsdSize();
+              lastOsdSizeUpdate = Now;
++             if (cOsdProvider::GetTriggerRecalcAndRefresh() && Menu)
++                ((cOsdMenu*)Menu)->Display();
+              }
          }
-      }
- }
---- ../vdr-2.3.2.plain//status.c	2014-01-25 11:47:39.000000000 +0100
-+++ status.c	2017-02-20 08:54:34.584581569 +0100
-@@ -113,6 +113,12 @@
-       sm->OsdCurrentItem(Text);
- }
- 
-+void cStatus::MsgOsdCurrentItemIndex(const char *Text, int Index)
-+{
-+  for (cStatus *sm = statusMonitors.First(); sm; sm = statusMonitors.Next(sm))
-+     sm->OsdCurrentItemIndex(Text, Index);
-+}
-+
- void cStatus::MsgOsdTextItem(const char *Text, bool Scroll)
- {
-   for (cStatus *sm = statusMonitors.First(); sm; sm = statusMonitors.Next(sm))
-@@ -130,3 +136,37 @@
-   for (cStatus *sm = statusMonitors.First(); sm; sm = statusMonitors.Next(sm))
-       sm->OsdProgramme(PresentTime, PresentTitle, PresentSubtitle, FollowingTime, FollowingTitle, FollowingSubtitle);
- }
-+
-+void cStatus::MsgOsdSetEvent(const cEvent* event)
-+{
-+  for (cStatus *sm = statusMonitors.First(); sm; sm = statusMonitors.Next(sm))
-+      sm->OsdSetEvent(event);
-+}
-+
-+void cStatus::MsgOsdSetRecording(const cRecording* recording)
-+{
-+  for (cStatus *sm = statusMonitors.First(); sm; sm = statusMonitors.Next(sm))
-+      sm->OsdSetRecording(recording);
-+}
-+
-+void cStatus::MsgOsdMenuDisplay(eMenuCategory menuCategory)
-+{
-+  for (cStatus *sm = statusMonitors.First(); sm; sm = statusMonitors.Next(sm))
-+      sm->OsdMenuDisplay(menuCategory);
-+}
-+
-+void cStatus::MsgOsdMenuDestroy()
-+{
-+  for (cStatus *sm = statusMonitors.First(); sm; sm = statusMonitors.Next(sm))
-+      sm->OsdMenuDestroy();
-+}
-+void cStatus::MsgOsdEventItem(const cEvent* Event, const char *Text, int Index, int Count)
-+{
-+  for (cStatus *sm = statusMonitors.First(); sm; sm = statusMonitors.Next(sm))
-+     sm->OsdEventItem(Event, Text, Index, Count);
-+}
-+void cStatus::MsgOsdMenuReady(int Count)
-+{
-+  for (cStatus *sm = statusMonitors.First(); sm; sm = statusMonitors.Next(sm))
-+     sm->OsdMenuReady(Count);
-+}
---- ../vdr-2.3.2.plain//status.h	2015-08-02 12:34:44.000000000 +0200
-+++ status.h	2017-02-20 08:54:18.480903706 +0100
-@@ -71,6 +71,8 @@
-                // The OSD displays the given single line Text as menu item at Index.
-   virtual void OsdCurrentItem(const char *Text) {}
-                // The OSD displays the given single line Text as the current menu item.
-+  virtual void OsdCurrentItemIndex(const char *Text, int Index) {}
-+               // The OSD displays the given single line Text as the current menu item.
-   virtual void OsdTextItem(const char *Text, bool Scroll) {}
-                // The OSD displays the given multi line text. If Text points to an
-                // actual string, that text shall be displayed and Scroll has no
-@@ -81,6 +83,19 @@
-                // The OSD displays the single line Text with the current channel information.
-   virtual void OsdProgramme(time_t PresentTime, const char *PresentTitle, const char *PresentSubtitle, time_t FollowingTime, const char *FollowingTitle, const char *FollowingSubtitle) {}
-                // The OSD displays the given programme information.
-+  virtual void OsdSetRecording(const cRecording* recording) {}
-+               // The OSD displays the recording information.
-+  virtual void OsdSetEvent(const cEvent* event) {}
-+               // The OSD displays the event information.
-+  virtual void OsdMenuDisplay(eMenuCategory menuCategory) {}
-+               // report menu creation
-+  virtual void OsdMenuDestroy() {}
-+               // report menu destruvtion
-+  virtual void OsdEventItem(const cEvent* Event, const char *Text, int Index, int Count) {}
-+               // The OSD displays the given single line Event as menu item at Index.
-+  virtual void OsdMenuReady(int Count) {}
-+               // The OSD menu is ready with Count Items (all Items added)
-+
- public:
-   cStatus(void);
-   virtual ~cStatus();
-@@ -100,9 +115,16 @@
-   static void MsgOsdHelpKeys(const char *Red, const char *Green, const char *Yellow, const char *Blue);
-   static void MsgOsdItem(const char *Text, int Index);
-   static void MsgOsdCurrentItem(const char *Text);
-+  static void MsgOsdCurrentItemIndex(const char *Text, int Index);
-   static void MsgOsdTextItem(const char *Text,  bool Scroll = false);
-   static void MsgOsdChannel(const char *Text);
-   static void MsgOsdProgramme(time_t PresentTime, const char *PresentTitle, const char *PresentSubtitle, time_t FollowingTime, const char *FollowingTitle, const char *FollowingSubtitle);
-+  static void MsgOsdSetEvent(const cEvent* event);
-+  static void MsgOsdSetRecording(const cRecording* recording);
-+  static void MsgOsdMenuDisplay(eMenuCategory menuCategory);
-+  static void MsgOsdMenuDestroy();
-+  static void MsgOsdEventItem(const cEvent* Event, const char *Text, int Index, int Count);
-+  static void MsgOsdMenuReady(int Count);
-   };
- 
- #endif //__STATUS_H
+         // Restart the Watchdog timer:
+--- ../vdr-2.3.2.plain//./osd.h	2015-04-19 14:18:25.000000000 +0200
++++ ./osd.h	2017-03-10 10:47:06.240286958 +0100
+@@ -965,6 +965,7 @@
+   static double oldAspect;
+   static cImage *images[MAXOSDIMAGES];
+   static int osdState;
++  static bool triggerRecalcAndRefresh;
+ protected:
+   virtual cOsd *CreateOsd(int Left, int Top, uint Level) = 0;
+       ///< Returns a pointer to a newly created cOsd object, which will be located
+@@ -1007,6 +1008,10 @@
+       ///< and is compared against State when calling the method.
+       ///< OsdSizeChanged() can be called with an uninitialized State to just get
+       ///< the current value of State.
++  static void TriggerRecalcAndRefresh() { triggerRecalcAndRefresh = true; }
++      ///< force call UpdateOsdSize(true) and redisplay of open OSD menu
++  static bool GetTriggerRecalcAndRefresh();
++      ///< get and restet trigger state
+   static bool SupportsTrueColor(void);
+       ///< Returns true if the current OSD provider is able to handle a true color OSD.
+   static int StoreImage(const cImage &Image);

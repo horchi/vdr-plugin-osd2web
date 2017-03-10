@@ -350,7 +350,7 @@ int cUpdate::performMaxLineRequest(json_t* oRequest)
       }
    }
 
-   cOsdProvider::UpdateOsdSize(true);
+   cOsdProvider::TriggerRecalcAndRefresh();
 
    return done;
 }

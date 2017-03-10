@@ -36,14 +36,28 @@ class cSkinOsd2WebDisplayChannel : public cSkinDisplayChannel
 {
     public:
 
-      cSkinOsd2WebDisplayChannel(bool WithInfo) {}
-      virtual ~cSkinOsd2WebDisplayChannel() {}
+      cSkinOsd2WebDisplayChannel(bool WithInfo) { visible = no; }
+      virtual ~cSkinOsd2WebDisplayChannel();
 
       virtual void SetChannel(const cChannel *Channel, int Number);
       virtual void SetEvents(const cEvent *Present, const cEvent *Following) {}
       virtual void SetMessage(eMessageType Type, const char *Text) {}
       virtual void Flush() {}
+
+   private:
+
+      int visible;
 };
+
+cSkinOsd2WebDisplayChannel::~cSkinOsd2WebDisplayChannel()
+{
+   if (visible)
+   {
+      json_t* obj = json_object();
+      addToJson(obj, "name", "");
+      cUpdate::pushMessage(obj, "channelgroup");
+   }
+}
 
 void cSkinOsd2WebDisplayChannel::SetChannel(const cChannel *Channel, int /*Number*/)
 {
@@ -52,6 +66,7 @@ void cSkinOsd2WebDisplayChannel::SetChannel(const cChannel *Channel, int /*Numbe
 
    if (Channel && Channel->Number() == 0)
    {
+      visible = yes;
       json_t* obj = json_object();
       addToJson(obj, "name", Channel->Name());
       cUpdate::pushMessage(obj, "channelgroup");
@@ -125,7 +140,10 @@ int cSkinOsd2WebDisplayMenu::MaxItems()
    tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::MaxItems()");
 
    if (MenuCategory() >= mcUnknown && MenuCategory() <= mcCam)
+   {
+      tell(0, "Set MaxItems() to %d", cUpdate::menuMaxLines[MenuCategory()].maxLines);
       return cUpdate::menuMaxLines[MenuCategory()].maxLines;
+   }
 
    return 10;
 }
@@ -184,8 +202,8 @@ void cSkinOsd2WebDisplayMenu::SetItem(const char* Text, int Index, bool Current,
    tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetItem(%s, %d, %d, %d)",
         Text, Index, Current, Selectable);
 
-   // if (isEditable(MenuCategory()))
-   //    SetEditableWidth(200);
+   if (isEditable(MenuCategory()))
+      SetEditableWidth(200);
 
    json_t* oMenuItem = json_object();
 
@@ -312,7 +330,7 @@ void cSkinOsd2WebDisplayMenu::SetEvent(const cEvent *Event)
    tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetEvent()");
 
    json_t* oEvent = json_object();
-   event2Json(oEvent, Event);
+   event2Json(oEvent, Event, 0, (eTimerMatch)na, no, cOsdService::osLarge);
 
    cUpdate::pushMessage(oEvent, "event");
 }
@@ -397,7 +415,6 @@ cSkinOsd2WebDisplayVolume::~cSkinOsd2WebDisplayVolume()
    addToJson(oVolume, "display", no);
 
    cUpdate::pushMessage(oVolume, "volume");
-
 }
 
 void cSkinOsd2WebDisplayVolume::SetVolume(int Current, int Total, bool Mute)
