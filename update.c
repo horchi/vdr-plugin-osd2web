@@ -35,7 +35,9 @@ const char* cOsdService::events[] =
    "channels",
    "maxlines",
    "login",
-   "logout"
+   "logout",
+
+   0
 };
 
 const char* cOsdService::toName(Event event)
