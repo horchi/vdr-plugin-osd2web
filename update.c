@@ -34,6 +34,9 @@ const char* cOsdService::events[] =
    "keypress",
    "channels",
    "maxlines",
+   "login",
+   "logout"
+
    0
 };
 
