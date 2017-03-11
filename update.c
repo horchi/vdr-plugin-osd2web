@@ -36,8 +36,6 @@ const char* cOsdService::events[] =
    "maxlines",
    "login",
    "logout"
-
-   0
 };
 
 const char* cOsdService::toName(Event event)
