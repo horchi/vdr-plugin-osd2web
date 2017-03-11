@@ -18,8 +18,6 @@
 
 #include "update.h"
 
-// std::queue<std::string> cUpdate::messagesOut;
-// cMutex cUpdate::messagesOutMutex;
 std::queue<std::string> cUpdate::messagesIn;
 
 std::map<int,cUpdate::CategoryConfig> cUpdate::menuMaxLines;
@@ -108,12 +106,6 @@ int cUpdate::pushMessage(json_t* oContents, const char* title)
 
    cWebSock::pushMessage(p);
 
-   // if (cWebSock::getClientCount())
-   // {
-   //    cMutexLock lock(&messagesOutMutex);
-   //    messagesOut.push(p);
-   // }
-
    tell(4, "DEBUG: PushMessage [%s]", p);
    free(p);
 
@@ -146,11 +138,6 @@ void cUpdate::atMeanwhile()
 
    if (!webSock->getClientCount())
    {
-      // // cleanup messages in case no client connected
-
-      // if (!messagesOut.empty())
-      //    cleanupMessages();
-
       // detach from Skin interface?
 
       if (skinMode == smAuto && isSkinAttached() && !isDefault())
@@ -344,7 +331,9 @@ int cUpdate::performMaxLineRequest(json_t* oRequest)
       }
    }
 
-   // cOsdProvider::TriggerRecalcAndRefresh();
+#if defined (APIVERSNUM) && (APIVERSNUM >= 20303)
+   cOsdProvider::TriggerRecalcAndRefresh();
+#endif
 
    return done;
 }
@@ -363,21 +352,3 @@ int cUpdate::performPing()
 
    return done;
 }
-
-//***************************************************************************
-// Cleanup Messages
-//***************************************************************************
-
-// int cUpdate::cleanupMessages()
-// {
-//    cMutexLock lock(&messagesOutMutex);
-
-//    // just in case no client is connected and wasted messages are pending
-
-//    tell(0, "Info: Flushing (%ld) old 'wasted' messages", messagesOut.size());
-
-//    while (!messagesOut.empty())
-//       messagesOut.pop();
-
-//    return done;
-// }

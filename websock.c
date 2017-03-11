@@ -272,25 +272,27 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
          event = cOsdService::toEvent(getStringFromJson(oData, "event", "<null>"));
          oObject = json_object_get(oData, "object");
 
-         if (event == evLogin)
+         if (event == evLogin)                             // { "event" : "login", "object" : { "type" : 0 } }
          {
-            // { "event" : "login", "object" : { "type" : 0 } }
-
             clients[wsi].type = (ClientType)getIntFromJson(oObject, "type", ctInteractive);
 
             if (clients[wsi].type == ctInteractive)
+            {
+               if (activeClient)
+                  clients[activeClient].pushMessage("{ \"event\" : \"rolechange\", \"object\" : { \"role\" : \"passive\" } }");
+
                activeClient = wsi;
+               clients[activeClient].pushMessage("{ \"event\" : \"rolechange\", \"object\" : { \"role\" : \"active\" } }");
+            }
          }
-         else if (event == evLogout)
+         else if (event == evLogout)                       // { "event" : "logout", "object" : { } }
          {
             clients[wsi].type = ctInactive;
             activateAvailableClient();
             clients[wsi].cleanupMessageQueue();
          }
-         else if (activeClient && activeClient == wsi)    // take data only from active client
-         {
+         else if (activeClient && activeClient == wsi)     // take data only from active client
             cUpdate::messagesIn.push(message);
-         }
          else
             tell(0, "Ignoring data of not 'active client (%p)", (void*)wsi);
 

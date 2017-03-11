@@ -242,8 +242,6 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
       static int pushMessage(json_t* obj, const char* title);
 
-      // static std::queue<std::string> messagesOut;
-      // static cMutex messagesOutMutex;
       static std::queue<std::string> messagesIn;
       static std::map<int,CategoryConfig> menuMaxLines;
 

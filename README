@@ -1,2 +1,8 @@
 
 Plugin under development - not ready or usable
+
+
+Dependencies
+------------
+
+  libwebsockets-dev
