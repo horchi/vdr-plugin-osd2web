@@ -1,7 +1,7 @@
 <template>
-<div v-show="title" class="uk-overflow-container uk-flex-space-between uk-width-1" :class="{'uk-text-nowrap':$root.onlyRemote}" id="osdCon">
+<div v-show="title" :class="{'uk-text-nowrap':$root.isOnlyView}" id="osdCon">
     <div class="uk-panel uk-panel-hover" @click="sendKey('Back')">
-        <h3 class="uk-panel-title"><i class="uk-icon-mail-reply-all"></i> {{ title }}</h3>
+        <h3 class="uk-panel-title"><i v-if="!$root.isOnlyView" class="uk-icon-mail-reply-all"></i> {{ title }}</h3>
     </div>
     <table v-show="colCount" class="uk-table uk-table-hover">
         <tbody>

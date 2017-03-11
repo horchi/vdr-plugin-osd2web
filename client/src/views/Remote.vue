@@ -42,6 +42,7 @@ export default {
         return { menuItem:{
             label: '',
             on:false,
+            hidden: false,
             iconClass: 'uk-icon-calculator',
             func: function(navComp){
                this.on= !this.on;
@@ -55,11 +56,6 @@ export default {
         }
     },
     created() {
-       var menuItem= this.menuItem;
-       this.$root.$watch('onlyRemote', function(onlyRemote){
-          this.$set(menuItem, "hidden",onlyRemote);
-          this.$set(menuItem, "on",false);
-       });
         this.$root.$data.menuItems.push(this.menuItem);
     }
 }

@@ -28,7 +28,8 @@ export default {
     methods: {
         checkHeight(){
            let topnav= document.getElementById('topnav');
-           topnav.style.height= topnav.firstChild.offsetHeight + 'px';
+           if (topnav)
+            topnav.style.height= topnav.firstChild.offsetHeight + 'px';
         },
         handleSelect(item) {
             if (item) {
@@ -48,6 +49,9 @@ export default {
                 this.keys[key] = item;
             return (item.iconClass ? '<i class="' + item.iconClass + '"></i>' : '') + label;
         }
+    },
+    mounted() {
+        this.checkHeight();
     },
     updated() {
         this.checkHeight();

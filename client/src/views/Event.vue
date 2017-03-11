@@ -25,11 +25,14 @@ export default {
     },
     data(){
       return {
-         now: parseInt(new Date().getTime() / 1000, 10),
-         description: this.event.description ? this.event.description.replace(/\n/g, '<br />') : ''
+         now: parseInt(new Date().getTime() / 1000, 10)
+
       }
     },
     computed: {
+       description:  function () {
+          return this.event.description ? this.event.description.replace(/\n/g, '<br />') : '';
+       },
        progress: function () {
           if (this.event.title){
               window.setTimeout(()=>{
