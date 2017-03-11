@@ -43,7 +43,7 @@ class cOsdService
       {
          osText   = 0x01,
          osSmall  = 0x02,
-         osLarge  = 0x04,
+         osLarge  = 0x04
       };
 
       enum SkinMode

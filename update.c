@@ -344,7 +344,7 @@ int cUpdate::performMaxLineRequest(json_t* oRequest)
       }
    }
 
-   cOsdProvider::TriggerRecalcAndRefresh();
+   // cOsdProvider::TriggerRecalcAndRefresh();
 
    return done;
 }
