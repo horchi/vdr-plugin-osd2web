@@ -274,6 +274,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 
          if (event == evLogin)                             // { "event" : "login", "object" : { "type" : 0 } }
          {
+            tell(0, "DEBUG: Got '%s'", message);
             clients[wsi].type = (ClientType)getIntFromJson(oObject, "type", ctInteractive);
 
             if (clients[wsi].type == ctInteractive)
@@ -287,6 +288,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
          }
          else if (event == evLogout)                       // { "event" : "logout", "object" : { } }
          {
+            tell(0, "DEBUG: Got '%s'", message);
             clients[wsi].type = ctInactive;
             activateAvailableClient();
             clients[wsi].cleanupMessageQueue();
@@ -362,6 +364,23 @@ void cWebSock::activateAvailableClient()
          }
       }
    }
+}
+
+//***************************************************************************
+// Client Count
+//***************************************************************************
+
+int cWebSock::getClientCount()
+{
+   int count = 0;
+
+   for (auto it = clients.begin(); it != clients.end(); ++it)
+   {
+      if (it->second.type != ctInactive)
+         count++;
+   }
+
+   return count;
 }
 
 //***************************************************************************

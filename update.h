@@ -160,7 +160,7 @@ class cWebSock : public cOsdService
 
       // static interface
 
-      static int getClientCount()    { return clients.size(); }
+      static int getClientCount();
       static void activateAvailableClient();
       static void pushMessage(const char* p);
 
