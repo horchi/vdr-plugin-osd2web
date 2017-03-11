@@ -60,12 +60,21 @@ class cOsdService
          evKeyPress,
          evChannels,
          evMaxLines,
+         evLogin,
+         evLogout,
 
          evCount
       };
 
-      const char* toName(Event event);
-      Event toEvent(const char* name);
+      enum ClientType
+      {
+         ctInactive = na,
+         ctInteractive,            // = 0  - for interactive browser session
+         ctView                    // = 1  - e.g. for graphtft display
+      };
+
+      static const char* toName(Event event);
+      static Event toEvent(const char* name);
 
       static const char* events[];
 };
@@ -90,7 +99,7 @@ int channels2Json(json_t* obj);
 // Class cWebSock
 //***************************************************************************
 
-class cWebSock
+class cWebSock : public cOsdService
 {
    public:
 
@@ -108,6 +117,33 @@ class cWebSock
          sizeLwsFrame     = sizeLwsPreFrame + sizeLwsPostFrame
       };
 
+      struct Client
+      {
+         ClientType type;
+         std::queue<std::string> messagesOut;
+         cMutex messagesOutMutex;
+         void* wsi;
+
+         void pushMessage(const char* p)
+         {
+            cMutexLock lock(&messagesOutMutex);
+            messagesOut.push(p);
+         }
+
+         void cleanupMessageQueue()
+         {
+            cMutexLock lock(&messagesOutMutex);
+
+            // just in case client is not connected and wasted messages are pending
+
+            tell(0, "Info: Flushing (%ld) old 'wasted' messages of client (%p)",
+                 messagesOut.size(), wsi);
+
+            while (!messagesOut.empty())
+               messagesOut.pop();
+         }
+      };
+
       cWebSock();
       virtual ~cWebSock();
 
@@ -122,10 +158,16 @@ class cWebSock
       static int callbackHttp(lws* wsi, lws_callback_reasons reason, void* user, void* in, size_t len);
       static int callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason, void* user, void* in, size_t len);
 
-      static int getClientCount()    { return clientCount; }
-      static void* getActiveClient() { return activeClient; }  // the last connected client
+      // static interface
+
+      static int getClientCount()    { return clients.size(); }
+      static void activateAvailableClient();
+      static void pushMessage(const char* p);
 
    private:
+
+      int login(json_t* oRequest);
+      int logout(json_t* oRequest);
 
       int port;
       lws_context* context;
@@ -134,8 +176,8 @@ class cWebSock
       // statics
 
       static int timeout;
-      static int clientCount;
       static void* activeClient;
+      static std::map<void*,Client> clients;
       static MsgType msgType;
 
       // only used in callback
@@ -200,8 +242,8 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
       static int pushMessage(json_t* obj, const char* title);
 
-      static std::queue<std::string> messagesOut;
-      static cMutex messagesOutMutex;
+      // static std::queue<std::string> messagesOut;
+      // static cMutex messagesOutMutex;
       static std::queue<std::string> messagesIn;
       static std::map<int,CategoryConfig> menuMaxLines;
 
@@ -222,13 +264,12 @@ class cUpdate : public cStatus, cThread, public cOsdService
       void updatePresentFollowing();
 
       int dispatchClientRequest();
-      int performServerData();
       int performPing();
       int performFocusRequest(json_t* oRequest, int focus);
       int performKeyPressRequest(json_t* oRequest);
       int performChannelsRequest(json_t* oRequest);
       int performMaxLineRequest(json_t* oRequest);
-      int cleanupMessages();
+      // int cleanupMessages();
 
       int isDefault(const char* name = SKIN_NAME)      { return strcmp(Skins.Current()->Name(), name) == 0; }
       int isSkinAttached(const char* name = SKIN_NAME) { return Skins.Current() && strcmp(Skins.Current()->Name(), name) == 0; }

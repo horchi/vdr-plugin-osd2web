@@ -14,10 +14,10 @@
 
 char* cWebSock::msgBuffer = 0;
 int cWebSock::msgBufferSize = 0;
-int cWebSock::clientCount = 0;
 void* cWebSock::activeClient = 0;
 int cWebSock::timeout = 0;
 cWebSock::MsgType cWebSock::msgType = mtNone;
+std::map<void*,cWebSock::Client> cWebSock::clients;
 
 //***************************************************************************
 // Init
@@ -113,8 +113,19 @@ int cWebSock::service(int timeoutMs)
 
 int cWebSock::performData(MsgType type)
 {
+   int count = 0;
+
    msgType = type;
-   lws_callback_on_writable_all_protocol(context, &protocols[1]);
+
+   for (auto it = clients.begin(); it != clients.end(); ++it)
+   {
+      if (it->second.type != ctInactive && !it->second.messagesOut.empty())
+         count++;
+   }
+
+   if (count || msgType == mtPing)
+      lws_callback_on_writable_all_protocol(context, &protocols[1]);
+
    return done;
 }
 
@@ -177,7 +188,7 @@ int cWebSock::callbackHttp(lws* wsi,
 }
 
 //***************************************************************************
-// Callback for osd2vdr protocol
+// Callback for osd2vdr Protocol
 //***************************************************************************
 
 int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
@@ -187,20 +198,19 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
    {
       case LWS_CALLBACK_SERVER_WRITEABLE:         // data to client
       {
-         if (activeClient && activeClient != wsi) // send data only to active client
-            break;
-
          if (msgType == mtPing)
          {
-            char buffer[sizeLwsFrame];
-
-            tell(1, "DEBUG: Write 'PING'");
-            lws_write(wsi, (unsigned char*)buffer + sizeLwsPreFrame, 0, LWS_WRITE_PING);
+            if (clients[wsi].type != ctInactive)
+            {
+               char buffer[sizeLwsFrame];
+               tell(1, "DEBUG: Write 'PING' (%p)", (void*)wsi);
+               lws_write(wsi, (unsigned char*)buffer + sizeLwsPreFrame, 0, LWS_WRITE_PING);
+            }
          }
 
          else if (msgType == mtData)
          {
-            while (!cUpdate::messagesOut.empty() && !lws_send_pipe_choked(wsi))
+            while (!clients[wsi].messagesOut.empty() && !lws_send_pipe_choked(wsi))
             {
                int res;
                std::string msg;  // take a copy of the message for short mutex lock!
@@ -208,8 +218,8 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
                // mutex lock context
                {
                   cMutexLock(&cUpdate::messagesOutMutex);
-                  msg = cUpdate::messagesOut.front();
-                  cUpdate::messagesOut.pop();
+                  msg = clients[wsi].messagesOut.front();
+                  clients[wsi].messagesOut.pop();
                }
 
                int msgSize = strlen(msg.c_str());
@@ -230,10 +240,9 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 
                strncpy(msgBuffer + sizeLwsPreFrame, msg.c_str(), msgSize);
 
-               tell(0, "DEBUG: Write (%d) [%.*s]\n",
-                    msgSize,
-                    msgSize,
-                    msgBuffer+sizeLwsPreFrame);
+               tell(0, "DEBUG: Write (%d) [%.*s] to (%p)\n",
+                    msgSize, msgSize,
+                    msgBuffer+sizeLwsPreFrame, (void*)wsi);
 
                res = lws_write(wsi, (unsigned char*)msgBuffer + sizeLwsPreFrame, msgSize, LWS_WRITE_TEXT);
 
@@ -247,45 +256,75 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 
       case LWS_CALLBACK_RECEIVE:                  // data from client
       {
+         json_t *oData, *oObject;
+         json_error_t error;
+         Event event;
          const char* message = (const char*)in;
 
-         if (activeClient && activeClient != wsi) // take data only to active client
-            break;
-
          tell(3, "DEBUG: 'LWS_CALLBACK_RECEIVE' [%s]", message);
-         cUpdate::messagesIn.push(message);
+
+         if (!( oData = json_loads(message, 0, &error)))
+         {
+            tell(0, "Error: Ignoring unexpeted client request [%s]", message);
+            break;
+         }
+
+         event = cOsdService::toEvent(getStringFromJson(oData, "event", "<null>"));
+         oObject = json_object_get(oData, "object");
+
+         if (event == evLogin)
+         {
+            // { "event" : "login", "object" : { "type" : 0 } }
+
+            clients[wsi].type = (ClientType)getIntFromJson(oObject, "type", ctInteractive);
+
+            if (clients[wsi].type == ctInteractive)
+               activeClient = wsi;
+         }
+         else if (event == evLogout)
+         {
+            clients[wsi].type = ctInactive;
+            activateAvailableClient();
+            clients[wsi].cleanupMessageQueue();
+         }
+         else if (activeClient && activeClient == wsi)    // take data only from active client
+         {
+            cUpdate::messagesIn.push(message);
+         }
+         else
+            tell(0, "Ignoring data of not 'active client (%p)", (void*)wsi);
+
+         json_decref(oData);
 
          break;
       }
 
-      case LWS_CALLBACK_ESTABLISHED:              // someone is connecting
+      case LWS_CALLBACK_ESTABLISHED:              // someone connecting
       {
          if (timeout)
             lws_set_timeout(wsi, PENDING_TIMEOUT_AWAITING_PING, timeout);
 
          tell(0, "Client connected (%p)", (void*)wsi);
-         clientCount++;
-         activeClient = (void*)wsi;
+         clients[wsi].wsi = wsi;
+         clients[wsi].type = ctInteractive; // #TODO ctInactive;
+         activeClient = wsi;  // #TODO delete this line!
 
          break;
       }
 
-      case LWS_CALLBACK_CLOSED:                   // someone is dis-connecting
+      case LWS_CALLBACK_CLOSED:                   // someone dis-connecting
       {
          tell(0, "Client disconnected (%p)", (void*)wsi);
-         clientCount--;
+         clients.erase(wsi);
 
-         if (activeClient && activeClient == wsi)
-            activeClient = 0;
+         if (!activeClient || activeClient == wsi)
+            activateAvailableClient();
 
          break;
       }
 
       case LWS_CALLBACK_RECEIVE_PONG:             // ping / pong
       {
-         if (activeClient && activeClient != wsi) // send pong only to active client!
-            break;
-
          tell(1, "DEBUG: Got 'PONG'");
 
          if (timeout)
@@ -300,4 +339,41 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
    }
 
    return 0;
+}
+
+//***************************************************************************
+// Check Activate Available Client
+//***************************************************************************
+
+void cWebSock::activateAvailableClient()
+{
+   auto it = clients.find(activeClient);
+
+   if (!activeClient || it == clients.end() || it->second.type == ctInactive)
+   {
+      for (it = clients.begin(); it != clients.end(); ++it)
+      {
+         if (it->second.type == ctInteractive)
+         {
+            activeClient = it->first;
+            tell(0, "Set client (%p) to active", activeClient);
+            break;
+         }
+      }
+   }
+}
+
+//***************************************************************************
+// Push Message
+//***************************************************************************
+
+void cWebSock::pushMessage(const char* message)
+{
+   // push message only to connected, not inactiv clients
+
+   for (auto it = clients.begin(); it != clients.end(); ++it)
+   {
+      if (it->second.type != ctInactive)
+         it->second.pushMessage(message);
+   }
 }

@@ -18,8 +18,8 @@
 
 #include "update.h"
 
-std::queue<std::string> cUpdate::messagesOut;
-cMutex cUpdate::messagesOutMutex;
+// std::queue<std::string> cUpdate::messagesOut;
+// cMutex cUpdate::messagesOutMutex;
 std::queue<std::string> cUpdate::messagesIn;
 
 std::map<int,cUpdate::CategoryConfig> cUpdate::menuMaxLines;
@@ -70,7 +70,7 @@ cUpdate::cUpdate(int aWebPort)
    skinMode = smAuto;
    active = no;
    currentChannelNr = 0;
-   pingTime = 60;
+   pingTime = 60;                      // timeout
    webPort = aWebPort;
    nextPing = time(0);
    nextPresentUpdateAt = time(0);
@@ -106,13 +106,13 @@ int cUpdate::pushMessage(json_t* oContents, const char* title)
    char* p = json_dumps(obj, JSON_PRESERVE_ORDER);
    json_decref(obj);
 
-   // only push message if at least one client is connected
+   cWebSock::pushMessage(p);
 
-   if (cWebSock::getClientCount())
-   {
-      cMutexLock lock(&messagesOutMutex);
-      messagesOut.push(p);
-   }
+   // if (cWebSock::getClientCount())
+   // {
+   //    cMutexLock lock(&messagesOutMutex);
+   //    messagesOut.push(p);
+   // }
 
    tell(4, "DEBUG: PushMessage [%s]", p);
    free(p);
@@ -146,10 +146,10 @@ void cUpdate::atMeanwhile()
 
    if (!webSock->getClientCount())
    {
-      // cleanup messages in case no client connected
+      // // cleanup messages in case no client connected
 
-      if (!messagesOut.empty())
-         cleanupMessages();
+      // if (!messagesOut.empty())
+      //    cleanupMessages();
 
       // detach from Skin interface?
 
@@ -194,8 +194,9 @@ void cUpdate::Action()
       if (!messagesIn.empty())       // data from clients
          dispatchClientRequest();
 
-      if (!messagesOut.empty())      // data to clients
-         performServerData();
+      // data to client(s)
+
+      webSock->performData(cWebSock::mtData);
 
       performPing();
    }
@@ -220,16 +221,9 @@ int cUpdate::dispatchClientRequest()
    tell(0, "DEBUG: Got '%s'", messagesIn.front().c_str());
    oData = json_loads(messagesIn.front().c_str(), 0, &error);
 
-   if (!oData)
-   {
-      tell(0, "Error: Ignoring unexpeted client request [%s]", messagesIn.front().c_str());
-      messagesIn.pop();
-      return fail;
-   }
-
    // get the request
 
-   event = toEvent(getStringFromJson(oData, "event", "<null>"));
+   event = cOsdService::toEvent(getStringFromJson(oData, "event", "<null>"));
    oObject = json_object_get(oData, "object");
 
    // dispatch client request
@@ -356,22 +350,6 @@ int cUpdate::performMaxLineRequest(json_t* oRequest)
 }
 
 //***************************************************************************
-// Perform Server Data
-//***************************************************************************
-
-int cUpdate::performServerData()
-{
-   cMutexLock lock(&messagesOutMutex);
-
-   // any data ..
-
-   if (!messagesOut.empty())
-      webSock->performData(cWebSock::mtData);
-
-   return done;
-}
-
-//***************************************************************************
 // Perform Ping
 //***************************************************************************
 
@@ -390,16 +368,16 @@ int cUpdate::performPing()
 // Cleanup Messages
 //***************************************************************************
 
-int cUpdate::cleanupMessages()
-{
-   cMutexLock lock(&messagesOutMutex);
+// int cUpdate::cleanupMessages()
+// {
+//    cMutexLock lock(&messagesOutMutex);
 
-   // just in case no client is connected and wasted messages are pending
+//    // just in case no client is connected and wasted messages are pending
 
-   tell(0, "Info: Flushing (%ld) old 'wasted' messages", messagesOut.size());
+//    tell(0, "Info: Flushing (%ld) old 'wasted' messages", messagesOut.size());
 
-   while (!messagesOut.empty())
-      messagesOut.pop();
+//    while (!messagesOut.empty())
+//       messagesOut.pop();
 
-   return done;
-}
+//    return done;
+// }
