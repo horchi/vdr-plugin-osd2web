@@ -308,8 +308,10 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 
          tell(0, "Client connected (%p)", (void*)wsi);
          clients[wsi].wsi = wsi;
-         clients[wsi].type = ctInteractive; // #TODO ctInactive;
-         activeClient = wsi;  // #TODO delete this line!
+         clients[wsi].type = ctInactive;
+
+//         clients[wsi].type = ctInteractive; // #TODO ctInactive;
+ //       activeClient = wsi;  // #TODO delete this line!
 
          break;
       }

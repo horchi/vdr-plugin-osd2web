@@ -22,6 +22,10 @@ export default {
             this.msg = data.message;
             this.type= "uk-alert" + (eMessageType[data.type] || '');
         })
+        this.$root.$on("channelgroup", (data) => {
+            this.msg = data.name;
+            this.type= "uk-alert";
+        })
     }
 }
 </script>

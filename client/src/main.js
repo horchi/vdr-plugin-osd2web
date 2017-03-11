@@ -11,7 +11,7 @@ enum ObjectShape
         osLarge  = 0x04,
      };
 
-mögliche largeobjekte:
+mögliche langeobjekte:
      5 -> Kanäle
      3 -> Programm 'Jetzt'
      4 -> Programm 'Next'
@@ -56,6 +56,7 @@ eMenuCategory['-1']= { "category" : 'mcUndefined', "maxlines" : 100, "shape": 1}
 
 window.v = new Vue({
     data: {
+        clientType: /[?&]onlyView/.test(location.search) ? 1 : 0,        // 0 - for interactive browser, 1 - onlyView e.g. for graphtft
         onlyRemote: null,
         menuItems: [],
         menuItemsRight: [{
@@ -127,6 +128,9 @@ window.v = new Vue({
         }*/
     },
     created() {
+        if (/[?&]onlyView/.test(location.search) )
+            this.clientType= 1;
+
 
         if (!window.WebSocket)
             return !(this.$el.innerHTML = "Your Browser will not support Websockets!");
@@ -136,6 +140,7 @@ window.v = new Vue({
             this.$socket.onopen = () =>{
                 console.log("websocket connection opened");
                 this.onlyRemote= false; //todo: automatisch ermitteln
+                this.$socket.send('{ "event" : "login", "object" : { "type" : ' + this.clientType + '} }' );
             }
 
             this.$socket.onmessage = (msg) => {
@@ -182,9 +187,10 @@ window.v = new Vue({
                 this.mapKey((ev.altKey ? 'alt.' : '') + (ev.ctrlKey ? 'ctrl.' : '') + (ev.shiftKey ? 'shift.' : '') + ev.keyCode)
             });
 
-            /*  window.addEventListener("unload", () =>{
-this.$socket.send({"action":"close"});
-})
+            window.addEventListener("unload", () =>{
+               this.$socket.send('{ "event" : "logout", "object" : {} }' );
+            })
+/*
 Alle 60 sekunden ein ping senden, damit die connection nicht geschlossen wird
 //, bzw. mitzubekommen, wenn der Server wieder da ist
 window.setTimeout(() =>{
