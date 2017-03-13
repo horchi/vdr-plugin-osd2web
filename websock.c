@@ -18,13 +18,18 @@ void* cWebSock::activeClient = 0;
 int cWebSock::timeout = 0;
 cWebSock::MsgType cWebSock::msgType = mtNone;
 std::map<void*,cWebSock::Client> cWebSock::clients;
+char* cWebSock::webPath = 0;
+char* cWebSock::epgImagePath = 0;
 
 //***************************************************************************
 // Init
 //***************************************************************************
 
-cWebSock::cWebSock()
+cWebSock::cWebSock(const char* aWebPath, const char* aEpgImagePath)
 {
+   webPath = strdup(aWebPath);
+   epgImagePath = strdup(aEpgImagePath);
+
    port = 4444;
    context = 0;
 }
@@ -33,6 +38,7 @@ cWebSock::~cWebSock()
 {
    exit();
 
+   free(webPath);
    free(msgBuffer);
 }
 
@@ -133,8 +139,7 @@ int cWebSock::performData(MsgType type)
 // HTTP Callback
 //***************************************************************************
 
-int cWebSock::callbackHttp(lws* wsi,
-                           lws_callback_reasons reason, void* user,
+int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
                            void* in, size_t len)
 {
    switch (reason)
@@ -147,31 +152,30 @@ int cWebSock::callbackHttp(lws* wsi,
 
       case LWS_CALLBACK_HTTP:
       {
-         const char* mime = "text/plain";
-         char* extension;
          char* file = 0;
          const char* url = (char*)in;
 
          tell(0, "HTTP: Requested uri: (%ld) '%s'", len, url);
 
-         if (strcmp(url, "/") == 0)
-            url = "index.html";
+         // data or file request ...
 
-         asprintf(&file, "%s/%s", "/var/lib/vdr/plugins/osd2web/http", url);
-         extension = strrchr(file, '.');
-
-         // choose mime type based on the file extension
-
-         if (!isEmpty(extension))
+         if (strncmp(url, "/data/", 6) == 0)
          {
-            if      (strcmp(extension, ".png") == 0)   mime = "image/png";
-            else if (strcmp(extension, ".jpg") == 0)   mime = "image/jpg";
-            else if (strcmp(extension, ".gif") == 0)   mime = "image/gif";
-            else if (strcmp(extension, ".html") == 0)  mime = "text/html";
-            else if (strcmp(extension, ".css") == 0)   mime = "text/css";
-         }
+            // data request
 
-         lws_serve_http_file(wsi, file, mime, 0, 0);
+            dispatchDataRequest(wsi, url);
+         }
+         else
+         {
+            // file  request
+
+            if (strcmp(url, "/") == 0)
+               url = "index.html";
+
+            asprintf(&file, "%s/%s", webPath, url);
+            serveFile(wsi, file);
+            free(file);
+         }
 
          break;
       }
@@ -180,11 +184,38 @@ int cWebSock::callbackHttp(lws* wsi,
          break;
 
       default:
-         tell(2, "DEBUG: 'callbackHttp' got (%d)", reason);
+         tell(2, "DEBUG: Unhandled 'callbackHttp' got (%d)", reason);
          break;
    }
 
    return 0;
+}
+
+//***************************************************************************
+// Serve File
+//***************************************************************************
+
+int cWebSock::serveFile(lws* wsi, const char* path)
+{
+   const char* extension;
+   const char* mime = "text/plain";
+
+   extension = strrchr(path, '.');
+
+   // choose mime type based on the file extension
+
+   if (!isEmpty(extension))
+   {
+      if      (strcmp(extension, ".png") == 0)   mime = "image/png";
+      else if (strcmp(extension, ".jpg") == 0)   mime = "image/jpg";
+      else if (strcmp(extension, ".gif") == 0)   mime = "image/gif";
+      else if (strcmp(extension, ".html") == 0)  mime = "text/html";
+      else if (strcmp(extension, ".css") == 0)   mime = "text/css";
+   }
+
+   lws_serve_http_file(wsi, path, mime, 0, 0);
+
+   return done;
 }
 
 //***************************************************************************
@@ -196,7 +227,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 {
    switch (reason)
    {
-      case LWS_CALLBACK_SERVER_WRITEABLE:         // data to client
+      case LWS_CALLBACK_SERVER_WRITEABLE:                     // data to client
       {
          if (msgType == mtPing)
          {
@@ -254,7 +285,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
          break;
       }
 
-      case LWS_CALLBACK_RECEIVE:                  // data from client
+      case LWS_CALLBACK_RECEIVE:                           // data from client
       {
          json_t *oData, *oObject;
          json_error_t error;
@@ -263,7 +294,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 
          tell(3, "DEBUG: 'LWS_CALLBACK_RECEIVE' [%s]", message);
 
-         if (!( oData = json_loads(message, 0, &error)))
+         if (!(oData = json_loads(message, 0, &error)))
          {
             tell(0, "Error: Ignoring unexpeted client request [%s]", message);
             break;
@@ -276,15 +307,8 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
          {
             tell(0, "DEBUG: Got '%s'", message);
             clients[wsi].type = (ClientType)getIntFromJson(oObject, "type", ctInteractive);
-
-            if (clients[wsi].type == ctInteractive)
-            {
-               if (activeClient)
-                  clients[activeClient].pushMessage("{ \"event\" : \"rolechange\", \"object\" : { \"role\" : \"passive\" } }");
-
-               activeClient = wsi;
-               clients[activeClient].pushMessage("{ \"event\" : \"rolechange\", \"object\" : { \"role\" : \"active\" } }");
-            }
+            atLogin(wsi);
+            activeClient = wsi;
          }
          else if (event == evLogout)                       // { "event" : "logout", "object" : { } }
          {
@@ -303,7 +327,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
          break;
       }
 
-      case LWS_CALLBACK_ESTABLISHED:              // someone connecting
+      case LWS_CALLBACK_ESTABLISHED:                       // someone connecting
       {
          if (timeout)
             lws_set_timeout(wsi, PENDING_TIMEOUT_AWAITING_PING, timeout);
@@ -315,7 +339,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
          break;
       }
 
-      case LWS_CALLBACK_CLOSED:                   // someone dis-connecting
+      case LWS_CALLBACK_CLOSED:                           // someone dis-connecting
       {
          tell(0, "Client disconnected (%p)", (void*)wsi);
          clients.erase(wsi);
@@ -326,7 +350,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
          break;
       }
 
-      case LWS_CALLBACK_RECEIVE_PONG:             // ping / pong
+      case LWS_CALLBACK_RECEIVE_PONG:                      // ping / pong
       {
          tell(1, "DEBUG: Got 'PONG'");
 
@@ -337,7 +361,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
       }
 
       default:
-         tell(0, "DEBUG: 'callbackOsd2Vdr' got (%d)", reason);
+         tell(0, "DEBUG: Unhandled 'callbackOsd2Vdr' got (%d)", reason);
          break;
    }
 
@@ -345,7 +369,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 }
 
 //***************************************************************************
-// Check Activate Available Client
+// Check/Activate Available Client
 //***************************************************************************
 
 void cWebSock::activateAvailableClient()
@@ -364,6 +388,41 @@ void cWebSock::activateAvailableClient()
          }
       }
    }
+}
+
+//***************************************************************************
+// At Login
+//***************************************************************************
+
+void cWebSock::atLogin(lws* wsi)
+{
+   json_t* oContents = json_object();
+
+   addToJson(oContents, "type", clients[wsi].type);
+   addToJson(oContents, "client", (long)wsi);
+   addToJson(oContents, "lastclient", (long)activeClient);
+
+   json_t* obj = json_object();
+   addToJson(obj, "event", "login");
+   json_object_set_new(obj, "object", oContents);
+
+   char* p = json_dumps(obj, JSON_PRESERVE_ORDER);
+   json_decref(obj);
+
+   cUpdate::messagesIn.push(p);
+   free(p);
+
+   // #TODO move to cUpdate::performLogin() ?  =>
+
+   if (clients[wsi].type == ctInteractive)
+   {
+      if (activeClient)
+         clients[activeClient].pushMessage("{ \"event\" : \"rolechange\", \"object\" : { \"role\" : \"passive\" } }");
+
+      clients[wsi].pushMessage("{ \"event\" : \"rolechange\", \"object\" : { \"role\" : \"active\" } }");
+   }
+
+   // <=
 }
 
 //***************************************************************************
@@ -396,4 +455,76 @@ void cWebSock::pushMessage(const char* message)
       if (it->second.type != ctInactive)
          it->second.pushMessage(message);
    }
+}
+
+//***************************************************************************
+// Get Integer Parameter
+//***************************************************************************
+
+int cWebSock::getIntParameter(lws* wsi, const char* name, int def)
+{
+   char buf[100];
+   const char* arg = lws_get_urlarg_by_name(wsi, name, buf, 100);
+
+   return arg ? atoi(arg) : def;
+}
+
+//***************************************************************************
+// Get String Parameter
+//***************************************************************************
+
+const char* cWebSock::getStrParameter(lws* wsi, const char* name, const char* def)
+{
+   static char buf[100];
+   const char* arg = lws_get_urlarg_by_name(wsi, name, buf, 100);
+
+   return arg ? arg : def;
+}
+
+//***************************************************************************
+// Method Of
+//***************************************************************************
+
+const char* cWebSock::methodOf(const char* url)
+{
+   const char* p;
+
+   if (url && (p = strchr(url+1, '/')))
+      return p+1;
+
+   return "";
+}
+
+//***************************************************************************
+// Dispatch Data Request
+//***************************************************************************
+
+int cWebSock::dispatchDataRequest(lws* wsi, const char* url)
+{
+   int statusCode = HTTP_STATUS_NOT_FOUND;
+
+   const char* method = methodOf(url);
+
+   if (strcmp(method, "eventimg") == 0)
+      statusCode = doEventImg(wsi);
+
+   return statusCode;
+}
+
+//***************************************************************************
+// Do Event Img
+//***************************************************************************
+
+int cWebSock::doEventImg(lws* wsi)
+{
+   char* path = 0;
+   int id = getIntParameter(wsi, "id=");
+   int no = getIntParameter(wsi, "no=");
+
+   asprintf(&path, "%s/%d_%d.jpg", epgImagePath, id, no);
+   tell(0, "DEBUG: Image for event (%d/%d) was requested [%s]", id, no, path);
+   serveFile(wsi, path);
+   free(path);
+
+   return HTTP_STATUS_OK;
 }

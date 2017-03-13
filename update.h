@@ -144,7 +144,7 @@ class cWebSock : public cOsdService
          }
       };
 
-      cWebSock();
+      cWebSock(const char* aWebPath, const char* aEpgImagePath);
       virtual ~cWebSock();
 
       int init(int aPort, int aTimeout);
@@ -160,14 +160,23 @@ class cWebSock : public cOsdService
 
       // static interface
 
-      static int getClientCount();
       static void activateAvailableClient();
+      static void atLogin(lws* wsi);
+      static int getClientCount();
+
       static void pushMessage(const char* p);
 
    private:
 
-      int login(json_t* oRequest);
-      int logout(json_t* oRequest);
+      static int serveFile(lws* wsi, const char* path);
+      static int dispatchDataRequest(lws* wsi, const char* url);
+      static int doEventImg(lws* wsi);
+
+      static const char* methodOf(const char* url);
+      static const char* getStrParameter(lws* wsi, const char* name, const char* def = 0);
+      static int getIntParameter(lws* wsi, const char* name, int def = na);
+
+      //
 
       int port;
       lws_context* context;
@@ -175,6 +184,8 @@ class cWebSock : public cOsdService
 
       // statics
 
+      static char* webPath;
+      static char* epgImagePath;
       static int timeout;
       static void* activeClient;
       static std::map<void*,Client> clients;
@@ -226,7 +237,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
       // object
 
-      cUpdate(int aWebPort);
+      cUpdate();
       ~cUpdate();
 
       // interface
@@ -286,7 +297,6 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
       cWebSock* webSock;
       bool active;
-      int webPort;
       SkinMode skinMode;
       int actualClientCount;
 };

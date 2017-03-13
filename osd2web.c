@@ -27,7 +27,6 @@ const char* logPrefix = LOG_PREFIX;
 cPluginOsd2Web::cPluginOsd2Web()
 {
    update = 0;
-   webPort = 4444;
 }
 
 cPluginOsd2Web::~cPluginOsd2Web()
@@ -55,7 +54,7 @@ bool cPluginOsd2Web::ProcessArgs(int argc, char* argv[])
    {
       switch (c)
       {
-         case 'p': webPort = atoi(optarg);     break;
+         case 'p': config.webPort = atoi(optarg);     break;
          default:  tell(0, "Ignoring unknown argument '%s'", optarg);
       }
    }
@@ -85,7 +84,7 @@ bool cPluginOsd2Web::Service(const char* id, void* data)
    {
       Osd2Web_Port_v1_0* req = (Osd2Web_Port_v1_0*)data;
 
-      req->webPort = webPort;
+      req->webPort = config.webPort;
 
       return true;
    }
@@ -102,7 +101,7 @@ bool cPluginOsd2Web::Start()
    // init
 
    skin = new cOsd2WebSkin();
-   update = new cUpdate(webPort);
+   update = new cUpdate();
    update->Start();                 // start plugin thread
 
    return true;

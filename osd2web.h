@@ -42,6 +42,9 @@ struct cOsd2WebConfig : public cConfigBase
    public:
 
       cOsd2WebConfig();
+
+      int webPort;
+      char epgImagePath[500+TB];
 };
 
 extern cOsd2WebConfig config;

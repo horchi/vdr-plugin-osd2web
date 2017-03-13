@@ -15,8 +15,10 @@
 //***************************************************************************
 
 #include <vdr/remote.h>
+#include <vdr/plugin.h>
 
 #include "update.h"
+#include "osd2web.h"   // #TODO remove here
 
 std::queue<std::string> cUpdate::messagesIn;
 
@@ -65,14 +67,13 @@ cOsdService::Event cOsdService::toEvent(const char* name)
 // Object
 //***************************************************************************
 
-cUpdate::cUpdate(int aWebPort)
+cUpdate::cUpdate()
 {
    actualClientCount = 0;
    skinMode = smAuto;
    active = no;
    currentChannelNr = 0;
    pingTime = 60;                      // timeout
-   webPort = aWebPort;
    nextPing = time(0);
    nextPresentUpdateAt = time(0);
 
@@ -82,7 +83,7 @@ cUpdate::cUpdate(int aWebPort)
       menuMaxLines[i].shape = osText;
    }
 
-   webSock = new cWebSock();
+   webSock = new cWebSock(cPlugin::ConfigDirectory("osd2web/http"), config.epgImagePath);
 }
 
 cUpdate::~cUpdate()
@@ -167,11 +168,9 @@ void cUpdate::Action()
 {
    tell(0, "osd2web plugin thread started (pid=%d)", getpid());
 
-   // performFocusRequest(0, yes);
-
    // init web socket
 
-   webSock->init(webPort, pingTime);
+   webSock->init(config.webPort, pingTime);
    active = yes;
 
    // main loop
@@ -225,6 +224,7 @@ int cUpdate::dispatchClientRequest()
       case evKeyPress:   status = performKeyPressRequest(oObject);    break;
       case evChannels:   status = performChannelsRequest(oObject);    break;
       case evMaxLines:   status = performMaxLineRequest(oObject);     break;
+      case evLogin  :    /*status = performLogin(oObject);*/         break;
 
       default:
          tell(0, "Error: Received unexpected client request '%s' at [%s]",
