@@ -224,7 +224,7 @@ int cUpdate::dispatchClientRequest()
       case evKeyPress:   status = performKeyPressRequest(oObject);    break;
       case evChannels:   status = performChannelsRequest(oObject);    break;
       case evMaxLines:   status = performMaxLineRequest(oObject);     break;
-      case evLogin  :    /*status = performLogin(oObject);*/         break;
+      case evLogin  :    /*status = performLogin(oObject);*/          break;
 
       default:
          tell(0, "Error: Received unexpected client request '%s' at [%s]",

@@ -35,6 +35,21 @@ class cEpgEvent_Interface_V1 : public cEvent
 };
 
 //***************************************************************************
+// Class cEpgEvent
+//***************************************************************************
+
+class cEpgEvent : public cEpgEvent_Interface_V1
+{
+   public:
+
+      cEpgEvent(tEventID EventID);
+      virtual ~cEpgEvent() {}
+
+      bool Read(FILE *f);
+      void setImageCount(int count) { imageCount = count; }
+};
+
+//***************************************************************************
 // Event To Json
 //***************************************************************************
 
@@ -68,14 +83,16 @@ int event2Json(json_t* obj, const cEvent* event, const cChannel* channel,
    addToJson(obj, "hastimer", event->HasTimer());
    addToJson(obj, "seen", event->Seen());
 
-   const cEpgEvent_Interface_V1* extendetEvent = dynamic_cast<const cEpgEvent_Interface_V1*>(event);
+   const cEpgEvent_Interface_V1* extendetEvent = dynamic_cast<const cEpgEvent_Interface_V1*>((cEvent*)event);
 
    if (extendetEvent)
    {
       addToJson(obj, "imagecount", extendetEvent->getImageCount());
    }
    else
-      tell(0, "Cast to cEpgEvent_Interface_V1 failed");
+   {
+      tell(0, "Info: Cast to cEpgEvent_Interface_V1 failed - aussume epg2vdr not loaded");
+   }
 
    if (current || shape & cOsdService::osLarge)
    {

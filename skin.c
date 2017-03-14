@@ -102,7 +102,7 @@ class cSkinOsd2WebDisplayMenu : public cSkinDisplayMenu
       virtual void SetText(const char* Text, bool FixedFont);
       virtual int GetTextAreaWidth() const;
       virtual const cFont* GetTextAreaFont(bool FixedFont) const;
-      virtual void Flush();
+      virtual void Flush() {}
 
    private:
 
@@ -322,7 +322,6 @@ void cSkinOsd2WebDisplayMenu::SetScrollbar(int Total, int Offset)
    addToJson(oBar, "Offset", Offset);
 
    cUpdate::pushMessage(oBar, "scrollbar");
-
 }
 
 void cSkinOsd2WebDisplayMenu::SetEvent(const cEvent *Event)
@@ -353,17 +352,13 @@ void cSkinOsd2WebDisplayMenu::SetText(const char *Text, bool FixedFont)
 
 int cSkinOsd2WebDisplayMenu::GetTextAreaWidth() const
 {
-   tell(0, "DEB: Skin:cSkinOsd2WebDisplayMenu::GetTextAreaWidth() = 1024");
+   tell(2, "DEB: Skin:cSkinOsd2WebDisplayMenu::GetTextAreaWidth() = 1024");
    return 1024;  // pixels dummy code
 }
 
 const cFont* cSkinOsd2WebDisplayMenu::GetTextAreaFont(bool FixedFont) const
 {
    return cFont::GetFont(FixedFont ? fontFix : fontOsd);    // dummy code
-}
-
-void cSkinOsd2WebDisplayMenu::Flush()
-{
 }
 
 //***************************************************************************
@@ -508,7 +503,6 @@ void cSkinOsd2WebDisplayMessage::SetMessage(eMessageType Type, const char *Text)
 void cSkinOsd2WebDisplayMessage::Flush()
 {
 }
-
 
 //***************************************************************************
 // Class cOsd2WebSkin
