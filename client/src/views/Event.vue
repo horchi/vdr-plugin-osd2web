@@ -12,7 +12,16 @@
          <div class="uk-width-1-3 uk-panel uk-float-right">
             {{event.duration/60}} min</div>
        </div>
-       <div v-show="description" class="uk-panel-box uk-grid-margin" v-html="description"></div>
+       <div class="uk-panel-box uk-margin-top">
+          <div class="uk-grid uk-flex-top">
+              <div v-if="event.eventid" class="uk-width-medium-1-3 uk-row-first">
+                  <div class="uk-panel"><img :src="'/data/eventimg?id=' + event.eventid + '&no=0'" alt="" /></div>
+              </div>
+              <div class="uk-width-medium-2-3 uk-flex-middle">
+                  <p v-show="description" v-html="description"></p>
+              </div>
+          </div>
+       </div>
    </div>
 </template>
 

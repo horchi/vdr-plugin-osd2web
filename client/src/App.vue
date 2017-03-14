@@ -15,7 +15,7 @@
 </template>
 <script>
 import o2vNavigation from './views/Navigation.vue';
-import o2vOsd from './views/Textmenu.vue';
+import o2vOsd from './views/Osd.vue';
 import o2vRemote from './views/Remote.vue';
 import o2vStatusmessage from './views/Statusmessage.vue';
 import o2vActual from './views/Actual.vue';

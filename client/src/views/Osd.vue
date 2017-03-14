@@ -1,0 +1,97 @@
+<template>
+    <div v-show="title" id="osdCon">
+        <div class="uk-panel-box-primary uk-panel-hover uk-padding-bottom-remove uk-padding-top-remove" @click="$root.sendKey('Back')">
+            <h3 class="uk-panel-title uk-margin-bottom-remove"><i v-if="!$root.isOnlyView" class="uk-icon-mail-reply-all"></i> {{ title }}</h3>
+        </div>
+        <o2v-textmenu></o2v-textmenu>
+        <o2v-event :event="event"></o2v-event>
+        <o2v-textarea></o2v-textarea>
+        <div class="uk-button-group" id="buttons" style="position:fixed;bottom:0">
+            <button v-for="(button,index) in buttons" @click="$root.sendKey(button.color)" :class="'but-' + button.color" class="uk-button uk-margin-small-top" type="button">{{button.label}}</button>
+        </div>
+    </div>
+</template>
+<script>
+import o2vEvent from './Event.vue';
+import o2vTextmenu from './Textmenu.vue';
+import o2vTextarea from './Textarea.vue';
+  
+function getClearData(){
+  return {
+      title: '',
+      category: -1,
+      event:{},
+      buttons: []
+  }
+}
+export default {
+    name: 'o2vOsd',
+    data: function() {
+        return getClearData();
+    },
+    created() {
+        this.$root.$data.menuItems.push({
+            label: '_O_SD',
+            key: 'menu'
+        });
+        this.$root.$on("clearmenu", (data) => {
+           let clearData= getClearData();
+           for (let key in clearData)
+                this[key]= clearData[key];
+        });
+        this.$root.$on("menu", (data) => {
+            this.category = data.category;
+            this.title = data.title;
+        });
+        this.$root.$on("event", (data) => {
+            this.event = data;
+        });
+        this.$root.$on("buttons", (data) => {
+            this.buttons = [];
+            for (let color in data)
+                this.buttons.push({
+                    'color': color,
+                    label: data[color]
+                });
+        })
+        window.addEventListener('resize', this.checkButtonHeight);
+    },
+    updated() {
+        document.getElementById('o2vContent').style.display= this.title ? "none" : '';
+        this.checkButtonHeight();
+    },
+    methods: {
+        checkButtonHeight() {
+            let buttons = document.getElementById('buttons');
+            if (buttons)
+                buttons.parentNode.style.paddingBottom = buttons.offsetHeight + 'px';
+        }
+    },
+    components: {
+        'o2v-event': o2vEvent,
+        'o2v-textmenu': o2vTextmenu, 
+        'o2v-textarea': o2vTextarea
+    }
+}
+</script>
+<style>
+    button.but-red {
+        background-color: red;
+        color: #fff;
+    }
+
+    button.but-green {
+        background-color: green;
+        color: #fff;
+    }
+
+    button.but-blue {
+        background-color: blue;
+        color: #fff;
+    }
+
+    button.but-yellow {
+        background-color: yellow;
+        color: #222;
+    }
+</style>
