@@ -17,6 +17,24 @@
 #include "update.h"
 
 //***************************************************************************
+// epg2vdr Service Interface
+//***************************************************************************
+
+class cEpgEvent_Interface_V1 : public cEvent
+{
+   public:
+
+      cEpgEvent_Interface_V1(tEventID EventID)
+         : cEvent(EventID) { imageCount = 0; }
+
+      int getImageCount() const { return imageCount; }
+
+   protected:
+
+      int imageCount;
+};
+
+//***************************************************************************
 // Event To Json
 //***************************************************************************
 
@@ -49,6 +67,15 @@ int event2Json(json_t* obj, const cEvent* event, const cChannel* channel,
    addToJson(obj, "vps", event->Vps());
    addToJson(obj, "hastimer", event->HasTimer());
    addToJson(obj, "seen", event->Seen());
+
+   const cEpgEvent_Interface_V1* extendetEvent = dynamic_cast<const cEpgEvent_Interface_V1*>(event);
+
+   if (extendetEvent)
+   {
+      addToJson(obj, "imagecount", extendetEvent->getImageCount());
+   }
+   else
+      tell(0, "Cast to cEpgEvent_Interface_V1 failed");
 
    if (current || shape & cOsdService::osLarge)
    {
