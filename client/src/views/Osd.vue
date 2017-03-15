@@ -2,6 +2,21 @@
     <div v-show="title" id="osdCon">
         <div class="uk-panel-box-primary uk-panel-hover uk-padding-bottom-remove uk-padding-top-remove" @click="$root.sendKey('Back')">
             <h3 class="uk-panel-title uk-margin-bottom-remove"><i v-if="!$root.isOnlyView" class="uk-icon-mail-reply-all"></i> {{ title }}</h3>
+            <!--<ul v-if="pageCount" class="uk-pagination">
+                <li :class="{'uk-disabled': pageCurrent <= 0}" @click="$root.sendKey('Left')"><span><i class="uk-icon-angle-double-left"></i></span></li>
+                <li v-for="p in pageCount" :class="{'uk-active':p == pageCurrent}"><a>{{p}}</a></li>
+                <li :class="{'uk-disabled': pageCurrent >= pageCount}" @click="$root.sendKey('Right')"><span><i class="uk-icon-angle-double-right"></i></span></li>
+            </ul>
+            <ul class="uk-pagination">
+                
+                <li class="uk-active"><span>1</span></li>
+                <li><a href="#">2</a></li>
+                <li><a href="#">3</a></li>
+                <li><a href="#">4</a></li>
+                <li><span>...</span></li>
+                <li><a href="#">20</a></li>
+                <li><a href="#"><i class="uk-icon-angle-double-right"></i></a></li>
+            </ul>-->
         </div>
         <o2v-textmenu></o2v-textmenu>
         <o2v-event :event="event"></o2v-event>
@@ -20,6 +35,8 @@ function getClearData(){
   return {
       title: '',
       category: -1,
+      pageCount:0,
+      pageCurrent:0,
       event:{},
       buttons: []
   }
@@ -42,6 +59,10 @@ export default {
         this.$root.$on("menu", (data) => {
             this.category = data.category;
             this.title = data.title;
+        });
+        this.$root.$on("scrollbar", (data) => {
+            this.pageCount = parseInt(data.Total / this.$root.maxLines,10);
+            this.pageCurrent =  parseInt(data.Offset / this.$root.maxLines,10);
         });
         this.$root.$on("event", (data) => {
             this.event = data;
