@@ -19,50 +19,50 @@ module.exports = (options = {}) => ({
   },
   module: {
     rules: [{
-        test: /\.vue$/,
-        use: ['vue-loader']
-      },
-      {
-        test: /\.js$/,
-        use: ['babel-loader'],
-        exclude: /node_modules/
-      },
-      {
-        test: /\.html$/,
-        use: [{
-          loader: 'html-loader',
-          options: {
-            root: resolve(__dirname, 'src'),
-            attrs: ['img:src', 'link:href']
-          }
-        }]
-      },
-      {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader', 'postcss-loader']
-      },
-      {
-        test: /\.(png|jpg|jpeg|gif|eot|ttf|woff|woff2|svg|svgz)(\?.+)?$/,
-        use: [{
-          loader: 'url-loader',
-          options: {
-            limit: 10000,
-            name: '[name].[ext]'
-          }
-        }]
-      }
+      test: /\.vue$/,
+      use: ['vue-loader']
+    },
+    {
+      test: /\.js$/,
+      use: ['babel-loader'],
+      exclude: /node_modules/
+    },
+    {
+      test: /\.html$/,
+      use: [{
+        loader: 'html-loader',
+        options: {
+          root: resolve(__dirname, 'src'),
+          attrs: ['img:src', 'link:href']
+        }
+      }]
+    },
+    {
+      test: /\.css$/,
+      use: ['style-loader', 'css-loader', 'postcss-loader']
+    },
+    {
+      test: /\.(png|jpg|jpeg|gif|eot|ttf|woff|woff2|svg|svgz)(\?.+)?$/,
+      use: [{
+        loader: 'url-loader',
+        options: {
+          limit: 10000,
+          name: '[name].[ext]'
+        }
+      }]
+    }
     ]
   },
   plugins: [
-     // split vendor js into its own file
+    // split vendor js into its own file
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
       minChunks: function (module, count) {
         // any required modules inside node_modules are extracted to vendor
         return (
-          module.resource &&
-          /\.js$/.test(module.resource) &&
-          module.resource.indexOf(
+          module.resource 
+          && /\.js$/.test(module.resource) 
+          && module.resource.indexOf(
             resolve(__dirname, '../node_modules')
           ) === 0
         )
@@ -73,10 +73,10 @@ module.exports = (options = {}) => ({
     new webpack.optimize.CommonsChunkPlugin({
       name: 'manifest',
       chunks: ['vendor']
-   }),
+    }),
     new HtmlWebpackPlugin({
-        template: 'src/index.html',
-        inject: true
+      template: 'src/index.html',
+      inject: true,
     })
   ],
   resolve: {

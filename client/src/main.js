@@ -19,129 +19,130 @@ mögliche langeobjekte:
 
 */
 const eMenuCategory = [
-   {
-    "category": 'mcUnknown',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcMain',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcSchedule',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcScheduleNow',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcScheduleNext',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcChannel',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcChannelEdit',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcTimer',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcTimerEdit',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcRecording',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcRecordingInfo',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcRecordingEdit',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcPlugin',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcPluginSetup',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcSetup',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcSetupOsd',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcSetupEpg',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcSetupDvb',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcSetupLnb',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcSetupCam',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcSetupRecord',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcSetupReplay',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcSetupMisc',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcSetupPlugins',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcCommand',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcEvent',
-    "maxlines": 100,
-    "shape": 4
-}, {
-    "category": 'mcText',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcFolder',
-    "maxlines": 100,
-    "shape": 1
-}, {
-    "category": 'mcCam',
-    "maxlines": 100,
-    "shape": 1
-}
+    {
+        "category": 'mcUnknown',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcMain',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcSchedule',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcScheduleNow',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcScheduleNext',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcChannel',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcChannelEdit',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcTimer',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcTimerEdit',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcRecording',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcRecordingInfo',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcRecordingEdit',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcPlugin',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcPluginSetup',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcSetup',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcSetupOsd',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcSetupEpg',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcSetupDvb',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcSetupLnb',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcSetupCam',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcSetupRecord',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcSetupReplay',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcSetupMisc',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcSetupPlugins',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcCommand',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcEvent',
+        "maxlines": 100,
+        "shape": 4
+    }, {
+        "category": 'mcText',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcFolder',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcCam',
+        "maxlines": 100,
+        "shape": 1
+    }
 ];
 eMenuCategory['-1'] = {
     "category": 'mcUndefined',
     "maxlines": 100,
     "shape": 1
 };
+
 window.v = new Vue({
     data: {
         isOnlyView: /[?&]onlyView/.test(location.search),
@@ -153,7 +154,7 @@ window.v = new Vue({
             label: '',
             on: false,
             iconClass: 'uk-icon-desktop',
-            func: function(navComp) {
+            func: function (navComp) {
                 this.on = !this.on;
                 navComp.$root.$emit("send", {
                     "event": (this.on ? "takefocus" : "leavefocus")
@@ -256,20 +257,20 @@ window.v = new Vue({
         },
         sendMaxLines(ev, maxLines) { //  header - buttons
             let max = maxLines || parseInt((window.innerHeight - 128 - 40) / 38, 10)
-            if ( max != this.maxLines){
-               this.maxLines= max;
-               let data = [];
-               for (let i = 0; i < eMenuCategory.length; i++) data.push({
-                   "category": i,
-                   "maxlines": max,
-                   "shape": eMenuCategory[i].shape
-               });
-               this.$emit("send", {
-                   "event": "maxlines",
-                   object: {
-                       "categories": data
-                   }
-               });
+            if (max != this.maxLines) {
+                this.maxLines = max;
+                let data = [];
+                for (let i = 0; i < eMenuCategory.length; i++) data.push({
+                    "category": i,
+                    "maxlines": max,
+                    "shape": eMenuCategory[i].shape
+                });
+                this.$emit("send", {
+                    "event": "maxlines",
+                    object: {
+                        "categories": data
+                    }
+                });
             }
         },
         formatDateTime(unixTime) {
@@ -300,10 +301,10 @@ window.v = new Vue({
                 this.$socket.send('{ "event" : "login", "object" : { "type" : ' + (this.isOnlyView ? 1 : 0) + '} }');
                 this.sendMaxLines(null);
             }
-            this.$socket.onclose = function() {
+            this.$socket.onclose = function () {
                 console.log("websocket connection closed");
             }
-            this.$socket.onerror = function(err) {
+            this.$socket.onerror = function (err) {
                 console.log("websocket error: ", err);
             }
             this.$socket.onmessage = (msg) => {
@@ -335,6 +336,29 @@ window.v = new Vue({
             })
 
 
+            if (this.isOnlyView) {
+                var scrollingElement = document.scrollingElement || document.documentElement;
+                window.autoScroll = function (delta) {
+                   
+                    let hasVScroll = document.body.scrollHeight > document.body.clientHeight;
+                    let cStyle = document.body.currentStyle || window.getComputedStyle(document.body, "");
+                    hasVScroll = cStyle.overflow == "visible"
+                        || cStyle.overflowY == "visible"
+                        || (hasVScroll && cStyle.overflow == "auto")
+                        || (hasVScroll && cStyle.overflowY == "auto");
+
+                    let nextCall = 3000;
+                    if (hasVScroll) {
+                        let curTop = scrollingElement.scrollTop;
+                        scrollingElement.scrollTop += delta;
+                        if (curTop == scrollingElement.scrollTop)
+                            delta *= -1;
+                        nextCall = 80;
+                    }
+                    window.setTimeout(window.autoScroll, nextCall, delta);
+                }
+                window.autoScroll(1);
+            }
             /*
             Alle 60 sekunden ein ping senden, damit die connection nicht geschlossen wird
             //, bzw. mitzubekommen, wenn der Server wieder da ist

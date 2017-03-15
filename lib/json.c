@@ -160,6 +160,16 @@ int getIntFromJson(json_t* obj, const char* name, int def)
    return json_integer_value(o);
 }
 
+long getLongFromJson(json_t* obj, const char* name, long def)
+{
+   json_t* o = json_object_get(obj, name);
+
+   if (!o)
+      return def;
+
+   return json_integer_value(o);
+}
+
 //***************************************************************************
 // Add Element
 //***************************************************************************
@@ -167,6 +177,11 @@ int getIntFromJson(json_t* obj, const char* name, int def)
 int addToJson(json_t* obj, const char* name, const char* value, const char* def)
 {
    return json_object_set_new(obj, name, json_string(value ? value : def));
+}
+
+int addToJson(json_t* obj, const char* name, long value)
+{
+   return json_object_set_new(obj, name, json_integer(value));
 }
 
 int addToJson(json_t* obj, const char* name, int value)

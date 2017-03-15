@@ -83,7 +83,7 @@ cUpdate::cUpdate()
       menuMaxLines[i].shape = osText;
    }
 
-   webSock = new cWebSock(cPlugin::ConfigDirectory("osd2web/http"), config.epgImagePath);
+   webSock = new cWebSock(cPlugin::ConfigDirectory("osd2web"), config.epgImagePath);
 }
 
 cUpdate::~cUpdate()
@@ -96,7 +96,7 @@ cUpdate::~cUpdate()
 // Push Message
 //***************************************************************************
 
-int cUpdate::pushMessage(json_t* oContents, const char* title)
+int cUpdate::pushMessage(json_t* oContents, const char* title, long client)
 {
    // json2Data(obj, data, "gzip");
 
@@ -108,7 +108,7 @@ int cUpdate::pushMessage(json_t* oContents, const char* title)
    char* p = json_dumps(obj, JSON_PRESERVE_ORDER);
    json_decref(obj);
 
-   cWebSock::pushMessage(p);
+   cWebSock::pushMessage(p, (lws*)client);
 
    tell(4, "DEBUG: PushMessage [%s]", p);
    free(p);
@@ -224,7 +224,7 @@ int cUpdate::dispatchClientRequest()
       case evKeyPress:   status = performKeyPressRequest(oObject);    break;
       case evChannels:   status = performChannelsRequest(oObject);    break;
       case evMaxLines:   status = performMaxLineRequest(oObject);     break;
-      case evLogin  :    /*status = performLogin(oObject);*/          break;
+      case evLogin  :    status = performLogin(oObject);              break;
 
       default:
          tell(0, "Error: Received unexpected client request '%s' at [%s]",
@@ -235,6 +235,42 @@ int cUpdate::dispatchClientRequest()
    messagesIn.pop();
 
    return status;
+}
+
+//***************************************************************************
+// Perform Login
+//***************************************************************************
+
+int cUpdate::performLogin(json_t* oObject)
+{
+   char* path;
+
+   int type = getIntFromJson(oObject, "type");
+   long client = getLongFromJson(oObject, "client");
+   long lastClient = getLongFromJson(oObject, "lastclient");
+
+   // passive for 'old' client ?
+
+   if (type == ctInteractive && lastClient)
+   {
+      json_t* oRole = json_object();
+      addToJson(oRole, "role", "passive");
+      cUpdate::pushMessage(oRole, "rolechange", lastClient);
+   }
+
+   // active for 'new' client
+
+   {
+      json_t* oRole = json_object();
+
+      addToJson(oRole, "role", type == ctInteractive ? "active" : "passive");
+      asprintf(&path, "%s/channellogos", cPlugin::ConfigDirectory("osd2web"));
+      addToJson(oRole, "havelogos", folderExists(path));
+      cUpdate::pushMessage(oRole, "rolechange", client);
+      free(path);
+   }
+
+   return done;
 }
 
 //***************************************************************************

@@ -18,16 +18,18 @@ void* cWebSock::activeClient = 0;
 int cWebSock::timeout = 0;
 cWebSock::MsgType cWebSock::msgType = mtNone;
 std::map<void*,cWebSock::Client> cWebSock::clients;
-char* cWebSock::webPath = 0;
+char* cWebSock::cfgPath = 0;
 char* cWebSock::epgImagePath = 0;
+
+const char* logoSuffix = "png";  // #TODO configure
 
 //***************************************************************************
 // Init
 //***************************************************************************
 
-cWebSock::cWebSock(const char* aWebPath, const char* aEpgImagePath)
+cWebSock::cWebSock(const char* aCfgPath, const char* aEpgImagePath)
 {
-   webPath = strdup(aWebPath);
+   cfgPath = strdup(aCfgPath);
    epgImagePath = strdup(aEpgImagePath);
 
    port = 4444;
@@ -38,7 +40,7 @@ cWebSock::~cWebSock()
 {
    exit();
 
-   free(webPath);
+   free(cfgPath);
    free(msgBuffer);
 }
 
@@ -152,6 +154,7 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
 
       case LWS_CALLBACK_HTTP:
       {
+         int res;
          char* file = 0;
          const char* url = (char*)in;
 
@@ -163,7 +166,10 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
          {
             // data request
 
-            dispatchDataRequest(wsi, url);
+            res = dispatchDataRequest(wsi, url);
+
+            if (res < 0 || (res > 0 && lws_http_transaction_completed(wsi)))
+               return -1;
          }
          else
          {
@@ -172,9 +178,12 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
             if (strcmp(url, "/") == 0)
                url = "index.html";
 
-            asprintf(&file, "%s/%s", webPath, url);
-            serveFile(wsi, file);
+            asprintf(&file, "%s/http/%s", cfgPath, url);
+            res = serveFile(wsi, file);
             free(file);
+
+            if (res < 0 || (res > 0 && lws_http_transaction_completed(wsi)))
+               return -1;
          }
 
          break;
@@ -213,9 +222,7 @@ int cWebSock::serveFile(lws* wsi, const char* path)
       else if (strcmp(extension, ".css") == 0)   mime = "text/css";
    }
 
-   lws_serve_http_file(wsi, path, mime, 0, 0);
-
-   return done;
+   return lws_serve_http_file(wsi, path, mime, 0, 0);
 }
 
 //***************************************************************************
@@ -412,17 +419,17 @@ void cWebSock::atLogin(lws* wsi)
    cUpdate::messagesIn.push(p);
    free(p);
 
-   // #TODO move to cUpdate::performLogin() ?  =>
+   // // #TODO move to cUpdate::performLogin() ?  =>
 
-   if (clients[wsi].type == ctInteractive)
-   {
-      if (activeClient)
-         clients[activeClient].pushMessage("{ \"event\" : \"rolechange\", \"object\" : { \"role\" : \"passive\" } }");
+   // if (clients[wsi].type == ctInteractive)
+   // {
+   //    if (activeClient)
+   //       clients[activeClient].pushMessage("{ \"event\" : \"rolechange\", \"object\" : { \"role\" : \"passive\" } }");
 
-      clients[wsi].pushMessage("{ \"event\" : \"rolechange\", \"object\" : { \"role\" : \"active\" } }");
-   }
+   //    clients[wsi].pushMessage("{ \"event\" : \"rolechange\", \"object\" : { \"role\" : \"active\" } }");
+   // }
 
-   // <=
+   // // <=
 }
 
 //***************************************************************************
@@ -446,14 +453,21 @@ int cWebSock::getClientCount()
 // Push Message
 //***************************************************************************
 
-void cWebSock::pushMessage(const char* message)
+void cWebSock::pushMessage(const char* message, lws* wsi)
 {
    // push message only to connected, not inactiv clients
 
-   for (auto it = clients.begin(); it != clients.end(); ++it)
+   if (wsi)
    {
-      if (it->second.type != ctInactive)
-         it->second.pushMessage(message);
+      clients[wsi].pushMessage(message);
+   }
+   else
+   {
+      for (auto it = clients.begin(); it != clients.end(); ++it)
+      {
+         if (it->second.type != ctInactive)
+            it->second.pushMessage(message);
+      }
    }
 }
 
@@ -507,6 +521,8 @@ int cWebSock::dispatchDataRequest(lws* wsi, const char* url)
 
    if (strcmp(method, "eventimg") == 0)
       statusCode = doEventImg(wsi);
+   else if (strcmp(method, "channellogo") == 0)
+      statusCode = doChannelLogo(wsi);
 
    return statusCode;
 }
@@ -517,14 +533,39 @@ int cWebSock::dispatchDataRequest(lws* wsi, const char* url)
 
 int cWebSock::doEventImg(lws* wsi)
 {
+   int result;
    char* path = 0;
    int id = getIntParameter(wsi, "id=");
    int no = getIntParameter(wsi, "no=");
 
    asprintf(&path, "%s/%d_%d.jpg", epgImagePath, id, no);
    tell(0, "DEBUG: Image for event (%d/%d) was requested [%s]", id, no, path);
-   serveFile(wsi, path);
+
+   result = serveFile(wsi, path);
+
    free(path);
 
-   return HTTP_STATUS_OK;
+   return result;
+}
+
+//***************************************************************************
+// Do Channel Logo
+//***************************************************************************
+
+int cWebSock::doChannelLogo(lws* wsi)
+{
+   int result;
+   char* path = 0;
+   char* cnlName = strdup(getStrParameter(wsi, "name="));
+
+   toCase(cLower, cnlName);
+   asprintf(&path, "%s/channellogos/%s.%s", cfgPath, cnlName, logoSuffix);
+   tell(0, "DEBUG: Logo for channel '%s' was requested [%s]", cnlName, path);
+
+   result = serveFile(wsi, path);
+
+   free(cnlName);
+   free(path);
+
+   return result;
 }

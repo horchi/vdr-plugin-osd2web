@@ -24,14 +24,14 @@ class cEpgEvent_Interface_V1 : public cEvent
 {
    public:
 
-      cEpgEvent_Interface_V1(tEventID EventID)
-         : cEvent(EventID) { imageCount = 0; }
+      cEpgEvent_Interface_V1(tEventID EventID) : cEvent(EventID) {}
 
-      int getImageCount() const { return imageCount; }
+      const char* getValue(const char* name)                     { return epg2vdrData[name].c_str(); }
+      const std::map<std::string,std::string>* getValues() const { return &epg2vdrData; }
 
    protected:
 
-      int imageCount;
+      std::map<std::string,std::string> epg2vdrData;
 };
 
 //***************************************************************************
@@ -46,12 +46,27 @@ class cEpgEvent : public cEpgEvent_Interface_V1
       virtual ~cEpgEvent() {}
 
       bool Read(FILE *f);
-      void setImageCount(int count) { imageCount = count; }
+      void setValue(const char* name, const char* value) { epg2vdrData[name] = value; }
+      void setValue(const char* name, long value)        { epg2vdrData[name] = std::to_string(value); }
 };
 
 //***************************************************************************
 // Event To Json
 //***************************************************************************
+
+int isBigField(const char* name)
+{
+   if (strstr(name, "description"))
+      return yes;
+
+   if (strcmp(name, "actor") == 0)
+      return yes;
+
+   if (strcmp(name, "other") == 0)
+      return yes;
+
+   return no;
+}
 
 int event2Json(json_t* obj, const cEvent* event, const cChannel* channel,
                eTimerMatch timerMatch, int current, cOsdService::ObjectShape shape)
@@ -87,7 +102,16 @@ int event2Json(json_t* obj, const cEvent* event, const cChannel* channel,
 
    if (extendetEvent)
    {
-      addToJson(obj, "imagecount", extendetEvent->getImageCount());
+      const std::map<std::string,std::string>* epg2vdrData = extendetEvent->getValues();
+      json_t* oEpg2Vdr = json_object();
+
+      for (auto it = epg2vdrData->begin(); it != epg2vdrData->end(); it++)
+      {
+         if (!isBigField(it->first.c_str()) || current || shape & cOsdService::osLarge)
+            addToJson(oEpg2Vdr, it->first.c_str(), it->second.c_str());
+      }
+
+      addToJson(obj, "epg2vdr", oEpg2Vdr);
    }
    else
    {
