@@ -83,7 +83,9 @@ cUpdate::cUpdate()
       menuMaxLines[i].shape = osText;
    }
 
-   webSock = new cWebSock(cPlugin::ConfigDirectory("osd2web"), config.epgImagePath);
+   config.confPath = strdup(cPlugin::ConfigDirectory("osd2web"));
+
+   webSock = new cWebSock(config.confPath, config.epgImagePath);
 }
 
 cUpdate::~cUpdate()
@@ -153,8 +155,6 @@ void cUpdate::atMeanwhile()
    else if (webSock->getClientCount() != actualClientCount)
    {
       // client count changed ...
-
-      updatePresentFollowing();  // trigger update of present/following
    }
 
    actualClientCount = webSock->getClientCount();
@@ -264,11 +264,14 @@ int cUpdate::performLogin(json_t* oObject)
       json_t* oRole = json_object();
 
       addToJson(oRole, "role", type == ctInteractive ? "active" : "passive");
-      asprintf(&path, "%s/channellogos", cPlugin::ConfigDirectory("osd2web"));
+      asprintf(&path, "%s/channellogos", config.confPath);
       addToJson(oRole, "havelogos", folderExists(path));
       cUpdate::pushMessage(oRole, "rolechange", client);
       free(path);
    }
+
+   updatePresentFollowing();  // trigger update of present/following
+   updateTimers();
 
    return done;
 }

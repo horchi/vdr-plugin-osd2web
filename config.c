@@ -16,5 +16,18 @@ cOsd2WebConfig config;
 cOsd2WebConfig::cOsd2WebConfig()
 {
    webPort = 4444;
-   strcpy(epgImagePath, "/var/cache/vdr/epgimages");
+   epgImagePath = 0;
+   logoNotLower = no;
+   logoById = no;
+
+   confPath = 0;
+   logoSuffix = strdup("png");
+   epgImagePath = strdup("/var/cache/vdr/epgimages");
+}
+
+cOsd2WebConfig::~cOsd2WebConfig()
+{
+   free(confPath);
+   free(epgImagePath);
+   free(logoSuffix);
 }

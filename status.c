@@ -16,7 +16,10 @@
 
 #include <algorithm>
 
+#include <vdr/plugin.h>
+
 #include "update.h"
+#include "epg2vdr.h"
 
 //***************************************************************************
 // Osd Channel Switch
@@ -93,17 +96,47 @@ void cUpdate::updatePresentFollowing()
 
       if (schedule)
       {
-         json_t* obj = json_object();
-         json_t* oPresent = json_object();
-         json_t* oFollowing = json_object();
-
-         json_t* oStreamInfo = json_object();
-         json_t* oChannel = json_object();
+         int ownPresent = no;
+         int ownFollowing = no;
          const cEvent* present = schedule->GetPresentEvent();
          const cEvent* following = schedule->GetFollowingEvent();
 
+         json_t* obj = json_object();
+         json_t* oPresent = json_object();
+         json_t* oFollowing = json_object();
+         json_t* oStreamInfo = json_object();
+         json_t* oChannel = json_object();
+
+         cPlugin* pEpg2Vdr = cPluginManager::GetPlugin("epg2vdr");
+
+         if (pEpg2Vdr)
+         {
+            cEpgEvent_Service_V1 data;
+
+            data.in = schedule->GetPresentEvent();
+
+            if (pEpg2Vdr->Service(EPG2VDR_EVENT_SERVICE, &data))
+            {
+               ownPresent = yes;
+               present = data.out;
+            }
+            else
+               tell(0, "EPG2VDR_EVENT_SERVICE failed");
+
+            data.in = schedule->GetFollowingEvent();
+
+            if (pEpg2Vdr->Service(EPG2VDR_EVENT_SERVICE, &data))
+            {
+               ownFollowing = yes;
+               following = data.out;
+            }
+            else
+               tell(0, "EPG2VDR_EVENT_SERVICE failed");
+         }
+
          channel2Json(oChannel, channel);
          stream2Json(oStreamInfo, channel);
+
          event2Json(oPresent, present, 0, (eTimerMatch)na, no, cOsdService::osLarge);
          event2Json(oFollowing, following, 0, (eTimerMatch)na, no, cOsdService::osLarge);
 
@@ -116,9 +149,77 @@ void cUpdate::updatePresentFollowing()
 
          // we need a trigger on start of following event
 
-         nextPresentUpdateAt = following->StartTime();
+         nextPresentUpdateAt = schedule->GetFollowingEvent()->StartTime();
+
+         if (ownPresent)     { delete present;   present = 0; }
+         if (ownFollowing)   { delete following; following = 0; }
       }
       else
          tell(0, "Info: Can't get schedules");
+   }
+}
+
+//***************************************************************************
+// Update Timers
+//***************************************************************************
+
+void cUpdate::updateTimers()
+{
+   json_t* oTimers = json_array();
+
+   cPlugin* pEpg2Vdr = cPluginManager::GetPlugin("epg2vdr");
+
+   if (pEpg2Vdr)
+   {
+      cEpgTimer_Service_V1 data;
+
+      if (pEpg2Vdr->Service(EPG2VDR_TIMER_SERVICE, &data))
+      {
+         for (auto it = data.epgTimers.begin(); it != data.epgTimers.end(); ++it)
+         {
+            cEpgTimer_Interface_V1* timer = (*it);
+
+            tell(0, "Got '%s' timer for '%s' - '%s'",
+                 timer->isLocal() ? "local" : "remote",
+                 timer->File(),
+                 timer->hasState('R') ? "timer is recording" : "timer is pending");
+
+            json_t* oTimer = json_object();
+            timer2Json(oTimer, timer);
+            json_array_append_new(oTimers, oTimer);
+
+            delete timer;
+         }
+
+         cUpdate::pushMessage(oTimers, "timers");
+      }
+   }
+
+   else
+   {
+#if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
+      const cTimers* timers = 0;
+      cStateKey stateKey;
+
+      if (!(timers = cTimers::GetTimersRead(stateKey, 500)))
+      {
+         tell(0, "Can't get lock for updateTimers(), retrying later");
+         return ;
+      }
+#else
+      const cTimers* timers = &Timers;
+#endif
+
+      for (const cTimer* timer = timers->First(); timer; timer = timers->Next(timer))
+      {
+         json_t* oTimer = json_object();
+         tell(0, "Got timer for '%s' - '%s'", timer->File(),
+              timer->Recording() ? "timer is regording" : "timer is pending");
+
+         timer2Json(oTimer, timer);
+         json_array_append_new(oTimers, oTimer);
+      }
+
+      cUpdate::pushMessage(oTimers, "timers");
    }
 }

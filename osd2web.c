@@ -38,24 +38,47 @@ cPluginOsd2Web::~cPluginOsd2Web()
 // Process Args
 //***************************************************************************
 
+const char* cPluginOsd2Web::CommandLineHelp()
+{
+   return
+      "   -s <logosuffix>, --logosuffix=<logosuffix> channel logo suffix\n"
+      "                                              (default: png)\n"
+      "   -p <port>,       --port=<port> web port\n"
+      "                                              (default: 4444)\n"
+      "   -l,              --logonotlower            do not search logo names in lower case\n"
+      "   -i,              --logobyid                logo names by channel id instead of name\n"
+      "   -e,              --epgimgpath              path to epg images\n"
+      "                                              (default: /var/cache/vdr/epgimages)\n"
+      ;
+}
+
 bool cPluginOsd2Web::ProcessArgs(int argc, char* argv[])
 {
    int c;
 
    static option long_options[] =
    {
-      { "port",     required_argument, 0, 'p' },
+      { "port",           required_argument, 0, 'p' },
+      { "logosuffix",     required_argument, 0, 's' },
+      { "logonotlower",         no_argument, 0, 'l' },
+      { "logobyid",             no_argument, 0, 'i' },
+      { "epgimgpath",     required_argument, 0, 'e' },
       { 0, 0, 0, 0 }
    };
 
    // check the arguments
 
-   while ((c = getopt_long(argc, argv, "p", long_options, 0)) != -1)
+   while ((c = getopt_long(argc, argv, "p:s:l:i:e", long_options, 0)) != -1)
    {
       switch (c)
       {
-         case 'p': config.webPort = atoi(optarg);     break;
-         default:  tell(0, "Ignoring unknown argument '%s'", optarg);
+         case 'p': config.webPort = atoi(optarg);  break;
+         case 's': config.setLogoSuffix(optarg);   break;
+         case 'l': config.logoNotLower = yes;      break;
+         case 'i': config.logoById = yes;          break;
+         case 'e': config.setEpgImagePath(optarg); break;
+
+         default:  tell(0, "Ignoring unknown argument '%c' '%s'", c, optarg);
       }
    }
 

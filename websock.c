@@ -11,6 +11,7 @@
  **/
 
 #include "update.h"
+#include "osd2web.h"   // #TODO remove here
 
 char* cWebSock::msgBuffer = 0;
 int cWebSock::msgBufferSize = 0;
@@ -20,8 +21,6 @@ cWebSock::MsgType cWebSock::msgType = mtNone;
 std::map<void*,cWebSock::Client> cWebSock::clients;
 char* cWebSock::cfgPath = 0;
 char* cWebSock::epgImagePath = 0;
-
-const char* logoSuffix = "png";  // #TODO configure
 
 //***************************************************************************
 // Init
@@ -556,15 +555,22 @@ int cWebSock::doChannelLogo(lws* wsi)
 {
    int result;
    char* path = 0;
-   char* cnlName = strdup(getStrParameter(wsi, "name="));
+   char* cnlName = strdup(getStrParameter(wsi, "name=", ""));
+   char* cnlId = strdup(getStrParameter(wsi, "id=", ""));
 
-   toCase(cLower, cnlName);
-   asprintf(&path, "%s/channellogos/%s.%s", cfgPath, cnlName, logoSuffix);
+   if (!config.logoNotLower)
+      toCase(cLower, cnlName);
+
+   asprintf(&path, "%s/channellogos/%s.%s",
+            cfgPath,
+            config.logoById ? cnlId : cnlName,
+            config.logoSuffix);
    tell(0, "DEBUG: Logo for channel '%s' was requested [%s]", cnlName, path);
 
    result = serveFile(wsi, path);
 
    free(cnlName);
+   free(cnlId);
    free(path);
 
    return result;

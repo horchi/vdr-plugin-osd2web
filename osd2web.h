@@ -42,9 +42,17 @@ struct cOsd2WebConfig : public cConfigBase
    public:
 
       cOsd2WebConfig();
+      ~cOsd2WebConfig();
+
+      void setLogoSuffix(const char* s)   { free(logoSuffix); logoSuffix = strdup(s); }
+      void setEpgImagePath(const char* s) { free(epgImagePath); epgImagePath = strdup(s); }
 
       int webPort;
-      char epgImagePath[500+TB];
+      char* epgImagePath;
+      char* confPath;
+      char* logoSuffix;
+      int logoNotLower;
+      int logoById;
 };
 
 extern cOsd2WebConfig config;
@@ -62,7 +70,7 @@ class cPluginOsd2Web : public cPlugin
 
       const char* Version()                     { return VERSION; }
       const char* Description()                 { return tr(DESCRIPTION); }
-      const char* CommandLineHelp()             { return ""; }
+      const char* CommandLineHelp();
       bool ProcessArgs(int argc, char* argv[]);
       bool Service(const char* id, void* data);
 

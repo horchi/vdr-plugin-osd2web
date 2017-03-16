@@ -29,6 +29,8 @@
 #include "lib/json.h"
 #include "lib/common.h"
 
+#include "epg2vdr.h"
+
 #define SKIN_NAME "osd2web"
 
 //***************************************************************************
@@ -69,8 +71,8 @@ class cOsdService
       enum ClientType
       {
          ctInactive = na,
-         ctInteractive,            // = 0  - for interactive browser session
-         ctView                    // = 1  - e.g. for graphtft display
+         ctInteractive,            // = 0 - for interactive browser session
+         ctView                    // = 1 - e.g. for graphtft display
       };
 
       static const char* toName(Event event);
@@ -272,6 +274,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
    private:
 
       void updatePresentFollowing();
+      void updateTimers();
 
       int dispatchClientRequest();
       int performLogin(json_t* oObject);

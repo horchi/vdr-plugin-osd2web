@@ -17,40 +17,6 @@
 #include "update.h"
 
 //***************************************************************************
-// epg2vdr Service Interface
-//***************************************************************************
-
-class cEpgEvent_Interface_V1 : public cEvent
-{
-   public:
-
-      cEpgEvent_Interface_V1(tEventID EventID) : cEvent(EventID) {}
-
-      const char* getValue(const char* name)                     { return epg2vdrData[name].c_str(); }
-      const std::map<std::string,std::string>* getValues() const { return &epg2vdrData; }
-
-   protected:
-
-      std::map<std::string,std::string> epg2vdrData;
-};
-
-//***************************************************************************
-// Class cEpgEvent
-//***************************************************************************
-
-class cEpgEvent : public cEpgEvent_Interface_V1
-{
-   public:
-
-      cEpgEvent(tEventID EventID);
-      virtual ~cEpgEvent() {}
-
-      bool Read(FILE *f);
-      void setValue(const char* name, const char* value) { epg2vdrData[name] = value; }
-      void setValue(const char* name, long value)        { epg2vdrData[name] = std::to_string(value); }
-};
-
-//***************************************************************************
 // Event To Json
 //***************************************************************************
 
@@ -244,7 +210,7 @@ int recording2Json(json_t* obj, const cRecording* recording)
 }
 
 //***************************************************************************
-// Recording To Json
+// Timer To Json
 //***************************************************************************
 
 int timer2Json(json_t* obj, const cTimer* timer)
@@ -284,6 +250,29 @@ int timer2Json(json_t* obj, const cTimer* timer)
       json_t* oEvent = json_object();
       event2Json(oEvent, timer->Event(), 0, (eTimerMatch)na, no, cOsdService::osLarge);
       addToJson(obj, "event", oEvent);
+   }
+
+   const cEpgTimer_Interface_V1* extendetTimer = dynamic_cast<const cEpgTimer_Interface_V1*>((cTimer*)timer);
+
+   if (extendetTimer)
+   {
+      char cStr[1+TB];
+      json_t* oEpg2Vdr = json_object();
+
+      addToJson(oEpg2Vdr, "id", extendetTimer->TimerId());
+      addToJson(oEpg2Vdr, "vdrname", extendetTimer->VdrName());
+      addToJson(oEpg2Vdr, "vdruuid", extendetTimer->VdrUuid());
+      addToJson(oEpg2Vdr, "vdrrunning", extendetTimer->isVdrRunning());
+      addToJson(oEpg2Vdr, "local", extendetTimer->isLocal());
+      addToJson(oEpg2Vdr, "state", c2s(extendetTimer->State(), cStr));
+      addToJson(oEpg2Vdr, "stateinfo", extendetTimer->StateInfo());
+      addToJson(oEpg2Vdr, "action", c2s(extendetTimer->Action(), cStr));
+
+      addToJson(obj, "epg2vdr", oEpg2Vdr);
+   }
+   else
+   {
+      tell(0, "Info: Cast to cEpgTimer_Interface_V1 failed - aussume epg2vdr not loaded");
    }
 
    return success;
