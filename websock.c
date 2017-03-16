@@ -254,7 +254,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 
                // mutex lock context
                {
-                  cMutexLock(&cUpdate::messagesOutMutex);
+                  cMutexLock(&clients[wsi].messagesOutMutex);
                   msg = clients[wsi].messagesOut.front();
                   clients[wsi].messagesOut.pop();
                }
