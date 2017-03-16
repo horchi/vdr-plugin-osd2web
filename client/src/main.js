@@ -150,6 +150,7 @@ window.v = new Vue({
         isActive: false,
         maxLines: 0,
         osdOn: false,
+        hasChannelLogos: false,
         menuItems: [],
         menuItemsRight: [{
             label: '',
@@ -335,6 +336,7 @@ window.v = new Vue({
             // Globale Nachrichten verarbeiten
             this.$on("rolechange", (data) => {
                 this.isActive = data.role == 'active';
+                this.hasChannelLogos= data.havelogos == 1;
             })
 
 

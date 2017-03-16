@@ -2,8 +2,8 @@
     <div v-if="channel.channelid" class="uk-card uk-card-default uk-width-1-1">
         <div class="uk-card-header uk-text-center">
             <div class="uk-float-right o2vChannelCircle uk-alert-success">{{channel.channelnumber}}</div>                
-            <div class="uk-float-left">
-                <img :src="'http://keller:9999/data/channellogo?maxW=70&maxH=50&id=' + channel.channelid" />
+            <div v-if="$root.hasChannelLogos" class="uk-float-left">
+                <img :src="'/data/channellogo?name=' + channel.channelname" />
             </div>
             <div class="uk-float-left uk-margin-left uk-margin-right">
                 <h3 class="uk-card-title">{{channel.channelname}}</h3>
