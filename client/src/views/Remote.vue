@@ -42,10 +42,13 @@ export default {
         return { menuItem:{
             label: '',
             on:false,
-            hidden: false,
             icon: 'rss',
             func: function(navComp){
                this.on= !this.on;
+			   if (!navComp.$root.isActive){
+				  navComp.$root.$socket.reopen();
+			   	  //navComp.$root.$socket.open();  // Neue Verbindung aufmachen und so focus zurückholen
+			   }
             }
         }}
     },

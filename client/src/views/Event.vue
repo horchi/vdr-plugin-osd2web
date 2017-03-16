@@ -10,15 +10,51 @@
          <div class="uk-width-1-3 uk-panel uk-float-right">
             {{event.duration/60}} min</div>
        </div>
-       <div class="uk-panel uk-margin-top">
-          <img v-if="event.eventid" class="uk-align-left uk-margin-remove-adjacent" :src="'/data/eventimg?id=' + event.eventid + '&no=0'" alt="" />
+       <div v-if="event.epg2vdr" class="uk-panel uk-margin-top">
+          <img v-for="n in parseInt(event.epg2vdr.imagecount,10)" class="uk-align-left uk-margin-remove-adjacent" :src="'/data/eventimg?id=' + event.eventid + '&no=' + n" alt="" />
+          <p v-html="event.epg2vdr.longdescription"></p>
+       </div>
+       <hr class="uk-divider-icon" />
+       <div v___-else class="uk-panel uk-margin-top">
           <p v-show="description" v-html="description"></p>
        </div>
    </div>
 </template>
 
 <script>
+/* event.epg2vdr:
 
+            "imagecount",          //    int
+              "numrating",           //    int
+              "year",                //    ascii     10
+              "category",            //    ascii     50
+              "country",             //    ascii     50
+              "audio",               //    ascii     50
+
+              "txtrating",           //    ascii    100
+              "genre",               //    ascii    100
+              "flags",               //    ascii    100
+              "commentator",         //    ascii    200
+              "tipp",                //    ascii    250
+              "rating",              //    ascii    250
+              "moderator",           //    ascii    250
+              "music",               //    ascii    250
+              "screenplay",          //    ascii    500
+              "shortreview",         //    ascii    500
+
+              "guest",               //    text    1000
+              "producer",            //    text    1000
+              "camera",              //    text    1000
+              "director",            //    text    1000
+              "topic",               //    ascii   1000
+
+              "other",               //    text    2000
+              "shortdescription",    //    mtext   3000
+              "actor",               //    mtext   5000
+              "longdescription",     //    mtext  25000
+              "cntlongdescription",  //    MText  25000
+
+*/
 export default {
     name: 'o2vEvent',
     props: {

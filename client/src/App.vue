@@ -1,6 +1,6 @@
 <template>
 <div id="app-view">
-    <o2v-navigation v-if="$root.isActive" :items="$root.menuItems" :itemsRight="$root.menuItemsRight"></o2v-navigation>
+    <o2v-navigation v-if="!$root.isOnlyView" :items="$root.menuItems" :itemsRight="$root.menuItemsRight"></o2v-navigation>
     <o2c-statusmessage></o2c-statusmessage>
     <div class="uk-flex">
        <o2v-remote v-if="!$root.isOnlyView"></o2v-remote>

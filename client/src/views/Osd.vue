@@ -49,6 +49,9 @@ export default {
     created() {
         let menuItem= {
             label: '_O_SD',
+            isHidden: function(navComp){
+                return !navComp.$root.isActive
+            },
             key: 'menu'
         };
         this.$root.$data.menuItems.push(menuItem);

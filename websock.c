@@ -217,6 +217,7 @@ int cWebSock::serveFile(lws* wsi, const char* path)
       if      (strcmp(extension, ".png") == 0)   mime = "image/png";
       else if (strcmp(extension, ".jpg") == 0)   mime = "image/jpg";
       else if (strcmp(extension, ".gif") == 0)   mime = "image/gif";
+      else if (strcmp(extension, ".svg") == 0)   mime = "image/svg+xml";
       else if (strcmp(extension, ".html") == 0)  mime = "text/html";
       else if (strcmp(extension, ".css") == 0)   mime = "text/css";
    }

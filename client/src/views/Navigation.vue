@@ -1,16 +1,14 @@
 <template>
    <div id="topnav" style="width:100%">
       <nav class="uk-navbar-container" uk-navbar style="position:fixed; z-index:9999;width:100%;">
-          <!--a @click="show_level0= !show_level0" class="uk-navbar-toggle uk-visible-small"></a>
-          <ul class="uk-navbar-nav" :class="{'uk-hidden-small':!show_level0}">-->
         <div class="uk-navbar-left">
           <ul class="uk-navbar-nav">
-              <li v-for="item in items" @click="handleSelect(item)" v-if="!item.hidden" :class="{'uk-active':item.on}">
+              <li v-for="item in items" @click="handleSelect(item)" v-if="!isHidden(item)" :class="{'uk-active':item.on}">
                   <a v-html="renderLabel(item)"></a>
               </li>
           </ul>
         </div>
-        <div class="uk-navbar-right">
+        <div v-if="$root.isActive" class="uk-navbar-right">
           <ul class="uk-navbar-nav">
              <li v-for="item in itemsRight" @click="handleSelect(item)" :class="{'uk-active':item.on}">
                   <a v-html="renderLabel(item)"></a>
@@ -30,15 +28,17 @@ UIkit.use(Icons);
 export default {
     name: 'o2vNavigation',
     props: {
-      show_level0: true,
       'items': Array,
-      'itemsRight': Array,
+      'itemsRight': Array
     },
     methods: {
         checkHeight(){
            let topnav= document.getElementById('topnav');
            if (topnav)
             topnav.style.height= topnav.firstChild.offsetHeight + 'px';
+        },
+        isHidden(item){
+            return typeof item.isHidden == "function" ? item.isHidden.call(item, this) : item.isHidden;
         },
         handleSelect(item) {
             if (item) {
