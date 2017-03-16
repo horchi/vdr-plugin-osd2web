@@ -43,7 +43,7 @@ export default {
             label: '',
             on:false,
             hidden: false,
-            iconClass: 'uk-icon-calculator',
+            icon: 'rss',
             func: function(navComp){
                this.on= !this.on;
             }

@@ -1,7 +1,7 @@
 <template>
     <div v-show="title" id="osdCon">
         <div class="uk-panel-box-primary uk-panel-hover uk-padding-bottom-remove uk-padding-top-remove" @click="$root.sendKey('Back')">
-            <h3 class="uk-panel-title uk-margin-bottom-remove"><i v-if="!$root.isOnlyView" class="uk-icon-mail-reply-all"></i> {{ title }}</h3>
+            <h3 class="uk-panel-title uk-margin-bottom-remove"><i v-if="!$root.isOnlyView" uk-icon="icon: chevron-left"></i> {{ title }}</h3>
             <!--<ul v-if="pageCount" class="uk-pagination">
                 <li :class="{'uk-disabled': pageCurrent <= 0}" @click="$root.sendKey('Left')"><span><i class="uk-icon-angle-double-left"></i></span></li>
                 <li v-for="p in pageCount" :class="{'uk-active':p == pageCurrent}"><a>{{p}}</a></li>
@@ -47,18 +47,21 @@ export default {
         return getClearData();
     },
     created() {
-        this.$root.$data.menuItems.push({
+        let menuItem= {
             label: '_O_SD',
             key: 'menu'
-        });
+        };
+        this.$root.$data.menuItems.push(menuItem);
         this.$root.$on("clearmenu", (data) => {
            let clearData= getClearData();
            for (let key in clearData)
                 this[key]= clearData[key];
+            menuItem.on= false;
         });
         this.$root.$on("menu", (data) => {
             this.category = data.category;
             this.title = data.title;
+            menuItem.on= true;
         });
         this.$root.$on("scrollbar", (data) => {
             this.pageCount = parseInt(data.Total / this.$root.maxLines,10);

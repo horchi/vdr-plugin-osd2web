@@ -1,23 +1,32 @@
 <template>
    <div id="topnav" style="width:100%">
-      <nav class="uk-navbar" style="position:fixed; z-index:9999;width:100%;">
+      <nav class="uk-navbar-container" uk-navbar style="position:fixed; z-index:9999;width:100%;">
           <!--a @click="show_level0= !show_level0" class="uk-navbar-toggle uk-visible-small"></a>
           <ul class="uk-navbar-nav" :class="{'uk-hidden-small':!show_level0}">-->
+        <div class="uk-navbar-left">
           <ul class="uk-navbar-nav">
               <li v-for="item in items" @click="handleSelect(item)" v-if="!item.hidden" :class="{'uk-active':item.on}">
                   <a v-html="renderLabel(item)"></a>
               </li>
           </ul>
-          <ul class="uk-navbar-nav uk-navbar-flip">
+        </div>
+        <div class="uk-navbar-right">
+          <ul class="uk-navbar-nav">
              <li v-for="item in itemsRight" @click="handleSelect(item)" :class="{'uk-active':item.on}">
                   <a v-html="renderLabel(item)"></a>
              </li>
           </ul>
+        </div>
       </nav>
    </div>
 </template>
 
 <script>
+import UIkit from 'uikit';
+import Icons from 'uikit/dist/js/uikit-icons';
+
+UIkit.use(Icons);
+
 export default {
     name: 'o2vNavigation',
     props: {
@@ -47,11 +56,11 @@ export default {
             });
             if (key)
                 this.keys[key] = item;
-            return (item.iconClass ? '<i class="' + item.iconClass + '"></i>' : '') + label;
+            return (item.icon ? '<span uk-icon="icon: ' + item.icon + '"></span>' : '') + label;
         }
     },
     mounted() {
-        this.checkHeight();
+        window.setTimeout(this.checkHeight,300);
     },
     updated() {
         this.checkHeight();

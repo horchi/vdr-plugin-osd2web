@@ -4,10 +4,10 @@
             <tr v-for="(row, rowIndex) in rows" :key="rowIndex" :class="{'uk-form-success': rowIndex == textmenucurrent}" @click="row.selectable && doAction(rowIndex)">
                 <td v-for="(col, index) in row.cols" :key="index" :class="{'uk-placeholder': rowIndex == textmenucurrent && index== 1 && canEdit == 1}">{{col}}</td>
                 <td v-if="row.selectable && canEdit==1" class="uk-button-group">
-                    <a class="uk-button" @click.stop="doAction(rowIndex,'Left')"><i class="uk-icon-caret-square-o-left"></i></a>
-                    <a v-show="row.textEdit" class="uk-button" @click.stop="$root.sendKey('Up')"><i class="uk-icon-caret-square-o-up"></i></a>
-                    <a v-show="row.textEdit" class="uk-button" @click.stop="$root.sendKey('Down')"><i class="uk-icon-caret-square-o-down"></i></a>
-                    <a class="uk-button" @click.stop="doAction(rowIndex,'Right')"><i class="uk-icon-caret-square-o-right"></i></a>
+                    <a class="uk-button" @click.stop="doAction(rowIndex,'Left')"><i uk-icon="icon:triangle-left"></i></a>
+                    <a v-show="row.textEdit" class="uk-button" @click.stop="$root.sendKey('Up')"><i uk-icon="icon:triangle-up"></i></a>
+                    <a v-show="row.textEdit" class="uk-button" @click.stop="$root.sendKey('Down')"><i uk-icon="icon:triangle-down"></i></a>
+                    <a class="uk-button" @click.stop="doAction(rowIndex,'Right')"><i uk-icon="icon:triangle-right"></i></a>
                 </td>
             </tr>
         </tbody>

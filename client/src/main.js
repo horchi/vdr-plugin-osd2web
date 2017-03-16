@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
-import "../vuikit-theme/dist/css/uikit.css"
+import "uikit/dist/css/uikit.min.css"
+
 /*
 enum ObjectShape
      {
@@ -153,7 +154,7 @@ window.v = new Vue({
         menuItemsRight: [{
             label: '',
             on: false,
-            iconClass: 'uk-icon-desktop',
+            icon: 'tv',
             func: function (navComp) {
                 this.on = !this.on;
                 navComp.$root.$emit("send", {
@@ -315,6 +316,7 @@ window.v = new Vue({
                     console.log(e);
                 }
             }
+//        UIkit.notification({message: 'Copied!', pos: 'bottom-right'}); 
 
             // Nachrichten/Anfragen der Module an den Server weiterleiten
             this.$on("send", (JSONobj) => {

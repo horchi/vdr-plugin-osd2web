@@ -2,9 +2,9 @@
 <div id="app-view">
     <o2v-navigation v-if="$root.isActive" :items="$root.menuItems" :itemsRight="$root.menuItemsRight"></o2v-navigation>
     <o2c-statusmessage></o2c-statusmessage>
-    <div class="uk-flex uk-flex-wrap-space-around">
+    <div class="uk-flex">
        <o2v-remote v-if="!$root.isOnlyView"></o2v-remote>
-       <div id="o2vContainer" class="uk-overflow-container uk-flex-space-between uk-width-1">
+       <div id="o2vContainer" class="uk-overflow-container uk-width-1">
           <o2v-osd name="osd"></o2v-osd>
           <div id="o2vContent" class="uk-width-1-1">
              <o2c-actual></o2c-actual>
@@ -31,7 +31,3 @@ export default {
     }
 }
 </script>
-
-<style>
-   
-</style>
