@@ -144,7 +144,7 @@ class cWebSock : public cOsdService
          }
       };
 
-      cWebSock(const char* aWebPath, const char* aEpgImagePath);
+      cWebSock(const char* aCfgPath, const char* aEpgImagePath);
       virtual ~cWebSock();
 
       int init(int aPort, int aTimeout);
@@ -164,13 +164,14 @@ class cWebSock : public cOsdService
       static void atLogin(lws* wsi);
       static int getClientCount();
 
-      static void pushMessage(const char* p);
+      static void pushMessage(const char* p, lws* wsi = 0);
 
    private:
 
       static int serveFile(lws* wsi, const char* path);
       static int dispatchDataRequest(lws* wsi, const char* url);
       static int doEventImg(lws* wsi);
+      static int doChannelLogo(lws* wsi);
 
       static const char* methodOf(const char* url);
       static const char* getStrParameter(lws* wsi, const char* name, const char* def = 0);
@@ -184,7 +185,7 @@ class cWebSock : public cOsdService
 
       // statics
 
-      static char* webPath;
+      static char* cfgPath;
       static char* epgImagePath;
       static int timeout;
       static void* activeClient;
@@ -251,7 +252,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
       // static message interface to web thread
 
-      static int pushMessage(json_t* obj, const char* title);
+      static int pushMessage(json_t* obj, const char* title, long client = 0);
 
       static std::queue<std::string> messagesIn;
       static std::map<int,CategoryConfig> menuMaxLines;
@@ -273,6 +274,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       void updatePresentFollowing();
 
       int dispatchClientRequest();
+      int performLogin(json_t* oObject);
       int performPing();
       int performFocusRequest(json_t* oRequest, int focus);
       int performKeyPressRequest(json_t* oRequest);

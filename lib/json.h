@@ -30,9 +30,10 @@ int getFieldFromJson(json_t* obj, cDbRow* row, const char* fname, const char* ex
 
 const char* getStringFromJson(json_t* obj, const char* name, const char* def = 0);
 int getIntFromJson(json_t* obj, const char* name, int def = na);
+long getLongFromJson(json_t* obj, const char* name, long def = na);
 
 int addToJson(json_t* obj, const char* name, const char* value, const char* def = "");
-int addToJson(json_t* obj, const char* name, int value);
+int addToJson(json_t* obj, const char* name, long value);
 int addToJson(json_t* obj, const char* name, json_t* o);
 
 #endif // USEJSON
