@@ -72,7 +72,45 @@ void cUpdate::Recording(const cDevice* Device, const char* Name,
 void cUpdate::Replaying(const cControl* Control, const char* Name,
                         const char* FileName, bool On)
 {
-   // #TODO - to be implemented
+   tell(0, "Replaying: Replay '%s', Name '%s', FileName '%s'",
+        On ? "Start" : "Stop" , notNull(Name), FileName);
+
+   if (!On)
+      return ;
+
+   // Replaying: Replay 'Start', Name 'Fifty Shades of Grey', FileName '/tank/video/Fifty_Shades_of_Grey/2015-12-06.20.13.57-0.rec'
+   // Replaying: Replay 'Stop',  Name '(null)',               FileName '/tank/video/Fifty_Shades_of_Grey/2015-12-06.20.13.57-0.rec'
+
+   json_t* oRecording = json_object();
+
+#if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
+   const cRecordings* recordings;
+   cStateKey stateKey;
+
+   if (!(recordings = cRecordings::GetRecordingsRead(stateKey, 500)))
+      tell(0, "Can't get lock for Recordings, retrying later");
+#else
+   const cRecordings* recordings = &Recordings;
+#endif
+
+   const cRecording* recording = recordings ? recordings->GetByName(FileName) : 0;
+
+   if (recording)
+   {
+      recording2Json(oRecording, recording);
+   }
+   else
+   {
+      addToJson(oRecording, "name", Name);
+      addToJson(oRecording, "filename", FileName);
+   }
+
+   cUpdate::pushMessage(oRecording, "replay");
+
+#if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
+   if (recordings)
+      stateKey.Remove();
+#endif
 }
 
 //***************************************************************************

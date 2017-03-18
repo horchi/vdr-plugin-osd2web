@@ -264,7 +264,7 @@ bool cSkinOsd2WebDisplayMenu::SetItemChannel(const cChannel* Channel, int Index,
    return true;
 }
 
-bool cSkinOsd2WebDisplayMenu::SetItemRecording(const cRecording *Recording, int Index, bool Current,
+bool cSkinOsd2WebDisplayMenu::SetItemRecording(const cRecording* Recording, int Index, bool Current,
                                                bool Selectable, int Level, int Total, int New)
 {
    tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetItemRecording()");
@@ -288,6 +288,16 @@ bool cSkinOsd2WebDisplayMenu::SetItemRecording(const cRecording *Recording, int 
    cUpdate::pushMessage(oMenuItem, "recordingitem");
 
    return true;
+}
+
+void cSkinOsd2WebDisplayMenu::SetRecording(const cRecording *Recording)
+{
+   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetRecording()");
+
+   json_t* oRecording = json_object();
+   recording2Json(oRecording, Recording);
+
+   cUpdate::pushMessage(oRecording, "recording");
 }
 
 bool cSkinOsd2WebDisplayMenu::SetItemTimer(const cTimer *Timer, int Index, bool Current, bool Selectable)
@@ -332,12 +342,6 @@ void cSkinOsd2WebDisplayMenu::SetEvent(const cEvent *Event)
    event2Json(oEvent, Event, 0, (eTimerMatch)na, no, cOsdService::osLarge);
 
    cUpdate::pushMessage(oEvent, "event");
-}
-
-void cSkinOsd2WebDisplayMenu::SetRecording(const cRecording *Recording)
-{
-   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetRecording()");
-   // #TODO !!
 }
 
 void cSkinOsd2WebDisplayMenu::SetText(const char *Text, bool FixedFont)

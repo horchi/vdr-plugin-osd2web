@@ -51,7 +51,10 @@ int event2Json(json_t* obj, const cEvent* event, const cChannel* channel,
    }
 
    addToJson(obj, "eventid", event->EventID());
-   addToJson(obj, "channelid", event->ChannelID().ToString());
+
+   if (event->Schedule())
+      addToJson(obj, "channelid", event->ChannelID().ToString());
+
    addToJson(obj, "title", event->Title());
    addToJson(obj, "shorttext", event->ShortText());
    addToJson(obj, "starttime", event->StartTime());
@@ -68,16 +71,28 @@ int event2Json(json_t* obj, const cEvent* event, const cChannel* channel,
 
    if (extendetEvent)
    {
+      int count = 0;
       const std::map<std::string,std::string>* epg2vdrData = extendetEvent->getValues();
       json_t* oEpg2Vdr = json_object();
 
       for (auto it = epg2vdrData->begin(); it != epg2vdrData->end(); it++)
       {
-         if (!isBigField(it->first.c_str()) || current || shape & cOsdService::osLarge)
+         // unfortunately a special handling needed
+         //   for epg2vdr events the schedule object is not set
+         //   there for the 'channelid' can't added above
+
+         if (it->first == "channelid")
+            addToJson(obj, it->first.c_str(), it->second.c_str());
+
+         else if (!isBigField(it->first.c_str()) || current || shape & cOsdService::osLarge)
+         {
+            count++;
             addToJson(oEpg2Vdr, it->first.c_str(), it->second.c_str());
+         }
       }
 
-      addToJson(obj, "epg2vdr", oEpg2Vdr);
+      if (count)
+         addToJson(obj, "epg2vdr", oEpg2Vdr);
    }
    else
    {
@@ -120,7 +135,7 @@ int event2Json(json_t* obj, const cEvent* event, const cChannel* channel,
       const cTimers* timers;
       cStateKey stateKey;
 
-      if (timers = cTimers::GetTimersRead(stateKey, 1000))
+      if ((timers = cTimers::GetTimersRead(stateKey, 1000)))
       {
          getTimerMatch(timers, event, &timerMatch);
          stateKey.Remove();
@@ -232,6 +247,22 @@ int recording2Json(json_t* obj, const cRecording* recording)
    addToJson(obj, "isnew", recording->IsNew());
    addToJson(obj, "isedited", recording->IsEdited());
    addToJson(obj, "hasmarks", ((cRecording*)recording)->HasMarks()); // cast due to vdr 2.2.0 ' const' issue
+
+   if (const cRecordingInfo* info = recording->Info())
+   {
+      json_t* oInfo = json_object();
+      json_t* oEvent = json_object();
+
+      addToJson(oInfo, "channelid", info->ChannelID().ToString());
+      addToJson(oInfo, "channelname", info->ChannelName());
+      addToJson(oInfo, "framespersecond", info->FramesPerSecond());
+      addToJson(oInfo, "aux", info->Aux());
+
+      event2Json(oEvent, info->GetEvent());
+
+      addToJson(obj, "info", oInfo);
+      addToJson(obj, "event", oEvent);
+   }
 
    return success;
 }
