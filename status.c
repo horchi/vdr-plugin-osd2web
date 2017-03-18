@@ -90,7 +90,7 @@ void cUpdate::Replaying(const cControl* Control, const char* Name,
    if (!(recordings = cRecordings::GetRecordingsRead(stateKey, 500)))
       tell(0, "Can't get lock for Recordings, retrying later");
 #else
-   const cRecordings* recordings = &Recordings;
+   cRecordings* recordings = &Recordings;
 #endif
 
    const cRecording* recording = recordings ? recordings->GetByName(FileName) : 0;

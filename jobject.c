@@ -96,7 +96,7 @@ int event2Json(json_t* obj, const cEvent* event, const cChannel* channel,
    }
    else
    {
-      tell(0, "Info: Cast to cEpgEvent_Interface_V1 failed - aussume epg2vdr not loaded");
+      tell(0, "Debug:  Cast to cEpgEvent_Interface_V1 failed - aussume epg2vdr not loaded");
    }
 
    if (current || shape & cOsdService::osLarge)
