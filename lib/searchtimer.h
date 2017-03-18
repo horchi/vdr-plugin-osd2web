@@ -65,9 +65,9 @@ class cSearchTimer
       cDbStatement* selectDoneTimer;
       cDbStatement* selectActiveSearchtimers;
       cDbStatement* selectSearchtimerMaxModSp;
-      cDbStatement* selectActiveVdrs;
       cDbStatement* selectAllTimer;
       cDbStatement* selectTimerByEvent;
+      // cDbStatement* selectActiveVdrs;
       // cDbStatement* selectConflictingTimers;
 
       cDbValue startValue;

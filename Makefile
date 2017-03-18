@@ -84,11 +84,12 @@ hlib:
 ### Implicit rules:
 
 %.o: %.c
-	$(CXX) $(CXXFLAGS) -c $(DEFINES) $(INCLUDES) -o $@ $<
+	$(doCompile) $(INCLUDES) -o $@ $<
+#	$(CXX) $(CXXFLAGS) -c $(DEFINES) $(INCLUDES) -o $@ $<
 
 ### Dependencies:
 
-MAKEDEP = $(CXX) -MM -MG
+MAKEDEP = $(CC) -MM -MG
 DEPFILE = .dependencies
 $(DEPFILE): Makefile
 	$(MAKEDEP) $(CXXFLAGS) $(DEFINES) $(INCLUDES) $(OBJS:%.o=%.c) > $@
@@ -124,7 +125,7 @@ install-i18n: $(I18Nmsgs)
 ### Targets:
 
 $(SOFILE): hlib $(OBJS)
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) $(LIBS) -o $@
+	$(CC) $(LDFLAGS) -shared $(OBJS) $(LIBS) -o $@
 
 install-lib: $(SOFILE)
 	install -D -m644 $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)

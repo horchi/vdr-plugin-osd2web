@@ -66,7 +66,7 @@ int event2Json(json_t* obj, const cEvent* event, const cChannel* channel,
 
    const cEpgEvent_Interface_V1* extendetEvent = dynamic_cast<const cEpgEvent_Interface_V1*>((cEvent*)event);
 
-   if (extendetEvent)
+   if (false && extendetEvent)
    {
       const std::map<std::string,std::string>* epg2vdrData = extendetEvent->getValues();
       json_t* oEpg2Vdr = json_object();
@@ -89,17 +89,44 @@ int event2Json(json_t* obj, const cEvent* event, const cChannel* channel,
       addToJson(obj, "description", event->Description());
    }
 
-   // #TODO add components
-   // const cComponents *Components(void) const { return components; }
+   // components
+
+   const cComponents* components = event->Components();
+
+   if (components && components->NumComponents())
+   {
+      json_t* oComponents = json_array();
+
+      for (int i = 0; i < components->NumComponents(); i++)
+      {
+         json_t* oComp = json_object();
+
+         addToJson(oComp, "stream", components->Component(i)->stream);
+         addToJson(oComp, "type", components->Component(i)->type);
+         addToJson(oComp, "language", components->Component(i)->language);
+         addToJson(oComp, "description", components->Component(i)->description);
+
+         json_array_append_new(oComponents, oComp);
+      }
+
+      addToJson(obj, "components", oComponents);
+   }
 
    // timer match ..
 
    if (timerMatch == (eTimerMatch)na)
    {
 #if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
-      // #TODO  - add timeout for timers lock
-      cTimersLock timersLock(false);
-      getTimerMatch(timersLock.Timers(), event, &timerMatch);
+      const cTimers* timers;
+      cStateKey stateKey;
+
+      if (timers = cTimers::GetTimersRead(stateKey, 1000))
+      {
+         getTimerMatch(timers, event, &timerMatch);
+         stateKey.Remove();
+      }
+      else
+         tell(0, "Can't get lock for updateTimers()");
 #else
       getTimerMatch(&Timers, event, &timerMatch);
 #endif

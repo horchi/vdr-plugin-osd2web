@@ -59,9 +59,13 @@ void cUpdate::Replaying(const cControl* Control, const char* Name,
 // Timer Change
 //***************************************************************************
 
-void cUpdate::TimerChange(const cTimer *Timer, eTimerChange Change)
+void cUpdate::TimerChange(const cTimer* Timer, eTimerChange Change)
 {
-   // needed ?!
+   // update timers here only without epg2vdr
+   //   with epg2vdr it is updated by a service interface trigger
+
+   if (!epg2vdrIsLoaded)
+      updateTimers();
 }
 
 //***************************************************************************
@@ -149,7 +153,7 @@ void cUpdate::updatePresentFollowing()
 
          // we need a trigger on start of following event
 
-         nextPresentUpdateAt = schedule->GetFollowingEvent()->StartTime();
+         nextPresentUpdateAt = following ? following->StartTime() : time(0) + 10;
 
          if (ownPresent)     { delete present;   present = 0; }
          if (ownFollowing)   { delete following; following = 0; }
@@ -171,6 +175,8 @@ void cUpdate::updateTimers()
 
    if (pEpg2Vdr)
    {
+      epg2vdrIsLoaded = yes;
+
       cEpgTimer_Service_V1 data;
 
       if (pEpg2Vdr->Service(EPG2VDR_TIMER_SERVICE, &data))
@@ -220,6 +226,9 @@ void cUpdate::updateTimers()
          json_array_append_new(oTimers, oTimer);
       }
 
+      stateKey.Remove();
       cUpdate::pushMessage(oTimers, "timers");
    }
+
+   triggerTimerUpdate = no;
 }

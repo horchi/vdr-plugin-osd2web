@@ -11,7 +11,7 @@
  **/
 
 #include "update.h"
-#include "osd2web.h"   // #TODO remove here
+#include "config.h"
 
 char* cWebSock::msgBuffer = 0;
 int cWebSock::msgBufferSize = 0;
@@ -63,7 +63,7 @@ int cWebSock::init(int aPort, int aTimeout)
    protocols[1].name = "osd2vdr";
    protocols[1].callback = callbackOsd2Vdr;
    protocols[1].per_session_data_size = 0;
-   protocols[1].rx_buffer_size = 40*1024;
+   protocols[1].rx_buffer_size = 80*1024;
 
    protocols[2].name = 0;
    protocols[2].callback = 0;
@@ -418,18 +418,6 @@ void cWebSock::atLogin(lws* wsi)
 
    cUpdate::messagesIn.push(p);
    free(p);
-
-   // // #TODO move to cUpdate::performLogin() ?  =>
-
-   // if (clients[wsi].type == ctInteractive)
-   // {
-   //    if (activeClient)
-   //       clients[activeClient].pushMessage("{ \"event\" : \"rolechange\", \"object\" : { \"role\" : \"passive\" } }");
-
-   //    clients[wsi].pushMessage("{ \"event\" : \"rolechange\", \"object\" : { \"role\" : \"active\" } }");
-   // }
-
-   // // <=
 }
 
 //***************************************************************************
@@ -536,7 +524,7 @@ int cWebSock::doEventImg(lws* wsi)
    int result;
    char* path = 0;
    int id = getIntParameter(wsi, "id=");
-   int no = getIntParameter(wsi, "no=");
+   int no = getIntParameter(wsi, "no=") -1;
 
    asprintf(&path, "%s/%d_%d.jpg", epgImagePath, id, no);
    tell(0, "DEBUG: Image for event (%d/%d) was requested [%s]", id, no, path);

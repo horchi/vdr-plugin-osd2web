@@ -18,10 +18,9 @@
 #include <vdr/plugin.h>
 
 #include "update.h"
-#include "osd2web.h"   // #TODO remove here
+#include "config.h"
 
 std::queue<std::string> cUpdate::messagesIn;
-
 std::map<int,cUpdate::CategoryConfig> cUpdate::menuMaxLines;
 
 //***************************************************************************
@@ -69,6 +68,8 @@ cOsdService::Event cOsdService::toEvent(const char* name)
 
 cUpdate::cUpdate()
 {
+   triggerTimerUpdate = no;
+   epg2vdrIsLoaded = no;
    actualClientCount = 0;
    skinMode = smAuto;
    active = no;
@@ -141,6 +142,9 @@ void cUpdate::atMeanwhile()
 
    if (nextPresentUpdateAt < time(0))
       updatePresentFollowing();
+
+   if (triggerTimerUpdate)
+      updateTimers();
 
    if (!webSock->getClientCount())
    {

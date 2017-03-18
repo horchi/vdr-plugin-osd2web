@@ -17,6 +17,7 @@
 
 #include "osd2web.h"
 #include "service.h"
+#include "config.h"
 
 const char* logPrefix = LOG_PREFIX;
 
@@ -106,10 +107,12 @@ bool cPluginOsd2Web::Service(const char* id, void* data)
    if (strcmp(id, OSD2WEB_PORT_SERVICE) == 0)
    {
       Osd2Web_Port_v1_0* req = (Osd2Web_Port_v1_0*)data;
-
       req->webPort = config.webPort;
-
       return true;
+   }
+   else if (strcmp(id, EPG2VDR_TIMER_UPDATED) == 0)
+   {
+      update->triggerTimerUpdate = yes;
    }
 
    return false;

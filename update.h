@@ -252,10 +252,13 @@ class cUpdate : public cStatus, cThread, public cOsdService
       bool Start()        { return cThread::Start(); }
       void Stop();
 
+      // public data
+
+      int triggerTimerUpdate;
+
       // static message interface to web thread
 
       static int pushMessage(json_t* obj, const char* title, long client = 0);
-
       static std::queue<std::string> messagesIn;
       static std::map<int,CategoryConfig> menuMaxLines;
 
@@ -283,7 +286,6 @@ class cUpdate : public cStatus, cThread, public cOsdService
       int performKeyPressRequest(json_t* oRequest);
       int performChannelsRequest(json_t* oRequest);
       int performMaxLineRequest(json_t* oRequest);
-      // int cleanupMessages();
 
       int isDefault(const char* name = SKIN_NAME)      { return strcmp(Skins.Current()->Name(), name) == 0; }
       int isSkinAttached(const char* name = SKIN_NAME) { return Skins.Current() && strcmp(Skins.Current()->Name(), name) == 0; }
@@ -300,6 +302,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
       // ...
 
+      int epg2vdrIsLoaded;
       cWebSock* webSock;
       bool active;
       SkinMode skinMode;

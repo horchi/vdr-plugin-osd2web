@@ -34,30 +34,6 @@ class cPluginOsd2Web;
 static const char* DESCRIPTION = trNOOP("osd2web plugin");
 
 //***************************************************************************
-// Config
-//***************************************************************************
-
-struct cOsd2WebConfig : public cConfigBase
-{
-   public:
-
-      cOsd2WebConfig();
-      ~cOsd2WebConfig();
-
-      void setLogoSuffix(const char* s)   { free(logoSuffix); logoSuffix = strdup(s); }
-      void setEpgImagePath(const char* s) { free(epgImagePath); epgImagePath = strdup(s); }
-
-      int webPort;
-      char* epgImagePath;
-      char* confPath;
-      char* logoSuffix;
-      int logoNotLower;
-      int logoById;
-};
-
-extern cOsd2WebConfig config;
-
-//***************************************************************************
 // Class cPluginOsd2Web
 //***************************************************************************
 
@@ -89,7 +65,6 @@ class cPluginOsd2Web : public cPlugin
 
       cOsd2WebSkin* skin;
       cUpdate* update;
-      int webPort;
 };
 
 //***************************************************************************

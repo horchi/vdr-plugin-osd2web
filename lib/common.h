@@ -132,7 +132,7 @@ int gunzip(MemoryStruct* zippedData, MemoryStruct* unzippedData);
 // MemoryStruct
 //***************************************************************************
 
-struct MemoryStruct
+class MemoryStruct
 {
    public:
 
