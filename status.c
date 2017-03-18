@@ -96,6 +96,18 @@ void cUpdate::updatePresentFollowing()
       const cSchedules* schedules = (cSchedules*)cSchedules::Schedules(schedulesLock);
 #endif
 
+      json_t* obj = json_object();
+      json_t* oStreamInfo = json_object();
+      json_t* oChannel = json_object();
+      json_t* oPresent = json_object();
+      json_t* oFollowing = json_object();
+
+      channel2Json(oChannel, channel);
+      stream2Json(oStreamInfo, channel);
+
+      json_object_set_new(obj, "channel", oChannel);
+      json_object_set_new(obj, "streaminfo", oStreamInfo);
+
       const cSchedule* schedule = schedules ? schedules->GetSchedule(channel->GetChannelID()) : 0;
 
       if (schedule)
@@ -104,12 +116,6 @@ void cUpdate::updatePresentFollowing()
          int ownFollowing = no;
          const cEvent* present = schedule->GetPresentEvent();
          const cEvent* following = schedule->GetFollowingEvent();
-
-         json_t* obj = json_object();
-         json_t* oPresent = json_object();
-         json_t* oFollowing = json_object();
-         json_t* oStreamInfo = json_object();
-         json_t* oChannel = json_object();
 
          cPlugin* pEpg2Vdr = cPluginManager::GetPlugin("epg2vdr");
 
@@ -138,18 +144,8 @@ void cUpdate::updatePresentFollowing()
                tell(0, "EPG2VDR_EVENT_SERVICE failed");
          }
 
-         channel2Json(oChannel, channel);
-         stream2Json(oStreamInfo, channel);
-
          event2Json(oPresent, present, 0, (eTimerMatch)na, no, cOsdService::osLarge);
          event2Json(oFollowing, following, 0, (eTimerMatch)na, no, cOsdService::osLarge);
-
-         json_object_set_new(obj, "channel", oChannel);
-         json_object_set_new(obj, "streaminfo", oStreamInfo);
-         json_object_set_new(obj, "present", oPresent);
-         json_object_set_new(obj, "following", oFollowing);
-
-         cUpdate::pushMessage(obj, "actual");
 
          // we need a trigger on start of following event
 
@@ -159,7 +155,15 @@ void cUpdate::updatePresentFollowing()
          if (ownFollowing)   { delete following; following = 0; }
       }
       else
+      {
+         nextPresentUpdateAt = time(0) + 60;
          tell(0, "Info: Can't get schedules");
+      }
+
+      json_object_set_new(obj, "present", oPresent);
+      json_object_set_new(obj, "following", oFollowing);
+
+      cUpdate::pushMessage(obj, "actual");
    }
 }
 
