@@ -226,7 +226,9 @@ void cUpdate::updateTimers()
          json_array_append_new(oTimers, oTimer);
       }
 
+#if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
       stateKey.Remove();
+#endif
       cUpdate::pushMessage(oTimers, "timers");
    }
 

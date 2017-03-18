@@ -66,7 +66,7 @@ int event2Json(json_t* obj, const cEvent* event, const cChannel* channel,
 
    const cEpgEvent_Interface_V1* extendetEvent = dynamic_cast<const cEpgEvent_Interface_V1*>((cEvent*)event);
 
-   if (false && extendetEvent)
+   if (extendetEvent)
    {
       const std::map<std::string,std::string>* epg2vdrData = extendetEvent->getValues();
       json_t* oEpg2Vdr = json_object();
