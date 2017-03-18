@@ -269,6 +269,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
       // status interface
 
+      virtual void OsdProgramme(time_t PresentTime, const char *PresentTitle, const char *PresentSubtitle, time_t FollowingTime, const char *FollowingTitle, const char *FollowingSubtitle);
       virtual void ChannelSwitch(const cDevice* Device, int ChannelNumber, bool LiveView);
       virtual void Replaying(const cControl *Control, const char *Name, const char *FileName, bool On);
       virtual void Recording(const cDevice *Device, const char *Name, const char *FileName, bool On);
@@ -293,6 +294,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       // osd status
 
       int currentChannelNr;
+      int haveActualEpg;
 
       // trigger
 

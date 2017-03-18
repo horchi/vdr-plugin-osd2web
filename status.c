@@ -39,6 +39,26 @@ void cUpdate::ChannelSwitch(const cDevice* device, int channelNumber, bool liveV
 // Recording
 //***************************************************************************
 
+void cUpdate::OsdProgramme(time_t PresentTime, const char* PresentTitle,
+                           const char* PresentSubtitle, time_t FollowingTime,
+                           const char* FollowingTitle, const char* FollowingSubtitle)
+{
+   // haveActualEpg is NOT set if the epg not avalible at channelswich
+   //   somtimes the epg is loaded later ...
+
+   if (!haveActualEpg && (!isEmpty(PresentTitle) || !isEmpty(FollowingTitle)))
+   {
+      tell(0, "OsdProgramme: PresentTitle '%s', FollowingTitle '%s'",
+           PresentTitle, FollowingTitle);
+
+      updatePresentFollowing();
+   }
+}
+
+//***************************************************************************
+// Recording
+//***************************************************************************
+
 void cUpdate::Recording(const cDevice* Device, const char* Name,
                         const char* FileName, bool On)
 {
@@ -76,6 +96,8 @@ void cUpdate::updatePresentFollowing()
 {
    if (!currentChannelNr)
       return;
+
+   haveActualEpg = no;
 
 #if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
    LOCK_CHANNELS_READ;
@@ -116,7 +138,6 @@ void cUpdate::updatePresentFollowing()
          int ownFollowing = no;
          const cEvent* present = schedule->GetPresentEvent();
          const cEvent* following = schedule->GetFollowingEvent();
-
          cPlugin* pEpg2Vdr = cPluginManager::GetPlugin("epg2vdr");
 
          if (pEpg2Vdr)
@@ -143,6 +164,8 @@ void cUpdate::updatePresentFollowing()
             else
                tell(0, "EPG2VDR_EVENT_SERVICE failed");
          }
+
+         haveActualEpg = present != 0;
 
          event2Json(oPresent, present, 0, (eTimerMatch)na, no, cOsdService::osLarge);
          event2Json(oFollowing, following, 0, (eTimerMatch)na, no, cOsdService::osLarge);

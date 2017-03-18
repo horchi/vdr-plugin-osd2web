@@ -74,6 +74,7 @@ cUpdate::cUpdate()
    skinMode = smAuto;
    active = no;
    currentChannelNr = 0;
+   haveActualEpg = no;
    pingTime = 60;                      // timeout
    nextPing = time(0);
    nextPresentUpdateAt = time(0);
