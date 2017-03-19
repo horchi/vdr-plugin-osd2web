@@ -8,10 +8,10 @@
             {{ $root.formatDateTime(event.starttime)}}&nbsp;-&nbsp;{{$root.formatTime(event.endtime)}}
          </div>
          <div class="uk-width-1-3 uk-panel uk-float-right">
-            {{event.duration/60}} min</div>
+            {{parseInt(event.duration/60,10)}} min</div>
        </div>
        <div v-if="event.epg2vdr" class="uk-panel uk-margin-top">
-          <img v-for="n in parseInt(event.epg2vdr.imagecount,10)" class="uk-align-left uk-margin-remove-adjacent" :src="'/data/eventimg?id=' + event.eventid + '&no=' + n" alt="" />
+          <img v-for="n in images" class="uk-align-left uk-margin-remove-adjacent" :src="'/data/eventimg?id=' + event.eventid + '&no=' + (n-1)" alt="" />
           <p v-html="event.epg2vdr.longdescription"></p>
        </div>
        <hr class="uk-divider-icon" />
@@ -77,6 +77,10 @@ export default {
              },60000);
          }
          return Math.max(parseInt((this.now - this.event.starttime) / this.event.duration * 100,10),0);
+       },
+       images: function(){
+         let cnt= parseInt(this.event.epg2vdr.imagecount, 10);
+         return isNaN(cnt) ? 0 : cnt;
        }
     }
 }
