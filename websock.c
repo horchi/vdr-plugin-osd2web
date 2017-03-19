@@ -524,7 +524,7 @@ int cWebSock::doEventImg(lws* wsi)
    int result;
    char* path = 0;
    int id = getIntParameter(wsi, "id=");
-   int no = getIntParameter(wsi, "no=") -1;
+   int no = getIntParameter(wsi, "no=");
 
    asprintf(&path, "%s/%d_%d.jpg", epgImagePath, id, no);
    tell(0, "DEBUG: Image for event (%d/%d) was requested [%s]", id, no, path);
