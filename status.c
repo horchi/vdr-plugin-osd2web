@@ -112,7 +112,7 @@ void cUpdate::Replaying(const cControl* Control, const char* Name,
       int total, current, speed;
       bool play, forward;
 
-      if (Control->GetReplayMode(play, forward, speed))
+      if (((cControl*)Control)->GetReplayMode(play, forward, speed))
       {
          addToJson(oControl, "play", play);
          addToJson(oControl, "speed", speed);
