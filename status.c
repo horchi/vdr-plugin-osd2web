@@ -112,14 +112,14 @@ void cUpdate::Replaying(const cControl* Control, const char* Name,
       int total, current, speed;
       bool play, forward;
 
-      if (((cControl*)Control)->GetReplayMode(play, forward, speed))
+      if (((cControl*)Control)->GetReplayMode(play, forward, speed)) // type cast only for vdr 2.2.0 needed :(
       {
          addToJson(oControl, "play", play);
          addToJson(oControl, "speed", speed);
          addToJson(oControl, "forward", forward);
       }
 
-      if (Control->GetIndex(current, total))
+      if (((cControl*)Control)->GetIndex(current, total)) // type cast only for vdr 2.2.0 needed :(
       {
          addToJson(oControl, "current", current);
          addToJson(oControl, "total", total);
