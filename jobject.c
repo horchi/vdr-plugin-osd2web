@@ -22,14 +22,9 @@
 
 int isBigField(const char* name)
 {
-   if (strstr(name, "description"))
-      return yes;
-
-   if (strcmp(name, "actor") == 0)
-      return yes;
-
-   if (strcmp(name, "other") == 0)
-      return yes;
+   if (strstr(name, "description"))  return yes;
+   if (strcmp(name, "actor") == 0)   return yes;
+   if (strcmp(name, "other") == 0)   return yes;
 
    return no;
 }

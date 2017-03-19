@@ -62,10 +62,13 @@ void cUpdate::OsdProgramme(time_t PresentTime, const char* PresentTitle,
 void cUpdate::Recording(const cDevice* Device, const char* Name,
                         const char* FileName, bool On)
 {
+/*
+  not needed at oll - since 'timers' support all needed data
+
    tell(0, "Recording: Recording '%s', Name '%s', FileName '%s'",
         On ? "Start" : "Stop" , notNull(Name), FileName);
 
-   // #TODO - to be implemented finally ... add loookup of recording ..
+   // to be implemented finally ... add loookup of recording ..
 
    json_t* oRecording = json_object();
 
@@ -74,6 +77,7 @@ void cUpdate::Recording(const cDevice* Device, const char* Name,
    addToJson(oRecording, "filename", FileName);
 
    cUpdate::pushMessage(oRecording, "recording");
+*/
 }
 
 //***************************************************************************
@@ -355,4 +359,14 @@ void cUpdate::updateControl()
    addToJson(oControl, "total", (int)(total / activeControlFps));
 
    cUpdate::pushMessage(oControl, "replaycontrol");
+}
+
+//***************************************************************************
+// Update Custom Data
+//***************************************************************************
+
+void cUpdate::updateCustomData()
+{
+
+
 }

@@ -247,6 +247,10 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
       int init(const char* dev, int port, int startDetached);
 
+      int initFileService();
+      int exitFileService();
+      int checkFileService();
+
       // thread stuff
 
       bool Start()        { return cThread::Start(); }
@@ -280,6 +284,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       void updatePresentFollowing();
       void updateTimers();
       void updateControl();
+      void updateCustomData();
 
       int dispatchClientRequest();
       int performLogin(json_t* oObject);
@@ -312,6 +317,8 @@ class cUpdate : public cStatus, cThread, public cOsdService
       bool active;
       SkinMode skinMode;
       int actualClientCount;
+      int fdInotify;
+      int wdInotify;
 };
 
 //***************************************************************************

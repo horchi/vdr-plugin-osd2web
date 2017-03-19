@@ -80,6 +80,8 @@ cUpdate::cUpdate()
    pingTime = 60;                      // timeout
    nextPing = time(0);
    nextPresentUpdateAt = time(0);
+   fdInotify = na;
+   wdInotify = 0;
 
    for (int i = 0; i <= mcCam; i++)
    {
@@ -143,6 +145,9 @@ void cUpdate::atMeanwhile()
 {
    // dispatch pending triggers
 
+   if (checkFileService() > 0)
+      updateCustomData();
+
    if (nextPresentUpdateAt < time(0))
       updatePresentFollowing();
 
@@ -177,6 +182,10 @@ void cUpdate::atMeanwhile()
 void cUpdate::Action()
 {
    tell(0, "osd2web plugin thread started (pid=%d)", getpid());
+
+   // init File Service
+
+   initFileService();
 
    // init web socket
 
