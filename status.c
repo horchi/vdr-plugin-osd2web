@@ -88,7 +88,7 @@ void cUpdate::Replaying(const cControl* Control, const char* Name,
    cStateKey stateKey;
 
    if (!(recordings = cRecordings::GetRecordingsRead(stateKey, 500)))
-      tell(0, "Can't get lock for Recordings, retrying later");
+      tell(0, "Can't get lock for recordings, retrying later");
 #else
    cRecordings* recordings = &Recordings;
 #endif
@@ -103,6 +103,29 @@ void cUpdate::Replaying(const cControl* Control, const char* Name,
    {
       addToJson(oRecording, "name", Name);
       addToJson(oRecording, "filename", FileName);
+   }
+
+   if (Control)
+   {
+      json_t* oControl = json_object();
+
+      int total, current, speed;
+      bool play, forward;
+
+      if (Control->GetReplayMode(play, forward, speed))
+      {
+         addToJson(oControl, "play", play);
+         addToJson(oControl, "speed", speed);
+         addToJson(oControl, "forward", forward);
+      }
+
+      if (Control->GetIndex(current, total))
+      {
+         addToJson(oControl, "current", current);
+         addToJson(oControl, "total", total);
+      }
+
+      addToJson(oRecording, "control", oControl);
    }
 
    cUpdate::pushMessage(oRecording, "replay");
