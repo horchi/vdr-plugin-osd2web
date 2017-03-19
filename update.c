@@ -74,6 +74,8 @@ cUpdate::cUpdate()
    skinMode = smAuto;
    active = no;
    currentChannelNr = 0;
+   activeControl = 0;
+   activeControlFps = 1;
    haveActualEpg = no;
    pingTime = 60;                      // timeout
    nextPing = time(0);
@@ -146,6 +148,9 @@ void cUpdate::atMeanwhile()
 
    if (triggerTimerUpdate)
       updateTimers();
+
+   if (activeControl)
+      updateControl();
 
    if (!webSock->getClientCount())
    {

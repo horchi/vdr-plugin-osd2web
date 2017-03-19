@@ -279,6 +279,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
       void updatePresentFollowing();
       void updateTimers();
+      void updateControl();
 
       int dispatchClientRequest();
       int performLogin(json_t* oObject);
@@ -295,6 +296,8 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
       int currentChannelNr;
       int haveActualEpg;
+      const cControl* activeControl;
+      int activeControlFps;
 
       // trigger
 

@@ -62,7 +62,18 @@ void cUpdate::OsdProgramme(time_t PresentTime, const char* PresentTitle,
 void cUpdate::Recording(const cDevice* Device, const char* Name,
                         const char* FileName, bool On)
 {
-   // #TODO - to be implemented
+   tell(0, "Recording: Recording '%s', Name '%s', FileName '%s'",
+        On ? "Start" : "Stop" , notNull(Name), FileName);
+
+   // #TODO - to be implemented finally ... add loookup of recording ..
+
+   json_t* oRecording = json_object();
+
+   addToJson(oRecording, "state", On ? "started" : "endet");
+   addToJson(oRecording, "name", Name);
+   addToJson(oRecording, "filename", FileName);
+
+   cUpdate::pushMessage(oRecording, "recording");
 }
 
 //***************************************************************************
@@ -76,12 +87,13 @@ void cUpdate::Replaying(const cControl* Control, const char* Name,
         On ? "Start" : "Stop" , notNull(Name), FileName);
 
    if (!On)
+   {
+      activeControl = 0;
       return ;
+   }
 
-   // Replaying: Replay 'Start', Name 'Fifty Shades of Grey', FileName '/tank/video/Fifty_Shades_of_Grey/2015-12-06.20.13.57-0.rec'
-   // Replaying: Replay 'Stop',  Name '(null)',               FileName '/tank/video/Fifty_Shades_of_Grey/2015-12-06.20.13.57-0.rec'
-
-   json_t* oRecording = json_object();
+   activeControlFps = 1;
+   activeControl = Control;
 
 #if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
    const cRecordings* recordings;
@@ -93,10 +105,12 @@ void cUpdate::Replaying(const cControl* Control, const char* Name,
    cRecordings* recordings = &Recordings;
 #endif
 
+   json_t* oRecording = json_object();
    const cRecording* recording = recordings ? recordings->GetByName(FileName) : 0;
 
    if (recording)
    {
+      activeControlFps = recording->Info() ? recording->Info()->FramesPerSecond() : 1;
       recording2Json(oRecording, recording);
    }
    else
@@ -105,35 +119,13 @@ void cUpdate::Replaying(const cControl* Control, const char* Name,
       addToJson(oRecording, "filename", FileName);
    }
 
-   if (Control)
-   {
-      json_t* oControl = json_object();
-
-      int total, current, speed;
-      bool play, forward;
-
-      if (((cControl*)Control)->GetReplayMode(play, forward, speed)) // type cast only for vdr 2.2.0 needed :(
-      {
-         addToJson(oControl, "play", play);
-         addToJson(oControl, "speed", speed);
-         addToJson(oControl, "forward", forward);
-      }
-
-      if (((cControl*)Control)->GetIndex(current, total)) // type cast only for vdr 2.2.0 needed :(
-      {
-         addToJson(oControl, "current", current);
-         addToJson(oControl, "total", total);
-      }
-
-      addToJson(oRecording, "control", oControl);
-   }
-
-   cUpdate::pushMessage(oRecording, "replay");
-
 #if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
    if (recordings)
       stateKey.Remove();
 #endif
+
+   cUpdate::pushMessage(oRecording, "replay");
+   updateControl();
 }
 
 //***************************************************************************
@@ -321,4 +313,46 @@ void cUpdate::updateTimers()
    }
 
    triggerTimerUpdate = no;
+}
+
+//***************************************************************************
+// Update Control
+//***************************************************************************
+
+void cUpdate::updateControl()
+{
+   static time_t lastCeckAt = na;
+   static int ltotal = 0, lspeed = 0;
+   static bool lplay = false, lforward = false;
+
+   json_t* oControl = json_object();
+   int total, current, speed;
+   bool play, forward;
+   cControl* control = (cControl*)activeControl;  // type cast only for vdr 2.2.0 needed :(
+
+   // check only once per second for changes
+
+   if (lastCeckAt == time(0))
+      return ;
+
+   lastCeckAt = time(0);
+
+   control->GetReplayMode(play, forward, speed);
+   control->GetIndex(current, total);
+
+   // any changes ..
+
+   if (total == ltotal && speed == lspeed && play == lplay && forward == lforward)
+      return ;
+
+   lspeed = speed; lplay = play; lforward = forward;
+   ltotal = total;
+
+   addToJson(oControl, "play", play);
+   addToJson(oControl, "speed", speed);
+   addToJson(oControl, "forward", forward);
+   addToJson(oControl, "current", (int)(current / activeControlFps));
+   addToJson(oControl, "total", (int)(total / activeControlFps));
+
+   cUpdate::pushMessage(oControl, "replaycontrol");
 }
