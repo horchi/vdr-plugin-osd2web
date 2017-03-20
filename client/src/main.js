@@ -194,9 +194,8 @@ window.v = new Vue({
                 on: false,
                 icon: 'tv',
                 func: function (navComp) {
-                    this.on = this.on;
                     navComp.$root.$emit("send", {
-                        "event": (this.on ? "takefocus" : "leavefocus")
+                        "event": (this.on ? "leavefocus" : "takefocus" )
                     });
                 }
             };
