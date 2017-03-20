@@ -21,7 +21,7 @@ cOsd2WebConfig config;
 cOsd2WebConfig::cOsd2WebConfig()
 {
    webPort = 4444;
-   clientOsdTimeout = 120;
+   clientOsdTimeout = 12;
    epgImagePath = 0;
    logoNotLower = no;
    logoById = no;

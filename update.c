@@ -90,7 +90,6 @@ cUpdate::cUpdate()
       menuMaxLines[i].shape = osText;
    }
 
-   defaultSkin = Skins.Current() ? Skins.Current()->Name() : "<null>";
    config.confPath = strdup(cPlugin::ConfigDirectory("osd2web"));
 
    webSock = new cWebSock(config.confPath, config.epgImagePath);
@@ -141,7 +140,7 @@ int cUpdate::setSkinAttachState(int attach)
 
    // attach ..
 
-   if (attach && !isSkinAttached(SKIN_NAME))
+   if (attach && !isSkinAttached())
    {
       Skins.SetCurrent(SKIN_NAME);
       tell(0, "Changed skin to '%s'", Skins.Current()->Name());
