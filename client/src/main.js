@@ -8,19 +8,10 @@ window.v = new Vue({
         isActive: false,
         maxLines: 0,
         osdOn: false,
+        skinAttached: false,
         hasChannelLogos: false,
         menuItems: [],
-        menuItemsRight: [{
-            label: '',
-            on: false,
-            icon: 'tv',
-            func: function (navComp) {
-                this.on = !this.on;
-                navComp.$root.$emit("send", {
-                    "event": (this.on ? "takefocus" : "leavefocus")
-                });
-            }
-        }],
+        menuItemsRight: [],
         keyMap: {
             38: 'Up',
             40: 'Down',
@@ -163,6 +154,9 @@ window.v = new Vue({
                     this.$socket.send({ "event" : "login", "object" : { "type" : + (this.isOnlyView ? 1 : 0) } });
                     this.sendMaxLines(null);
                 },
+                onclose:() => {
+                    this.isActive = false;
+                },
                 onmessage: (msg) => {
                     try {
                         let data = JSON.parse(msg.data.replace());
@@ -175,6 +169,8 @@ window.v = new Vue({
             if (!this.$socket)
                 return !(this.$el.innerHTML = "Your Browser will not support Websockets!");
             //        UIkit.notification({message: 'Copied!', pos: 'bottom-right'}); 
+
+
 
             // Nachrichten/Anfragen der Module an den Server weiterleiten
             this.$on("send", this.$socket.send);
@@ -193,8 +189,22 @@ window.v = new Vue({
                 this.isActive = data.role == 'active';
                 this.hasChannelLogos = data.havelogos == 1;
             })
-
-
+            let skinMenuItem= {
+                label: '',
+                on: false,
+                icon: 'tv',
+                func: function (navComp) {
+                    this.on = this.on;
+                    navComp.$root.$emit("send", {
+                        "event": (this.on ? "takefocus" : "leavefocus")
+                    });
+                }
+            };
+            this.$on("skinstate", (data) => {
+                this.skinAttached = data.attached == 1;
+                this.$root.$set(skinMenuItem, "on",this.skinAttached);
+            })
+            this.menuItemsRight.push(skinMenuItem);
             if (this.isOnlyView) {
                 var scrollingElement = document.scrollingElement || document.documentElement;
                 window.autoScroll = function (delta) {
@@ -275,7 +285,7 @@ const eMenuCategory = [
     }, {
         "category": 'mcTimer',
         "maxlines": 100,
-        "shape": 1
+        "shape": 4
     }, {
         "category": 'mcTimerEdit',
         "maxlines": 100,

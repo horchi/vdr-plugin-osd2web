@@ -59,12 +59,12 @@ export default {
            let clearData= getClearData();
            for (let key in clearData)
                 this[key]= clearData[key];
-            menuItem.on= false;
+                this.$root.$set(menuItem, "on",false);
         });
         this.$root.$on("menu", (data) => {
             this.category = data.category;
             this.title = data.title;
-            menuItem.on= true;
+                this.$root.$set(menuItem, "on",true);
         });
         this.$root.$on("scrollbar", (data) => {
             this.pageCount = parseInt(data.Total / this.$root.maxLines,10);
@@ -121,4 +121,9 @@ export default {
         background-color: yellow;
         color: #222;
     }
+
+    .uk-navbar-nav>li.uk-active>a {
+        color: blue !important;
+    }
+
 </style>
