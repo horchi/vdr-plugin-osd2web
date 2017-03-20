@@ -22,6 +22,7 @@
 
 std::queue<std::string> cUpdate::messagesIn;
 std::map<int,cUpdate::CategoryConfig> cUpdate::menuMaxLines;
+int cUpdate::menuCloseTrigger = no;
 
 //***************************************************************************
 // OSD Service
@@ -192,6 +193,14 @@ void cUpdate::atMeanwhile()
 
    if (activeControl)
       updateControl();
+
+   if (menuCloseTrigger)
+   {
+      if (!isDefaultSkin() && isSkinAttached())
+         setSkinAttachState(no);
+
+      menuCloseTrigger = no;
+   }
 
    if (!isDefaultSkin() && isSkinAttached() &&
        lastClientActionAt < time(0) - config.clientOsdTimeout)
@@ -376,12 +385,16 @@ int cUpdate::performKeyPressRequest(json_t* oRequest)
       return fail;
    }
 
+   // auto attach on menu key
+
+   if (!isDefaultSkin() && !isSkinAttached() && key == kMenu)
+      setSkinAttachState(yes);
+
+   // process key press
+
    for (int i = 0; i < repeat; i++)
    {
       tell(2, "DEBUG: Put key (%d) '%s'", key, keyName);
-
-      if (!isDefaultSkin() && !isSkinAttached() && key == kMenu)
-         setSkinAttachState(yes);
 
       if (!cRemote::Put(key))
          tell(0, "Info: Sending key '%s' failed", keyName);

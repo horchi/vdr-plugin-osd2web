@@ -122,6 +122,10 @@ cSkinOsd2WebDisplayMenu::cSkinOsd2WebDisplayMenu()
 
 cSkinOsd2WebDisplayMenu::~cSkinOsd2WebDisplayMenu()
 {
+   tell(2, "Menu closed (%d)", MenuCategory());
+
+   if (MenuCategory() == mcMain)
+      cUpdate::menuClosed();
 }
 
 void cSkinOsd2WebDisplayMenu::SetMenuCategory(eMenuCategory MenuCategory)
