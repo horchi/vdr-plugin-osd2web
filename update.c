@@ -22,6 +22,7 @@
 
 std::queue<std::string> cUpdate::messagesIn;
 std::map<int,cUpdate::CategoryConfig> cUpdate::menuMaxLines;
+int cUpdate::menuCloseTrigger = no;
 
 //***************************************************************************
 // OSD Service
@@ -192,6 +193,14 @@ void cUpdate::atMeanwhile()
 
    if (activeControl)
       updateControl();
+
+   if (menuCloseTrigger)
+   {
+      if (!isDefaultSkin() && isSkinAttached())
+         setSkinAttachState(no);
+
+      menuCloseTrigger = no;
+   }
 
    if (!isDefaultSkin() && isSkinAttached() &&
        lastClientActionAt < time(0) - config.clientOsdTimeout)

@@ -267,8 +267,11 @@ class cUpdate : public cStatus, cThread, public cOsdService
       // static message interface to web thread
 
       static int pushMessage(json_t* obj, const char* title, long client = 0);
+      static void menuClosed() { menuCloseTrigger = yes; }
+
       static std::queue<std::string> messagesIn;
       static std::map<int,CategoryConfig> menuMaxLines;
+      static int menuCloseTrigger;
 
    protected:
 
