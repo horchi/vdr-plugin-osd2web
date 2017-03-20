@@ -380,6 +380,9 @@ int cUpdate::performKeyPressRequest(json_t* oRequest)
    {
       tell(2, "DEBUG: Put key (%d) '%s'", key, keyName);
 
+      if (!isDefaultSkin() && !isSkinAttached() && key == kMenu)
+         setSkinAttachState(yes);
+
       if (!cRemote::Put(key))
          tell(0, "Info: Sending key '%s' failed", keyName);
    }
