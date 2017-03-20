@@ -24,16 +24,16 @@ cSystemNotification* cCurl::sysNotification = 0;
 size_t collect_data(void *ptr, size_t size, size_t nmemb, void* stream)
 {
    std::string sTmp;
-   register size_t actualsize = size * nmemb;
+   size_t actualsize = size * nmemb;
 
-   if ((FILE *)stream == NULL)
+   if (!stream)
    {
-      sTmp.assign((char *)ptr, actualsize);
+      sTmp.assign((char*)ptr, actualsize);
       cCurl::sBuf += sTmp;
    }
    else
    {
-      fwrite(ptr, size, nmemb, (FILE *)stream);
+      fwrite(ptr, size, nmemb, (FILE*)stream);
    }
 
    return actualsize;

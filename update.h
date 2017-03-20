@@ -251,6 +251,10 @@ class cUpdate : public cStatus, cThread, public cOsdService
       int exitFileService();
       int checkFileService();
 
+      int setSkinAttachState(int state);
+      int isDefaultSkin(const char* name = SKIN_NAME)  { return strcmp(Skins.Current()->Name(), name) == 0; }
+      int isSkinAttached(const char* name = SKIN_NAME) { return Skins.Current() && strcmp(Skins.Current()->Name(), name) == 0; }
+
       // thread stuff
 
       bool Start()        { return cThread::Start(); }
@@ -285,19 +289,17 @@ class cUpdate : public cStatus, cThread, public cOsdService
       void updateTimers();
       void updateControl();
       void updateCustomData();
+      void updateSkinState();
 
       int dispatchClientRequest();
       int performLogin(json_t* oObject);
       int performPing();
-      int performFocusRequest(json_t* oRequest, int focus);
       int performKeyPressRequest(json_t* oRequest);
       int performChannelsRequest(json_t* oRequest);
       int performMaxLineRequest(json_t* oRequest);
+      int performFocusRequest(json_t* oRequest, int focus);
 
-      int isDefault(const char* name = SKIN_NAME)      { return strcmp(Skins.Current()->Name(), name) == 0; }
-      int isSkinAttached(const char* name = SKIN_NAME) { return Skins.Current() && strcmp(Skins.Current()->Name(), name) == 0; }
-
-      // osd status
+      // VDRs osd status data
 
       int currentChannelNr;
       int haveActualEpg;
@@ -312,6 +314,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
       // ...
 
+      time_t lastClientActionAt;
       int epg2vdrIsLoaded;
       cWebSock* webSock;
       bool active;

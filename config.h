@@ -32,6 +32,7 @@ struct cOsd2WebConfig : public cConfigBase
       char* logoSuffix;
       int logoNotLower;
       int logoById;
+      int clientOsdTimeout;
 };
 
 extern cOsd2WebConfig config;

@@ -82,6 +82,7 @@ cUpdate::cUpdate()
    nextPresentUpdateAt = time(0);
    fdInotify = na;
    wdInotify = 0;
+   lastClientActionAt = time(0);
 
    for (int i = 0; i <= mcCam; i++)
    {
@@ -125,6 +126,41 @@ int cUpdate::pushMessage(json_t* oContents, const char* title, long client)
 }
 
 //***************************************************************************
+// Set Skin Attach State
+//***************************************************************************
+
+int cUpdate::setSkinAttachState(int attach)
+{
+   if (isDefaultSkin())
+   {
+      tell(1, "Ignoring '%s' skin request, osd2web ist configured as the default sikn",
+           attach ? "attach" : "detach");
+      return done;
+   }
+
+   // attach ..
+
+   if (attach && !isSkinAttached(SKIN_NAME))
+   {
+      Skins.SetCurrent(SKIN_NAME);
+      tell(0, "Changed skin to '%s'", Skins.Current()->Name());
+   }
+
+   // detach ..
+
+   else if (!attach && !isSkinAttached(Setup.OSDSkin))
+   {
+      Skins.SetCurrent(Setup.OSDSkin);
+      cThemes::Load(Skins.Current()->Name(), Setup.OSDTheme, Skins.Current()->Theme());
+      tell(0, "Changed skin to '%s'", Skins.Current()->Name());
+   }
+
+   updateSkinState();
+
+   return done;
+}
+
+//***************************************************************************
 // Stop
 //***************************************************************************
 
@@ -157,14 +193,22 @@ void cUpdate::atMeanwhile()
    if (activeControl)
       updateControl();
 
+   if (!isDefaultSkin() && isSkinAttached() &&
+       lastClientActionAt < time(0) - config.clientOsdTimeout)
+   {
+      tell(0, "Info: Detaching from skin interface, no client key action"
+           " since (%ld) seconds", time(0) - lastClientActionAt);
+      setSkinAttachState(no);
+   }
+
    if (!webSock->getClientCount())
    {
       // detach from Skin interface?
 
-      if (skinMode == smAuto && isSkinAttached() && !isDefault())
+      if (skinMode == smAuto && isSkinAttached() && !isDefaultSkin())
       {
          tell(0, "Info: No client connected, detaching from skin interface");
-         performFocusRequest(0, no);
+         setSkinAttachState(no);
       }
    }
    else if (webSock->getClientCount() != actualClientCount)
@@ -196,11 +240,12 @@ void cUpdate::Action()
 
    while (active)
    {
-      webSock->service(50);
+      webSock->service(100);
       atMeanwhile();
 
-      if (!messagesIn.empty())       // data from clients
-         dispatchClientRequest();
+      // data from clients
+
+      dispatchClientRequest();
 
       // data to client(s)
 
@@ -224,9 +269,14 @@ int cUpdate::dispatchClientRequest()
    json_t *oData, *oObject;
    Event event = evUnknown;
 
+   // #TODO loop here while (!messagesIn.empty()) ?
+
+   if (messagesIn.empty())
+      return done;
+
    // { "event" : "keypress", "object" : { "key" : "menu", "repeat" : 1 } }
 
-   tell(0, "DEBUG: Got '%s'", messagesIn.front().c_str());
+   tell(1, "DEBUG: Got '%s'", messagesIn.front().c_str());
    oData = json_loads(messagesIn.front().c_str(), 0, &error);
 
    // get the request
@@ -289,6 +339,7 @@ int cUpdate::performLogin(json_t* oObject)
       free(path);
    }
 
+   updateSkinState();
    updatePresentFollowing();  // trigger update of present/following
    updateTimers();
 
@@ -301,19 +352,7 @@ int cUpdate::performLogin(json_t* oObject)
 
 int cUpdate::performFocusRequest(json_t* oRequest, int focus)
 {
-   if (focus && !isSkinAttached(SKIN_NAME))
-   {
-      Skins.SetCurrent(SKIN_NAME);
-      tell(0, "Changed skin to '%s'", Skins.Current()->Name());
-   }
-   else if (!focus && !isSkinAttached(Setup.OSDSkin))
-   {
-      Skins.SetCurrent(Setup.OSDSkin);
-      cThemes::Load(Skins.Current()->Name(), Setup.OSDTheme, Skins.Current()->Theme());
-      tell(0, "Changed skin to '%s'", Skins.Current()->Name());
-   }
-
-   return done;
+   return setSkinAttachState(focus);
 }
 
 //***************************************************************************
@@ -329,15 +368,17 @@ int cUpdate::performKeyPressRequest(json_t* oRequest)
    int repeat = getIntFromJson(oRequest, "repeat");
    eKeys key = cKey::FromString(keyName);
 
+   lastClientActionAt = time(0);
+
    if (key == kNone)
    {
-      tell(0, "Info: Received unknown key '%s'", keyName);
+      tell(1, "Info: Received unknown key '%s'", keyName);
       return fail;
    }
 
    for (int i = 0; i < repeat; i++)
    {
-      tell(0, "DEBUG: Put key (%d) '%s'", key, keyName);
+      tell(2, "DEBUG: Put key (%d) '%s'", key, keyName);
 
       if (!cRemote::Put(key))
          tell(0, "Info: Sending key '%s' failed", keyName);
@@ -392,7 +433,7 @@ int cUpdate::performMaxLineRequest(json_t* oRequest)
       }
    }
 
-#if defined (APIVERSNUM) && (APIVERSNUM >= 20303)
+#if defined (APIVERSNUM) && (APIVERSNUM >= 20303)  // #TODO || (PATCHED)
    cOsdProvider::TriggerRecalcAndRefresh();
 #endif
 

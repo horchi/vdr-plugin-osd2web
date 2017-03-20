@@ -32,7 +32,7 @@ int cUpdate::initFileService()
    if ((fdInotify = inotify_init1(IN_NONBLOCK)) < 0)
    {
       fdInotify = na;
-      tell(0, "Couldn't initialize inotify, %m");
+      tell(0, "Couldn't initialize inotify, erroe was '%s'", strerror(errno));
       return fail;
    }
 

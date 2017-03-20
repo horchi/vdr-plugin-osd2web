@@ -157,5 +157,56 @@ bool cPluginOsd2Web::SetupParse(const char* name, const char* value)
 }
 
 //***************************************************************************
+// SVDRP Help Pages
+//***************************************************************************
+
+const char** cPluginOsd2Web::SVDRPHelpPages()
+{
+   static const char *HelpPages[] =
+   {
+      "ATTACH\n"
+      "    Attach osd2web to the skin interface",
+      "DETACH\n"
+      "    Detach osd2web to the skin interface (if it isn't the default skin)",
+
+      0
+   };
+
+   return HelpPages;
+}
+
+//***************************************************************************
+// SVDRP Command
+//***************************************************************************
+
+cString cPluginOsd2Web::SVDRPCommand(const char* cmd, const char* Option, int& ReplyCode)
+{
+   // ------------------------------------
+   // Attach to skin interface
+
+   if (strcasecmp(cmd, "ATTACH") == 0)
+   {
+      update->setSkinAttachState(yes);
+      return "attached";
+   }
+
+   // Detach from skin interface
+
+   if (strcasecmp(cmd, "DETACH") == 0)
+   {
+      if (update->isDefaultSkin())
+         return "i'am already the default skin";
+
+      if (!update->isSkinAttached())
+         return "already detached";
+
+      update->setSkinAttachState(no);
+      return "detached";
+   }
+
+   return 0;
+}
+
+//***************************************************************************
 
 VDRPLUGINCREATOR(cPluginOsd2Web)

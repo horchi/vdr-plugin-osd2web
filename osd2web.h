@@ -49,6 +49,8 @@ class cPluginOsd2Web : public cPlugin
       const char* CommandLineHelp();
       bool ProcessArgs(int argc, char* argv[]);
       bool Service(const char* id, void* data);
+      const char** SVDRPHelpPages();
+      cString SVDRPCommand(const char* cmd, const char* Option, int& ReplyCode);
 
       bool Initialize();
       bool Start();

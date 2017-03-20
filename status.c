@@ -29,7 +29,7 @@ void cUpdate::ChannelSwitch(const cDevice* device, int channelNumber, bool liveV
 {
    if (liveView && channelNumber)
    {
-      tell(0, "ChannelSwitch: channelNumber: %d", channelNumber);
+      tell(2, "ChannelSwitch: channelNumber: %d", channelNumber);
       currentChannelNr = channelNumber;
       updatePresentFollowing();
    }
@@ -48,7 +48,7 @@ void cUpdate::OsdProgramme(time_t PresentTime, const char* PresentTitle,
 
    if (!haveActualEpg && (!isEmpty(PresentTitle) || !isEmpty(FollowingTitle)))
    {
-      tell(0, "OsdProgramme: PresentTitle '%s', FollowingTitle '%s'",
+      tell(2, "OsdProgramme: PresentTitle '%s', FollowingTitle '%s'",
            PresentTitle, FollowingTitle);
 
       updatePresentFollowing();
@@ -65,7 +65,7 @@ void cUpdate::Recording(const cDevice* Device, const char* Name,
 /*
   not needed at oll - since 'timers' support all needed data
 
-   tell(0, "Recording: Recording '%s', Name '%s', FileName '%s'",
+   tell(2, "Recording: Recording '%s', Name '%s', FileName '%s'",
         On ? "Start" : "Stop" , notNull(Name), FileName);
 
    // to be implemented finally ... add loookup of recording ..
@@ -87,7 +87,7 @@ void cUpdate::Recording(const cDevice* Device, const char* Name,
 void cUpdate::Replaying(const cControl* Control, const char* Name,
                         const char* FileName, bool On)
 {
-   tell(0, "Replaying: Replay '%s', Name '%s', FileName '%s'",
+   tell(2, "Replaying: Replay '%s', Name '%s', FileName '%s'",
         On ? "Start" : "Stop" , notNull(Name), FileName);
 
    if (!On)
@@ -104,7 +104,7 @@ void cUpdate::Replaying(const cControl* Control, const char* Name,
    cStateKey stateKey;
 
    if (!(recordings = cRecordings::GetRecordingsRead(stateKey, 500)))
-      tell(0, "Can't get lock for recordings, retrying later");
+      tell(1, "Can't get lock for recordings, retrying later");
 #else
    cRecordings* recordings = &Recordings;
 #endif
@@ -165,7 +165,7 @@ void cUpdate::updatePresentFollowing()
 
    if (channel)
    {
-      tell(0, "update present/following for channel '%s'", channel->Name());
+      tell(2, "update present/following for channel '%s'", channel->Name());
 
 #if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
       LOCK_SCHEDULES_READ;
@@ -269,7 +269,7 @@ void cUpdate::updateTimers()
          {
             cEpgTimer_Interface_V1* timer = (*it);
 
-            tell(0, "Got '%s' timer for '%s' - '%s'",
+            tell(2, "Got '%s' timer for '%s' - '%s'",
                  timer->isLocal() ? "local" : "remote",
                  timer->File(),
                  timer->hasState('R') ? "timer is recording" : "timer is pending");
@@ -293,7 +293,7 @@ void cUpdate::updateTimers()
 
       if (!(timers = cTimers::GetTimersRead(stateKey, 500)))
       {
-         tell(0, "Can't get lock for updateTimers(), retrying later");
+         tell(1, "Can't get lock for updateTimers(), retrying later");
          return ;
       }
 #else
@@ -303,7 +303,7 @@ void cUpdate::updateTimers()
       for (const cTimer* timer = timers->First(); timer; timer = timers->Next(timer))
       {
          json_t* oTimer = json_object();
-         tell(0, "Got timer for '%s' - '%s'", timer->File(),
+         tell(2, "Got timer for '%s' - '%s'", timer->File(),
               timer->Recording() ? "timer is regording" : "timer is pending");
 
          timer2Json(oTimer, timer);
@@ -368,5 +368,15 @@ void cUpdate::updateControl()
 void cUpdate::updateCustomData()
 {
 
+}
 
+//***************************************************************************
+// Update Skin State
+//***************************************************************************
+
+void cUpdate::updateSkinState()
+{
+   json_t* obj = json_object();
+   addToJson(obj, "attached", isSkinAttached());
+   cUpdate::pushMessage(obj, "skinstate");
 }

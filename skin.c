@@ -59,7 +59,7 @@ cSkinOsd2WebDisplayChannel::~cSkinOsd2WebDisplayChannel()
    }
 }
 
-void cSkinOsd2WebDisplayChannel::SetChannel(const cChannel *Channel, int /*Number*/)
+void cSkinOsd2WebDisplayChannel::SetChannel(const cChannel* Channel, int /*Number*/)
 {
    tell(1, "DEB: Skin:cSkinOsd2WebDisplayChannel::DisplayChannel(%s, %d)",
         Channel ? Channel->Name() : "<null>", Channel ? Channel->Number() : na);
@@ -69,6 +69,13 @@ void cSkinOsd2WebDisplayChannel::SetChannel(const cChannel *Channel, int /*Numbe
       visible = yes;
       json_t* obj = json_object();
       addToJson(obj, "name", Channel->Name());
+      cUpdate::pushMessage(obj, "channelgroup");
+   }
+   else if (visible)
+   {
+      visible = no;
+      json_t* obj = json_object();
+      addToJson(obj, "name", "");
       cUpdate::pushMessage(obj, "channelgroup");
    }
 }
@@ -119,13 +126,13 @@ cSkinOsd2WebDisplayMenu::~cSkinOsd2WebDisplayMenu()
 
 void cSkinOsd2WebDisplayMenu::SetMenuCategory(eMenuCategory MenuCategory)
 {
-   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetMenuCategory(%d)", MenuCategory);
+   tell(2, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetMenuCategory(%d)", MenuCategory);
    cSkinDisplayMenu::SetMenuCategory(MenuCategory);
 }
 
 void cSkinOsd2WebDisplayMenu::Scroll(bool Up, bool Page)
 {
-   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::Scroll(%d, %d)", Up, Page);
+   tell(2, "DEB: Skin:cSkinOsd2WebDisplayMenu::Scroll(%d, %d)", Up, Page);
 
    json_t* obj = json_object();
 
@@ -137,11 +144,11 @@ void cSkinOsd2WebDisplayMenu::Scroll(bool Up, bool Page)
 
 int cSkinOsd2WebDisplayMenu::MaxItems()
 {
-   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::MaxItems()");
+   tell(2, "DEB: Skin:cSkinOsd2WebDisplayMenu::MaxItems()");
 
    if (MenuCategory() >= mcUnknown && MenuCategory() <= mcCam)
    {
-      tell(0, "Set MaxItems() to %d", cUpdate::menuMaxLines[MenuCategory()].maxLines);
+      tell(2, "Set MaxItems() to %d", cUpdate::menuMaxLines[MenuCategory()].maxLines);
       return cUpdate::menuMaxLines[MenuCategory()].maxLines;
    }
 

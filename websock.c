@@ -88,7 +88,7 @@ int cWebSock::init(int aPort, int aTimeout)
 
    if (!context)
    {
-      tell(0, "libwebsocket init failed");
+      tell(0, "Error: libwebsocket init failed");
       return fail;
    }
 
@@ -147,7 +147,7 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
    {
       case LWS_CALLBACK_CLIENT_WRITEABLE:
       {
-         tell(0, "HTTP: connection established\n");
+         tell(2, "HTTP: connection established\n");
          break;
       }
 
@@ -157,7 +157,7 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
          char* file = 0;
          const char* url = (char*)in;
 
-         tell(0, "HTTP: Requested uri: (%ld) '%s'", len, url);
+         tell(2, "HTTP: Requested uri: (%ld) '%s'", len, url);
 
          // data or file request ...
 
@@ -241,7 +241,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
             if (clients[wsi].type != ctInactive)
             {
                char buffer[sizeLwsFrame];
-               tell(1, "DEBUG: Write 'PING' (%p)", (void*)wsi);
+               tell(2, "DEBUG: Write 'PING' (%p)", (void*)wsi);
                lws_write(wsi, (unsigned char*)buffer + sizeLwsPreFrame, 0, LWS_WRITE_PING);
             }
          }
@@ -278,7 +278,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 
                strncpy(msgBuffer + sizeLwsPreFrame, msg.c_str(), msgSize);
 
-               tell(0, "DEBUG: Write (%d) [%.*s] to (%p)\n",
+               tell(1, "DEBUG: Write (%d) [%.*s] to (%p)\n",
                     msgSize, msgSize,
                     msgBuffer+sizeLwsPreFrame, (void*)wsi);
 
@@ -312,14 +312,14 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 
          if (event == evLogin)                             // { "event" : "login", "object" : { "type" : 0 } }
          {
-            tell(0, "DEBUG: Got '%s'", message);
+            tell(1, "DEBUG: Got '%s'", message);
             clients[wsi].type = (ClientType)getIntFromJson(oObject, "type", ctInteractive);
             atLogin(wsi);
             activeClient = wsi;
          }
          else if (event == evLogout)                       // { "event" : "logout", "object" : { } }
          {
-            tell(0, "DEBUG: Got '%s'", message);
+            tell(2, "DEBUG: Got '%s'", message);
             clients[wsi].type = ctInactive;
             activateAvailableClient();
             clients[wsi].cleanupMessageQueue();
@@ -327,7 +327,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
          else if (activeClient && activeClient == wsi)     // take data only from active client
             cUpdate::messagesIn.push(message);
          else
-            tell(0, "Ignoring data of not 'active client (%p)", (void*)wsi);
+            tell(1, "Ignoring data of not 'active client (%p)", (void*)wsi);
 
          json_decref(oData);
 
@@ -339,7 +339,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
          if (timeout)
             lws_set_timeout(wsi, PENDING_TIMEOUT_AWAITING_PING, timeout);
 
-         tell(0, "Client connected (%p)", (void*)wsi);
+         tell(1, "Client connected (%p)", (void*)wsi);
          clients[wsi].wsi = wsi;
          clients[wsi].type = ctInactive;
 
@@ -348,7 +348,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 
       case LWS_CALLBACK_CLOSED:                           // someone dis-connecting
       {
-         tell(0, "Client disconnected (%p)", (void*)wsi);
+         tell(1, "Client disconnected (%p)", (void*)wsi);
          clients.erase(wsi);
 
          if (!activeClient || activeClient == wsi)
@@ -359,7 +359,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 
       case LWS_CALLBACK_RECEIVE_PONG:                      // ping / pong
       {
-         tell(1, "DEBUG: Got 'PONG'");
+         tell(2, "DEBUG: Got 'PONG'");
 
          if (timeout)
             lws_set_timeout(wsi, PENDING_TIMEOUT_AWAITING_PING, timeout);
@@ -368,7 +368,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
       }
 
       default:
-         tell(0, "DEBUG: Unhandled 'callbackOsd2Vdr' got (%d)", reason);
+         tell(2, "DEBUG: Unhandled 'callbackOsd2Vdr' got (%d)", reason);
          break;
    }
 
@@ -390,7 +390,7 @@ void cWebSock::activateAvailableClient()
          if (it->second.type == ctInteractive)
          {
             activeClient = it->first;
-            tell(0, "Set client (%p) to active", activeClient);
+            tell(1, "Set client (%p) to active", activeClient);
             break;
          }
       }
@@ -527,7 +527,7 @@ int cWebSock::doEventImg(lws* wsi)
    int no = getIntParameter(wsi, "no=");
 
    asprintf(&path, "%s/%d_%d.jpg", epgImagePath, id, no);
-   tell(0, "DEBUG: Image for event (%d/%d) was requested [%s]", id, no, path);
+   tell(2, "DEBUG: Image for event (%d/%d) was requested [%s]", id, no, path);
 
    result = serveFile(wsi, path);
 
@@ -554,7 +554,7 @@ int cWebSock::doChannelLogo(lws* wsi)
             cfgPath,
             config.logoById ? cnlId : cnlName,
             config.logoSuffix);
-   tell(0, "DEBUG: Logo for channel '%s' was requested [%s]", cnlName, path);
+   tell(2, "DEBUG: Logo for channel '%s' was requested [%s]", cnlName, path);
 
    result = serveFile(wsi, path);
 
