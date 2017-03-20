@@ -252,7 +252,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       int checkFileService();
 
       int setSkinAttachState(int state);
-      int isDefaultSkin(const char* name = SKIN_NAME)  { return strcmp(Skins.Current()->Name(), name) == 0; }
+      int isDefaultSkin(const char* name = SKIN_NAME)  { return defaultSkin == name; }
       int isSkinAttached(const char* name = SKIN_NAME) { return Skins.Current() && strcmp(Skins.Current()->Name(), name) == 0; }
 
       // thread stuff
@@ -322,6 +322,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       int actualClientCount;
       int fdInotify;
       int wdInotify;
+      std::string defaultSkin;
 };
 
 //***************************************************************************

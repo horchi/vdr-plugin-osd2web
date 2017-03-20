@@ -90,6 +90,7 @@ cUpdate::cUpdate()
       menuMaxLines[i].shape = osText;
    }
 
+   defaultSkin = Skins.Current() ? Skins.Current()->Name() : "<null>";
    config.confPath = strdup(cPlugin::ConfigDirectory("osd2web"));
 
    webSock = new cWebSock(config.confPath, config.epgImagePath);
