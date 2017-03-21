@@ -48,12 +48,6 @@ class cOsdService
          osLarge  = 0x04
       };
 
-      enum SkinMode
-      {
-         smManual,
-         smAuto
-      };
-
       enum Event
       {
          evUnknown,
@@ -146,7 +140,7 @@ class cWebSock : public cOsdService
          }
       };
 
-      cWebSock(const char* aCfgPath, const char* aEpgImagePath);
+      cWebSock(const char* aHttpPath);
       virtual ~cWebSock();
 
       int init(int aPort, int aTimeout);
@@ -187,7 +181,7 @@ class cWebSock : public cOsdService
 
       // statics
 
-      static char* cfgPath;
+      static char* httpPath;
       static char* epgImagePath;
       static int timeout;
       static void* activeClient;
@@ -251,7 +245,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       int exitFileService();
       int checkFileService();
 
-      int setSkinAttachState(int state);
+      int setSkinAttachState(int state, int bySvdrp = no);
       int isDefaultSkin()                              { return strcmp(Setup.OSDSkin, SKIN_NAME) == 0; }
       int isSkinAttached(const char* name = SKIN_NAME) { return Skins.Current() && strcmp(Skins.Current()->Name(), name) == 0; }
 
@@ -317,11 +311,11 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
       // ...
 
+      int attachedBySvdrp;
       time_t lastClientActionAt;
       int epg2vdrIsLoaded;
       cWebSock* webSock;
       bool active;
-      SkinMode skinMode;
       int actualClientCount;
       int fdInotify;
       int wdInotify;

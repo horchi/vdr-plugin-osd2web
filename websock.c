@@ -19,17 +19,15 @@ void* cWebSock::activeClient = 0;
 int cWebSock::timeout = 0;
 cWebSock::MsgType cWebSock::msgType = mtNone;
 std::map<void*,cWebSock::Client> cWebSock::clients;
-char* cWebSock::cfgPath = 0;
-char* cWebSock::epgImagePath = 0;
+char* cWebSock::httpPath = 0;
 
 //***************************************************************************
 // Init
 //***************************************************************************
 
-cWebSock::cWebSock(const char* aCfgPath, const char* aEpgImagePath)
+cWebSock::cWebSock(const char* aHttpPath)
 {
-   cfgPath = strdup(aCfgPath);
-   epgImagePath = strdup(aEpgImagePath);
+   httpPath = strdup(aHttpPath);
 
    port = 4444;
    context = 0;
@@ -39,7 +37,7 @@ cWebSock::~cWebSock()
 {
    exit();
 
-   free(cfgPath);
+   free(httpPath);
    free(msgBuffer);
 }
 
@@ -177,7 +175,7 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
             if (strcmp(url, "/") == 0)
                url = "index.html";
 
-            asprintf(&file, "%s/http/%s", cfgPath, url);
+            asprintf(&file, "%s/%s", httpPath, url);
             res = serveFile(wsi, file);
             free(file);
 
@@ -282,10 +280,12 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
                     msgSize, msgSize,
                     msgBuffer+sizeLwsPreFrame, (void*)wsi);
 
+               // #TODO gzip message here?
+
                res = lws_write(wsi, (unsigned char*)msgBuffer + sizeLwsPreFrame, msgSize, LWS_WRITE_TEXT);
 
                if (res != msgSize)
-                  tell(0, "Error: Only (%d) bytes of (%d) sendet", res, msgSize);
+                  tell(0, "Error: Only (%d) bytes of (%d) sended", res, msgSize);
             }
          }
 
@@ -526,7 +526,7 @@ int cWebSock::doEventImg(lws* wsi)
    int id = getIntParameter(wsi, "id=");
    int no = getIntParameter(wsi, "no=");
 
-   asprintf(&path, "%s/%d_%d.jpg", epgImagePath, id, no);
+   asprintf(&path, "%s/%d_%d.jpg", config.epgImagePath, id, no);
    tell(2, "DEBUG: Image for event (%d/%d) was requested [%s]", id, no, path);
 
    result = serveFile(wsi, path);
@@ -550,8 +550,8 @@ int cWebSock::doChannelLogo(lws* wsi)
    if (!config.logoNotLower)
       toCase(cLower, cnlName);
 
-   asprintf(&path, "%s/channellogos/%s.%s",
-            cfgPath,
+   asprintf(&path, "%s/%s.%s",
+            config.logoPath,
             config.logoById ? cnlId : cnlName,
             config.logoSuffix);
    tell(2, "DEBUG: Logo for channel '%s' was requested [%s]", cnlName, path);

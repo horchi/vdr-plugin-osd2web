@@ -1443,7 +1443,7 @@ const char* getMacOf(const char* device)
    int s;
 
    s = socket(AF_INET, SOCK_DGRAM, 0);
-   strcpy(ifr.ifr_name, "eth0");
+   strcpy(ifr.ifr_name, device);
    ioctl(s, SIOCGIFHWADDR, &ifr);
 
    for (int i = 0; i < macTuppel; i++)

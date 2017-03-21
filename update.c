@@ -72,7 +72,6 @@ cUpdate::cUpdate()
    triggerTimerUpdate = no;
    epg2vdrIsLoaded = no;
    actualClientCount = 0;
-   skinMode = smAuto;
    active = no;
    currentChannelNr = 0;
    activeControl = 0;
@@ -84,6 +83,7 @@ cUpdate::cUpdate()
    fdInotify = na;
    wdInotify = 0;
    lastClientActionAt = time(0);
+   attachedBySvdrp = no;
 
    for (int i = 0; i <= mcCam; i++)
    {
@@ -92,8 +92,10 @@ cUpdate::cUpdate()
    }
 
    config.confPath = strdup(cPlugin::ConfigDirectory("osd2web"));
+   asprintf(&config.logoPath, "%s/channellogos", config.confPath);
+   asprintf(&config.httpPath, "%s/http", config.confPath);
 
-   webSock = new cWebSock(config.confPath, config.epgImagePath);
+   webSock = new cWebSock(config.httpPath);
 }
 
 cUpdate::~cUpdate()
@@ -108,8 +110,6 @@ cUpdate::~cUpdate()
 
 int cUpdate::pushMessage(json_t* oContents, const char* title, long client)
 {
-   // json2Data(obj, data, "gzip");
-
    json_t* obj = json_object();
 
    addToJson(obj, "event", title);
@@ -130,12 +130,18 @@ int cUpdate::pushMessage(json_t* oContents, const char* title, long client)
 // Set Skin Attach State
 //***************************************************************************
 
-int cUpdate::setSkinAttachState(int attach)
+int cUpdate::setSkinAttachState(int attach, int bySvdrp)
 {
    if (isDefaultSkin())
    {
       tell(1, "Ignoring '%s' skin request, osd2web ist configured as the default sikn",
            attach ? "attach" : "detach");
+      return done;
+   }
+
+   if (!attach && attachedBySvdrp && !bySvdrp)
+   {
+      tell(1, "Ignoring 'detach' skin request, attach was performed by SVDRP");
       return done;
    }
 
@@ -155,6 +161,9 @@ int cUpdate::setSkinAttachState(int attach)
       cThemes::Load(Skins.Current()->Name(), Setup.OSDTheme, Skins.Current()->Theme());
       tell(0, "Changed skin to '%s'", Skins.Current()->Name());
    }
+
+   if (bySvdrp)    // change only if attach is triggert by SVDRP!
+      attachedBySvdrp = attach;
 
    updateSkinState();
 
@@ -202,7 +211,7 @@ void cUpdate::atMeanwhile()
       menuCloseTrigger = no;
    }
 
-   if (!isDefaultSkin() && isSkinAttached() &&
+   if (!attachedBySvdrp && !isDefaultSkin() && isSkinAttached() &&
        lastClientActionAt < time(0) - config.clientOsdTimeout)
    {
       tell(0, "Info: Detaching from skin interface, no client key action"
@@ -214,15 +223,17 @@ void cUpdate::atMeanwhile()
    {
       // detach from Skin interface?
 
-      if (skinMode == smAuto && isSkinAttached() && !isDefaultSkin())
+      if (!attachedBySvdrp && isSkinAttached() && !isDefaultSkin())
       {
          tell(0, "Info: No client connected, detaching from skin interface");
          setSkinAttachState(no);
       }
    }
-   else if (webSock->getClientCount() != actualClientCount)
+
+   if (webSock->getClientCount() != actualClientCount)
    {
       // client count changed ...
+      //    nothing yet
    }
 
    actualClientCount = webSock->getClientCount();
@@ -449,7 +460,7 @@ int cUpdate::performMaxLineRequest(json_t* oRequest)
       }
    }
 
-#if defined (APIVERSNUM) && (APIVERSNUM >= 20303)  // #TODO || (PATCHED)
+#if (defined (APIVERSNUM) && (APIVERSNUM >= 20303)) || (PATCHED)
    cOsdProvider::TriggerRecalcAndRefresh();
 #endif
 

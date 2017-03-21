@@ -46,7 +46,9 @@ const char* cPluginOsd2Web::CommandLineHelp()
       "                                              (default: png)\n"
       "   -p <port>,       --port=<port> web port\n"
       "                                              (default: 4444)\n"
-      "   -l,              --logonotlower            do not search logo names in lower case\n"
+      "   -l <path>,       --logopath <path>         path to channel logos\n"
+      "                                              (default: <plg-conf-dir>/channellogos)\n"
+      "   -L,              --logonotlower            do not search logo names in lower case\n"
       "   -i,              --logobyid                logo names by channel id instead of name\n"
       "   -e,              --epgimgpath              path to epg images\n"
       "                                              (default: /var/cache/vdr/epgimages)\n"
@@ -61,7 +63,8 @@ bool cPluginOsd2Web::ProcessArgs(int argc, char* argv[])
    {
       { "port",           required_argument, 0, 'p' },
       { "logosuffix",     required_argument, 0, 's' },
-      { "logonotlower",         no_argument, 0, 'l' },
+      { "logopath",       required_argument, 0, 'l' },
+      { "logonotlower",         no_argument, 0, 'L' },
       { "logobyid",             no_argument, 0, 'i' },
       { "epgimgpath",     required_argument, 0, 'e' },
       { 0, 0, 0, 0 }
@@ -75,7 +78,8 @@ bool cPluginOsd2Web::ProcessArgs(int argc, char* argv[])
       {
          case 'p': config.webPort = atoi(optarg);  break;
          case 's': config.setLogoSuffix(optarg);   break;
-         case 'l': config.logoNotLower = yes;      break;
+         case 'l': config.setLogoPath(optarg);     break;
+         case 'L': config.logoNotLower = yes;      break;
          case 'i': config.logoById = yes;          break;
          case 'e': config.setEpgImagePath(optarg); break;
 
@@ -162,7 +166,7 @@ bool cPluginOsd2Web::SetupParse(const char* name, const char* value)
 
 const char** cPluginOsd2Web::SVDRPHelpPages()
 {
-   static const char *HelpPages[] =
+   static const char* HelpPages[] =
    {
       "ATTACH\n"
       "    Attach osd2web to the skin interface",
@@ -181,30 +185,40 @@ const char** cPluginOsd2Web::SVDRPHelpPages()
 
 cString cPluginOsd2Web::SVDRPCommand(const char* cmd, const char* Option, int& ReplyCode)
 {
+   const char* result = 0;
+
    // ------------------------------------
    // Attach to skin interface
 
    if (strcasecmp(cmd, "ATTACH") == 0)
    {
-      update->setSkinAttachState(yes);
-      return "attached";
+      if (update->isSkinAttached())
+         result = "already attached";
+      else
+         result = "attached";
+
+      // call always, independent of check states above!!
+
+      update->setSkinAttachState(yes, yes);
    }
 
    // Detach from skin interface
 
-   if (strcasecmp(cmd, "DETACH") == 0)
+   else if (strcasecmp(cmd, "DETACH") == 0)
    {
       if (update->isDefaultSkin())
-         return "i'am already the default skin";
+         result = "nothing to do, i'am the default skin ;)";
+      else if (!update->isSkinAttached())
+         result = "already detached";
+      else
+         result = "detached";
 
-      if (!update->isSkinAttached())
-         return "already detached";
+      // call always, independent of check states above!!
 
-      update->setSkinAttachState(no);
-      return "detached";
+      update->setSkinAttachState(no, yes);
    }
 
-   return 0;
+   return result;
 }
 
 //***************************************************************************

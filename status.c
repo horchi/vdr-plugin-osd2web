@@ -355,8 +355,8 @@ void cUpdate::updateControl()
    addToJson(oControl, "play", play);
    addToJson(oControl, "speed", speed);
    addToJson(oControl, "forward", forward);
-   addToJson(oControl, "current", (int)(current / activeControlFps));
-   addToJson(oControl, "total", (int)(total / activeControlFps));
+   addToJson(oControl, "current", current / activeControlFps);
+   addToJson(oControl, "total", total / activeControlFps);
 
    cUpdate::pushMessage(oControl, "replaycontrol");
 }

@@ -26,7 +26,9 @@ cOsd2WebConfig::cOsd2WebConfig()
    logoNotLower = no;
    logoById = no;
 
+   httpPath = 0;
    confPath = 0;
+   logoPath = 0;
    logoSuffix = strdup("png");
    epgImagePath = strdup("/var/cache/vdr/epgimages");
 }
@@ -34,6 +36,8 @@ cOsd2WebConfig::cOsd2WebConfig()
 cOsd2WebConfig::~cOsd2WebConfig()
 {
    free(confPath);
+   free(httpPath);
    free(epgImagePath);
    free(logoSuffix);
+   free(logoPath);
 }
