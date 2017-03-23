@@ -12,7 +12,7 @@ HLIB      = -L. -lhorchi
 DEMO = demo
 TEST = tst
 
-LIBOBJS = common.o config.o json.o
+LIBOBJS = common.o config.o json.o xml.o
 
 ifdef USEEPGD
    LIBOBJS += epgservice.o
@@ -26,7 +26,9 @@ ifdef USECURL
    LIBOBJS += curl.o configuration.o thread.o
 endif
 
-BASELIBS = -lrt -lz -luuid
+BASELIBS = -lrt -lz
+BASELIBS += $(shell pkg-config --libs uuid)
+BASELIBS += $(shell pkg-config --libs tinyxml2)
 
 ifdef USEDB
    BASELIBS += $(shell mysql_config --libs_r)

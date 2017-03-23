@@ -14,6 +14,8 @@
 // Includes
 //***************************************************************************
 
+#include "lib/xml.h"
+
 #include "update.h"
 
 //***************************************************************************
@@ -62,36 +64,30 @@ int event2Json(json_t* obj, const cEvent* event, const cChannel* channel,
    addToJson(obj, "hastimer", event->HasTimer());
    addToJson(obj, "seen", event->Seen());
 
-   const cEpgEvent_Interface_V1* extendetEvent = dynamic_cast<const cEpgEvent_Interface_V1*>((cEvent*)event);
-
-   if (extendetEvent)
+   if (!isEmpty(event->Aux()))
    {
+      cXml xml;
       int count = 0;
-      const std::map<std::string,std::string>* epg2vdrData = extendetEvent->getValues();
       json_t* oEpg2Vdr = json_object();
 
-      for (auto it = epg2vdrData->begin(); it != epg2vdrData->end(); it++)
+      if (xml.set(event->Aux()) == success)
       {
-         // unfortunately a special handling needed
-         //   for epg2vdr events the schedule object is not set
-         //   there for the 'channelid' can't added above
-
-         if (it->first == "channelid")
-            addToJson(obj, it->first.c_str(), it->second.c_str());
-
-         else if (!isBigField(it->first.c_str()) || current || shape & cOsdService::osLarge)
+         for (XMLElement* e = xml.getFirst(); e; e = xml.getNext(e))
          {
-            count++;
-            addToJson(oEpg2Vdr, it->first.c_str(), it->second.c_str());
+            if (!isBigField(e->Name()) || current || shape & cOsdService::osLarge)
+            {
+               count++;
+               addToJson(oEpg2Vdr, e->Name(), e->GetText());
+            }
          }
-      }
 
-      if (count)
-         addToJson(obj, "epg2vdr", oEpg2Vdr);
-   }
-   else
-   {
-      tell(0, "Debug:  Cast to cEpgEvent_Interface_V1 failed - aussume epg2vdr not loaded");
+         if (count)
+            addToJson(obj, "epg2vdr", oEpg2Vdr);
+      }
+      else
+      {
+         tell(0, "Debug: Parsing of xml data in aux failed");
+      }
    }
 
    if (current || shape & cOsdService::osLarge)

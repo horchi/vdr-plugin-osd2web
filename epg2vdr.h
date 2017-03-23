@@ -15,24 +15,6 @@
 #include <map>
 
 //***************************************************************************
-// Event - Skin Interface
-//***************************************************************************
-
-class cEpgEvent_Interface_V1 : public cEvent
-{
-   public:
-
-      cEpgEvent_Interface_V1(tEventID EventID) : cEvent(EventID) {}
-
-      const char* getValue(const char* name)                     { return epg2vdrData[name].c_str(); }
-      const std::map<std::string,std::string>* getValues() const { return &epg2vdrData; }
-
-   protected:
-
-      std::map<std::string,std::string> epg2vdrData;
-};
-
-//***************************************************************************
 // Timer - Skin Interface
 //***************************************************************************
 
@@ -87,42 +69,12 @@ struct cEpgTimer_Service_V1
 #define EPG2VDR_TIMER_UPDATED "Epg2Vdr_Timer_Updated-v1.0"
 #define EPG2VDR_TIMER_SERVICE "Epg2Vdr_Timer_Service-v1.0"
 
-//***************************************************************************
-// Event Service Interfaces
-//***************************************************************************
-
-struct cEpgEvent_Service_V1
-{
-   const cEvent* in;
-   cEpgEvent_Interface_V1* out;
-};
-
-#define EPG2VDR_EVENT_SERVICE "Epg2Vdr_Event_Service-v1.0"
-
 #ifdef EPG2VDR
 
 //***************************************************************************
 //***************************************************************************
-//***************************************************************************
 // Internal Stuff
 //***************************************************************************
-
-//***************************************************************************
-// Class cEpgEvent
-//***************************************************************************
-
-class cEpgEvent : public cEpgEvent_Interface_V1
-{
-   public:
-
-      cEpgEvent(tEventID EventID);
-      virtual ~cEpgEvent() {}
-
-      bool Read(FILE *f);
-
-      void setValue(const char* name, const char* value) { epg2vdrData[name] = value; }
-      void setValue(const char* name, long value)        { epg2vdrData[name] = std::to_string(value); }
-};
 
 //***************************************************************************
 // Class cEpgTimer

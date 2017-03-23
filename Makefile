@@ -51,7 +51,9 @@ OBJS = $(PLUGIN).o \
        config.o update.o websock.o fileservice.o status.o tools.o skin.o jobject.o
 
 LIBS  = $(HLIB)
-LIBS += -lrt -larchive -lcrypto -luuid
+LIBS += -lrt -larchive -lcrypto
+LIBS += $(shell pkg-config --libs uuid)
+LIBS += $(shell pkg-config --libs tinyxml2)
 LIBS += $(shell pkg-config --libs libwebsockets)
 LIBS += $(shell mysql_config --libs_r) $(shell python-config --libs) $(shell pkg-config --cflags --libs jansson)
 

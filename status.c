@@ -191,48 +191,16 @@ void cUpdate::updatePresentFollowing()
 
       if (schedule)
       {
-         int ownPresent = no;
-         int ownFollowing = no;
          const cEvent* present = schedule->GetPresentEvent();
          const cEvent* following = schedule->GetFollowingEvent();
-         cPlugin* pEpg2Vdr = cPluginManager::GetPlugin("epg2vdr");
-
-         if (pEpg2Vdr)
-         {
-            cEpgEvent_Service_V1 data;
-
-            data.in = schedule->GetPresentEvent();
-
-            if (pEpg2Vdr->Service(EPG2VDR_EVENT_SERVICE, &data))
-            {
-               ownPresent = yes;
-               present = data.out;
-            }
-            else
-               tell(0, "EPG2VDR_EVENT_SERVICE failed");
-
-            data.in = schedule->GetFollowingEvent();
-
-            if (pEpg2Vdr->Service(EPG2VDR_EVENT_SERVICE, &data))
-            {
-               ownFollowing = yes;
-               following = data.out;
-            }
-            else
-               tell(0, "EPG2VDR_EVENT_SERVICE failed");
-         }
 
          haveActualEpg = present != 0;
-
          event2Json(oPresent, present, 0, (eTimerMatch)na, no, cOsdService::osLarge);
          event2Json(oFollowing, following, 0, (eTimerMatch)na, no, cOsdService::osLarge);
 
          // we need a trigger on start of following event
 
          nextPresentUpdateAt = following ? following->StartTime() : time(0) + 10;
-
-         if (ownPresent)     { delete present;   present = 0; }
-         if (ownFollowing)   { delete following; following = 0; }
       }
       else
       {
