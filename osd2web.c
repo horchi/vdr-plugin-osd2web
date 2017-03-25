@@ -63,25 +63,25 @@ bool cPluginOsd2Web::ProcessArgs(int argc, char* argv[])
    {
       { "port",           required_argument, 0, 'p' },
       { "logosuffix",     required_argument, 0, 's' },
+      { "epgimgpath",     required_argument, 0, 'e' },
       { "logopath",       required_argument, 0, 'l' },
       { "logonotlower",         no_argument, 0, 'L' },
       { "logobyid",             no_argument, 0, 'i' },
-      { "epgimgpath",     required_argument, 0, 'e' },
       { 0, 0, 0, 0 }
    };
 
    // check the arguments
 
-   while ((c = getopt_long(argc, argv, "p:s:l:i:e", long_options, 0)) != -1)
+   while ((c = getopt_long(argc, argv, "p:s:e:l:L:i", long_options, 0)) != -1)
    {
       switch (c)
       {
          case 'p': config.webPort = atoi(optarg);  break;
          case 's': config.setLogoSuffix(optarg);   break;
+         case 'e': config.setEpgImagePath(optarg); break;
          case 'l': config.setLogoPath(optarg);     break;
          case 'L': config.logoNotLower = yes;      break;
          case 'i': config.logoById = yes;          break;
-         case 'e': config.setEpgImagePath(optarg); break;
 
          default:  tell(0, "Ignoring unknown argument '%c' '%s'", c, optarg);
       }
