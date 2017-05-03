@@ -460,9 +460,9 @@ int cUpdate::performMaxLineRequest(json_t* oRequest)
       }
    }
 
-#if (defined (APIVERSNUM) && (APIVERSNUM >= 20303)) || (PATCHED)
-   cOsdProvider::TriggerRecalcAndRefresh();
-#endif
+// #if (defined (APIVERSNUM) && (APIVERSNUM >= 20303)) || (PATCHED)
+//    cOsdProvider::TriggerRecalcAndRefresh();
+// #endif
 
    return done;
 }
