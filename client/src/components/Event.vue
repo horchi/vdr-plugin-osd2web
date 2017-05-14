@@ -1,23 +1,27 @@
 <template>
-   <div v-show="event.title" class="uk-panelt">
-       <h3 class="uk-panel-title">{{event.title}}</h3>
-       <div class="uk-panel-teaser">{{event.shorttext}}</div>
-       <progress v-show="progress" class="uk-progress" :value="progress" max="100">{{progress}}%</progress>
-       <div class="uk-flex">
-         <div class="uk-width-2-3 uk-panel">
-            {{ $root.formatDateTime(event.starttime)}}&nbsp;-&nbsp;{{$root.formatTime(event.endtime)}}
-         </div>
-         <div class="uk-width-1-3 uk-panel uk-float-right">
-            {{parseInt(event.duration/60,10)}} min</div>
-       </div>
-       <div v-if="event.epg2vdr" class="uk-panel uk-margin-top">
-          <img v-for="n in images" class="uk-align-left uk-margin-remove-adjacent" :src="'/data/eventimg?id=' + event.eventid + '&no=' + (n-1)" alt="" />
-          <p v-html="event.epg2vdr.longdescription"></p>
-       </div>
-       <hr class="uk-divider-icon" />
-       <div v___-else class="uk-panel uk-margin-top">
-          <p v-show="description" v-html="description"></p>
-       </div>
+   <div v-show="event.title" class="card">
+      <div class="card-block">
+        <h3 class="card-title">{{event.title}}</h3>
+        <div class="card-text">{{event.shorttext}}</div>
+        <div class="progress" v-show="progress">
+          <div class="progress-bar" role="progressbar" :style="{width: progress + '%'}" :aria-valuenow="{progress}" aria-valuemin="0" aria-valuemax="100">{{progress}}%</div>
+        </div>
+        <div class="row">
+          <div class="col">
+              {{ $root.formatDateTime(event.starttime)}}&nbsp;-&nbsp;{{$root.formatTime(event.endtime)}}
+          </div>
+          <div class="col text-right">
+              {{parseInt(event.duration/60,10)}} min</div>
+        </div>
+        <div v-if="event.epg2vdr" class="row">
+            <img v-for="n in images" class="mx-auto d-block mb-1" :src="'/data/eventimg?id=' + event.eventid + '&no=' + (n-1)" alt="" />
+            <p v-html="event.epg2vdr.longdescription"></p>
+        </div>
+      </div>
+      <hr />
+      <div v__-else class="card-block">
+         <p v-show="description" v-html="description"></p>
+      </div>
    </div>
 </template>
 
@@ -56,14 +60,13 @@
 
 */
 export default {
-    name: 'o2vEvent',
+    name: 'o2w-event',
     props: {
       event: Object
     },
     data(){
       return {
          now: parseInt(new Date().getTime() / 1000, 10)
-
       }
     },
     computed: {
@@ -79,7 +82,7 @@ export default {
          return Math.max(parseInt((this.now - this.event.starttime) / this.event.duration * 100,10),0);
        },
        images: function(){
-         let cnt= parseInt(this.event.epg2vdr.imagecount, 10);
+         let cnt= this.event.epg2vdr ? parseInt(this.event.epg2vdr.imagecount, 10) : 0;
          return isNaN(cnt) ? 0 : cnt;
        }
     }

@@ -1,32 +1,31 @@
 <template>
-   <div id="topnav" style="width:100%">
-      <nav class="uk-navbar-container" uk-navbar style="position:fixed; z-index:9999;width:100%;">
-        <div class="uk-navbar-left">
-          <ul class="uk-navbar-nav">
-              <li v-for="item in items" @click="handleSelect(item)" v-if="!isHidden(item)" :class="{'uk-active':item.on}">
-                  <a v-html="renderLabel(item)"></a>
-              </li>
-          </ul>
-        </div>
-        <div v-if="$root.isActive" class="uk-navbar-right">
-          <ul class="uk-navbar-nav">
-             <li v-for="item in itemsRight" @click="handleSelect(item)" :class="{'uk-active':item.on}">
-                  <a v-html="renderLabel(item)"></a>
-             </li>
-          </ul>
-        </div>
-      </nav>
-   </div>
+
+  <nav class="navbar navbar-toggleable-xl navbar-light bg-faded fixed-top">
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbar"
+            aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <!--<a class="navbar-brand" href="#">Navbar w</a>-->
+    <div class="collapse navbar-collapse" id="navbar">
+        <ul class="navbar-nav mr-auto">
+            <li v-for="item in items" @click="handleSelect(item)" v-if="!isHidden(item)" class="nav-item" :class="{'active':item.on}">
+                <a class="nav-link" href="#"><icon v-if="item.icon" :name="item.icon" /><span v-html="renderLabel(item)"></span></a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto" v-if="$root.isActive">
+            <li v-for="item in itemsRight" @click="handleSelect(item)" v-if="!isHidden(item)" class="nav-item" :class="{'active':item.on}">
+                <a class="nav-link" href="#"><icon v-if="item.icon" :name="item.icon" /><span v-html="renderLabel(item)"></span></a>
+            </li>
+        </ul>
+    </div>
+  </nav>
+
+
 </template>
 
 <script>
-import UIkit from 'uikit';
-import Icons from 'uikit/dist/js/uikit-icons';
-
-UIkit.use(Icons);
-
 export default {
-    name: 'o2vNavigation',
+    name: 'o2wNavigation',
     props: {
       'items': Array,
       'itemsRight': Array
@@ -56,7 +55,7 @@ export default {
             });
             if (key)
                 this.keys[key] = item;
-            return (item.icon ? '<span uk-icon="icon: ' + item.icon + '"></span>' : '') + label;
+            return label;
         }
     },
     mounted() {

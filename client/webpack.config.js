@@ -1,21 +1,46 @@
+// hier wird beim Entwickeln der code hingepublisht, muss ggf. angepasst werden    
+const outPathDev = '/var/lib/vdr/plugins/osd2web/http/dev';
+// Wenn ein neuer Skin hinzugefügt werden soll, 
+// einfach das Object um den entsprechenden Ordnernamen erweitern und dann die verfügbaren themes eintragen:
+
+const skins = { 
+  'default': ['default'], 
+  //'skin-example': ['default', 'theme-example'] 
+};
+
+/*============================================================================ */
+
 const {
-  resolve
+   resolve
 } = require('path')
+const isDev = (process.env.NODE_ENV === 'dev');
+
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const url = require('url')
-const publicPath = ''
-const lang = 'de'
+const webpackUglifyJsPlugin = require('webpack-uglify-js-plugin');
+const webpackMerge = require('webpack-merge');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-module.exports = (options = {}) => ({
-  entry: {
-    index: './src/main.js'
-  },
+var baseConf = {
+  plugins: [/*
+  new webpackUglifyJsPlugin({
+    cacheFolder: resolve(__dirname, 'public/cached_uglify/'),
+    debug: true,
+    minimize: !true,
+    sourceMap: false,
+    output: {
+      comments: false
+    },
+    compressor: {
+      warnings: false
+    }
+  })*/
+    new ExtractTextPlugin({ filename: '[name].css', allChunks: false })
+  ],
   output: {
-    path: options.dev ? '/var/lib/vdr/plugins/osd2web/http/dev' : resolve(__dirname, 'dist'),
-    filename: options.dev ? '[name].js' : '[name].js?[chunkhash]',
-    chunkFilename: '[id].js?[chunkhash]',
-    publicPath: publicPath
+    path: isDev ? outPathDev : resolve(__dirname, 'dist'),
+    filename: '[name]',
+    publicPath: ''
   },
   module: {
     rules: [{
@@ -28,21 +53,11 @@ module.exports = (options = {}) => ({
       exclude: /node_modules/
     },
     {
-      test: /\.html$/,
-      use: [{
-        loader: 'html-loader',
-        options: {
-          root: resolve(__dirname, 'src'),
-          attrs: ['img:src', 'link:href']
-        }
-      }]
+      test: /\.scss$/,
+      use: ExtractTextPlugin.extract({ use: ['css-loader?sourceMap', 'postcss-loader?sourceMap', 'sass-loader?sourceMap'] })
     },
     {
-      test: /\.css$/,
-      use: ['style-loader', 'css-loader', 'postcss-loader']
-    },
-    {
-      test: /\.(png|jpg|jpeg|gif|eot|ttf|woff|woff2|svg|svgz)(\?.+)?$/,
+      test: /\.(png|jpg|jpeg|gif|ico|eot|ttf|woff|woff2|svg|svgz)(\?.+)?$/,
       use: [{
         loader: 'url-loader',
         options: {
@@ -53,38 +68,56 @@ module.exports = (options = {}) => ({
     }
     ]
   },
-  plugins: [
-    /* split vendor js into its own file
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      minChunks: function (module, count) {
-        // any required modules inside node_modules are extracted to vendor
-        return (
-          module.resource 
-          && /\.js$/.test(module.resource) 
-          && module.resource.indexOf(
-            resolve(__dirname, '../node_modules')
-          ) === 0
-        )
-      }
-    }),*/
-    /*
-    // extract webpack runtime and module manifest to its own file in order to
-    // prevent vendor hash from being updated whenever app bundle is updated
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'manifest',
-      chunks: ['vendor']
-    }),
-    */
-    new HtmlWebpackPlugin({
-      template: 'src/index.html',
-      inject: true,
-    })
-  ],
-  resolve: {
-    alias: {
-      '~': resolve(__dirname, 'src')
-    }
+  externals: {
+    'common': 'common'
   },
-  devtool: options.dev ? '#eval-source-map' : '#source-map'
-})
+  resolve: {
+    extensions: [".vue", ".js", ".json", '.scss']
+  },
+  devtool: isDev ? '#eval-source-map' : '#source-map'
+}
+let skinTargets = [webpackMerge(baseConf, {
+  entry: { 
+    'common.js': './src/common.js'
+  },
+  output: { library: 'common' },
+  resolve: {
+      modules: [resolve(__dirname, 'node_modules')]
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: 'src/index.html',
+      inject: false
+    })
+  ]
+})];
+
+for (target in skins) {
+  let entries = {
+    'skin.js': './src/skins/' + target + '/main.js'
+  };
+  let themes= skins[target];
+  for (i in themes)
+    entries['themes/' + themes[i]]= themes[i] + '.scss';
+  skinTargets.push(webpackMerge(baseConf, {
+    entry: entries,
+    output: {
+      path: baseConf.output.path + '/skins/' + target
+    },
+    resolve: {
+      modules: [resolve(__dirname, 'src/skins/' + target), resolve(__dirname, 'src/components'), resolve(__dirname, 'src/themes'), resolve(__dirname, 'node_modules')]
+    },
+    plugins: [
+      new HtmlWebpackPlugin({
+        filename: 'index.html',
+        chunks: ['skin'],
+        template: 'src/skin.html',
+        inject: false
+      })
+    ]
+  }));
+
+}
+
+module.exports = skinTargets;

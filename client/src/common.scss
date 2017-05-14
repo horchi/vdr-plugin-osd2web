@@ -1,0 +1,37 @@
+@import '~bootstrap/scss/bootstrap.scss';
+
+
+/* we use topmenu fixed, so we need padding */
+body {
+  //min-height: 75rem;
+  padding-top: 4rem;
+}
+
+
+button.but-red {
+    background-color: red;
+    border-color: red;
+    color: #fff;
+}
+
+button.but-green {
+    background-color: green;
+    border-color: green;
+    color: #fff;
+}
+
+button.but-blue {
+    background-color: blue;
+    border-color: blue;
+    color: #fff;
+}
+
+button.but-yellow {
+    background-color: yellow;
+    border-color: yellow;
+    color: #222;
+}
+
+.nav-item.active>a {
+    color: blue !important;
+}

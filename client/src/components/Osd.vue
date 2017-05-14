@@ -1,7 +1,7 @@
 <template>
     <div v-show="title" id="osdCon">
-        <div class="uk-panel-box-primary uk-panel-hover uk-padding-bottom-remove uk-padding-top-remove" @click="$root.sendKey('Back')">
-            <h3 class="uk-panel-title uk-margin-bottom-remove"><i v-if="!$root.isOnlyView" uk-icon="icon: chevron-left"></i> {{ title }}</h3>
+        <div class="container" @click="$root.sendKey('Back')">
+            <h3 class=""><icon v-if="!$root.isOnlyView" name="osd-back"></icon> {{ title }}</h3>
             <!--<ul v-if="pageCount" class="uk-pagination">
                 <li :class="{'uk-disabled': pageCurrent <= 0}" @click="$root.sendKey('Left')"><span><i class="uk-icon-angle-double-left"></i></span></li>
                 <li v-for="p in pageCount" :class="{'uk-active':p == pageCurrent}"><a>{{p}}</a></li>
@@ -18,19 +18,17 @@
                 <li><a href="#"><i class="uk-icon-angle-double-right"></i></a></li>
             </ul>-->
         </div>
-        <o2v-textmenu></o2v-textmenu>
-        <o2v-event :event="event"></o2v-event>
-        <o2v-textarea></o2v-textarea>
-        <div class="uk-button-group" id="buttons" style="position:fixed;bottom:0">
-            <button v-for="(button,index) in buttons" @click="$root.sendKey(button.color)" :class="'but-' + button.color" class="uk-button uk-margin-small-top" type="button">{{button.label}}</button>
+        <o2w-textmenu></o2w-textmenu>
+        <o2w-event :event="event"></o2w-event>
+        <o2w-textarea></o2w-textarea>
+        <div class="btn-group fixed-bottom" id="buttons" st__yle="position:fixed;bottom:0">
+            <button v-for="(button,index) in buttons" @click="$root.sendKey(button.color)" :class="'but-' + button.color" class="btn btn-primary" type="button">{{button.label}}</button>
         </div>
     </div>
 </template>
 <script>
-import o2vEvent from './Event.vue';
-import o2vTextmenu from './Textmenu.vue';
-import o2vTextarea from './Textarea.vue';
-  
+require("common").Icon.register({"osd-back":{"width":1280,"height":1792,"paths":[{"d":"M1171 301l-531 531 531 531q19 19 19 45t-19 45l-166 166q-19 19-45 19t-45-19l-742-742q-19-19-19-45t19-45l742-742q19-19 45-19t45 19l166 166q19 19 19 45t-19 45z"}]}})
+
 function getClearData(){
   return {
       title: '',
@@ -42,7 +40,7 @@ function getClearData(){
   }
 }
 export default {
-    name: 'o2vOsd',
+    name: 'o2wOsd',
     data: function() {
         return getClearData();
     },
@@ -84,7 +82,7 @@ export default {
         window.addEventListener('resize', this.checkButtonHeight);
     },
     updated() {
-        document.getElementById('o2vContent').style.display= this.title ? "none" : '';
+        document.getElementById('o2wContent').style.display= this.title ? "none" : '';
         this.checkButtonHeight();
     },
     methods: {
@@ -93,37 +91,6 @@ export default {
             if (buttons)
                 buttons.parentNode.style.paddingBottom = buttons.offsetHeight + 'px';
         }
-    },
-    components: {
-        'o2v-event': o2vEvent,
-        'o2v-textmenu': o2vTextmenu, 
-        'o2v-textarea': o2vTextarea
     }
 }
 </script>
-<style>
-    button.but-red {
-        background-color: red;
-        color: #fff;
-    }
-
-    button.but-green {
-        background-color: green;
-        color: #fff;
-    }
-
-    button.but-blue {
-        background-color: blue;
-        color: #fff;
-    }
-
-    button.but-yellow {
-        background-color: yellow;
-        color: #222;
-    }
-
-    .uk-navbar-nav>li.uk-active>a {
-        color: blue !important;
-    }
-
-</style>

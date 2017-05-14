@@ -1,0 +1,4 @@
+addToJson(oVolume, "current", Current);
+addToJson(oVolume, "total", Total);
+addToJson(oVolume, "mute", Mute);
+cUpdate::pushMessage(oVolume, "volume");   // event 'volume'

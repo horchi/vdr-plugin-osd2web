@@ -1,8 +1,9 @@
-import Vue from 'vue'
-import App from './App.vue'
-import "uikit/dist/css/uikit.min.css"
+var common= require("common");
+import WebSocketClient from "./websocket.js"
+common.Icon.register({"skinfocus":{"width":2048,"height":1792,"paths":[{"d":"M1792 1248v-960q0-13-9.5-22.5t-22.5-9.5h-1600q-13 0-22.5 9.5t-9.5 22.5v960q0 13 9.5 22.5t22.5 9.5h1600q13 0 22.5-9.5t9.5-22.5zM1920 288v960q0 66-47 113t-113 47h-736v128h352q14 0 23 9t9 23v64q0 14-9 23t-23 9h-832q-14 0-23-9t-9-23v-64q0-14 9-23t23-9h352v-128h-736q-66 0-113-47t-47-113v-960q0-66 47-113t113-47h1600q66 0 113 47t47 113z"}]}})
 
-window.v = new Vue({
+export var Vue= common.Vue;
+export var root = {
     data: {
         isOnlyView: /[?&]onlyView/.test(location.search),
         isActive: false,
@@ -91,7 +92,7 @@ window.v = new Vue({
                 */
         }
     },
-    render: h => h(App),
+    render: h => h(require('App')),
     methods: {
         sendKey(key, repeat) {
             this.$socket.send({
@@ -142,6 +143,7 @@ window.v = new Vue({
                     var d = new Date(unixTime * 1000); // - this.timeOffset
                     return d.toLocaleDateString('de-DE', { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' });
                 }*/
+
     },
     created() {
         try {
@@ -151,10 +153,10 @@ window.v = new Vue({
                 autoReconnectInterval: 10000,
                 onopen: () => {
                     console.log("websocket connection opened");
-                    this.$socket.send({ "event" : "login", "object" : { "type" : + (this.isOnlyView ? 1 : 0) } });
+                    this.$socket.send({ "event": "login", "object": { "type": + (this.isOnlyView ? 1 : 0) } });
                     this.sendMaxLines(null);
                 },
-                onclose:() => {
+                onclose: () => {
                     this.isActive = false;
                 },
                 onmessage: (msg) => {
@@ -180,7 +182,7 @@ window.v = new Vue({
                 this.mapKey((ev.altKey ? 'alt.' : '') + (ev.ctrlKey ? 'ctrl.' : '') + (ev.shiftKey ? 'shift.' : '') + ev.keyCode)
             });
             window.addEventListener("unload", () => {
-                this.$socket.send({ "event" : "logout", "object" : {} });
+                this.$socket.send({ "event": "logout", "object": {} });
             })
             window.addEventListener('resize', this.sendMaxLines);
 
@@ -189,19 +191,19 @@ window.v = new Vue({
                 this.isActive = data.role == 'active';
                 this.hasChannelLogos = data.havelogos == 1;
             })
-            let skinMenuItem= {
+            let skinMenuItem = {
                 label: '',
                 on: false,
-                icon: 'tv',
+                icon: 'skinfocus',
                 func: function (navComp) {
                     navComp.$root.$emit("send", {
-                        "event": (this.on ? "leavefocus" : "takefocus" )
+                        "event": (this.on ? "leavefocus" : "takefocus")
                     });
                 }
             };
             this.$on("skinstate", (data) => {
                 this.skinAttached = data.attached == 1;
-                this.$root.$set(skinMenuItem, "on",this.skinAttached);
+                this.$root.$set(skinMenuItem, "on", this.skinAttached);
             })
             this.menuItemsRight.push(skinMenuItem);
             if (this.isOnlyView) {
@@ -231,9 +233,19 @@ window.v = new Vue({
             alert('<p>Error' + exception);
         }
     }
-}).$mount('#app')
+}
 
-
+// Registrieren aller Komponenten:
+Vue.component('o2w-event', require('Event'))
+Vue.component('o2w-textmenu', require('Textmenu'))
+Vue.component('o2w-textarea', require('Textarea'))
+Vue.component('o2w-actual', require('Actual'))
+Vue.component('o2w-timer', require('Timer'))
+Vue.component('o2w-navigation', require('Navigation'))
+Vue.component('o2w-remote', require('Remote'))
+Vue.component('o2w-osd', require('Osd'))
+Vue.component('o2w-statusmessage', require('Statusmessage'))
+Vue.component('o2w-overview', require('Overview'))
 
 /*
 enum ObjectShape
@@ -376,73 +388,3 @@ eMenuCategory['-1'] = {
     "maxlines": 100,
     "shape": 1
 };
-
-/* WebsocketClient, usage:
-wsClient = new WebSocketClient({
-    url: "ws://" + location.host,
-    protocol: "optional",
-    autoReconnectInterval: 5000, // default is 0, without reconnect
-    onopen: () => {  ...  },
-    onmessage: (msg) => {  ...  },
-    onclose: function () {  ...  },
-    onerror: function (err) {  ...  }
-});
-*/
-function WebSocketClient(opt) {
-    if (!window.WebSocket) return false;
-
-    let client= this;
-    this.onclose= function () {
-        console.log("websocket connection closed");
-    }
-    this.onerror= function (err) {
-        console.log("websocket error: ", err);
-    }
-    for (var key in opt)
-        this[key]= opt[key];
-    this.reconnect= function(e){
-        if (client.autoReconnectInterval){
-            console.log(`WebSocketClient: retry in ${client.autoReconnectInterval}ms`, e);
-            setTimeout(function () {
-                console.log("WebSocketClient: reconnecting...");
-                client.open();
-            }, client.autoReconnectInterval);
-        }
-    }
-    this.send= function(JSONobj){
-        client.ws.send(JSON.stringify(JSONobj));
-    }
-    this.open= function(){
-        client.ws = new WebSocket(client.url, client.protocol);
-        client.ws.onopen = client.onopen;
-        client.ws.onmessage = client.onmessage;
-        client.ws.onclose= function(e) {
-            switch (e) {
-                case 1000:  // CLOSE_NORMAL
-                    console.log("WebSocket: closed");
-                    break;
-                default:    // Abnormal closure
-                    client.reconnect(e);
-                    break;
-            }
-            client.onclose && client.onclose(e);
-        };
-        client.ws.onerror = function(e){
-            switch (e.code) {
-                case 'ECONNREFUSED':
-                    client.reconnect(e);
-                    break;
-                default:
-                    client.onerror || client.onerror(e);
-                    break;
-            }
-        };
-    }
-    this.reopen= function(){
-        client.ws.onerror= client.ws.onclose= client.ws.onmessage= null;
-        client.ws.close();
-        this.open();
-    }
-    this.open();
-    return this;
-}

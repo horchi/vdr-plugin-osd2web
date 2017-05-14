@@ -1,9 +1,11 @@
 <template>
-  <div v-show="text" class="uk-panel-box uk-grid-margin" v-html="text"></div>
+  <div v-show="text" class="card">
+      <div class="card-block" v-html="text"></div>
+  </div>
 </template>
 <script>
 export default {
-    name: 'o2vTextarea',
+    name: 'o2wTextarea',
     data: function() {
         return {
             'text': ''
