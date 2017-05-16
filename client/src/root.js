@@ -3,15 +3,27 @@ import WebSocketClient from "./websocket.js"
 common.Icon.register({"skinfocus":{"width":2048,"height":1792,"paths":[{"d":"M1792 1248v-960q0-13-9.5-22.5t-22.5-9.5h-1600q-13 0-22.5 9.5t-9.5 22.5v960q0 13 9.5 22.5t22.5 9.5h1600q13 0 22.5-9.5t9.5-22.5zM1920 288v960q0 66-47 113t-113 47h-736v128h352q14 0 23 9t9 23v64q0 14-9 23t-23 9h-832q-14 0-23-9t-9-23v-64q0-14 9-23t23-9h352v-128h-736q-66 0-113-47t-47-113v-960q0-66 47-113t113-47h1600q66 0 113 47t47 113z"}]}})
 
 export var Vue= common.Vue;
+
+// Registrieren aller Komponenten:
+Vue.component('o2w-event', require('Event'))
+Vue.component('o2w-textmenu', require('Textmenu'))
+Vue.component('o2w-textarea', require('Textarea'))
+Vue.component('o2w-actual', require('Actual'))
+Vue.component('o2w-timer', require('Timer'))
+Vue.component('o2w-navigation', require('Navigation'))
+Vue.component('o2w-remote', require('Remote'))
+Vue.component('o2w-osd', require('Osd'))
+Vue.component('o2w-statusmessage', require('Statusmessage'))
+Vue.component('o2w-overview', require('Overview'))
+
 export var root = {
     data: {
-        isOnlyView: /[?&]onlyView/.test(location.search),
-        isActive: false,
-        maxLines: 0,
-        osdOn: false,
+        isOnlyView: /[?&]onlyView/.test(location.search),   // reine Anzeige ohne direkte Interaktion über den Client
+        isActive: false,                                    // ist der Client am VDR als aktive angemeldet
         skinAttached: false,
         hasChannelLogos: false,
-        menuItems: [],
+        osdOn: false,
+        menuItems: [],                                      // 
         menuItemsRight: [],
         keyMap: {
             38: 'Up',
@@ -107,24 +119,6 @@ export var root = {
             let key = this.keyMap[keyString];
             if (key) this.sendKey(key);
         },
-        sendMaxLines(ev, maxLines) { //  header - buttons
-            let max = maxLines || parseInt((window.innerHeight - 128 - 40) / 38, 10)
-            if (max != this.maxLines) {
-                this.maxLines = max;
-                let data = [];
-                for (let i = 0; i < eMenuCategory.length; i++) data.push({
-                    "category": i,
-                    "maxlines": max,
-                    "shape": eMenuCategory[i].shape
-                });
-                this.$emit("send", {
-                    "event": "maxlines",
-                    object: {
-                        "categories": data
-                    }
-                });
-            }
-        },
         formatDateTime(unixTime) {
             var d = new Date(unixTime * 1000); // - this.timeOffset
             return d.toLocaleDateString('de-DE', {
@@ -154,7 +148,6 @@ export var root = {
                 onopen: () => {
                     console.log("websocket connection opened");
                     this.$socket.send({ "event": "login", "object": { "type": + (this.isOnlyView ? 1 : 0) } });
-                    this.sendMaxLines(null);
                 },
                 onclose: () => {
                     this.isActive = false;
@@ -170,27 +163,23 @@ export var root = {
             });
             if (!this.$socket)
                 return !(this.$el.innerHTML = "Your Browser will not support Websockets!");
-            //        UIkit.notification({message: 'Copied!', pos: 'bottom-right'}); 
 
-
-
-            // Nachrichten/Anfragen der Module an den Server weiterleiten
+            // Nachrichten/Anfragen der Komponenten an den Server weiterleiten
             this.$on("send", this.$socket.send);
-
-            // Browserevent abfangen
-            !this.isOnlyView && window.addEventListener('keyup', (ev) => {
-                this.mapKey((ev.altKey ? 'alt.' : '') + (ev.ctrlKey ? 'ctrl.' : '') + (ev.shiftKey ? 'shift.' : '') + ev.keyCode)
-            });
-            window.addEventListener("unload", () => {
-                this.$socket.send({ "event": "logout", "object": {} });
-            })
-            window.addEventListener('resize', this.sendMaxLines);
 
             // Globale Nachrichten verarbeiten
             this.$on("rolechange", (data) => {
                 this.isActive = data.role == 'active';
                 this.hasChannelLogos = data.havelogos == 1;
             })
+
+            // Interne Nachrichten verarbeiten
+            this.$on("osdState", (data) => {
+                this.osdOn= data.active;
+                //document.getElementById('o2wContent').style.display= data.active ? "none" : '';
+            });
+
+            // Status des VDR-Skins
             let skinMenuItem = {
                 label: '',
                 on: false,
@@ -206,6 +195,8 @@ export var root = {
                 this.$root.$set(skinMenuItem, "on", this.skinAttached);
             })
             this.menuItemsRight.push(skinMenuItem);
+
+
             if (this.isOnlyView) {
                 var scrollingElement = document.scrollingElement || document.documentElement;
                 window.autoScroll = function (delta) {
@@ -228,24 +219,28 @@ export var root = {
                     window.setTimeout(window.autoScroll, nextCall, delta);
                 }
                 window.autoScroll(1);
+            } else {
+                // Browserevent abfangen
+                window.addEventListener('keyup', (ev) => {
+                    this.mapKey((ev.altKey ? 'alt.' : '') + (ev.ctrlKey ? 'ctrl.' : '') + (ev.shiftKey ? 'shift.' : '') + ev.keyCode)
+                });
             }
+
+            window.addEventListener("unload", () => {
+                this.$socket.send({ "event": "logout", "object": {} });
+            })
+
         } catch (exception) {
             alert('<p>Error' + exception);
         }
     }
 }
 
-// Registrieren aller Komponenten:
-Vue.component('o2w-event', require('Event'))
-Vue.component('o2w-textmenu', require('Textmenu'))
-Vue.component('o2w-textarea', require('Textarea'))
-Vue.component('o2w-actual', require('Actual'))
-Vue.component('o2w-timer', require('Timer'))
-Vue.component('o2w-navigation', require('Navigation'))
-Vue.component('o2w-remote', require('Remote'))
-Vue.component('o2w-osd', require('Osd'))
-Vue.component('o2w-statusmessage', require('Statusmessage'))
-Vue.component('o2w-overview', require('Overview'))
+/* TODO
+    { "event" : "channels" } holt alle channels -> sollte ggf. gecacht werden
+
+*/
+
 
 /*
 enum ObjectShape
@@ -264,127 +259,3 @@ mögliche langeobjekte:
      9 -> Aufzeichnungen
 
 */
-const eMenuCategory = [
-    {
-        "category": 'mcUnknown',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcMain',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcSchedule',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcScheduleNow',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcScheduleNext',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcChannel',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcChannelEdit',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcTimer',
-        "maxlines": 100,
-        "shape": 4
-    }, {
-        "category": 'mcTimerEdit',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcRecording',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcRecordingInfo',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcRecordingEdit',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcPlugin',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcPluginSetup',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcSetup',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcSetupOsd',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcSetupEpg',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcSetupDvb',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcSetupLnb',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcSetupCam',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcSetupRecord',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcSetupReplay',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcSetupMisc',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcSetupPlugins',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcCommand',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcEvent',
-        "maxlines": 100,
-        "shape": 4
-    }, {
-        "category": 'mcText',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcFolder',
-        "maxlines": 100,
-        "shape": 1
-    }, {
-        "category": 'mcCam',
-        "maxlines": 100,
-        "shape": 1
-    }
-];
-eMenuCategory['-1'] = {
-    "category": 'mcUndefined',
-    "maxlines": 100,
-    "shape": 1
-};

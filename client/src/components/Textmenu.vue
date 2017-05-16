@@ -35,6 +35,7 @@ export default {
         return getClearData();
     },
     created() {
+     
         this.$root.$on("clearmenu", (data) => {
            let clearData= getClearData();
            for (let key in clearData)

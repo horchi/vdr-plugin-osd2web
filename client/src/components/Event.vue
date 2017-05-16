@@ -13,10 +13,28 @@
           <div class="col text-right">
               {{parseInt(event.duration/60,10)}} min</div>
         </div>
+        <div v-if="event.epg2vdr" :id="'evImages' + event.eventid" class="carousel slide" data-ride="carousel" data-interval="5000">
+          <div class="carousel-inner" role="listbox">
+            <div v-for="n in images" class="carousel-item" :class="{'active':n==1}">
+              <img class="d-block img-fluid" :src="'/data/eventimg?id=' + event.eventid + '&no=' + (n-1)" alt="">
+            </div>
+          </div>
+          <a class="carousel-control-prev" :href="'#evImages' + event.eventid" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+          </a>
+          <a class="carousel-control-next" :href="'#evImages' + event.eventid" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+          </a>
+           <p v-html="event.epg2vdr.longdescription"></p>
+        </div>
+<!--
         <div v-if="event.epg2vdr" class="row">
             <img v-for="n in images" class="mx-auto d-block mb-1" :src="'/data/eventimg?id=' + event.eventid + '&no=' + (n-1)" alt="" />
             <p v-html="event.epg2vdr.longdescription"></p>
         </div>
+        -->
       </div>
       <hr />
       <div v__-else class="card-block">
@@ -73,7 +91,7 @@ export default {
        description:  function () {
           return this.event.description ? this.event.description.replace(/\n/g, '<br />') : '';
        },
-       progress: function () {
+       progress: function () { 
           if (this.event.title){
               window.setTimeout(()=>{
                   this.now= parseInt(new Date().getTime() / 1000, 10);

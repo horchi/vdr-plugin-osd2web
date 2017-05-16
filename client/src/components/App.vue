@@ -6,7 +6,7 @@
        <o2w-remote v-if="!$root.isOnlyView"></o2w-remote>
        <div id="o2wContainer" class="container">
           <o2w-osd name="osd"></o2w-osd>
-          <div id="o2wContent">
+          <div id="o2wContent" v-show="!$root.osdOn">
              <o2w-overview></o2w-overview>
           </div>
        </div>

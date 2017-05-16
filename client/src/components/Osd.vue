@@ -1,42 +1,31 @@
 <template>
-    <div v-show="title" id="osdCon">
+    <div v-show="$root.osdOn" id="osdCon">
         <div class="container" @click="$root.sendKey('Back')">
             <h3 class=""><icon v-if="!$root.isOnlyView" name="osd-back"></icon> {{ title }}</h3>
-            <!--<ul v-if="pageCount" class="uk-pagination">
-                <li :class="{'uk-disabled': pageCurrent <= 0}" @click="$root.sendKey('Left')"><span><i class="uk-icon-angle-double-left"></i></span></li>
-                <li v-for="p in pageCount" :class="{'uk-active':p == pageCurrent}"><a>{{p}}</a></li>
-                <li :class="{'uk-disabled': pageCurrent >= pageCount}" @click="$root.sendKey('Right')"><span><i class="uk-icon-angle-double-right"></i></span></li>
-            </ul>
-            <ul class="uk-pagination">
-                
-                <li class="uk-active"><span>1</span></li>
-                <li><a href="#">2</a></li>
-                <li><a href="#">3</a></li>
-                <li><a href="#">4</a></li>
-                <li><span>...</span></li>
-                <li><a href="#">20</a></li>
-                <li><a href="#"><i class="uk-icon-angle-double-right"></i></a></li>
-            </ul>-->
         </div>
         <o2w-textmenu></o2w-textmenu>
         <o2w-event :event="event"></o2w-event>
         <o2w-textarea></o2w-textarea>
-        <div class="btn-group fixed-bottom" id="buttons" st__yle="position:fixed;bottom:0">
+        <div class="btn-group btn-group-sm justify-content-center fixed-bottom" id="buttons">
+            <a v-show="pageUp" class="btn btn-secondary" @click="$root.sendKey('Up',maxLines)"><icon name="caret-up" /></a>
             <button v-for="(button,index) in buttons" @click="$root.sendKey(button.color)" :class="'but-' + button.color" class="btn btn-primary" type="button">{{button.label}}</button>
+            <a v-show="pageDn" class="btn btn-secondary" @click="$root.sendKey('Down',maxLines)"><icon name="caret-down" /></a>
         </div>
     </div>
 </template>
 <script>
-require("common").Icon.register({"osd-back":{"width":1280,"height":1792,"paths":[{"d":"M1171 301l-531 531 531 531q19 19 19 45t-19 45l-166 166q-19 19-45 19t-45-19l-742-742q-19-19-19-45t19-45l742-742q19-19 45-19t45 19l166 166q19 19 19 45t-19 45z"}]}})
+var common=require("common");
+common.Icon.register({"osd-back":{"width":1280,"height":1792,"paths":[{"d":"M1171 301l-531 531 531 531q19 19 19 45t-19 45l-166 166q-19 19-45 19t-45-19l-742-742q-19-19-19-45t19-45l742-742q19-19 45-19t45 19l166 166q19 19 19 45t-19 45z"}]}})
 
 function getClearData(){
   return {
       title: '',
       category: -1,
-      pageCount:0,
-      pageCurrent:0,
+      pageUp: false,
+      pageDn: false,
       event:{},
-      buttons: []
+      buttons: [],
+      maxLines: 0                                       // maximale Anzahl Zeilen, die der Client darstellen kann
   }
 }
 export default {
@@ -65,8 +54,8 @@ export default {
                 this.$root.$set(menuItem, "on",true);
         });
         this.$root.$on("scrollbar", (data) => {
-            this.pageCount = parseInt(data.Total / this.$root.maxLines,10);
-            this.pageCurrent =  parseInt(data.Offset / this.$root.maxLines,10);
+            this.pageUp= data.Offset > 0;
+            this.pageDn= (data.Total - this.maxLines) > data.Offset;
         });
         this.$root.$on("event", (data) => {
             this.event = data;
@@ -79,18 +68,190 @@ export default {
                     label: data[color]
                 });
         })
-        window.addEventListener('resize', this.checkButtonHeight);
+
+        if (this.$root.isOnlyView){
+            let lastResize= 0;
+            let checkInt= false;
+            let _this= this;
+            function checkResize(ev){
+                console.log(lastResize)
+                if (!checkInt){
+                    checkInt= window.setInterval(checkResize,500);
+                } else{
+                    if ( (new Date().getTime() - lastResize) > 500 ){
+                        _this.sendMaxLines(null);
+                        checkInt= !!window.clearInterval(checkInt);
+                    }
+                }
+                lastResize= new Date().getTime();
+            }
+            window.addEventListener('resize', checkResize);
+        }
+        // socket muss erst initialisiert werden..
+        window.setTimeout(this.sendMaxLines,500, null, this.$root.isOnlyView ? null : 50);
+        //window.addEventListener('resize', this.checkButtonHeight);
     },
     updated() {
-        document.getElementById('o2wContent').style.display= this.title ? "none" : '';
-        this.checkButtonHeight();
+        if (this.title){
+             this.$root.$emit("osdState", {active: true});
+             if (this.$root.isOnlyView)
+                window.addEventListener('resize', this.sendMaxLines);
+        } else {
+             this.$root.$emit("osdState", {active: false});
+             window.removeEventListener('resize', this.sendMaxLines);
+        }
+        //this.checkButtonHeight();
     },
     methods: {
+        sendMaxLines(ev, maxLines) { //  header - buttons
+            let max = maxLines || common.maxLinesCalc.getMax();
+            if (max != this.maxLines) {
+                this.maxLines = max;
+                let data = [];
+                for (let i = 0; i < eMenuCategory.length; i++) data.push({
+                    "category": i,
+                    "maxlines": max,
+                    "shape": eMenuCategory[i].shape
+                });
+                this.$root.$emit("send", {
+                    "event": "maxlines",
+                    object: {
+                        "categories": data
+                    }
+                });
+            }
+        }/*,
         checkButtonHeight() {
             let buttons = document.getElementById('buttons');
             if (buttons)
                 buttons.parentNode.style.paddingBottom = buttons.offsetHeight + 'px';
-        }
+        }*/
     }
 }
+
+const eMenuCategory = [
+    {
+        "category": 'mcUnknown',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcMain',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcSchedule',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcScheduleNow',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcScheduleNext',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcChannel',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcChannelEdit',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcTimer',
+        "maxlines": 100,
+        "shape": 4
+    }, {
+        "category": 'mcTimerEdit',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcRecording',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcRecordingInfo',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcRecordingEdit',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcPlugin',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcPluginSetup',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcSetup',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcSetupOsd',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcSetupEpg',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcSetupDvb',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcSetupLnb',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcSetupCam',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcSetupRecord',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcSetupReplay',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcSetupMisc',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcSetupPlugins',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcCommand',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcEvent',
+        "maxlines": 100,
+        "shape": 4
+    }, {
+        "category": 'mcText',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcFolder',
+        "maxlines": 100,
+        "shape": 1
+    }, {
+        "category": 'mcCam',
+        "maxlines": 100,
+        "shape": 1
+    }
+];
+eMenuCategory['-1'] = {
+    "category": 'mcUndefined',
+    "maxlines": 100,
+    "shape": 1
+};
+
 </script>
