@@ -13,6 +13,7 @@ export default function WebSocketClient(opt) {
     if (!window.WebSocket) return false;
 
     let client = this;
+    let queue= [];
     this.onclose = function () {
         console.log("websocket connection closed");
     }
@@ -30,12 +31,21 @@ export default function WebSocketClient(opt) {
             }, client.autoReconnectInterval);
         }
     }
-    this.send = function (JSONobj) {
-        client.ws.send(JSON.stringify(JSONobj));
+    this.doQueue = function (JSONobj) {
+        queue.push(JSONobj);
     }
+    this.send = this.doQueue;
     this.open = function () {
         client.ws = new WebSocket(client.url, client.protocol);
-        client.ws.onopen = client.onopen;
+        client.ws.onopen = function(e){
+            client.send= function (JSONobj) {
+                client.ws.send(JSON.stringify(JSONobj));
+            }
+            let JSONobj;
+            while ( (JSONobj=queue.shift()))
+                client.ws.send(JSON.stringify(JSONobj));
+            client.onopen && client.onopen(e);
+        }
         client.ws.onmessage = client.onmessage;
         client.ws.onclose = function (e) {
             switch (e) {
@@ -47,6 +57,7 @@ export default function WebSocketClient(opt) {
                     break;
             }
             client.onclose && client.onclose(e);
+            client.send = client.doQueue;
         };
         client.ws.onerror = function (e) {
             switch (e.code) {

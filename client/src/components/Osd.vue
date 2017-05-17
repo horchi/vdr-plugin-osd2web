@@ -17,6 +17,8 @@
 var common=require("common");
 common.Icon.register({"osd-back":{"width":1280,"height":1792,"paths":[{"d":"M1171 301l-531 531 531 531q19 19 19 45t-19 45l-166 166q-19 19-45 19t-45-19l-742-742q-19-19-19-45t19-45l742-742q19-19 45-19t45 19l166 166q19 19 19 45t-19 45z"}]}})
 
+var maxLines= 0;
+
 function getClearData(){
   return {
       title: '',
@@ -25,7 +27,7 @@ function getClearData(){
       pageDn: false,
       event:{},
       buttons: [],
-      maxLines: 0                                       // maximale Anzahl Zeilen, die der Client darstellen kann
+      maxLines: maxLines                                       // maximale Anzahl Zeilen, die der Client darstellen kann
   }
 }
 export default {
@@ -55,7 +57,7 @@ export default {
         });
         this.$root.$on("scrollbar", (data) => {
             this.pageUp= data.Offset > 0;
-            this.pageDn= (data.Total - this.maxLines) > data.Offset;
+            this.pageDn= (data.Total - maxLines) > data.Offset;
         });
         this.$root.$on("event", (data) => {
             this.event = data;
@@ -74,7 +76,6 @@ export default {
             let checkInt= false;
             let _this= this;
             function checkResize(ev){
-                console.log(lastResize)
                 if (!checkInt){
                     checkInt= window.setInterval(checkResize,500);
                 } else{
@@ -87,8 +88,7 @@ export default {
             }
             window.addEventListener('resize', checkResize);
         }
-        // socket muss erst initialisiert werden..
-        window.setTimeout(this.sendMaxLines,500, null, this.$root.isOnlyView ? null : 50);
+        this.sendMaxLines(null, this.$root.isOnlyView ? null : 50);
         //window.addEventListener('resize', this.checkButtonHeight);
     },
     updated() {
@@ -103,10 +103,10 @@ export default {
         //this.checkButtonHeight();
     },
     methods: {
-        sendMaxLines(ev, maxLines) { //  header - buttons
-            let max = maxLines || common.maxLinesCalc.getMax();
-            if (max != this.maxLines) {
-                this.maxLines = max;
+        sendMaxLines(ev, linesMax) { //  header - buttons
+            let max = linesMax || common.maxLinesCalc.getMax();
+            if (max != maxLines) {
+                maxLines = max;
                 let data = [];
                 for (let i = 0; i < eMenuCategory.length; i++) data.push({
                     "category": i,
