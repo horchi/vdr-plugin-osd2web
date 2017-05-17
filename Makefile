@@ -150,7 +150,9 @@ install-http:
 	   mkdir -p $(DESTDIR)$(HTTPDEST); \
 	   chmod a+rx $(DESTDIR)$(HTTPDEST); \
 	fi
-	install --mode=644 -D ./client/dist/* $(DESTDIR)$(HTTPDEST)
+	cp -r ./client/dist/* $(DESTDIR)$(HTTPDEST)
+	chmod -R a+rX $(DESTDIR)$(HTTPDEST)
+#	install --mode=644 -D ./client/dist/* $(DESTDIR)$(HTTPDEST)
 ifdef VDR_USER
 	if test -n $(VDR_USER); then \
 		chown -R $(VDR_USER) $(DESTDIR)$(HTTPDEST); \
