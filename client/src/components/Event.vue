@@ -16,7 +16,7 @@
         <div v-if="event.epg2vdr" :id="'evImages' + event.eventid" class="carousel slide" data-ride="carousel" data-interval="5000">
           <div class="carousel-inner" role="listbox">
             <div v-for="n in images" class="carousel-item" :class="{'active':n==1}">
-              <img class="d-block img-fluid" :src="'/data/eventimg?id=' + event.eventid + '&no=' + (n-1)" alt="">
+              <img class="d-block" :src="'/data/eventimg?id=' + event.eventid + '&no=' + (n-1)" alt="">
             </div>
           </div>
           <a class="carousel-control-prev" :href="'#evImages' + event.eventid" role="button" data-slide="prev">

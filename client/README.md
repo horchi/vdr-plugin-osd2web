@@ -1,7 +1,7 @@
 
 Die Programmierung basiert auf Vue.js 
     https://vuejs.org/
-Als Responsive Ui-Framework wurde bootstrap 4 benutzt
+Als Responsive Ui-Framework wurde bootstrap 4 benutzt (nicht vom alpha in der Version verwirren lassen...)
     https://v4-alpha.getbootstrap.com/
 Die Icons basieren auf vue-awesome
     https://github.com/Justineo/vue-awesome
