@@ -64,7 +64,7 @@ int event2Json(json_t* obj, const cEvent* event, const cChannel* channel,
    addToJson(obj, "hastimer", event->HasTimer());
    addToJson(obj, "seen", event->Seen());
 
-/*   if (!isEmpty(event->Aux()))
+   if (!isEmpty(event->Aux()))
    {
       cXml xml;
       int count = 0;
@@ -88,7 +88,7 @@ int event2Json(json_t* obj, const cEvent* event, const cChannel* channel,
       {
          tell(0, "Debug: Parsing of xml data in aux failed");
       }
-   }*/
+   }
 
    if (current || shape & cOsdService::osLarge)
    {
