@@ -76,6 +76,8 @@ cUpdate::cUpdate()
    currentChannelNr = 0;
    activeControl = 0;
    activeControlFps = 1;
+   activeReplayName = "";
+   activeReplayFile = "";
    haveActualEpg = no;
    pingTime = 60;                      // timeout
    nextPing = time(0);
@@ -362,6 +364,7 @@ int cUpdate::performLogin(json_t* oObject)
    updateSkinState();
    updatePresentFollowing();  // trigger update of present/following
    updateTimers();
+   updateReplay();
 
    return done;
 }

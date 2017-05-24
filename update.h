@@ -285,6 +285,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       void updatePresentFollowing();
       void updateTimers();
       void updateControl();
+      void updateReplay();
       void updateCustomData();
       void updateSkinState();
 
@@ -302,6 +303,8 @@ class cUpdate : public cStatus, cThread, public cOsdService
       int haveActualEpg;
       const cControl* activeControl;
       int activeControlFps;
+      std::string activeReplayName;
+      std::string activeReplayFile;
 
       // trigger
 

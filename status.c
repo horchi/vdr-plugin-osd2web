@@ -93,43 +93,17 @@ void cUpdate::Replaying(const cControl* Control, const char* Name,
    if (!On)
    {
       activeControl = 0;
+      activeReplayFile = "";
+      activeReplayName = "";
       return ;
    }
 
    activeControlFps = 1;
    activeControl = Control;
+   activeReplayFile = FileName;
+   activeReplayName = Name;
 
-#if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
-   const cRecordings* recordings;
-   cStateKey stateKey;
-
-   if (!(recordings = cRecordings::GetRecordingsRead(stateKey, 500)))
-      tell(1, "Can't get lock for recordings, retrying later");
-#else
-   cRecordings* recordings = &Recordings;
-#endif
-
-   json_t* oRecording = json_object();
-   const cRecording* recording = recordings ? recordings->GetByName(FileName) : 0;
-
-   if (recording)
-   {
-      activeControlFps = recording->Info() ? recording->Info()->FramesPerSecond() : 1;
-      recording2Json(oRecording, recording);
-   }
-   else
-   {
-      addToJson(oRecording, "name", Name);
-      addToJson(oRecording, "filename", FileName);
-   }
-
-#if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
-   if (recordings)
-      stateKey.Remove();
-#endif
-
-   cUpdate::pushMessage(oRecording, "replay");
-   updateControl();
+   updateReplay();
 }
 
 //***************************************************************************
@@ -285,6 +259,48 @@ void cUpdate::updateTimers()
    }
 
    triggerTimerUpdate = no;
+}
+
+//***************************************************************************
+// Replaying
+//***************************************************************************
+
+void cUpdate::updateReplay()
+{
+#if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
+   const cRecordings* recordings;
+   cStateKey stateKey;
+
+   if (!activeControl)
+      return;
+
+   if (!(recordings = cRecordings::GetRecordingsRead(stateKey, 500)))
+      tell(1, "Can't get lock for recordings, retrying later");
+#else
+   cRecordings* recordings = &Recordings;
+#endif
+
+   json_t* oRecording = json_object();
+   const cRecording* recording = recordings ? recordings->GetByName(activeReplayFile.c_str()) : 0;
+
+   if (recording)
+   {
+      activeControlFps = recording->Info() ? recording->Info()->FramesPerSecond() : 1;
+      recording2Json(oRecording, recording);
+   }
+   else
+   {
+      addToJson(oRecording, "name", activeReplayName.c_str());
+      addToJson(oRecording, "filename", activeReplayFile.c_str());
+   }
+
+#if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
+   if (recordings)
+      stateKey.Remove();
+#endif
+
+   cUpdate::pushMessage(oRecording, "replay");
+   updateControl();
 }
 
 //***************************************************************************
