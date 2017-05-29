@@ -63,7 +63,7 @@ export default {
             this.channel = data.channel;
             this.present= data.present;
             this.following= data.following;
-            this.buttons= {};
+            this.buttons= null;
             this.controlInfo=null;
         });
         this.$root.$on("replay", (data) => {

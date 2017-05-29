@@ -13,6 +13,7 @@
 #include "update.h"
 #include "config.h"
 
+lws_context* cWebSock::context = 0;
 char* cWebSock::msgBuffer = 0;
 int cWebSock::msgBufferSize = 0;
 void* cWebSock::activeClient = 0;
@@ -28,9 +29,7 @@ char* cWebSock::httpPath = 0;
 cWebSock::cWebSock(const char* aHttpPath)
 {
    httpPath = strdup(aHttpPath);
-
    port = 4444;
-   context = 0;
 }
 
 cWebSock::~cWebSock()
@@ -55,7 +54,7 @@ int cWebSock::init(int aPort, int aTimeout)
 
    protocols[0].name = "http-only";
    protocols[0].callback = callbackHttp;
-   protocols[0].per_session_data_size = 0;
+   protocols[0].per_session_data_size = sizeof(SessionData);
    protocols[0].rx_buffer_size = 20;
 
    protocols[1].name = "osd2vdr";
@@ -141,11 +140,38 @@ int cWebSock::performData(MsgType type)
 int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
                            void* in, size_t len)
 {
+   SessionData* sessionData = (SessionData*)user;
+
    switch (reason)
    {
       case LWS_CALLBACK_CLIENT_WRITEABLE:
       {
-         tell(2, "HTTP: connection established\n");
+         tell(2, "HTTP: Client connected");
+         break;
+      }
+
+      case LWS_CALLBACK_HTTP_WRITEABLE:
+      {
+         tell(2, "HTTP: LWS_CALLBACK_HTTP_WRITEABLE");
+
+         // data to write?
+
+         if (sessionData->dataPending)
+         {
+            int res;
+
+            res = lws_write(wsi, (unsigned char*)sessionData->buffer+sizeLwsPreFrame,
+                            sessionData->payloadSize, LWS_WRITE_HTTP);
+
+            if (res < 0)
+               tell(0, "Failed writing '%s'", sessionData->buffer+sizeLwsPreFrame);
+            else
+               tell(2, "WROTE '%s'", sessionData->buffer+sizeLwsPreFrame);
+
+            free(sessionData->buffer);
+            memset(sessionData, 0, sizeof(SessionData));
+         }
+
          break;
       }
 
@@ -155,6 +181,8 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
          char* file = 0;
          const char* url = (char*)in;
 
+         memset(sessionData, 0, sizeof(SessionData));
+
          tell(2, "HTTP: Requested uri: (%ld) '%s'", len, url);
 
          // data or file request ...
@@ -163,14 +191,14 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
          {
             // data request
 
-            res = dispatchDataRequest(wsi, url);
+            res = dispatchDataRequest(wsi, sessionData, url);
 
             if (res < 0 || (res > 0 && lws_http_transaction_completed(wsi)))
                return -1;
          }
          else
          {
-            // file  request
+            // file request
 
             if (strcmp(url, "/") == 0)
                url = "index.html";
@@ -279,8 +307,6 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
                tell(1, "DEBUG: Write (%d) [%.*s] to (%p)\n",
                     msgSize, msgSize,
                     msgBuffer+sizeLwsPreFrame, (void*)wsi);
-
-               // #TODO gzip message here?
 
                res = lws_write(wsi, (unsigned char*)msgBuffer + sizeLwsPreFrame, msgSize, LWS_WRITE_TEXT);
 
@@ -501,7 +527,7 @@ const char* cWebSock::methodOf(const char* url)
 // Dispatch Data Request
 //***************************************************************************
 
-int cWebSock::dispatchDataRequest(lws* wsi, const char* url)
+int cWebSock::dispatchDataRequest(lws* wsi, SessionData* sessionData, const char* url)
 {
    int statusCode = HTTP_STATUS_NOT_FOUND;
 
@@ -511,6 +537,8 @@ int cWebSock::dispatchDataRequest(lws* wsi, const char* url)
       statusCode = doEventImg(wsi);
    else if (strcmp(method, "channellogo") == 0)
       statusCode = doChannelLogo(wsi);
+   else if (strcmp(method, "getenv") == 0)
+      statusCode = doEnvironment(wsi, sessionData);
 
    return statusCode;
 }
@@ -563,4 +591,152 @@ int cWebSock::doChannelLogo(lws* wsi)
    free(path);
 
    return result;
+}
+
+//***************************************************************************
+// Do Environment
+//***************************************************************************
+
+int cWebSock::doEnvironment(lws* wsi, SessionData* sessionData)
+{
+   static unsigned char header[4096+sizeLwsFrame];
+   unsigned char* p = header + sizeLwsPreFrame;
+   unsigned char* e = p + sizeof(header) - sizeLwsPreFrame;
+
+   DIR* dirSkin;
+   int result = 0;
+   char* path = 0;
+
+   json_t* obj = json_object();
+   json_t* oEnvironment = json_object();
+   json_t* oSkins = json_array();
+
+   asprintf(&path, "%s/skins/", config.httpPath);
+
+   if (!(dirSkin = opendir(path)))
+   {
+      tell(1, "Can't open directory '%s', '%s'", path, strerror(errno));
+      free(path);
+      return fail;
+   }
+
+#ifndef HAVE_READDIR_R
+   dirent* pSkinEntry;
+
+   while (pSkinEntry = readdir(dirSkin))
+#else
+   dirent skinEntry;
+   dirent* pSkinEntry = &skinEntry;
+   dirent* skinRes;
+
+   // deprecated but the only reentrant with old libc!
+
+   while (readdir_r(dirSkin, pSkinEntry, &skinRes) == 0 && skinRes)
+#endif
+   {
+      char* themePath = 0;
+      DIR* dirTheme;
+
+      if (pSkinEntry->d_type != DT_DIR || pSkinEntry->d_name[0] == '.')
+         continue;
+
+      json_t* oSkin = json_object();
+      json_t* oThemes = json_array();
+
+      asprintf(&themePath, "%s/skins/%s/themes/", config.httpPath, pSkinEntry->d_name);
+
+      if (!(dirTheme = opendir(themePath)))
+      {
+         tell(1, "Can't open directory '%s', '%s'", pSkinEntry->d_name, strerror(errno));
+         continue;
+      }
+
+#ifndef HAVE_READDIR_R
+      dirent* pThemeEntry;
+
+      while (pThemeEntry = readdir(dirTheme))
+#else
+      dirent themeEntry;
+      dirent* pThemeEntry = &themeEntry;
+      dirent* themeRes;
+
+      // deprecated but the only reentrant with old libc!
+
+      while (readdir_r(dirTheme, pThemeEntry, &themeRes) == 0 && themeRes)
+#endif
+      {
+         if (pThemeEntry->d_type != DT_REG || pThemeEntry->d_name[0] == '.')
+            continue;
+
+         if (rep(pThemeEntry->d_name, ".css$") != success)
+            continue;
+
+         json_array_append_new(oThemes, json_string(strReplace(".css", "", pThemeEntry->d_name).c_str()));
+      }
+
+      closedir(dirTheme);
+      free(themePath);
+
+      addToJson(oSkin, "name", pSkinEntry->d_name);
+      addToJson(oSkin, "themes", oThemes);
+      json_array_append_new(oSkins, oSkin);
+
+      tell(1, "Found skin '%s'", pSkinEntry->d_name);
+   }
+
+   closedir(dirSkin);
+   free(path);
+
+   // build json object
+
+   addToJson(oEnvironment, "skins", oSkins);
+   addToJson(obj, "event", "environment");
+   addToJson(obj, "object", oEnvironment);
+
+   char* strJson = json_dumps(obj, JSON_PRESERVE_ORDER);
+   json_decref(obj);
+
+   // store to session data
+
+   sessionData->payloadSize = strlen(strJson);
+   sessionData->bufferSize = sizeLwsFrame + sessionData->payloadSize + TB;
+   sessionData->buffer = (char*)malloc(sessionData->bufferSize);
+   sprintf(sessionData->buffer+sizeLwsPreFrame, "%s", strJson);
+   sessionData->dataPending = yes;
+
+   free(strJson);
+
+   // prepare header
+
+   if (!result && lws_add_http_header_status(wsi, 200, &p, e))
+      result = 1;
+
+   if (!result && lws_add_http_header_by_token(wsi, WSI_TOKEN_HTTP_SERVER,
+                                               (unsigned char*)"osd2web", 7, &p, e))
+      result = 1;
+
+   if (!result && lws_add_http_header_by_token(wsi, WSI_TOKEN_HTTP_CONTENT_TYPE,
+                                               (unsigned char*)"application/json", 16, &p, e))
+      result = 1;
+
+   if (!result && lws_add_http_header_content_length(wsi, sessionData->payloadSize, &p, e))
+      result = 1;
+
+   if (!result && lws_finalize_http_header(wsi, &p, e))
+      result = 1;
+
+   *p = 0;
+
+   // write header
+
+   if (!result && lws_write(wsi, header + sizeLwsPreFrame, p - (header + sizeLwsPreFrame), LWS_WRITE_HTTP_HEADERS))
+      result = 1;
+
+   tell(2, "WROTE '%.*s'", (int)(p - (header + sizeLwsPreFrame)), header + sizeLwsPreFrame);
+
+   // book us a LWS_CALLBACK_HTTP_WRITEABLE callback
+
+   lws_callback_on_writable(wsi);
+
+   return 0;
 }

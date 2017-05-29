@@ -3,11 +3,14 @@ const outPathDev = '/var/lib/vdr/plugins/osd2web/http/dev';
 // Wenn ein neuer Skin hinzugefügt werden soll, 
 // einfach das Object um den entsprechenden Ordnernamen erweitern und dann die verfügbaren themes eintragen:
 
-const skins = { 
-  'default': ['default'], 
-  //'skin-example': ['default', 'theme-example'] 
-};
+var skins= null;
 
+try{
+  skins= require('./skins.config.js');
+} catch(e) {};
+
+if (!skins)
+  skins= {'default': ['default']};
 /*============================================================================ */
 
 const {

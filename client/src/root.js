@@ -145,10 +145,6 @@ export var root = {
                 url: "ws://" + location.host,
                 protocol: "osd2vdr",
                 autoReconnectInterval: 10000,
-                onopen: () => {
-                    console.log("websocket connection opened");
-                    this.$socket.send({ "event": "login", "object": { "type": + (this.isOnlyView ? 1 : 0) } });
-                },
                 onclose: () => {
                     this.isActive = false;
                 },
@@ -163,6 +159,8 @@ export var root = {
             });
             if (!this.$socket)
                 return !(this.$el.innerHTML = "Your Browser will not support Websockets!");
+
+            this.$socket.send({ "event": "login", "object": { "type": + (this.isOnlyView ? 1 : 0) } });
 
             // Nachrichten/Anfragen der Komponenten an den Server weiterleiten
             this.$on("send", this.$socket.send);
