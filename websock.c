@@ -620,6 +620,8 @@ int cWebSock::doEnvironment(lws* wsi, SessionData* sessionData)
       return fail;
    }
 
+   tell(1, "Scanning '%s' for skins", path);
+
 #ifndef HAVE_READDIR_R
    dirent* pSkinEntry;
 
@@ -637,6 +639,8 @@ int cWebSock::doEnvironment(lws* wsi, SessionData* sessionData)
       char* themePath = 0;
       DIR* dirTheme;
 
+      tell(1, "Checking '%s'", pSkinEntry->d_name);
+
       if (pSkinEntry->d_type != DT_DIR || pSkinEntry->d_name[0] == '.')
          continue;
 
@@ -652,6 +656,8 @@ int cWebSock::doEnvironment(lws* wsi, SessionData* sessionData)
          continue;
       }
 
+      tell(1, "Scanning '%s' for themes", themePath);
+
 #ifndef HAVE_READDIR_R
       dirent* pThemeEntry;
 
@@ -666,6 +672,8 @@ int cWebSock::doEnvironment(lws* wsi, SessionData* sessionData)
       while (readdir_r(dirTheme, pThemeEntry, &themeRes) == 0 && themeRes)
 #endif
       {
+         tell(1, "Checking '%s'", pThemeEntry->d_name);
+
          if (pThemeEntry->d_type != DT_REG || pThemeEntry->d_name[0] == '.')
             continue;
 
