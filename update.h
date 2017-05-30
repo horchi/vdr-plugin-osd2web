@@ -113,6 +113,14 @@ class cWebSock : public cOsdService
          sizeLwsFrame     = sizeLwsPreFrame + sizeLwsPostFrame
       };
 
+      struct SessionData
+      {
+         char* buffer;
+         int bufferSize;
+         int payloadSize;
+         int dataPending;
+      };
+
       struct Client
       {
          ClientType type;
@@ -165,9 +173,10 @@ class cWebSock : public cOsdService
    private:
 
       static int serveFile(lws* wsi, const char* path);
-      static int dispatchDataRequest(lws* wsi, const char* url);
+      static int dispatchDataRequest(lws* wsi, SessionData* sessionData, const char* url);
       static int doEventImg(lws* wsi);
       static int doChannelLogo(lws* wsi);
+      static int doEnvironment(lws* wsi, SessionData* sessionData);
 
       static const char* methodOf(const char* url);
       static const char* getStrParameter(lws* wsi, const char* name, const char* def = 0);
@@ -176,10 +185,11 @@ class cWebSock : public cOsdService
       //
 
       int port;
-      lws_context* context;
       lws_protocols protocols[3];
 
       // statics
+
+      static lws_context* context;
 
       static char* httpPath;
       static char* epgImagePath;

@@ -61,7 +61,7 @@ cSkinOsd2WebDisplayChannel::~cSkinOsd2WebDisplayChannel()
 
 void cSkinOsd2WebDisplayChannel::SetChannel(const cChannel* Channel, int /*Number*/)
 {
-   tell(1, "DEB: Skin:cSkinOsd2WebDisplayChannel::DisplayChannel(%s, %d)",
+   tell(4, "DEB: Skin:cSkinOsd2WebDisplayChannel::DisplayChannel(%s, %d)",
         Channel ? Channel->Name() : "<null>", Channel ? Channel->Number() : na);
 
    if (Channel && Channel->Number() == 0)
@@ -161,7 +161,7 @@ int cSkinOsd2WebDisplayMenu::MaxItems()
 
 void cSkinOsd2WebDisplayMenu::Clear()
 {
-   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::Clear()");
+   tell(4, "DEB: Skin:cSkinOsd2WebDisplayMenu::Clear()");
 
    json_t* obj = json_object();
 
@@ -171,7 +171,7 @@ void cSkinOsd2WebDisplayMenu::Clear()
 
 void cSkinOsd2WebDisplayMenu::SetTitle(const char *Title)
 {
-   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetTitle(%s)", Title);
+   tell(4, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetTitle(%s)", Title);
 
    json_t* oMenu = json_object();
 
@@ -185,7 +185,7 @@ void cSkinOsd2WebDisplayMenu::SetTitle(const char *Title)
 void cSkinOsd2WebDisplayMenu::SetButtons(const char *red, const char *green,
                                          const char *yellow, const char *blue)
 {
-   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetButtons()");
+   tell(4, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetButtons()");
    json_t* buttons = json_object();
 
    if (!isEmpty(red))    addToJson(buttons, "red", red);
@@ -198,7 +198,7 @@ void cSkinOsd2WebDisplayMenu::SetButtons(const char *red, const char *green,
 
 void cSkinOsd2WebDisplayMenu::SetMessage(eMessageType Type, const char *Text)
 {
-   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetMessage(%d, %s)", Type, Text);
+   tell(4, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetMessage(%d, %s)", Type, Text);
 
    json_t* obj = json_object();
 
@@ -210,7 +210,7 @@ void cSkinOsd2WebDisplayMenu::SetMessage(eMessageType Type, const char *Text)
 
 void cSkinOsd2WebDisplayMenu::SetItem(const char* Text, int Index, bool Current, bool Selectable)
 {
-   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetItem(%s, %d, %d, %d)",
+   tell(4, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetItem(%s, %d, %d, %d)",
         Text, Index, Current, Selectable);
 
    if (isEditable(MenuCategory()))
@@ -230,7 +230,7 @@ bool cSkinOsd2WebDisplayMenu::SetItemEvent(const cEvent* Event, int Index, bool 
                                            bool Selectable, const cChannel *Channel,
                                            bool WithDate, eTimerMatch TimerMatch)
 {
-   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetItemEvent()");
+   tell(4, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetItemEvent()");
 
    if (cUpdate::menuMaxLines[MenuCategory()].shape & cOsdService::osText)
       return false;
@@ -254,7 +254,7 @@ bool cSkinOsd2WebDisplayMenu::SetItemEvent(const cEvent* Event, int Index, bool 
 bool cSkinOsd2WebDisplayMenu::SetItemChannel(const cChannel* Channel, int Index, bool Current,
                                              bool Selectable, bool WithProvider)
 {
-   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetItemChannel()");
+   tell(4, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetItemChannel()");
 
    if (cUpdate::menuMaxLines[MenuCategory()].shape & cOsdService::osText)
       return false;
@@ -278,7 +278,7 @@ bool cSkinOsd2WebDisplayMenu::SetItemChannel(const cChannel* Channel, int Index,
 bool cSkinOsd2WebDisplayMenu::SetItemRecording(const cRecording* Recording, int Index, bool Current,
                                                bool Selectable, int Level, int Total, int New)
 {
-   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetItemRecording()");
+   tell(4, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetItemRecording()");
 
    if (cUpdate::menuMaxLines[MenuCategory()].shape & cOsdService::osText)
       return false;
@@ -303,7 +303,7 @@ bool cSkinOsd2WebDisplayMenu::SetItemRecording(const cRecording* Recording, int 
 
 void cSkinOsd2WebDisplayMenu::SetRecording(const cRecording *Recording)
 {
-   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetRecording()");
+   tell(4, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetRecording()");
 
    json_t* oRecording = json_object();
    recording2Json(oRecording, Recording);
@@ -313,7 +313,7 @@ void cSkinOsd2WebDisplayMenu::SetRecording(const cRecording *Recording)
 
 bool cSkinOsd2WebDisplayMenu::SetItemTimer(const cTimer *Timer, int Index, bool Current, bool Selectable)
 {
-   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetItemTimer()");
+   tell(4, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetItemTimer()");
 
    if (cUpdate::menuMaxLines[MenuCategory()].shape & cOsdService::osText)
       return false;
@@ -335,7 +335,7 @@ bool cSkinOsd2WebDisplayMenu::SetItemTimer(const cTimer *Timer, int Index, bool 
 
 void cSkinOsd2WebDisplayMenu::SetScrollbar(int Total, int Offset)
 {
-   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetScrollbar(%d, %d)", Total, Offset);
+   tell(4, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetScrollbar(%d, %d)", Total, Offset);
 
    json_t* oBar = json_object();
 
@@ -347,7 +347,7 @@ void cSkinOsd2WebDisplayMenu::SetScrollbar(int Total, int Offset)
 
 void cSkinOsd2WebDisplayMenu::SetEvent(const cEvent *Event)
 {
-   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetEvent()");
+   tell(4, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetEvent()");
 
    json_t* oEvent = json_object();
    event2Json(oEvent, Event, 0, (eTimerMatch)na, no, cOsdService::osLarge);
@@ -357,7 +357,7 @@ void cSkinOsd2WebDisplayMenu::SetEvent(const cEvent *Event)
 
 void cSkinOsd2WebDisplayMenu::SetText(const char *Text, bool FixedFont)
 {
-   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetText(%s, %d)", Text, FixedFont);
+   tell(4, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetText(%s, %d)", Text, FixedFont);
 
    json_t* oMenuText = json_object();
 
@@ -368,7 +368,7 @@ void cSkinOsd2WebDisplayMenu::SetText(const char *Text, bool FixedFont)
 
 int cSkinOsd2WebDisplayMenu::GetTextAreaWidth() const
 {
-   tell(2, "DEB: Skin:cSkinOsd2WebDisplayMenu::GetTextAreaWidth() = 1024");
+   tell(4, "DEB: Skin:cSkinOsd2WebDisplayMenu::GetTextAreaWidth() = 1024");
    return 1024;  // pixels dummy code
 }
 
@@ -430,7 +430,7 @@ cSkinOsd2WebDisplayVolume::~cSkinOsd2WebDisplayVolume()
 
 void cSkinOsd2WebDisplayVolume::SetVolume(int Current, int Total, bool Mute)
 {
-   tell(1, "DEB: Skin:cSkinOsd2WebDisplayVolume::SetVolume(%d, %d, %d)", Current, Total, Mute);
+   tell(4, "DEB: Skin:cSkinOsd2WebDisplayVolume::SetVolume(%d, %d, %d)", Current, Total, Mute);
 
    json_t* oVolume = json_object();
 
@@ -495,7 +495,7 @@ cSkinOsd2WebDisplayMessage::cSkinOsd2WebDisplayMessage()
 
 cSkinOsd2WebDisplayMessage::~cSkinOsd2WebDisplayMessage()
 {
-   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMessage~cSkinOsd2WebDisplayMessage()");
+   tell(4, "DEB: Skin:cSkinOsd2WebDisplayMessage~cSkinOsd2WebDisplayMessage()");
 
    json_t* obj = json_object();
 
@@ -506,7 +506,7 @@ cSkinOsd2WebDisplayMessage::~cSkinOsd2WebDisplayMessage()
 
 void cSkinOsd2WebDisplayMessage::SetMessage(eMessageType Type, const char *Text)
 {
-   tell(1, "DEB: Skin:cSkinOsd2WebDisplayMessage::SetMessage(%d, %s)", Type, Text);
+   tell(4, "DEB: Skin:cSkinOsd2WebDisplayMessage::SetMessage(%d, %s)", Type, Text);
 
    json_t* obj = json_object();
 

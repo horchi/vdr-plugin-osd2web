@@ -83,7 +83,7 @@ int cUpdate::checkFileService()
       if (event->mask & IN_CREATE || event->mask & IN_MODIFY)
       {
          count++;
-         tell(0, "DEBUG: File '%s' was 'created' or 'modified'", event->name);
+         tell(4, "DEBUG: File '%s' was 'created' or 'modified'", event->name);
 
       }
    }

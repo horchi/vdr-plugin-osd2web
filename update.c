@@ -298,7 +298,7 @@ int cUpdate::dispatchClientRequest()
 
    // { "event" : "keypress", "object" : { "key" : "menu", "repeat" : 1 } }
 
-   tell(1, "DEBUG: Got '%s'", messagesIn.front().c_str());
+   tell(2, "DEBUG: Got '%s'", messagesIn.front().c_str());
    oData = json_loads(messagesIn.front().c_str(), 0, &error);
 
    // get the request
