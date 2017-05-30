@@ -20,7 +20,7 @@ export var maxLinesCalc= {
 
 VueInst.component('icon', Icon);
 
-global.jQuery = require('jquery-slim');
+global.jQuery = global.$= require('jquery-slim');
 global.Tether = require('tether');
 
 require('bootstrap');

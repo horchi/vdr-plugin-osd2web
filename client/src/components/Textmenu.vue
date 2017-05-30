@@ -46,7 +46,7 @@ export default {
             this.colCount= -1;
         });
         this.$root.$on("menuitem", (data) => {
-            if (this.colCount < 0) {
+            if (this.colCount < 0 && data.text) {
                 this.colCount = data.text.split('\t').length;
                 if (this.colCount == 2 && this.canEdit)
                     this.colCount++;
@@ -54,7 +54,7 @@ export default {
                     this.canEdit = 0;
             }
             this.$set(this.rows, data.index, {
-                cols: data.text.split('\t'),
+                cols: data.text ? data.text.split('\t') : new Array(this.colCount),
                 selectable: data.selectable,
                 textEdit: this.canEdit && /.+\\t.*\[.\]/.test(data.text)
             });

@@ -166,7 +166,7 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
             if (res < 0)
                tell(0, "Failed writing '%s'", sessionData->buffer+sizeLwsPreFrame);
             else
-               tell(3, "WROTE '%s'", sessionData->buffer+sizeLwsPreFrame);
+               tell(2, "WROTE '%s'", sessionData->buffer+sizeLwsPreFrame);
 
             free(sessionData->buffer);
             memset(sessionData, 0, sizeof(SessionData));
@@ -615,7 +615,7 @@ int cWebSock::doEnvironment(lws* wsi, SessionData* sessionData)
 
    if (!(dirSkin = opendir(path)))
    {
-      tell(0, "Can't open directory '%s', '%s'", path, strerror(errno));
+      tell(1, "Can't open directory '%s', '%s'", path, strerror(errno));
       free(path);
       return fail;
    }
@@ -647,7 +647,7 @@ int cWebSock::doEnvironment(lws* wsi, SessionData* sessionData)
 
       if (!(dirTheme = opendir(themePath)))
       {
-         tell(0, "Can't open directory '%s', '%s'", pSkinEntry->d_name, strerror(errno));
+         tell(1, "Can't open directory '%s', '%s'", pSkinEntry->d_name, strerror(errno));
          free(themePath);
          continue;
       }

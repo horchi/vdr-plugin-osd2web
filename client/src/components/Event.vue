@@ -15,7 +15,7 @@
         </div>
         <div v-if="event.epg2vdr" :id="'evImages' + event.eventid" class="carousel slide" data-ride="carousel" data-interval="5000">
           <div class="carousel-inner" role="listbox">
-            <div v-for="n in images" class="carousel-item" :class="{'active':n==1}">
+            <div v-for="n in imagecnt" class="carousel-item" :class="{'active':n==1}">
               <img class="d-block" :src="'/data/eventimg?id=' + event.eventid + '&no=' + (n-1)" alt="">
             </div>
           </div>
@@ -99,7 +99,7 @@ export default {
          }
          return Math.max(parseInt((this.now - this.event.starttime) / this.event.duration * 100,10),0);
        },
-       images: function(){
+       imagecnt: function(){
          let cnt= this.event.epg2vdr ? parseInt(this.event.epg2vdr.imagecount, 10) : 0;
          return isNaN(cnt) ? 0 : cnt;
        }

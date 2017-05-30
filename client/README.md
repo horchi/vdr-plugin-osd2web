@@ -35,9 +35,9 @@ Wenn es sich um ein generelles theme handelt, kopiert man am besten die default.
 
 cp themes/default.less themes/myTheme.less
 
-edit webpack.config.js 
-    -> im Kopf die "skins" anpassen, bzw. erweitern, zb:
-const skins = { 
+edit skins.config.js  (ggf. cp skins.config.js.sample skins.config.js) anpassen, bzw. erweitern, zb:
+
+module.exports = { 
   'default': ['default', 'myTheme']
 };   
 
@@ -49,9 +49,9 @@ Skin-Entwicklung:
 mkdir src/skin/mySkin
 cp src/default/main.js src/skin/mySkin/
 
-edit webpack.config.js 
-    -> im Kopf die "skins" anpassen, bzw. erweitern, zb:
-const skins = { 
+edit skins.config.js  (ggf. cp skins.config.js.sample skins.config.js) anpassen, bzw. erweitern, zb:
+
+module.exports = { 
   'default': ['default'], 
   'mySkin': ['default', 'myTheme'] 
 };    
