@@ -161,7 +161,7 @@ const eMenuCategory = [
     }, {
         "category": 'mcTimer',
         "maxlines": 100,
-        "shape": 4
+        "shape": 1 //4 für ausführliche Informationen
     }, {
         "category": 'mcTimerEdit',
         "maxlines": 100,
@@ -233,7 +233,7 @@ const eMenuCategory = [
     }, {
         "category": 'mcEvent',
         "maxlines": 100,
-        "shape": 4
+        "shape": 1 //4 für ausführliche Informationen
     }, {
         "category": 'mcText',
         "maxlines": 100,

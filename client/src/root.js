@@ -145,8 +145,11 @@ export var root = {
                 url: "ws://" + location.host,
                 protocol: "osd2vdr",
                 autoReconnectInterval: 10000,
-                onclose: () => {
-                    this.isActive = false;
+                onOpen: () => {
+                    if ( this.isActive === null) // Dann wurde es beim schliessen auf null gesetzt
+                        this.$socket.send({ "event": "login", "object": { "type": + (this.isOnlyView ? 1 : 0) } });
+                }, onclose: () => {
+                    this.isActive = null; // auf null setzten, dass ein neues login aufgerufen wird
                 },
                 onmessage: (msg) => {
                     try {

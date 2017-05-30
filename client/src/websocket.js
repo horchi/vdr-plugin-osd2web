@@ -40,10 +40,12 @@ export default function WebSocketClient(opt) {
     this.open = function () {
         client.ws = new WebSocket(client.url, client.protocol);
         client.ws.onopen = function(e){
-            let JSONobj;
-            while ( (JSONobj=queue.shift()))
-                client.ws.send(JSON.stringify(JSONobj));
-            queue= null;
+            if (queue){
+                let JSONobj;
+                while ( (JSONobj=queue.shift()))
+                    client.ws.send(JSON.stringify(JSONobj));
+                queue= null;
+            }
             client.onopen && client.onopen(e);
         }
         client.ws.onmessage = client.onmessage;
@@ -73,7 +75,7 @@ export default function WebSocketClient(opt) {
     this.reopen = function () {
         client.ws.onerror = client.ws.onclose = client.ws.onmessage = null;
         client.ws.close();
-        this.open();
+        client.open();
     }
     this.open();
     return this;
