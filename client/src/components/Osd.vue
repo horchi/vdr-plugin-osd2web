@@ -70,6 +70,9 @@ export default {
                     label: data[color]
                 });
         })
+        this.$root.$on("rolechange", (data) => {
+            this.sendMaxLines(null, this.$root.isOnlyView ? null : 50);
+        })
 
         if (this.$root.isOnlyView){
             let lastResize= 0;
@@ -88,7 +91,7 @@ export default {
             }
             window.addEventListener('resize', checkResize);
         }
-        this.sendMaxLines(null, this.$root.isOnlyView ? null : 50);
+        
         //window.addEventListener('resize', this.checkButtonHeight);
     },
     updated() {

@@ -146,7 +146,7 @@ export var root = {
                 protocol: "osd2vdr",
                 autoReconnectInterval: 10000,
                 onOpen: () => {
-                    if ( this.isActive === null) // Dann wurde es beim schliessen auf null gesetzt
+                    if ( this.isActive === null) // Dann wurde es beim Schliessen auf null gesetzt
                         this.$socket.send({ "event": "login", "object": { "type": + (this.isOnlyView ? 1 : 0) } });
                 }, onclose: () => {
                     this.isActive = null; // auf null setzten, dass ein neues login aufgerufen wird

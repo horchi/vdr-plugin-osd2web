@@ -933,6 +933,52 @@ int fileExists(const char* path)
    return access(path, F_OK) == 0;
 }
 
+//***************************************************************************
+// Get Directory Type
+//***************************************************************************
+
+unsigned char dirTypeOf(const char* path, dirent* d)
+{
+   struct stat fileStat;
+   char* fullPath = 0;
+   unsigned char type = DT_UNKNOWN;
+
+   if (d->d_type != DT_UNKNOWN)
+      return d->d_type;
+
+   asprintf(&fullPath, "%s/%s", path, d->d_name);
+
+   if (stat(fullPath, &fileStat) == 0)
+   {
+      // check types
+
+      if (S_ISBLK(fileStat.st_mode))        /* block special */
+         type = DT_BLK;
+
+      else if (S_ISCHR(fileStat.st_mode))   /* char special */
+         type = DT_CHR;
+
+      else if (S_ISDIR(fileStat.st_mode))   /* directory */
+         type = DT_DIR;
+
+      else if (S_ISFIFO(fileStat.st_mode))  /* fifo */
+         type = DT_FIFO;
+
+      else if (S_ISLNK(fileStat.st_mode))   /* symbolic link */
+         type = DT_LNK;
+
+      else if (S_ISREG(fileStat.st_mode))   /* regular file */
+         type = DT_REG;
+
+      else if (S_ISSOCK(fileStat.st_mode))  /* socket */
+         type = DT_SOCK;
+   }
+
+   free(fullPath);
+
+   return type;
+}
+
 int createLink(const char* link, const char* dest, int force)
 {
    if (!fileExists(link) || force)

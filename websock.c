@@ -152,7 +152,7 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
 
       case LWS_CALLBACK_HTTP_WRITEABLE:
       {
-         tell(2, "HTTP: LWS_CALLBACK_HTTP_WRITEABLE");
+         tell(3, "HTTP: LWS_CALLBACK_HTTP_WRITEABLE");
 
          // data to write?
 
@@ -214,7 +214,22 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
          break;
       }
 
+      case LWS_CALLBACK_PROTOCOL_INIT:
+      case LWS_CALLBACK_SERVER_NEW_CLIENT_INSTANTIATED:
+      case LWS_CALLBACK_FILTER_HTTP_CONNECTION:
+      case LWS_CALLBACK_CLOSED_HTTP:
+      case LWS_CALLBACK_WSI_CREATE:
+      case LWS_CALLBACK_HTTP_FILE_COMPLETION:
+      case LWS_CALLBACK_FILTER_NETWORK_CONNECTION:
+      case LWS_CALLBACK_ADD_POLL_FD:
+      case LWS_CALLBACK_DEL_POLL_FD:
+      case LWS_CALLBACK_WSI_DESTROY:
+      case LWS_CALLBACK_CHANGE_MODE_POLL_FD:
+      case LWS_CALLBACK_LOCK_POLL:
+      case LWS_CALLBACK_UNLOCK_POLL:
       case LWS_CALLBACK_GET_THREAD_ID:
+      case LWS_CALLBACK_HTTP_BIND_PROTOCOL:
+      case LWS_CALLBACK_HTTP_DROP_PROTOCOL:
          break;
 
       default:
@@ -374,12 +389,13 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 
       case LWS_CALLBACK_CLOSED:                           // someone dis-connecting
       {
-         tell(1, "Client disconnected (%p)", (void*)wsi);
-         clients.erase(wsi);
+         atLogout(wsi, "Client disconnected");
+         break;
+      }
 
-         if (!activeClient || activeClient == wsi)
-            activateAvailableClient();
-
+      case LWS_CALLBACK_WS_PEER_INITIATED_CLOSE:
+      {
+         atLogout(wsi, "Client disconnected unsolicited");
          break;
       }
 
@@ -392,6 +408,10 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 
          break;
       }
+
+      case LWS_CALLBACK_PROTOCOL_INIT:
+      case LWS_CALLBACK_FILTER_PROTOCOL_CONNECTION:
+         break;
 
       default:
          tell(1, "DEBUG: Unhandled 'callbackOsd2Vdr' got (%d)", reason);
@@ -424,7 +444,7 @@ void cWebSock::activateAvailableClient()
 }
 
 //***************************************************************************
-// At Login
+// At Login / Logout
 //***************************************************************************
 
 void cWebSock::atLogin(lws* wsi)
@@ -444,6 +464,15 @@ void cWebSock::atLogin(lws* wsi)
 
    cUpdate::messagesIn.push(p);
    free(p);
+}
+
+void cWebSock::atLogout(lws* wsi, const char* message)
+{
+   tell(1, "%s (%p)", message, (void*)wsi);
+   clients.erase(wsi);
+
+   if (!activeClient || activeClient == wsi)
+      activateAvailableClient();
 }
 
 //***************************************************************************
@@ -641,7 +670,7 @@ int cWebSock::doEnvironment(lws* wsi, SessionData* sessionData)
 
       tell(1, "Checking '%s'", pSkinEntry->d_name);
 
-      if (pSkinEntry->d_type != DT_DIR || pSkinEntry->d_name[0] == '.')
+      if (dirTypeOf(path, pSkinEntry) != DT_DIR || pSkinEntry->d_name[0] == '.')
          continue;
 
       json_t* oSkin = json_object();
@@ -674,7 +703,7 @@ int cWebSock::doEnvironment(lws* wsi, SessionData* sessionData)
       {
          tell(1, "Checking '%s'", pThemeEntry->d_name);
 
-         if (pThemeEntry->d_type != DT_REG || pThemeEntry->d_name[0] == '.')
+         if (dirTypeOf(themePath, pThemeEntry) != DT_REG || pThemeEntry->d_name[0] == '.')
             continue;
 
          if (rep(pThemeEntry->d_name, ".css$") != success)

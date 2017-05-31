@@ -24,6 +24,9 @@ std::queue<std::string> cUpdate::messagesIn;
 std::map<int,cUpdate::CategoryConfig> cUpdate::menuMaxLines;
 int cUpdate::menuCloseTrigger = no;
 
+eMenuCategory cUpdate::menuCategory = mcUnknown;
+std::string cUpdate::menuTitle = "";
+
 //***************************************************************************
 // OSD Service
 //***************************************************************************
@@ -74,11 +77,11 @@ cUpdate::cUpdate()
    actualClientCount = 0;
    active = no;
    currentChannelNr = 0;
+   haveActualEpg = no;
    activeControl = 0;
    activeControlFps = 1;
    activeReplayName = "";
    activeReplayFile = "";
-   haveActualEpg = no;
    pingTime = 60;                      // timeout
    nextPing = time(0);
    nextPresentUpdateAt = time(0);
@@ -126,6 +129,18 @@ int cUpdate::pushMessage(json_t* oContents, const char* title, long client)
    free(p);
 
    return done;
+}
+
+//***************************************************************************
+// Is Editable Menu Category
+//***************************************************************************
+
+int cUpdate::isEditable(eMenuCategory category)
+{
+   return
+      category >= mcPluginSetup &&
+      category <= mcSetupMisc &&
+      category != mcSetup;
 }
 
 //***************************************************************************
@@ -366,6 +381,9 @@ int cUpdate::performLogin(json_t* oObject)
    updateTimers();
    updateReplay();
 
+   if (menuCategory > mcUnknown)
+      updateMenu();
+
    return done;
 }
 
@@ -408,7 +426,7 @@ int cUpdate::performKeyPressRequest(json_t* oRequest)
 
    for (int i = 0; i < repeat; i++)
    {
-      tell(2, "DEBUG: Put key (%d) '%s'", key, keyName);
+      tell(3, "DEBUG: Put key (%d) '%s'", key, keyName);
 
       if (!cRemote::Put(key))
          tell(0, "Info: Sending key '%s' failed", keyName);

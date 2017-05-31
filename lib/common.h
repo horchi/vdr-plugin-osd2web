@@ -305,6 +305,7 @@ int loadFromFile(const char* infile, MemoryStruct* data);
 int folderExists(const char* path);
 int fileExists(const char* path);
 int fileSize(const char* path);
+unsigned char dirTypeOf(const char* path, dirent* d);
 time_t fileModTime(const char* path);
 int createLink(const char* link, const char* dest, int force);
 int isLink(const char* path);

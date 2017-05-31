@@ -132,7 +132,7 @@ int event2Json(json_t* obj, const cEvent* event, const cChannel* channel,
          stateKey.Remove();
       }
       else
-         tell(0, "Can't get lock for updateTimers()");
+         tell(0, "Can't get lock for event2Json()");
 #else
       getTimerMatch(&Timers, event, &timerMatch);
 #endif

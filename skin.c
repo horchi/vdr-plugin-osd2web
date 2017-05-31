@@ -16,14 +16,6 @@
 
 #include "update.h"
 
-int isEditable(eMenuCategory category)
-{
-   return
-      category >= mcPluginSetup &&
-      category <= mcSetupMisc &&
-      category != mcSetup;
-}
-
 //***************************************************************************
 // cSkinOsd2WebDisplayChannel
 //   - normally used to display present/following
@@ -122,21 +114,23 @@ cSkinOsd2WebDisplayMenu::cSkinOsd2WebDisplayMenu()
 
 cSkinOsd2WebDisplayMenu::~cSkinOsd2WebDisplayMenu()
 {
-   tell(2, "Menu closed (%d)", MenuCategory());
+   tell(3, "Menu closed (%d)", MenuCategory());
 
    if (MenuCategory() == mcMain)
       cUpdate::menuClosed();
+
+   cUpdate::menuCategory = mcUnknown;
 }
 
 void cSkinOsd2WebDisplayMenu::SetMenuCategory(eMenuCategory MenuCategory)
 {
-   tell(2, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetMenuCategory(%d)", MenuCategory);
+   tell(3, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetMenuCategory(%d)", MenuCategory);
    cSkinDisplayMenu::SetMenuCategory(MenuCategory);
 }
 
 void cSkinOsd2WebDisplayMenu::Scroll(bool Up, bool Page)
 {
-   tell(2, "DEB: Skin:cSkinOsd2WebDisplayMenu::Scroll(%d, %d)", Up, Page);
+   tell(3, "DEB: Skin:cSkinOsd2WebDisplayMenu::Scroll(%d, %d)", Up, Page);
 
    json_t* obj = json_object();
 
@@ -148,7 +142,7 @@ void cSkinOsd2WebDisplayMenu::Scroll(bool Up, bool Page)
 
 int cSkinOsd2WebDisplayMenu::MaxItems()
 {
-   tell(2, "DEB: Skin:cSkinOsd2WebDisplayMenu::MaxItems()");
+   tell(3, "DEB: Skin:cSkinOsd2WebDisplayMenu::MaxItems()");
 
    if (MenuCategory() >= mcUnknown && MenuCategory() <= mcCam)
    {
@@ -173,13 +167,10 @@ void cSkinOsd2WebDisplayMenu::SetTitle(const char *Title)
 {
    tell(4, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetTitle(%s)", Title);
 
-   json_t* oMenu = json_object();
+   cUpdate::menuCategory = MenuCategory();
+   cUpdate::menuTitle = Title;
 
-   addToJson(oMenu, "category", MenuCategory());
-   addToJson(oMenu, "title", Title);
-   addToJson(oMenu, "editable", isEditable(MenuCategory()));
-
-   cUpdate::pushMessage(oMenu, "menu");
+   cUpdate::updateMenu();
 }
 
 void cSkinOsd2WebDisplayMenu::SetButtons(const char *red, const char *green,
@@ -213,7 +204,7 @@ void cSkinOsd2WebDisplayMenu::SetItem(const char* Text, int Index, bool Current,
    tell(4, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetItem(%s, %d, %d, %d)",
         Text, Index, Current, Selectable);
 
-   if (isEditable(MenuCategory()))
+   if (cUpdate::isEditable(MenuCategory()))
       SetEditableWidth(200);
 
    json_t* oMenuItem = json_object();

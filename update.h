@@ -166,6 +166,7 @@ class cWebSock : public cOsdService
 
       static void activateAvailableClient();
       static void atLogin(lws* wsi);
+      static void atLogout(lws* wsi, const char* message);
       static int getClientCount();
 
       static void pushMessage(const char* p, lws* wsi = 0);
@@ -272,10 +273,15 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
       static int pushMessage(json_t* obj, const char* title, long client = 0);
       static void menuClosed() { menuCloseTrigger = yes; }
+      static int isEditable(eMenuCategory category);
+      static void updateMenu();
 
       static std::queue<std::string> messagesIn;
       static std::map<int,CategoryConfig> menuMaxLines;
       static int menuCloseTrigger;
+
+      static eMenuCategory menuCategory;
+      static std::string menuTitle;
 
    protected:
 
