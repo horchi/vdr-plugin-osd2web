@@ -166,25 +166,40 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
 
       case LWS_CALLBACK_HTTP_WRITEABLE:
       {
+         int res;
+
          tell(3, "HTTP: LWS_CALLBACK_HTTP_WRITEABLE");
 
          // data to write?
 
-         if (sessionData->dataPending)
+         if (!sessionData->dataPending)
          {
-            int res;
-
-            res = lws_write(wsi, (unsigned char*)sessionData->buffer+sizeLwsPreFrame,
-                            sessionData->payloadSize, LWS_WRITE_HTTP);
-
-            if (res < 0)
-               tell(0, "Failed writing '%s'", sessionData->buffer+sizeLwsPreFrame);
-            else
-               tell(2, "WROTE '%s'", sessionData->buffer+sizeLwsPreFrame);
-
-            free(sessionData->buffer);
-            memset(sessionData, 0, sizeof(SessionData));
+            tell(1, "Info: No more session data pending");
+            return -1;
          }
+
+         int m = lws_get_peer_write_allowance(wsi);
+
+         if (!m)
+            tell(0, "right now, peer can't handle anything :o");
+         else if (m != -1 && m < sessionData->payloadSize)
+            tell(0, "peer can't handle %d but %d is needed", m, sessionData->payloadSize);
+         else if (m != -1)
+            tell(0, "all fine, peer can handle %d bytes", m);
+
+         res = lws_write(wsi, (unsigned char*)sessionData->buffer+sizeLwsPreFrame,
+                         sessionData->payloadSize, LWS_WRITE_HTTP);
+
+         if (res < 0)
+            tell(0, "Failed writing '%s'", sessionData->buffer+sizeLwsPreFrame);
+         else
+            tell(2, "WROTE '%s' (%d)", sessionData->buffer+sizeLwsPreFrame, res);
+
+         free(sessionData->buffer);
+         memset(sessionData, 0, sizeof(SessionData));
+
+         if (lws_http_transaction_completed(wsi))
+            return -1;
 
          break;
       }
@@ -772,29 +787,50 @@ int cWebSock::doEnvironment(lws* wsi, SessionData* sessionData)
 
    // prepare header
 
-   if (!result && lws_add_http_header_status(wsi, 200, &p, e))
+   if (!result && lws_add_http_header_status(wsi, HTTP_STATUS_OK, &p, e))
+   {
+      tell(0, "Error lws_add_http_header_status");
       result = 1;
+   }
 
    if (!result && lws_add_http_header_by_token(wsi, WSI_TOKEN_HTTP_SERVER,
                                                (unsigned char*)"osd2web", 7, &p, e))
+   {
+      tell(0, "Error lws_add_http_header_by_token");
       result = 1;
+   }
 
    if (!result && lws_add_http_header_by_token(wsi, WSI_TOKEN_HTTP_CONTENT_TYPE,
                                                (unsigned char*)"application/json", 16, &p, e))
+   {
+      tell(0, "Error lws_add_http_header_by_token");
       result = 1;
+   }
 
    if (!result && lws_add_http_header_content_length(wsi, sessionData->payloadSize, &p, e))
+   {
+      tell(0, "Error lws_add_http_header_content_length");
       result = 1;
+   }
 
    if (!result && lws_finalize_http_header(wsi, &p, e))
+   {
+      tell(0, "Error lws_finalize_http_header");
       result = 1;
+   }
 
    *p = 0;
 
    // write header
 
-   if (!result && lws_write(wsi, header + sizeLwsPreFrame, p - (header + sizeLwsPreFrame), LWS_WRITE_HTTP_HEADERS))
+   if (!result && lws_write(wsi, header + sizeLwsPreFrame, p - (header + sizeLwsPreFrame), LWS_WRITE_HTTP_HEADERS) < 0)
+   {
+      tell(0, "Error: lws_write failed");
       result = 1;
+   }
+
+   if (result)
+      tell(0, "Error building HTTP header");
 
    tell(3, "WROTE '%.*s'", (int)(p - (header + sizeLwsPreFrame)), header + sizeLwsPreFrame);
 
