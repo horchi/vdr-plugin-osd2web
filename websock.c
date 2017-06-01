@@ -148,12 +148,12 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
 
    switch (reason)
    {
-      case LWS_CALLBACK_HTTP_BODY:           // #DEBUG
+      case LWS_CALLBACK_HTTP_BODY:
       {
          const char* message = (const char*)in;
          int s = lws_hdr_total_length(wsi, WSI_TOKEN_POST_URI);
 
-         tell(0, "got LWS_CALLBACK_HTTP_BODY with [%.*s] lws_hdr_total_length is (%d)",
+         tell(0, "DEBUG: Got unecpected LWS_CALLBACK_HTTP_BODY with [%.*s] lws_hdr_total_length is (%d)",
               (int)len+1, message, s);
          break;
       }
