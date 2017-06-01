@@ -55,7 +55,7 @@ int cWebSock::init(int aPort, int aTimeout)
    protocols[0].name = "http-only";
    protocols[0].callback = callbackHttp;
    protocols[0].per_session_data_size = sizeof(SessionData);
-   protocols[0].rx_buffer_size = 20;
+   protocols[0].rx_buffer_size = 0;
 
    protocols[1].name = "osd2vdr";
    protocols[1].callback = callbackOsd2Vdr;
@@ -90,13 +90,14 @@ int cWebSock::init(int aPort, int aTimeout)
    }
 
    tell(0, "Listener at port (%d) established", port);
+   tell(1, "using libwebsocket version '%s'", lws_get_library_version());
 
    return success;
 }
 
 int cWebSock::exit()
 {
-   lws_context_destroy(context);
+//   lws_context_destroy(context);  #TODO ?
 
    return success;
 }
@@ -124,11 +125,20 @@ int cWebSock::performData(MsgType type)
    for (auto it = clients.begin(); it != clients.end(); ++it)
    {
       if (it->second.type != ctInactive && !it->second.messagesOut.empty())
+      {
+         // #DEBUG
+         tell(0, "%d messages for client (%p) pending [%d]",
+              (int)it->second.messagesOut.size(), (void*)it->first, it->second.type);
          count++;
+      }
    }
 
    if (count || msgType == mtPing)
+   {
+      // #DEBUG
+      tell(0, "call: lws_callback_on_writable #1 (%d / %d)", msgType, count);
       lws_callback_on_writable_all_protocol(context, &protocols[1]);
+   }
 
    return done;
 }
@@ -144,6 +154,15 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
 
    switch (reason)
    {
+      case LWS_CALLBACK_HTTP_BODY:           // #DEBUG
+      {
+         const char* message = (const char*)in;
+         int s = lws_hdr_total_length(wsi, WSI_TOKEN_POST_URI);
+
+         tell(0, "got LWS_CALLBACK_HTTP_BODY with [%.*s] lws_hdr_total_length is (%d)",
+              (int)len+1, message, s);
+      }
+
       case LWS_CALLBACK_CLIENT_WRITEABLE:
       {
          tell(2, "HTTP: Client connected");
@@ -277,6 +296,11 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
    {
       case LWS_CALLBACK_SERVER_WRITEABLE:                     // data to client
       {
+         // #DEBUG
+         tell(0, "LWS_CALLBACK_SERVER_WRITEABLE (%d / %d) wsi (%p)",
+              msgType, (int)clients[wsi].messagesOut.size(),
+              (void*)wsi);
+
          if (msgType == mtPing)
          {
             if (clients[wsi].type != ctInactive)
@@ -387,7 +411,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
          break;
       }
 
-      case LWS_CALLBACK_CLOSED:                           // someone dis-connecting
+      case LWS_CALLBACK_CLOSED:                            // someone dis-connecting
       {
          atLogout(wsi, "Client disconnected");
          break;
@@ -468,8 +492,12 @@ void cWebSock::atLogin(lws* wsi)
 
 void cWebSock::atLogout(lws* wsi, const char* message)
 {
-   tell(1, "%s (%p)", message, (void*)wsi);
+   tell(1, "%s (%p) (client count=%d)", message, (void*)wsi, (int)clients.size());          // #DEBUG zum teil!
+
    clients.erase(wsi);
+
+   // #DEBUG
+   tell(1, "client deleted, client count now (%d)", (int)clients.size());
 
    if (!activeClient || activeClient == wsi)
       activateAvailableClient();
@@ -611,6 +639,7 @@ int cWebSock::doChannelLogo(lws* wsi)
             config.logoPath,
             config.logoById ? cnlId : cnlName,
             config.logoSuffix);
+
    tell(2, "DEBUG: Logo for channel '%s' was requested [%s]", cnlName, path);
 
    result = serveFile(wsi, path);
@@ -649,7 +678,7 @@ int cWebSock::doEnvironment(lws* wsi, SessionData* sessionData)
       return fail;
    }
 
-   tell(1, "Scanning '%s' for skins", path);
+   tell(2, "Scanning '%s' for skins", path);
 
 #ifndef HAVE_READDIR_R
    dirent* pSkinEntry;
@@ -668,7 +697,7 @@ int cWebSock::doEnvironment(lws* wsi, SessionData* sessionData)
       char* themePath = 0;
       DIR* dirTheme;
 
-      tell(1, "Checking '%s'", pSkinEntry->d_name);
+      tell(4, "Checking '%s'", pSkinEntry->d_name);
 
       if (dirTypeOf(path, pSkinEntry) != DT_DIR || pSkinEntry->d_name[0] == '.')
          continue;
@@ -685,7 +714,7 @@ int cWebSock::doEnvironment(lws* wsi, SessionData* sessionData)
          continue;
       }
 
-      tell(1, "Scanning '%s' for themes", themePath);
+      tell(3, "Scanning '%s' for themes", themePath);
 
 #ifndef HAVE_READDIR_R
       dirent* pThemeEntry;
@@ -701,7 +730,7 @@ int cWebSock::doEnvironment(lws* wsi, SessionData* sessionData)
       while (readdir_r(dirTheme, pThemeEntry, &themeRes) == 0 && themeRes)
 #endif
       {
-         tell(1, "Checking '%s'", pThemeEntry->d_name);
+         tell(4, "Checking '%s'", pThemeEntry->d_name);
 
          if (dirTypeOf(themePath, pThemeEntry) != DT_REG || pThemeEntry->d_name[0] == '.')
             continue;
@@ -719,7 +748,7 @@ int cWebSock::doEnvironment(lws* wsi, SessionData* sessionData)
       addToJson(oSkin, "themes", oThemes);
       json_array_append_new(oSkins, oSkin);
 
-      tell(1, "Found skin '%s'", pSkinEntry->d_name);
+      tell(2, "Found skin '%s'", pSkinEntry->d_name);
    }
 
    closedir(dirSkin);

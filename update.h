@@ -102,8 +102,8 @@ class cWebSock : public cOsdService
       enum MsgType
       {
          mtNone = na,
-         mtPing,
-         mtData
+         mtPing,    // 0
+         mtData     // 1
       };
 
       enum Protokoll

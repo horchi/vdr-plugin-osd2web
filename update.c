@@ -97,8 +97,10 @@ cUpdate::cUpdate()
    }
 
    config.confPath = strdup(cPlugin::ConfigDirectory("osd2web"));
-   asprintf(&config.logoPath, "%s/channellogos", config.confPath);
    asprintf(&config.httpPath, "%s/http", config.confPath);
+
+   if (!config.logoPath)
+      asprintf(&config.logoPath, "%s/channellogos", config.confPath);
 
    webSock = new cWebSock(config.httpPath);
 }
@@ -349,8 +351,6 @@ int cUpdate::dispatchClientRequest()
 
 int cUpdate::performLogin(json_t* oObject)
 {
-   char* path;
-
    int type = getIntFromJson(oObject, "type");
    long client = getLongFromJson(oObject, "client");
    long lastClient = getLongFromJson(oObject, "lastclient");
@@ -370,10 +370,8 @@ int cUpdate::performLogin(json_t* oObject)
       json_t* oRole = json_object();
 
       addToJson(oRole, "role", type == ctInteractive ? "active" : "passive");
-      asprintf(&path, "%s/channellogos", config.confPath);
-      addToJson(oRole, "havelogos", folderExists(path));
+      addToJson(oRole, "havelogos", folderExists(config.logoPath));
       cUpdate::pushMessage(oRole, "rolechange", client);
-      free(path);
    }
 
    updateSkinState();
