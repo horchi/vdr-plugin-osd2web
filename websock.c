@@ -20,6 +20,7 @@ void* cWebSock::activeClient = 0;
 int cWebSock::timeout = 0;
 cWebSock::MsgType cWebSock::msgType = mtNone;
 std::map<void*,cWebSock::Client> cWebSock::clients;
+cMutex cWebSock::clientsMutex;
 char* cWebSock::httpPath = 0;
 
 //***************************************************************************
@@ -119,6 +120,8 @@ int cWebSock::service(int timeoutMs)
 int cWebSock::performData(MsgType type)
 {
    int count = 0;
+
+   cMutexLock lock(&clientsMutex);
 
    msgType = type;
 
@@ -320,7 +323,8 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 
                // mutex lock context
                {
-                  cMutexLock(&clients[wsi].messagesOutMutex);
+                  cMutexLock clock(&clientsMutex);
+                  cMutexLock lock(&clients[wsi].messagesOutMutex);
                   msg = clients[wsi].messagesOut.front();
                   clients[wsi].messagesOut.pop();
                }
@@ -451,6 +455,8 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 
 void cWebSock::activateAvailableClient()
 {
+   cMutexLock lock(&clientsMutex);
+
    auto it = clients.find(activeClient);
 
    if (!activeClient || it == clients.end() || it->second.type == ctInactive)
@@ -492,6 +498,8 @@ void cWebSock::atLogin(lws* wsi)
 
 void cWebSock::atLogout(lws* wsi, const char* message)
 {
+   cMutexLock lock(&clientsMutex);
+
    tell(1, "%s (%p) (client count=%d)", message, (void*)wsi, (int)clients.size());          // #DEBUG zum teil!
 
    clients.erase(wsi);
@@ -511,6 +519,8 @@ int cWebSock::getClientCount()
 {
    int count = 0;
 
+   cMutexLock lock(&clientsMutex);
+
    for (auto it = clients.begin(); it != clients.end(); ++it)
    {
       if (it->second.type != ctInactive)
@@ -526,11 +536,14 @@ int cWebSock::getClientCount()
 
 void cWebSock::pushMessage(const char* message, lws* wsi)
 {
+   cMutexLock lock(&clientsMutex);
+
    // push message only to connected, not inactiv clients
 
    if (wsi)
    {
-      clients[wsi].pushMessage(message);
+      if (clients.find(wsi) != clients.end())
+         clients[wsi].pushMessage(message);
    }
    else
    {

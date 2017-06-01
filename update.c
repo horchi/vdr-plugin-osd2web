@@ -272,8 +272,8 @@ void cUpdate::Action()
 
    // init web socket
 
-   webSock->init(config.webPort, pingTime);
-   active = yes;
+   if (webSock->init(config.webPort, pingTime) == success)
+      active = yes;
 
    // main loop
 

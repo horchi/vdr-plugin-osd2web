@@ -197,6 +197,7 @@ class cWebSock : public cOsdService
       static int timeout;
       static void* activeClient;
       static std::map<void*,Client> clients;
+      static cMutex clientsMutex;
       static MsgType msgType;
 
       // only used in callback
