@@ -128,20 +128,11 @@ int cWebSock::performData(MsgType type)
    for (auto it = clients.begin(); it != clients.end(); ++it)
    {
       if (it->second.type != ctInactive && !it->second.messagesOut.empty())
-      {
-         // #DEBUG
-         tell(0, "%d messages for client (%p) pending [%d]",
-              (int)it->second.messagesOut.size(), (void*)it->first, it->second.type);
          count++;
-      }
    }
 
    if (count || msgType == mtPing)
-   {
-      // #DEBUG
-      tell(0, "call: lws_callback_on_writable #1 (%d / %d)", msgType, count);
       lws_callback_on_writable_all_protocol(context, &protocols[1]);
-   }
 
    return done;
 }
@@ -164,6 +155,7 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
 
          tell(0, "got LWS_CALLBACK_HTTP_BODY with [%.*s] lws_hdr_total_length is (%d)",
               (int)len+1, message, s);
+         break;
       }
 
       case LWS_CALLBACK_CLIENT_WRITEABLE:
@@ -299,11 +291,6 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
    {
       case LWS_CALLBACK_SERVER_WRITEABLE:                     // data to client
       {
-         // #DEBUG
-         tell(0, "LWS_CALLBACK_SERVER_WRITEABLE (%d / %d) wsi (%p)",
-              msgType, (int)clients[wsi].messagesOut.size(),
-              (void*)wsi);
-
          if (msgType == mtPing)
          {
             if (clients[wsi].type != ctInactive)
@@ -500,12 +487,9 @@ void cWebSock::atLogout(lws* wsi, const char* message)
 {
    cMutexLock lock(&clientsMutex);
 
-   tell(1, "%s (%p) (client count=%d)", message, (void*)wsi, (int)clients.size());          // #DEBUG zum teil!
+   tell(1, "%s (%p)", message, (void*)wsi);
 
    clients.erase(wsi);
-
-   // #DEBUG
-   tell(1, "client deleted, client count now (%d)", (int)clients.size());
 
    if (!activeClient || activeClient == wsi)
       activateAvailableClient();
