@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.3.2\n"
 "Report-Msgid-Bugs-To: <vdr@jwendel.de>\n"
-"POT-Creation-Date: 2017-03-08 13:43+0100\n"
+"POT-Creation-Date: 2017-06-02 09:14+0200\n"
 "PO-Revision-Date: 2017-02-14 21:40+0200\n"
 "Last-Translator: <vdr@jwendel.de>\n"
 "Language-Team: <vdr@linuxtv.org>\n"
@@ -15,4 +15,91 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid "osd2web plugin"
+msgstr ""
+
+msgid "auto"
+msgstr ""
+
+msgid "yes"
+msgstr ""
+
+msgid "no"
+msgstr ""
+
+msgid "EPG Update"
+msgstr ""
+
+msgid "Update DVB EPG Database"
+msgstr ""
+
+msgid "Load Images"
+msgstr ""
+
+msgid "Prohibit Shutdown On Busy 'epgd'"
+msgstr ""
+
+msgid "Schedule Boot For Update"
+msgstr ""
+
+msgid "Blacklist not configured Channels"
+msgstr ""
+
+msgid "Store extended EPD Data to AUX (e.g. for Skins)"
+msgstr ""
+
+msgid "Menu"
+msgstr ""
+
+msgid "Show In Main Menu"
+msgstr ""
+
+msgid "Replace Program Menu"
+msgstr ""
+
+msgid "Replace Timer Menu"
+msgstr ""
+
+msgid "XChange Key Ok/Blue"
+msgstr ""
+
+msgid "Show Channels without EPG"
+msgstr ""
+
+msgid "Web"
+msgstr ""
+
+msgid "Share in Web"
+msgstr ""
+
+msgid "Create Timer Local"
+msgstr ""
+
+msgid "Have Common Recordings Folder (NAS)"
+msgstr ""
+
+msgid "SVDRP Interface"
+msgstr ""
+
+msgid "User"
+msgstr ""
+
+msgid "MySQL"
+msgstr ""
+
+msgid "Host"
+msgstr ""
+
+msgid "Port"
+msgstr ""
+
+msgid "Database Name"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "Technical Stuff"
+msgstr ""
+
+msgid "Log level"
 msgstr ""

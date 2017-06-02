@@ -266,12 +266,12 @@ void cUpdate::updateTimers()
 
 void cUpdate::updateReplay()
 {
+   if (!activeControl)
+      return;
+
 #if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
    const cRecordings* recordings;
    cStateKey stateKey;
-
-   if (!activeControl)
-      return;
 
    if (!(recordings = cRecordings::GetRecordingsRead(stateKey, 500)))
       tell(1, "Can't get lock for recordings, retrying later");
