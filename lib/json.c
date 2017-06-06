@@ -33,6 +33,7 @@ int json2Data(json_t* obj, MemoryStruct* data, const char* encoding)
    return status;
 }
 
+#ifdef USEDB
 //***************************************************************************
 // Add field to json object
 //***************************************************************************
@@ -135,6 +136,7 @@ int getFieldFromJson(json_t* obj, cDbRow* row, const char* fname, const char* ex
 
    return success;
 }
+#endif
 
 //***************************************************************************
 // Get Elements

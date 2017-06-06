@@ -695,7 +695,7 @@ int cWebSock::doEnvironment(lws* wsi, SessionData* sessionData)
 #ifndef HAVE_READDIR_R
    dirent* pSkinEntry;
 
-   while (pSkinEntry = readdir(dirSkin))
+   while ((pSkinEntry = readdir(dirSkin)))
 #else
    dirent skinEntry;
    dirent* pSkinEntry = &skinEntry;
@@ -731,7 +731,7 @@ int cWebSock::doEnvironment(lws* wsi, SessionData* sessionData)
 #ifndef HAVE_READDIR_R
       dirent* pThemeEntry;
 
-      while (pThemeEntry = readdir(dirTheme))
+      while ((pThemeEntry = readdir(dirTheme)))
 #else
       dirent themeEntry;
       dirent* pThemeEntry = &themeEntry;

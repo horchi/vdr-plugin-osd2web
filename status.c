@@ -63,7 +63,7 @@ void cUpdate::Recording(const cDevice* Device, const char* Name,
                         const char* FileName, bool On)
 {
 /*
-  not needed at oll - since 'timers' support all needed data
+  not needed - since 'timers' support all needed data
 
    tell(3, "Recording: Recording '%s', Name '%s', FileName '%s'",
         On ? "Start" : "Stop" , notNull(Name), FileName);

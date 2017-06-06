@@ -33,6 +33,7 @@ BASELIBS += $(shell pkg-config --libs tinyxml2)
 ifdef USEDB
    BASELIBS += $(shell mysql_config --libs_r)
    LIBOBJS += db.o dbdict.o
+	USES += -DUSEDB
 endif
 
 ifdef USECURL
