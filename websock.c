@@ -181,11 +181,11 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
          int m = lws_get_peer_write_allowance(wsi);
 
          if (!m)
-            tell(0, "right now, peer can't handle anything :o");
+            tell(3, "right now, peer can't handle anything :o");
          else if (m != -1 && m < sessionData->payloadSize)
             tell(0, "peer can't handle %d but %d is needed", m, sessionData->payloadSize);
          else if (m != -1)
-            tell(0, "all fine, peer can handle %d bytes", m);
+            tell(3, "all fine, peer can handle %d bytes", m);
 
          res = lws_write(wsi, (unsigned char*)sessionData->buffer+sizeLwsPreFrame,
                          sessionData->payloadSize, LWS_WRITE_HTTP);

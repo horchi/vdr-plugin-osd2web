@@ -7,7 +7,7 @@
  *
  */
 
-#define _VERSION      "0.1.2"
+#define _VERSION      "0.1.3"
 #define VERSION_DATE  "06.06.2017"
 
 #ifdef GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2017-06-06: version 0.1.3 (horchi)
+   - Bugfix: Fixed possible crash at replay
 
 2017-06-06: version 0.1.2 (horchi)
    - Change: removed unused mysql dependency

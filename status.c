@@ -90,7 +90,7 @@ void cUpdate::Replaying(const cControl* Control, const char* Name,
    tell(3, "Replaying: Replay '%s', Name '%s', FileName '%s'",
         On ? "Start" : "Stop" , notNull(Name), FileName);
 
-   if (!On)
+   if (!On || isEmpty(FileName))
    {
       activeControl = 0;
       activeReplayFile = "";
