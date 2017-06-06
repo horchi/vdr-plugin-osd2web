@@ -37,13 +37,14 @@
         -->
       </div>
       <hr />
-      <div v__-else class="card-block">
+      <div class="card-block">
          <p v-show="description" v-html="description"></p>
       </div>
    </div>
 </template>
 
 <script>
+
 /* event.epg2vdr:
 
             "imagecount",          //    int
@@ -78,7 +79,7 @@
 
 */
 export default {
-    name: 'o2w-event',
+    name: 'o2wEvent',
     props: {
       event: Object
     },

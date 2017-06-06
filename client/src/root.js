@@ -15,6 +15,7 @@ Vue.component('o2w-remote', require('Remote'))
 Vue.component('o2w-osd', require('Osd'))
 Vue.component('o2w-statusmessage', require('Statusmessage'))
 Vue.component('o2w-overview', require('Overview'))
+Vue.component('o2w-replaycontrol', require('ReplayControl'))
 
 export var root = {
     data: {

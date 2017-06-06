@@ -28,7 +28,7 @@
 <script>
 import oEvent from '../../components/Event.vue'
 export default {
-    name: 'o2w-event',
+    name: 'o2wEvent',
     extends: oEvent
 }
 
