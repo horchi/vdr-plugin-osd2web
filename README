@@ -1,8 +1,75 @@
 
-Plugin under development - not ready or usable
+osd2web ist ein VDR Skin Interface für den Browser, der das OSD anzeigt und alle Interaktionen welche am OSD möglich sind zulässt.
+
+Die Skins (Widgets, Layout, ....) sowie die Themes (Farbe, Aussehen, ....) können selbst erstellt werden.
+
+Gedacht haben wir, Dirk (Rechner) und ich es einerseits als Ergänzung des 'epgd' Web Interface und ggf. auch Nachfolger von live und andererseits als Ersatz für das graphTFT(ng) Plugin welches ich ab jetzt nicht mehr weiter entwickeln und pflegen werde.
 
 
-Dependencies
-------------
+Voraussetzung:
+  libwebsocket Version >= 2.1.0.
 
-  libwebsockets-dev
+Installation:
+  git clone git@github.com:horchi/vdr-plugin-osd2web.git
+  cd vdr-plugin-osd2web
+  make install
+
+
+epg2vdr
+Verwendet man das Plugin zusammen mit epg2vdr muss >= 1.1.61 sein.
+Für VDR Versionen < 2.3.4 muss der mit dem epg2vdr Plugin ausgelieferte AUX Patch verwendet werden sofern man im Theme auf die erweiterten Event Daten zugreifen möchte, verwendet man diesen Patch muss man das dem epg2vdr beim compilieren verraten (in make.config PATCHED = 1 ein-kommentieren).
+Ab VDR 2.3.4 ist dieser Patch bereits integriert!
+Zum aktivieren der erweiterten Event Daten kann man diese nun in Plugin-Setup (epg2vdr) aktivieren: "Store extended EPD Data to AUX (e.g. for Skins)", diese Einstellung verdoppelt die Größe der epg.data!
+
+Somit stehen dem Skin zusätzliche Daten wie Category, Genre, Year, Tipp, Rating, Country und viele weitere zur Verfügung. Diese können potentiell dann auch von anderen Skin Plugins genutzt werden.
+
+Konfiguration:
+
+osd2web (0.0.3-GITf19cff5) - osd2web plugin
+
+   -s <logosuffix>, --logosuffix=<logosuffix> channel logo suffix
+                                              (default: png)
+   -p <port>,       --port=<port> web port
+                                              (default: 4444)
+   -l <path>,       --logopath <path>         path to channel logos
+                                              (default: <plg-conf-dir>/channellogos)
+   -L,              --logonotlower            do not search logo names in lower case
+   -i,              --logobyid                logo names by channel id instead of name
+   -e,              --epgimgpath              path to epg images
+                                              (default: /var/cache/vdr/epgimages)
+
+
+
+setup.conf
+
+osd2web.LogLevel = 1   (0-4, default 1)
+
+
+Verwendung
+
+Wenn der VDR gestartet ist zugriff über den Browser:
+
+http://<dein host>:4444
+
+bzw. der konfigurierte Port
+Als graphtft kann man es in einem Browser im Vollbild, im Kioskmodus oder mit einem webkit starten. gibt man in der URL die Option onlyView=1 mit wird die Interaktion ausgeschaltet und die Menüleiste ausgeblendet.
+http://192.168.200.101:4444/skins/default/index.html?onlyView=1
+
+
+Hinweise
+
+Das Plugin selbst ist ein Skin Plugin, der VDR unterstützt nur ein aktives Skin welches man im OSD Setup des VDR auswählt bzw. einstellt.
+
+Die nicht interaktive Anzeige (viewOnly) geht immer und zeigt Daten der Aktuellen/Nächsten Sendung oder zur laufende Wiedergabe (wie von graphtft Plugin gewohnt).
+Für die Interaktive Anzeige mit den OSD Menüs muss das osd2web als Theme gewählt sein, herzu gibt es zwei Möglichkeiten:
+
+- temporär -> indem man im Browser oben rechts auf das Monitor Symbol drückt - solange verschwindet am TV das OSD!
+- permanent -> man konfiguriert im OSD Setup das VDR das osd2web als Skin - dann hat man am TV kein OSD mehr bis man es manuell zurück stellt - dies ist bei Headless Servern sinnvoll
+
+
+Help ;)
+
+nun sind Theme Entwickler gefragt, das mitgelieferte default Theme ist im Browser schon sehr gut verwendbar auch wenn es längst nicht alle Features ausschöpft.
+Für die Anzeige auf einem TFT werden noch Themes benötigt welche ohne scrollen die nötigen Elemente Anzeigen.
+
+In client/README.md findet man die Voraussetzungen (Tools) welche man zur Theme Erstellung installieren muss. Das default Theme ist ein gute Basis sich um den Syntax anzusehen. Weitere Fragen zur Theme Erstellung kann Dirk am besten beantworten.

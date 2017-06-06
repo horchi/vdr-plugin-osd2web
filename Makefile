@@ -55,7 +55,7 @@ LIBS += -lrt -larchive -lcrypto
 LIBS += $(shell pkg-config --libs uuid)
 LIBS += $(shell pkg-config --libs tinyxml2)
 LIBS += $(shell pkg-config --libs libwebsockets)
-LIBS += $(shell mysql_config --libs_r) $(shell python-config --libs) $(shell pkg-config --cflags --libs jansson)
+LIBS += $(shell python-config --libs) $(shell pkg-config --cflags --libs jansson)
 
 ### The name of the distribution archive:
 
@@ -67,8 +67,6 @@ PACKAGE = vdr-$(ARCHIVE)
 SOFILE = libvdr-$(PLUGIN).so
 
 ### Includes and Defines (add further entries here):
-
-INCLUDES += $(shell mysql_config --include)
 
 DEFINES += -DOSD2WEB -DLOG_PREFIX='"$(PLUGIN): "' $(USES)
 

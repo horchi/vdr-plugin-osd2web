@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.1.1"
-#define VERSION_DATE  "02.06.2017"
+#define _VERSION      "0.1.2"
+#define VERSION_DATE  "06.06.2017"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2017-06-06: version 0.1.2 (horchi)
+   - Change: removed unused mysql dependency
 
 2017-06-02: version 0.1.1 (horchi)
    - Bugfix: Fxed possible crash
