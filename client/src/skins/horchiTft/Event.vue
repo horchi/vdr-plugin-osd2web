@@ -3,12 +3,13 @@
         <o2w-fullevent v-if="isFullevent" :event="event" />
         <div v-else="">
             <div v-show="event.title" class="card mt-2" style="height:310px; overflow: hidden;">
-               <div class="progress" v-show="progress">
-                 <div class="progress-bar" role="progressbar" :style="{width: progress + '%'}" :aria-valuenow="{progress}" aria-valuemin="0" aria-valuemax="100">{{progress}}%</div>
-               </div>
                <div class="card-block">
+                 <div class="progress" v-show="progress">
+                    <div class="progress-bar" role="progressbar" :style="{width: progress + '%'}" :aria-valuenow="{progress}" aria-valuemin="0" aria-valuemax="100">{{progress}}%</div>
+                 </div>
                  <div class="row">
-                   <h3 class="card-title">{{ $root.formatTime(event.starttime)}}&nbsp;{{event.title}}</h3>
+                   <h3 class="card-title">{{$root.formatTime(event.starttime)}}&nbsp;{{event.title}}</h3>
+                   <div class="ml-auto p-1 mr-3">{{parseInt(event.duration/60,10)}} min</div>
                  </div>
                  <div class="row">
                     <div v-if="event.epg2vdr" class="col-12 col-md-9">
