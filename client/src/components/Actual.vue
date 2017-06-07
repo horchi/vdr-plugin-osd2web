@@ -8,13 +8,13 @@
                     <h3 class="d-block mt-4 card-title">{{channel.channelname}}</h3>
                 </div>
                 <div class="col">
-                    <div class="o2wChannelCircle alert-success ml-3">{{channel.channelnumber}}</div>        
-                </div>        
+                    <div class="o2wChannelCircle alert-success ml-3">{{channel.channelnumber}}</div>
+                </div>
             </div>
         </div>
         <o2w-event :event="present"></o2w-event>
         <o2w-event :event="following"></o2w-event>
-    </div>        
+    </div>
 </template>
 
 <script>
@@ -48,4 +48,3 @@ export default {
     }
 }
 </script>
-

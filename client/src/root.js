@@ -24,7 +24,7 @@ export var root = {
         skinAttached: false,
         hasChannelLogos: false,
         osdOn: false,
-        menuItems: [],                                      // 
+        menuItems: [],                                      //
         menuItemsRight: [],
         keyMap: {
             38: 'Up',
@@ -220,7 +220,7 @@ export var root = {
                     }
                     window.setTimeout(window.autoScroll, nextCall, delta);
                 }
-                window.autoScroll(1);
+                window.autoScroll(0);
             } else {
                 // Browserevent abfangen
                 window.addEventListener('keyup', (ev) => {

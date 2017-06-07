@@ -41,7 +41,8 @@ Wenn es bei Ubuntu klemmt weil ggf das mitgelieferte node-js zu alt ist:
 während der Entwicklung:
 =====================================================
 npm run dev
-  -> alle Änderungen an den Quellen werden überwacht und man kann sich das Ergebniss unter http://<server>:<port>/dev/skins/mySkin/index.html anschauen.
+  -> alle Änderungen an den Quellen werden überwacht und man kann sich das Ergebniss unter
+      http://<server>:<port>/dev/skins/the skin>/index.html anschauen.
 
 
 ======================================================
@@ -49,7 +50,7 @@ Theme-Entwicklung:
 ======================================================
 
 Wenn es sich um ein generelles theme handelt, kopiert man am besten die default.scss:
-cp src/themes/default.scss src/skins/<the skin>themes/myTheme.scss
+cp src/themes/default.scss src/skins/<the skin>/themes/myTheme.scss
 
 edit skins.config.js  (ggf. cp skins.config.js.sample skins.config.js) anpassen, bzw. erweitern, zb:
 
