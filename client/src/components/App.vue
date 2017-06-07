@@ -4,7 +4,7 @@
     <o2w-statusmessage></o2w-statusmessage>
     <div class="d-flex flex-row">
        <o2w-remote v-if="!$root.isOnlyView"></o2w-remote>
-       <div id="o2wContainer" class="container">
+       <div id="o2wContainer" class="container-fluid">
           <o2w-osd name="osd"></o2w-osd>
           <div id="o2wContent" v-show="!$root.osdOn">
              <o2w-overview></o2w-overview>

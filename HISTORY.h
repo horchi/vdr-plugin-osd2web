@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.1.4"
-#define VERSION_DATE  "06.06.2017"
+#define _VERSION      "0.1.5"
+#define VERSION_DATE  "07.06.2017"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2017-06-07: version 0.1.5 (horchi)
+   -Added: TFT skin horchiu - under development
 
 2017-06-06: version 0.1.4 (horchi)
    - Change: Further less lib dependencies
