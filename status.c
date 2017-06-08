@@ -131,6 +131,13 @@ void cUpdate::updatePresentFollowing()
    haveActualEpg = no;
 
 #if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
+   LOCK_TIMERS_READ;
+   const cTimers* timers = Timers;
+#else
+   timers = &Timers;
+#endif
+
+#if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
    LOCK_CHANNELS_READ;
    const cChannel* channel = Channels->GetByNumber(currentChannelNr);
 #else
@@ -165,12 +172,15 @@ void cUpdate::updatePresentFollowing()
 
       if (schedule)
       {
+         eTimerMatch timerMatch;
          const cEvent* present = schedule->GetPresentEvent();
          const cEvent* following = schedule->GetFollowingEvent();
 
          haveActualEpg = present != 0;
-         event2Json(oPresent, present, 0, (eTimerMatch)na, no, cOsdService::osLarge);
-         event2Json(oFollowing, following, 0, (eTimerMatch)na, no, cOsdService::osLarge);
+         getTimerMatch(timers, present, &timerMatch);
+         event2Json(oPresent, present, 0, timerMatch, no, cOsdService::osLarge);
+         getTimerMatch(timers, following, &timerMatch);
+         event2Json(oFollowing, following, 0, timerMatch, no, cOsdService::osLarge);
 
          // we need a trigger on start of following event
 

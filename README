@@ -73,3 +73,12 @@ nun sind Theme Entwickler gefragt, das mitgelieferte default Theme ist im Browse
 Für die Anzeige auf einem TFT werden noch Themes benötigt welche ohne scrollen die nötigen Elemente Anzeigen.
 
 In client/README.md findet man die Voraussetzungen (Tools) welche man zur Theme Erstellung installieren muss. Das default Theme ist ein gute Basis sich um den Syntax anzusehen. Weitere Fragen zur Theme Erstellung kann Dirk am besten beantworten.
+
+-----------
+Remenber:
+-----------
+
+  + If a plugin needs to access several of the global lists in parallel, locking must
+    always be done in the sequence Timers, Channels, Recordings, Schedules. This is
+    necessary to make sure that different threads that need to lock several lists at
+    the same time don't end up in a deadlock.

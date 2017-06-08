@@ -60,6 +60,12 @@ const cTimer* getTimerMatch(const cTimers* timers, const cEvent* event, eTimerMa
    const cTimer* t = 0;
    eTimerMatch m = tmNone;
 
+   if (match)
+      *match = m;
+
+   if (!timers)
+      return 0;
+
    for (const cTimer* ti = timers->First(); ti; ti = timers->Next(ti))
    {
       eTimerMatch tm = Matches(ti, event);
