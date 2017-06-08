@@ -1,6 +1,6 @@
-// hier wird beim Entwickeln der code hingepublisht, muss ggf. angepasst werden    
+// hier wird beim Entwickeln der code hingepublisht, muss ggf. angepasst werden
 const outPathDev = '/var/lib/vdr/plugins/osd2web/http/dev';
-// Wenn ein neuer Skin hinzugefügt werden soll, 
+// Wenn ein neuer Skin hinzugefügt werden soll,
 // einfach das Object um den entsprechenden Ordnernamen erweitern und dann die verfügbaren themes eintragen:
 
 var skins= null;
@@ -10,7 +10,9 @@ try{
 } catch(e) {};
 
 if (!skins)
-  skins= {'default': ['default']};
+    skins= {'default': ['default'],
+            'horchiTft': ['plain']
+           };
 /*============================================================================ */
 
 const {
@@ -80,7 +82,7 @@ var baseConf = {
   devtool: isDev ? '#eval-source-map' : '#source-map'
 }
 let skinTargets = [webpackMerge(baseConf, {
-  entry: { 
+  entry: {
     'common.js': './src/common.js'
   },
   output: { library: 'common' },
