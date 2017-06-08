@@ -23,7 +23,7 @@ export var root = {
         isActive: false,                                    // ist der Client am VDR als aktive angemeldet
         skinAttached: false,
         hasChannelLogos: false,
-        osdOn: false,
+        curView: "actual",
         menuItems: [],                                      //
         menuItemsRight: [],
         keyMap: {
@@ -176,8 +176,8 @@ export var root = {
             })
 
             // Interne Nachrichten verarbeiten
-            this.$on("osdState", (data) => {
-                this.osdOn= data.active;
+            this.$on("curView", (data) => {
+                this.curView= data || "actual";
                 //document.getElementById('o2wContent').style.display= data.active ? "none" : '';
             });
 

@@ -1,5 +1,5 @@
 <template>
-    <div v-show="$root.osdOn" id="osdCon">
+    <div v-show="$root.curView == 'osd'" id="osdCon">
         <div class="container" @click="$root.sendKey('Back')">
             <h3 class=""><icon v-if="!$root.isOnlyView" name="osd-back"></icon> {{ title }}</h3>
         </div>
@@ -96,11 +96,11 @@ export default {
     },
     updated() {
         if (this.title){
-             this.$root.$emit("osdState", {active: true});
+             this.$root.$emit("curView", "osd");
              if (this.$root.isOnlyView)
                 window.addEventListener('resize', this.sendMaxLines);
         } else {
-             this.$root.$emit("osdState", {active: false});
+             this.$root.$emit("curView", null);
              window.removeEventListener('resize', this.sendMaxLines);
         }
         //this.checkButtonHeight();
