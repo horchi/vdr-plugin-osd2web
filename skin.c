@@ -345,7 +345,7 @@ void cSkinOsd2WebDisplayMenu::SetEvent(const cEvent *Event)
    LOCK_TIMERS_READ;
    const cTimers* timers = Timers;
 #else
-   timers = &Timers;
+   cTimers* timers = &Timers;
 #endif
 
    json_t* oEvent = json_object();

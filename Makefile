@@ -173,7 +173,7 @@ clean:
 	@-rm -f $(OBJS) $(DEPFILE) *.so *.core* *~ ./configs/*~
 	@-rm -f $(PODIR)/*.mo $(PODIR)/*.pot $(PODIR)/*~
 	@-rm -f $(PACKAGE).tgz
-	(cd lib && $(MAKE) clean)
+	$(MAKE) -C lib/ clean
 
 cppchk:
 	cppcheck --language=c++ --template="{file}:{line}:{severity}:{message}" --quiet --force *.c *.h

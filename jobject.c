@@ -231,7 +231,7 @@ int recording2Json(json_t* obj, const cRecording* recording)
       LOCK_TIMERS_READ;
       const cTimers* timers = Timers;
 #else
-      timers = &Timers;
+      cTimers* timers = &Timers;
 #endif
 
       addToJson(oInfo, "channelid", info->ChannelID().ToString());
