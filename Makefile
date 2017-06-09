@@ -70,6 +70,10 @@ SOFILE = libvdr-$(PLUGIN).so
 
 DEFINES += -DOSD2WEB -DLOG_PREFIX='"$(PLUGIN): "' $(USES)
 
+ifdef PATCHED
+	DEFINES += -DPATCHED
+endif
+
 ifdef GIT_REV
    DEFINES += -DGIT_REV='"$(GIT_REV)"'
 endif

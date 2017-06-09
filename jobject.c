@@ -64,7 +64,7 @@ int event2Json(json_t* obj, const cEvent* event, const cChannel* channel,
    addToJson(obj, "hastimer", event->HasTimer());
    addToJson(obj, "seen", event->Seen());
 
-#if (defined (APIVERSNUM) && (APIVERSNUM >= 20304)) || defined (PATCHED)
+#if (defined (APIVERSNUM) && (APIVERSNUM >= 20304)) || (PATCHED)
    if (!isEmpty(event->Aux()))
    {
       cXml xml;
