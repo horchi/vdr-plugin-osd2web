@@ -137,7 +137,7 @@ void cUpdate::updatePresentFollowing()
    LOCK_TIMERS_READ;
    const cTimers* timers = Timers;
 #else
-   timers = &Timers;
+   cTimers* timers = &Timers;
 #endif
 
 #if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
