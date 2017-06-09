@@ -131,6 +131,9 @@ install-i18n: $(I18Nmsgs)
 $(SOFILE): hlib $(OBJS)
 	$(CC) $(LDFLAGS) -shared $(OBJS) $(LIBS) -o $@
 
+cbuild:
+	(cd client && $(MAKE) client)
+
 install-lib: $(SOFILE)
 	install -D -m644 $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
 

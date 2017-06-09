@@ -4,7 +4,26 @@ body {
   padding-top: 0px;
 }
 
-.o2wChannelCircle  {
+.eventarea {
+    display: -webkit-flex;
+    display: flex;
+    flex-direction: column;
+}
+
+.channel {
+    height: 63px;
+    -webkit-flex: 10;
+    flex: 10;
+}
+
+.event {
+    height: 308px;
+    overflow: hidden;
+    -webkit-flex: 45;
+    flex: 45;
+}
+
+.o2wChannelCircle {
     width: 60px;
     height: 60px;
     line-height: 60px;

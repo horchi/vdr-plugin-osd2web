@@ -38,7 +38,7 @@ Wenn es bei Ubuntu klemmt weil ggf das mitgelieferte node-js zu alt ist:
 * Skins / Themes Entwicklung
 *****************************************************************
 
-während der Entwicklung:
+Praktisches auto-build nach 'dev' während der Entwicklung:
 =====================================================
 npm run dev
   -> alle Änderungen an den Quellen werden überwacht und man kann sich das Ergebniss unter

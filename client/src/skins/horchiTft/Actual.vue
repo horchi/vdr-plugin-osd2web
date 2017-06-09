@@ -2,7 +2,7 @@
     <div id="Actual">
         <o2w-replaycontrol />
         <div v-if="channel.channelid" class="card-header">
-            <div class="text-center row" style="height: 65px;">
+            <div class="channel text-center row">
                 <div class="o2wChannelCircle alert-info">{{channel.channelnumber}}</div>
                 <div v-if="$root.hasChannelLogos" class="media d-flex flex-column ml-auto p-1" style="height: 65px;">
                     <img align="right" class="d-block img-fluid" style="max-height: 95%" :src="'/data/channellogo?name=' + channel.channelname + '&id=' + channel.channelid" />

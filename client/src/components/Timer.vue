@@ -1,5 +1,5 @@
 <template>
-    <div v-if="timers" class="list-group" id="actual-timer" style="height:100%; overflow: hidden;">
+    <div v-if="timers" class="list-group" id="actual-timer" style="overflow: hidden;">
         <h3 v-if="!$root.isOnlyView">Timer</h3>
         <div v-for="(timer,n) in timers" class="mt-2">
             <a @click.stop="detail= detail == timer.id ? -1 : timer.id" class="list-group-item list-group-item-action flex-column align-items-start active">
