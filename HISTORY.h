@@ -7,7 +7,7 @@
  *
  */
 
-#define _VERSION      "0.1.6"
+#define _VERSION      "0.1.7"
 #define VERSION_DATE  "09.06.2017"
 
 #ifdef GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2017-06-09: version 0.1.7 (horchi)
+   - Bugfix: Fixed lock sequence
 
 2017-06-09: version 0.1.6 (horchi)
    - Bugfix: Fixed PATCHED switch

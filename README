@@ -78,7 +78,8 @@ In client/README.md findet man die Voraussetzungen (Tools) welche man zur Theme 
 Remenber:
 -----------
 
-  + If a plugin needs to access several of the global lists in parallel, locking must
-    always be done in the sequence Timers, Channels, Recordings, Schedules. This is
-    necessary to make sure that different threads that need to lock several lists at
-    the same time don't end up in a deadlock.
+  + If a plugin needs to access several of the global lists in parallel,
+    locking must always be done in the sequence:
+    Timers, Channels, Recordings, Schedules.
+    This is necessary to make sure that different threads that need
+    to lock several lists at the same time don't end up in a deadlock.
