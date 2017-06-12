@@ -1,26 +1,25 @@
 <template>
   <o2w-fullevent v-if="isFullevent" :event="event" />
-  <div v-else="">
-    <div v-show="event.title" class="event card mt-2">
-      <div class="card-block p-1">
+  <div v-else="" class="event card mt-1">
+    <div v-show="event.title" style="height: 100%;">
+      <div class="card-block p-1" style="height: 100%;">
         <div class="progress" v-show="progress">
           <div class="progress-bar" role="progressbar" :style="{width: progress + '%'}" :aria-valuenow="{progress}" aria-valuemin="0" aria-valuemax="100">{{progress}}%</div>
         </div>
         <div class="row">
-          <h3 class="card-title col-12 col-md-9">{{$root.formatTime(event.starttime)}}&nbsp;{{event.title}}</h3>
-          <div class="ml-auto col-12 col-md-3">{{elapsed}}/{{parseInt(event.duration/60,10)}} min</div>
+          <h3 class="card-title col-12 col-md-9 titletxt">{{$root.formatTime(event.starttime)}}&nbsp;{{event.title}}</h3>
+          <div class="ml-auto col-12 col-md-3 desctxt">{{elapsed}}/{{parseInt(event.duration/60,10)}} min</div>
         </div>
         <div class="row">
           <div v-if="event.epg2vdr" class="col-12 col-md-9">
-            <div v-if="event.epg2vdr.shorttext" class="card-text">{{event.shorttext}}</div>
-            <div v-if="event.epg2vdr.genre" class="card-text htxt">{{event.epg2vdr.genre}}</div>
-            <div v-if="event.epg2vdr.category" class="card-text htxt">{{event.epg2vdr.category}}</div>
-            <div v-if="event.epg2vdr.episodepartname" class="card-text">{{event.epg2vdr.episodepartname}}</div>
-            <div v-if="event.epg2vdr.country" class="card-text">{{event.epg2vdr.country}}&nbsp;{{event.epg2vdr.year}}</div>
-            <div v-if="event.epg2vdr.tipp" class="card-text">{{event.epg2vdr.tipp}}&nbsp;&nbsp;{{event.epg2vdr.txtrating}}</div>
+            <div v-if="event.epg2vdr.shorttext" class="card-text desctxt">{{event.shorttext}}</div>
+            <div v-if="event.epg2vdr.genre" class="card-text htxt">{{event.epg2vdr.genre}}&nbsp;/&nbsp;{{event.epg2vdr.category}}</div>
+            <div v-if="event.epg2vdr.episodepartname" class="card-text desctxt">{{event.epg2vdr.episodepartname}}</div>
+            <div v-if="event.epg2vdr.country" class="card-text desctxt">{{event.epg2vdr.country}}&nbsp;{{event.epg2vdr.year}}</div>
+            <div v-if="event.epg2vdr.tipp" class="card-text desctxt">{{event.epg2vdr.tipp}}&nbsp;&nbsp;{{event.epg2vdr.txtrating}}</div>
           </div>
           <div v-else="" class="col-12 col-md-9">
-            <div v-if="event.shorttext" class="card-text">{{event.shorttext}}</div>
+            <div v-if="event.shorttext" class="card-text desctxt">{{event.shorttext}}</div>
           </div>
           <div v-if="event.epg2vdr" :id="'evImages' + event.eventid" class="col-12 col-md-3 carousel slide" data-ride="carousel" data-interval="5000">
             <div class="carousel-inner" role="listbox">
@@ -30,7 +29,7 @@
             </div>
           </div>
         </div>
-        <p v-show="description" v-html="description"></p>
+        <p class="desctxt" v-show="description" v-html="description"></p>
       </div>
     </div>
   </div>

@@ -157,7 +157,6 @@ install-http:
 	fi
 	cp -r ./client/dist/* $(DESTDIR)$(HTTPDEST)
 	chmod -R a+rX $(DESTDIR)$(HTTPDEST)
-#	install --mode=644 -D ./client/dist/* $(DESTDIR)$(HTTPDEST)
 ifdef VDR_USER
 	if test -n $(VDR_USER); then \
 		chown -R $(VDR_USER) $(DESTDIR)$(HTTPDEST); \
@@ -168,7 +167,7 @@ dist: clean
 	@-rm -rf $(TMPDIR)/$(ARCHIVE)
 	@mkdir $(TMPDIR)/$(ARCHIVE)
 	@cp -a * $(TMPDIR)/$(ARCHIVE)
-	@tar czf $(PACKAGE).tgz -C $(TMPDIR) $(ARCHIVE)
+	@tar czf $(PACKAGE).tgz --exclude=$(ARCHIVE)'/client/node_modules/*' -C $(TMPDIR) $(ARCHIVE)
 	@-rm -rf $(TMPDIR)/$(ARCHIVE)
 	@echo Distribution package created as $(PACKAGE).tgz
 

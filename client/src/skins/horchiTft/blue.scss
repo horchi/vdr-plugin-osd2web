@@ -2,6 +2,7 @@
 
 body {
     padding-top: 0px;
+    background-color: black;
     line-height: 1.2;
 }
 
@@ -13,6 +14,8 @@ body {
 
 .statusbar {
     height: 6vh;
+    background-color: #27567e;
+    color: white;
 }
 
 .eventarea {
@@ -26,11 +29,15 @@ body {
 .channel {
     height: 10vh;
     overflow: hidden;
+    background-color: #27567e;
+    color: white;
 }
 
 .event {
     height: 40vh;
     overflow: hidden;
+    background-color: #0275d8;
+    background: linear-gradient(to bottom right, #113359, #0275d8);
 }
 
 // channel logo
@@ -44,19 +51,27 @@ body {
 
 .chtxt {
     font-size: 8vh !important;
+    color: #ffffed;
 }
 
 .titletxt {
     font-size: 6vh;
+    color: white;
 }
 
 .htxt {
-    color: #0275d8;
+    color: #d2e00d;
     font-size: 3.8vh;
 }
 
 .desctxt {
     font-size: 3.5vh;
+    color: white;
+}
+
+.progress-bar {
+    background-color: #d2e00d;
+    color: black;
 }
 
 // status bar
@@ -71,6 +86,10 @@ body {
 }
 
 // timer list
+
+.timer {
+    background: linear-gradient(to bottom right, #113359, #0275d8);
+}
 
 .tmtxt {
     font-size: 2.7vh;

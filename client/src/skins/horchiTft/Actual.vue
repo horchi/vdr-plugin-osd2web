@@ -1,20 +1,18 @@
 <template>
-    <div id="Actual">
-        <o2w-replaycontrol />
-        <div v-if="channel.channelid" class="card-header">
-            <div class="channel text-center row">
-                <div class="o2wChannelCircle alert-info">{{channel.channelnumber}}</div>
-                <div v-if="$root.hasChannelLogos" class="media d-flex flex-column ml-auto p-1" style="height: 65px;">
-                    <img align="right" class="d-block img-fluid" style="max-height: 95%" :src="'/data/channellogo?name=' + channel.channelname + '&id=' + channel.channelid" />
-                </div>
-                <div v-else="" class="media d-flex flex-column">
-                    <h3 class="d-block mt-4 card-title">{{channel.channelname}}</h3>
-                </div>
-            </div>
+  <div id="Actual">
+    <o2w-replaycontrol />
+    <div v-if="channel.channelid" class="channel card mt-1">
+      <div class="row" style="height: 100%;">
+        <h3 class="d-block my-auto ml-3 card-title htxt chtxt">&nbsp;{{channel.channelnumber}}</h3>
+        <h3 class="d-block my-auto card-title chtxt">&nbsp;{{channel.channelname}}</h3>
+        <div v-if="$root.hasChannelLogos" class="media my-auto d-flex flex-column ml-auto p-1 chlogo">
+          <img align="right" class="d-block" style="max-height: 95%" :src="'/data/channellogo?name=' + channel.channelname + '&id=' + channel.channelid" />
         </div>
-        <o2w-event :event="present"></o2w-event>
-        <o2w-event :event="following"></o2w-event>
+      </div>
     </div>
+    <o2w-event :event="present"></o2w-event>
+    <o2w-event :event="following"></o2w-event>
+  </div>
 </template>
 
 <script>
