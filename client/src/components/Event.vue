@@ -47,33 +47,49 @@
 
 /* event.epg2vdr:
 
-       "imagecount",          //    int
-       "numrating",           //    int
-       "year",                //    ascii     10
-       "category",            //    ascii     50
-       "country",             //    ascii     50
-       "audio",               //    ascii     50
+   "imagecount",          // int
+   "scrseriesid",         // int
+   "scrseriesepisode",    // int
+   "scrmovieid",          // int
+   "numrating",           // int
 
-       "txtrating",           //    ascii    100
-       "genre",               //    ascii    100
-       "flags",               //    ascii    100
-       "commentator",         //    ascii    200
-       "tipp",                //    ascii    250
-       "rating",              //    ascii    250
-       "moderator",           //    ascii    250
-       "music",               //    ascii    250
-       "screenplay",          //    ascii    500
-       "shortreview",         //    ascii    500
+   "year",                // ascii     10
+   "category",            // ascii     50
+   "country",             // ascii     50
+   "audio",               // ascii     50
 
-       "guest",               //    text    1000
-       "producer",            //    text    1000
-       "camera",              //    text    1000
-       "director",            //    text    1000
-       "topic",               //    ascii   1000
+   "txtrating",           // ascii    100
+   "genre",               // ascii    100
+   "flags",               // ascii    100
+   "commentator",         // ascii    200
+   "tipp",                // ascii    250
+   "rating",              // ascii    250
+   "moderator",           // ascii    250
+   "music",               // ascii    250
+   "screenplay",          // ascii    500
+   "shortreview",         // ascii    500
 
-       "other",               //    text    2000
-       "actor",               //    mtext   5000
-       "longdescription",     //    mtext  25000
+   "guest",               // text    1000
+   "producer",            // text    1000
+   "camera",              // text    1000
+   "director",            // text    1000
+   "topic",               // ascii   1000
+
+   "other",               // text    2000
+   "shortdescription",    // mtext   3000
+   "shorttext",           // ascii    300
+   "actor",               // mtext   5000
+
+   "episodename",         // ascii    100
+   "episodeshortname",    // ascii    100
+   "episodepartname",     // ascii    300
+   "episodeextracol1",    // ascii    250
+   "episodeextracol2",    // ascii    250
+   "episodeextracol3",    // ascii    250
+   "episodeseason",       // int
+   "episodepart",         // int
+   "episodeparts",        // int
+   "episodenumber",       // int
 
 */
 export default {

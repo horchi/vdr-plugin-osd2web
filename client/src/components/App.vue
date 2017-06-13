@@ -1,5 +1,5 @@
 <template>
-<div id="app-view">
+<div id="app-view" class="viewport">
     <o2w-navigation v-if="!$root.isOnlyView" :items="$root.menuItems" :itemsRight="$root.menuItemsRight"></o2w-navigation>
     <o2w-statusmessage></o2w-statusmessage>
     <div class="d-flex flex-row">

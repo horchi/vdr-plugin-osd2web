@@ -70,6 +70,10 @@ SOFILE = libvdr-$(PLUGIN).so
 
 DEFINES += -DOSD2WEB -DLOG_PREFIX='"$(PLUGIN): "' $(USES)
 
+ifdef PATCHED
+	DEFINES += -DPATCHED
+endif
+
 ifdef GIT_REV
    DEFINES += -DGIT_REV='"$(GIT_REV)"'
 endif
@@ -127,6 +131,9 @@ install-i18n: $(I18Nmsgs)
 $(SOFILE): hlib $(OBJS)
 	$(CC) $(LDFLAGS) -shared $(OBJS) $(LIBS) -o $@
 
+cbuild:
+	(cd client && $(MAKE) client)
+
 install-lib: $(SOFILE)
 	install -D -m644 $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
 
@@ -150,7 +157,6 @@ install-http:
 	fi
 	cp -r ./client/dist/* $(DESTDIR)$(HTTPDEST)
 	chmod -R a+rX $(DESTDIR)$(HTTPDEST)
-#	install --mode=644 -D ./client/dist/* $(DESTDIR)$(HTTPDEST)
 ifdef VDR_USER
 	if test -n $(VDR_USER); then \
 		chown -R $(VDR_USER) $(DESTDIR)$(HTTPDEST); \
@@ -161,7 +167,7 @@ dist: clean
 	@-rm -rf $(TMPDIR)/$(ARCHIVE)
 	@mkdir $(TMPDIR)/$(ARCHIVE)
 	@cp -a * $(TMPDIR)/$(ARCHIVE)
-	@tar czf $(PACKAGE).tgz -C $(TMPDIR) $(ARCHIVE)
+	@tar czf $(PACKAGE).tgz --exclude=$(ARCHIVE)'/client/node_modules/*' -C $(TMPDIR) $(ARCHIVE)
 	@-rm -rf $(TMPDIR)/$(ARCHIVE)
 	@echo Distribution package created as $(PACKAGE).tgz
 
@@ -169,7 +175,7 @@ clean:
 	@-rm -f $(OBJS) $(DEPFILE) *.so *.core* *~ ./configs/*~
 	@-rm -f $(PODIR)/*.mo $(PODIR)/*.pot $(PODIR)/*~
 	@-rm -f $(PACKAGE).tgz
-	(cd lib && $(MAKE) clean)
+	$(MAKE) -C lib/ clean
 
 cppchk:
 	cppcheck --language=c++ --template="{file}:{line}:{severity}:{message}" --quiet --force *.c *.h

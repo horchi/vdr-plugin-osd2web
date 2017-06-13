@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.1.5"
-#define VERSION_DATE  "07.06.2017"
+#define _VERSION      "0.1.9"
+#define VERSION_DATE  "13.06.2017"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -19,8 +19,20 @@
 /*
  * ------------------------------------
 
+2017-06-13: version 0.1.9 (horchi)
+   - Bugfix: Fixed possible crash on missing event
+
+2017-06-12: version 0.1.8 (horchi)
+   - Change: Improved auto size of theme horchiTft to fit different resolutions
+
+2017-06-09: version 0.1.7 (horchi)
+   - Bugfix: Fixed lock sequence
+
+2017-06-09: version 0.1.6 (horchi)
+   - Bugfix: Fixed PATCHED switch
+
 2017-06-07: version 0.1.5 (horchi)
-   -Added: TFT skin horchiu - under development
+   - Added: TFT skin horchi (under development)
 
 2017-06-06: version 0.1.4 (horchi)
    - Change: Further less lib dependencies

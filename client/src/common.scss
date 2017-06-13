@@ -1,12 +1,27 @@
 @import '~bootstrap/scss/bootstrap.scss';
 
 
-/* we use topmenu fixed, so we need padding */
 body {
-  //min-height: 75rem;
-  padding-top: 4rem;
+    padding-top: 4rem;
 }
 
+.viewport {
+    display: -webkit-flex;
+    display: flex;
+    flex-direction: column;
+}
+
+.dataarea {
+}
+
+.statusbar {
+}
+
+.eventarea {
+}
+
+.timerarea {
+}
 
 button.but-red {
     background-color: red;

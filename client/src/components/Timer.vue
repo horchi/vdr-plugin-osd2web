@@ -1,12 +1,14 @@
 <template>
-    <div v-if="timers" class="list-group" id="actual-timer">
+    <div v-if="timers" class="list-group" id="actual-timer" style="overflow: hidden;">
         <h3 v-if="!$root.isOnlyView">Timer</h3>
         <div v-for="(timer,n) in timers" class="mt-2">
-            <a @click.stop="detail= detail == timer.id ? -1 : timer.id"
-            class="list-group-item list-group-item-action flex-column align-items-start active">
-                <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">{{timer.file}}</h5>
-                    <small>{{$root.formatDateTime(timer.starttime)}}</small>
+            <a @click.stop="detail= detail == timer.id ? -1 : timer.id" class="timer list-group-item list-group-item-action flex-column align-items-start p-1 active">
+                <div class="d-flex w-100 justify-content-between tmtxt">
+                  <div class="">{{timer.file}}</div>
+                  <div>
+                    <small class="tltmtxt">{{$root.formatDateTime(timer.starttime)}}</small>
+                    <small v-if="timer.epg2vdr" class="tlvdrtxt">[{{timer.epg2vdr.vdrname}}]</small>
+                  </div>
                 </div>
             </a>
             <o2w-event v-if="detail == timer.id" :event="timer.event"></o2w-event>

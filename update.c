@@ -73,6 +73,8 @@ cOsdService::Event cOsdService::toEvent(const char* name)
 cUpdate::cUpdate()
 {
    triggerTimerUpdate = no;
+   triggerReplayUpdate = no;
+   nextPresentUpdateAt = time(0);
    epg2vdrIsLoaded = no;
    actualClientCount = 0;
    active = no;
@@ -84,7 +86,6 @@ cUpdate::cUpdate()
    activeReplayFile = "";
    pingTime = 60;                      // timeout
    nextPing = time(0);
-   nextPresentUpdateAt = time(0);
    fdInotify = na;
    wdInotify = 0;
    lastClientActionAt = time(0);
@@ -213,14 +214,19 @@ void cUpdate::atMeanwhile()
    if (checkFileService() > 0)
       updateCustomData();
 
-   if (nextPresentUpdateAt < time(0))
+   if (nextPresentUpdateAt <= time(0))
       updatePresentFollowing();
 
    if (triggerTimerUpdate)
       updateTimers();
 
    if (activeControl)
-      updateControl();
+   {
+      if (triggerReplayUpdate)
+         updateReplay();   // calls updateControl()
+      else
+         updateControl();
+   }
 
    if (menuCloseTrigger)
    {

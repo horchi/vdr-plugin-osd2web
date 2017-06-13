@@ -11,7 +11,7 @@ try{
 
 if (!skins)
     skins= {'default': ['default'],
-            'horchiTft': ['plain']
+            'horchiTft': ['plain', 'blue']
            };
 /*============================================================================ */
 

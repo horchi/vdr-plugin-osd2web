@@ -64,7 +64,7 @@ int event2Json(json_t* obj, const cEvent* event, const cChannel* channel,
    addToJson(obj, "hastimer", event->HasTimer());
    addToJson(obj, "seen", event->Seen());
 
-#if (defined (APIVERSNUM) && (APIVERSNUM >= 20304)) || defined (PATCHED)
+#if (defined (APIVERSNUM) && (APIVERSNUM >= 20304)) || (PATCHED)
    if (!isEmpty(event->Aux()))
    {
       cXml xml;
@@ -118,26 +118,6 @@ int event2Json(json_t* obj, const cEvent* event, const cChannel* channel,
       }
 
       addToJson(obj, "components", oComponents);
-   }
-
-   // timer match ..
-
-   if (timerMatch == (eTimerMatch)na)
-   {
-#if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
-      const cTimers* timers;
-      cStateKey stateKey;
-
-      if ((timers = cTimers::GetTimersRead(stateKey, 1000)))
-      {
-         getTimerMatch(timers, event, &timerMatch);
-         stateKey.Remove();
-      }
-      else
-         tell(0, "Can't get lock for event2Json()");
-#else
-      getTimerMatch(&Timers, event, &timerMatch);
-#endif
    }
 
    if (timerMatch == tmFull)
@@ -243,15 +223,24 @@ int recording2Json(json_t* obj, const cRecording* recording)
 
    if (const cRecordingInfo* info = recording->Info())
    {
+      eTimerMatch timerMatch;
       json_t* oInfo = json_object();
       json_t* oEvent = json_object();
+
+#if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
+      LOCK_TIMERS_READ;
+      const cTimers* timers = Timers;
+#else
+      cTimers* timers = &Timers;
+#endif
 
       addToJson(oInfo, "channelid", info->ChannelID().ToString());
       addToJson(oInfo, "channelname", info->ChannelName());
       addToJson(oInfo, "framespersecond", info->FramesPerSecond());
       addToJson(oInfo, "aux", info->Aux());
 
-      event2Json(oEvent, info->GetEvent());
+      getTimerMatch(timers, info->GetEvent(), &timerMatch);
+      event2Json(oEvent, info->GetEvent(), 0, timerMatch);
 
       addToJson(obj, "info", oInfo);
       addToJson(obj, "event", oEvent);
@@ -299,7 +288,7 @@ int timer2Json(json_t* obj, const cTimer* timer)
    if (timer->Event())
    {
       json_t* oEvent = json_object();
-      event2Json(oEvent, timer->Event(), 0, (eTimerMatch)na, no, cOsdService::osLarge);
+      event2Json(oEvent, timer->Event(), 0, tmFull, no, cOsdService::osLarge);
       addToJson(obj, "event", oEvent);
    }
 

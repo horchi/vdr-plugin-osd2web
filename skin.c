@@ -338,10 +338,19 @@ void cSkinOsd2WebDisplayMenu::SetScrollbar(int Total, int Offset)
 
 void cSkinOsd2WebDisplayMenu::SetEvent(const cEvent *Event)
 {
+   eTimerMatch timerMatch;
    tell(4, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetEvent()");
 
+#if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
+   LOCK_TIMERS_READ;
+   const cTimers* timers = Timers;
+#else
+   cTimers* timers = &Timers;
+#endif
+
    json_t* oEvent = json_object();
-   event2Json(oEvent, Event, 0, (eTimerMatch)na, no, cOsdService::osLarge);
+   getTimerMatch(timers, Event, &timerMatch);
+   event2Json(oEvent, Event, 0, timerMatch, no, cOsdService::osLarge);
 
    cUpdate::pushMessage(oEvent, "event");
 }

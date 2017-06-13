@@ -31,7 +31,7 @@ void cUpdate::ChannelSwitch(const cDevice* device, int channelNumber, bool liveV
    {
       tell(3, "ChannelSwitch: channelNumber: %d", channelNumber);
       currentChannelNr = channelNumber;
-      updatePresentFollowing();
+      nextPresentUpdateAt = time(0);
    }
 }
 
@@ -51,7 +51,7 @@ void cUpdate::OsdProgramme(time_t PresentTime, const char* PresentTitle,
       tell(3, "OsdProgramme: PresentTitle '%s', FollowingTitle '%s'",
            PresentTitle, FollowingTitle);
 
-      updatePresentFollowing();
+      nextPresentUpdateAt = time(0);
    }
 }
 
@@ -103,7 +103,7 @@ void cUpdate::Replaying(const cControl* Control, const char* Name,
    activeReplayFile = FileName;
    activeReplayName = Name;
 
-   updateReplay();
+   triggerReplayUpdate = yes;
 }
 
 //***************************************************************************
@@ -116,7 +116,7 @@ void cUpdate::TimerChange(const cTimer* Timer, eTimerChange Change)
    //   with epg2vdr it is updated by a service interface trigger
 
    if (!epg2vdrIsLoaded)
-      updateTimers();
+      triggerTimerUpdate = yes;
 }
 
 //***************************************************************************
@@ -126,9 +126,19 @@ void cUpdate::TimerChange(const cTimer* Timer, eTimerChange Change)
 void cUpdate::updatePresentFollowing()
 {
    if (!currentChannelNr)
+   {
+      nextPresentUpdateAt = time(0) + 60;
       return;
+   }
 
    haveActualEpg = no;
+
+#if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
+   LOCK_TIMERS_READ;
+   const cTimers* timers = Timers;
+#else
+   cTimers* timers = &Timers;
+#endif
 
 #if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
    LOCK_CHANNELS_READ;
@@ -165,12 +175,15 @@ void cUpdate::updatePresentFollowing()
 
       if (schedule)
       {
+         eTimerMatch timerMatch;
          const cEvent* present = schedule->GetPresentEvent();
          const cEvent* following = schedule->GetFollowingEvent();
 
          haveActualEpg = present != 0;
-         event2Json(oPresent, present, 0, (eTimerMatch)na, no, cOsdService::osLarge);
-         event2Json(oFollowing, following, 0, (eTimerMatch)na, no, cOsdService::osLarge);
+         getTimerMatch(timers, present, &timerMatch);
+         event2Json(oPresent, present, 0, timerMatch, no, cOsdService::osLarge);
+         getTimerMatch(timers, following, &timerMatch);
+         event2Json(oFollowing, following, 0, timerMatch, no, cOsdService::osLarge);
 
          // we need a trigger on start of following event
 
@@ -266,6 +279,8 @@ void cUpdate::updateTimers()
 
 void cUpdate::updateReplay()
 {
+   triggerReplayUpdate = no;
+
    if (!activeControl)
       return;
 

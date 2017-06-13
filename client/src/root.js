@@ -129,10 +129,33 @@ export var root = {
                 day: 'numeric'
             }) + ' ' + new String(100 + d.getHours()).slice(1) + ':' + new String(100 + d.getMinutes()).slice(1);
         },
+        formatDateTimeLong(unixTime) {
+            var d = new Date(unixTime * 1000); // - this.timeOffset
+            return d.toLocaleDateString('de-DE', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            }) + ' ' + new String(100 + d.getHours()).slice(1) + ':' + new String(100 + d.getMinutes()).slice(1);
+        },
+        formatDateLong(unixTime) {
+            var d = new Date(unixTime * 1000); // - this.timeOffset
+            return d.toLocaleDateString('de-DE', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        },
         formatTime(unixTime) {
             var d = new Date(unixTime * 1000); // - this.timeOffset
             return new String(100 + d.getHours()).slice(1) + ':' + new String(100 + d.getMinutes()).slice(1);
+        },
+        formatTimeLong(unixTime) {
+            var d = new Date(unixTime * 1000); // - this.timeOffset
+            return new String(100 + d.getHours()).slice(1) + ':' + new String(100 + d.getMinutes()).slice(1) + ':' + new String(100 + d.getSeconds()).slice(1);
         }
+
         /*,
                 formatDate(unixTime) {
                     var d = new Date(unixTime * 1000); // - this.timeOffset
