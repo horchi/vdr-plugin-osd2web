@@ -7,7 +7,7 @@
  *
  */
 
-#define _VERSION      "0.1.9"
+#define _VERSION      "0.1.10"
 #define VERSION_DATE  "13.06.2017"
 
 #ifdef GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2017-06-13: version 0.1.10 (horchi)
+   - Change: further improvements of skin horchiTft
 
 2017-06-13: version 0.1.9 (horchi)
    - Bugfix: Fixed possible crash on missing event
