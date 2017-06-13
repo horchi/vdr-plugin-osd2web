@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "bootstrap": "^4.0.0-alpha.6",
+    "intl": "^1.2.5",
     "jquery-slim": "^3.0.0",
     "tether": "^1.4.0",
     "vue": "^2.3.3",

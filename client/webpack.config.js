@@ -85,7 +85,9 @@ let skinTargets = [webpackMerge(baseConf, {
   entry: {
     'common.js': './src/common.js'
   },
-  output: { library: 'common' },
+  output: { library: 'common',
+    publicPath: isDev ? '/dev/' : '/'
+  },
   resolve: {
       modules: [resolve(__dirname, 'node_modules')]
   },

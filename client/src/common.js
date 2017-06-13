@@ -37,6 +37,15 @@ import 'bootstrap/js/src/tab';
 import 'bootstrap/js/src/tooltip';
 */
 
+if (!global.Intl) {
+    require.ensure([
+        'intl',
+        'intl/locale-data/jsonp/de.js'
+    ], function (require) {
+        require('intl');
+        require('intl/locale-data/jsonp/de.js');
+    });
+}
 
 // Einbetten des styles, der in der Url mit ?theme=xxxangegeben werden muss
 (function(){

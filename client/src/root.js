@@ -121,37 +121,47 @@ export var root = {
             if (key) this.sendKey(key);
         },
         formatDateTime(unixTime) {
+            if (!unixTime)
+                return "";
             var d = new Date(unixTime * 1000); // - this.timeOffset
-            return d.toLocaleDateString('de-DE', {
+            return new Intl.DateTimeFormat('de-DE', {
                 weekday: 'short',
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric'
-            }) + ' ' + new String(100 + d.getHours()).slice(1) + ':' + new String(100 + d.getMinutes()).slice(1);
+            }).format(d) + ' ' + new String(100 + d.getHours()).slice(1) + ':' + new String(100 + d.getMinutes()).slice(1);
         },
         formatDateTimeLong(unixTime) {
+            if (!unixTime)
+                return "";
             var d = new Date(unixTime * 1000); // - this.timeOffset
-            return d.toLocaleDateString('de-DE', {
+            return new Intl.DateTimeFormat('de-DE', {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric'
-            }) + ' ' + new String(100 + d.getHours()).slice(1) + ':' + new String(100 + d.getMinutes()).slice(1);
+            }).format(d) + ' ' + new String(100 + d.getHours()).slice(1) + ':' + new String(100 + d.getMinutes()).slice(1);
         },
         formatDateLong(unixTime) {
+            if (!unixTime)
+                return "";
             var d = new Date(unixTime * 1000); // - this.timeOffset
-            return d.toLocaleDateString('de-DE', {
+            return new Intl.DateTimeFormat('de-DE', {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric'
-            });
+            }).format(d);
         },
         formatTime(unixTime) {
+            if (!unixTime)
+                return "";
             var d = new Date(unixTime * 1000); // - this.timeOffset
             return new String(100 + d.getHours()).slice(1) + ':' + new String(100 + d.getMinutes()).slice(1);
         },
         formatTimeLong(unixTime) {
+            if (!unixTime)
+                return "";
             var d = new Date(unixTime * 1000); // - this.timeOffset
             return new String(100 + d.getHours()).slice(1) + ':' + new String(100 + d.getMinutes()).slice(1) + ':' + new String(100 + d.getSeconds()).slice(1);
         }
