@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.1.8"
-#define VERSION_DATE  "12.06.2017"
+#define _VERSION      "0.1.9"
+#define VERSION_DATE  "13.06.2017"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2017-06-13: version 0.1.9 (horchi)
+   - Bugfix: Fixed possible crash on missing event
 
 2017-06-12: version 0.1.8 (horchi)
    - Change: Improved auto size of theme horchiTft to fit different resolutions

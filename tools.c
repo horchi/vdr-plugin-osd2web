@@ -24,7 +24,7 @@
 
 eTimerMatch Matches(const cTimer* ti, const cEvent* event)
 {
-   if (ti->HasFlags(tfActive) && ti->Channel()->GetChannelID() == event->ChannelID())
+   if (event && ti->HasFlags(tfActive) && ti->Channel()->GetChannelID() == event->ChannelID())
    {
       int overlap = 0;
       bool useVps = ti->HasFlags(tfVps) && event->Vps();
@@ -63,7 +63,7 @@ const cTimer* getTimerMatch(const cTimers* timers, const cEvent* event, eTimerMa
    if (match)
       *match = m;
 
-   if (!timers)
+   if (!timers || !event)
       return 0;
 
    for (const cTimer* ti = timers->First(); ti; ti = timers->Next(ti))
