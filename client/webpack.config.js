@@ -1,23 +1,33 @@
+const { resolve } = require('path')
+// hier wird beim Builden (production) der code hingepublisht und wird dann per make kopiert
+var targetFolder = resolve(__dirname, 'dist');
 // hier wird beim Entwickeln der code hingepublisht, muss ggf. angepasst werden
-const outPathDev = '/var/lib/vdr/plugins/osd2web/http/dev';
-// Wenn ein neuer Skin hinzugefügt werden soll,
+var targetFolder_dev = '/var/lib/vdr/plugins/osd2web/http/dev';
+// Wenn ein neuer Skin in dieser Branch hinzugefügt werden soll,
 // einfach das Object um den entsprechenden Ordnernamen erweitern und dann die verfügbaren themes eintragen:
+var skins = {
+  'default': ['default'],
+  'horchiTft': ['plain', 'blue']
+};
 
-var skins= null;
+// Eine vorhandene skins.config.js kann Einstellungen überschreiben
+var custom_conf = null;
+try {
+  let custom_conf = require('./skins.config.js');
+  if (custom_conf.skins)
+    skins = custom_conf.skins;
+  else if (custom_conf.additional_skins) {
+    for (target in custom_conf.additional_skins)
+      skins[target] = custom_conf.additional_skins[target];
+  }
+  if (custom_conf.targetFolder)
+    targetFolder = custom_conf.targetFolder;
+  if (custom_conf.targetFolder_dev)
+    targetFolder_dev = custom_conf.targetFolder_dev;
+} catch (e) { };
 
-try{
-  skins= require('./skins.config.js');
-} catch(e) {};
 
-if (!skins)
-    skins= {'default': ['default'],
-            'horchiTft': ['plain', 'blue']
-           };
-/*============================================================================ */
-
-const {
-   resolve
-} = require('path')
+const skin = process.env.npm_config_skin || null;
 const isDev = (process.env.NODE_ENV === 'dev');
 
 const webpack = require('webpack')
@@ -43,7 +53,7 @@ var baseConf = {
     new ExtractTextPlugin({ filename: '[name].css', allChunks: false })
   ],
   output: {
-    path: isDev ? outPathDev : resolve(__dirname, 'dist'),
+    path: isDev ? targetFolder_dev : targetFolder,
     filename: '[name]',
     publicPath: ''
   },
@@ -81,15 +91,17 @@ var baseConf = {
   },
   devtool: isDev ? '#eval-source-map' : '#source-map'
 }
-let skinTargets = [webpackMerge(baseConf, {
+
+const common_conf = webpackMerge(baseConf, {
   entry: {
     'common.js': './src/common.js'
   },
-  output: { library: 'common',
+  output: {
+    library: 'common',
     publicPath: isDev ? '/dev/' : '/'
   },
   resolve: {
-      modules: [resolve(__dirname, 'node_modules')]
+    modules: [resolve(__dirname, 'node_modules')]
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -99,16 +111,27 @@ let skinTargets = [webpackMerge(baseConf, {
       inject: false
     })
   ]
-})];
+});
+var conf;
 
-for (target in skins) {
+if (skin){
+  conf = (process.env.npm_config_common ? [common_conf,getSkinConfig(skin)] : getSkinConfig(skin));
+}else {
+  conf = [common_conf];
+  for (target in skins) {
+    conf.push(getSkinConfig(target));
+  }
+}
+
+
+function getSkinConfig(target) {
   let entries = {
     'skin.js': './src/skins/' + target + '/main.js'
   };
-  let themes= skins[target];
+  let themes = skins[target];
   for (i in themes)
-    entries['themes/' + themes[i]]= themes[i] + '.scss';
-  skinTargets.push(webpackMerge(baseConf, {
+    entries['themes/' + themes[i]] = themes[i] + '.scss';
+  return webpackMerge(baseConf, {
     entry: entries,
     output: {
       path: baseConf.output.path + '/skins/' + target
@@ -124,8 +147,7 @@ for (target in skins) {
         inject: false
       })
     ]
-  }));
-
+  });
 }
 
-module.exports = skinTargets;
+module.exports = conf;

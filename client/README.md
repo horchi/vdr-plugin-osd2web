@@ -31,19 +31,25 @@ Wenn es bei Ubuntu klemmt weil ggf das mitgelieferte node-js zu alt ist:
 * Skins / Themes Entwicklung
 *****************************************************************
 
+Um ein zusätzliches Skin oder Theme hinzuzufügen, welches nicht in der Branch ist:
+#> edit skins.config.js  # (ggf. cp skins.config.js.sample skins.config.js) anpassen, bzw. erweitern 
+Diese Datei wird dann beim git pull ignoriert
+
 Compilieren der Skins / Themes:
 ==========================================================
-
+Alle Skins:
 #> npm run build
+oder ein einzelnes:
+#> npm --skin=<the skin> run build
   -> der code wird unter osd2web/client/dist erstellt,
      welcher dann beim "osd2web/make install" (make install-http genügt auch) an die richtige Stelle kopiert wird.
+     Wird in der skin.config.js "targetFolder" überschrieben, wird der code natürlich dort erstellt
 
 Praktisches auto-build nach 'dev' während der Entwicklung:
 ==========================================================
-Achtung das auto-build funktioniert noch nicht zuverlässig wir sind noch an einer Umstellung der Ordner Struktur dafür.
-Bis dahin bitte wie oben beschriben "npm run build" verwenden!
-
-#> npm run dev
+#> npm --skin=<the skin> run dev
+oder wenn man auch an den allgemeinen code etwas ändern möchte
+#> npm --skin=skin-example --common=1 run dev
 
   -> alle Änderungen an den Quellen werden überwacht und es wird automatisch nach 'dev' gebaut
    - man kann sich das Ergebniss unter:
@@ -62,9 +68,9 @@ Wenn es sich um ein generelles theme handelt, kopiert man am besten die default.
 
 #> edit skins.config.js  # (ggf. cp skins.config.js.sample skins.config.js) anpassen, bzw. erweitern, zb:
 
-module.exports = {
+additional_skins: {
   'default': ['default', 'myTheme']
-};
+}
 
 Anschlissend kann man das Theme fogendermassen aktivieren:
   http://<server>:<port>/dev/skins/mySkin/index.html?theme=myTheme
@@ -75,13 +81,12 @@ oder hier auswählen:
 Skin-Entwicklung:
 ======================================================
 
-mkdir src/skins/mySkin
+#> mkdir src/skins/mySkin
 #> cp src/skins/default/main.js src/skins/mySkin/
 
 #> edit skins.config.js  (ggf. cp skins.config.js.sample skins.config.js) anpassen, bzw. erweitern, zb:
 
-module.exports = {
-  'default': ['default'],
+additional_skins: {
   'mySkin': ['default']
 };
 
@@ -97,7 +102,7 @@ Hier kann man sich die Icons ansehen:
 
 Wenn in einer Komponente ein Icon verwendet wird, darf dieses NICHT nach Anleitung per
     import 'vue-awesome/icons/xx'
-eingebunden werden, weil sonst das skin riesig wird, weil der das Vue Framework erneut einbindet.
+eingebunden werden, weil sonst das skin riesig wird, da das Vue Framework die erneut einbindet.
 
 Stattdessen sollte das so eingebunden werden:
     Aus der vue-awesome/icons/xx.js die Register-Zeile kopieren und die direkt in die Komponenete

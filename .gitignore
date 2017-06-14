@@ -6,9 +6,6 @@
 .dependencies
 po/*.mo
 po/*.pot
-client/dist/skins/*
-!client/dist/skins/default
-!client/dist/skins/horchiTft
 client/node_modules/
 client/npm-debug.log
 client/skins.config.js
