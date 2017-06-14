@@ -44,7 +44,7 @@ if (!global.Intl) {
     ], function (require) {
         require('intl');
         require('intl/locale-data/jsonp/de.js');
-    });
+    },"intl");
 }
 
 // Einbetten des styles, der in der Url mit ?theme=xxxangegeben werden muss

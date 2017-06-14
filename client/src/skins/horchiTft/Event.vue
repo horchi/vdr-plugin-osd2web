@@ -7,8 +7,9 @@
           <div class="progress-bar" role="progressbar" :style="{width: progress + '%'}" :aria-valuenow="{progress}" aria-valuemin="0" aria-valuemax="100">{{progress}}%</div>
         </div>
         <div class="row">
-          <h3 class="card-title col-12 col-md-9 titletxt">{{$root.formatTime(event.starttime)}}&nbsp;{{event.title}}</h3>
-          <div class="ml-auto col-12 col-md-3 desctxt">{{elapsed}}/{{parseInt(event.duration/60,10)}} min</div>
+          <h3 class="card-title col-12 col-md-10 titletxt">{{$root.formatTime(event.starttime)}}&nbsp;{{event.title}}</h3>
+          <div v-if="elapsed > 0" class="ml-auto col-12 col-md-2 desctxt">{{elapsed}}/{{parseInt(event.duration/60,10)}} min</div>
+          <div v-if="elapsed <= 0" class="ml-auto col-12 col-md-2 desctxt">{{parseInt(event.duration/60,10)}} min</div>
         </div>
         <div class="clearfix">
           <div v-if="event.epg2vdr" :id="'evImages' + event.eventid" class="img-fluid float-right img-thumbnail carousel slide" data-ride="carousel" data-interval="5000">
