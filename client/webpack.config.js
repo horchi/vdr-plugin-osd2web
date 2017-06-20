@@ -98,7 +98,8 @@ const common_conf = webpackMerge(baseConf, {
   },
   output: {
     library: 'common',
-    publicPath: isDev ? '/dev/' : '/'
+    publicPath: isDev ? '/dev/' : '/',
+    chunkFilename: '[name].js'
   },
   resolve: {
     modules: [resolve(__dirname, 'node_modules')]

@@ -38,11 +38,11 @@ import 'bootstrap/js/src/tooltip';
 */
 
 if (!global.Intl) {
-    require.ensure([
+    require.ensure([/* webpackChunkName: "intl" */ 
         'intl',
         'intl/locale-data/jsonp/de.js'
     ], function (require) {
-        require('intl');
+        require(/* webpackChunkName: "intl" */ 'intl');
         require('intl/locale-data/jsonp/de.js');
     },"intl");
 }
