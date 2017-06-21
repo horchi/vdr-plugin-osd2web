@@ -8,7 +8,4 @@ po/*.mo
 po/*.pot
 client/node_modules/
 client/npm-debug.log
-client/skins.config.js
-client/src/skins/*
-!client/src/skins/default/
-!client/src/skins/horchiTft/
+client/custom/*

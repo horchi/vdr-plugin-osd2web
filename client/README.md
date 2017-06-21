@@ -30,10 +30,19 @@ Wenn es bei Ubuntu klemmt weil ggf das mitgelieferte node-js zu alt ist:
 *****************************************************************
 * Skins / Themes Entwicklung
 *****************************************************************
+Eine zusätzliche Entwicklung, die nicht in das osd2web-Plugin einfliessen soll, findet im Ordner
+src/custom 
+statt. Dieser Ordner wird beim git pull ignoriert.
+Beispiele, bzw. Vorlagen finden sich im Ordner custom_sample
+
+Dabei entspricht der Ordnername unterhalb von custom dem Skinname. 
+ - Dieser Ordner muss mindestesens ein theme-file (xxx.scss) haben.
+ - Entspricht der Orndername einem vorhanden (build-in) Skin,
+   werden die gefunden themes dem Skin hinzugefügt;
+   andernfalls muss auch eine  main.js vorhanden sein, damit daraus ein neuer Skin erstellt wird
 
 Um ein zusätzliches Skin oder Theme hinzuzufügen, welches nicht in der Branch ist:
-#> edit skins.config.js  # (ggf. cp skins.config.js.sample skins.config.js) anpassen, bzw. erweitern 
-Diese Datei wird dann beim git pull ignoriert
+#> cp src/custom_sample/config.js src/custom/    ggf. anpassen
 
 Compilieren der Skins / Themes:
 ==========================================================
@@ -43,7 +52,7 @@ oder ein einzelnes:
 #> npm --skin=<the skin> run build
   -> der code wird unter osd2web/client/dist erstellt,
      welcher dann beim "osd2web/make install" (make install-http genügt auch) an die richtige Stelle kopiert wird.
-     Wird in der skin.config.js "targetFolder" überschrieben, wird der code natürlich dort erstellt
+     Wird in der custom/config.js "targetFolder" überschrieben, wird der code natürlich dort erstellt
 
 Praktisches auto-build nach 'dev' während der Entwicklung:
 ==========================================================
@@ -63,17 +72,12 @@ oder wenn man auch an den allgemeinen code etwas ändern möchte
 Theme-Entwicklung:
 ======================================================
 
-Wenn es sich um ein generelles theme handelt, kopiert man am besten die default.scss:
-#> cp src/themes/default.scss src/skins/<the skin>/themes/myTheme.scss
-
-#> edit skins.config.js  # (ggf. cp skins.config.js.sample skins.config.js) anpassen, bzw. erweitern, zb:
-
-additional_skins: {
-  'default': ['default', 'myTheme']
-}
+Möchte man einem vorhanden Skin eine neues Theme hinzufügen:
+#> mkdir src/custom/<the skin>
+#> cp src/custom_sample/default/theme-example.scss src/custom/<the skin>/<the theme>.scss
 
 Anschlissend kann man das Theme fogendermassen aktivieren:
-  http://<server>:<port>/dev/skins/mySkin/index.html?theme=myTheme
+  http://<server>:<port>/dev/skins/<the skin>/index.html?theme=<the theme>
 oder hier auswählen:
   http://<server>:<port>
 
@@ -81,17 +85,11 @@ oder hier auswählen:
 Skin-Entwicklung:
 ======================================================
 
-#> mkdir src/skins/mySkin
-#> cp src/skins/default/main.js src/skins/mySkin/
-
-#> edit skins.config.js  (ggf. cp skins.config.js.sample skins.config.js) anpassen, bzw. erweitern, zb:
-
-additional_skins: {
-  'mySkin': ['default']
-};
+#> mkdir src/custom/<the skin>
+#> cp src/custom_sample/skin-example/* src/custom/<the skin>/
 
 Um jetzt Veränderungen vorzunehmen, kopiert man sich die zu verändernde(n) Komponente(n) aus
-src/components in das Verzeichnis src/skins/mySkin
+src/components in das Verzeichnis src/custom/<the skin>/ (siehe Beispiel Event.vue)
 
 ======================================================
 Icons:

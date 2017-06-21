@@ -5,26 +5,51 @@ var targetFolder = resolve(__dirname, 'dist');
 var targetFolder_dev = '/var/lib/vdr/plugins/osd2web/http/dev';
 // Wenn ein neuer Skin in dieser Branch hinzugefügt werden soll,
 // einfach das Object um den entsprechenden Ordnernamen erweitern und dann die verfügbaren themes eintragen:
-var skins = {
-  'default': ['default'],
-  'horchiTft': ['plain', 'blue']
-};
-
-// Eine vorhandene skins.config.js kann Einstellungen überschreiben
-var custom_conf = null;
-try {
-  let custom_conf = require('./skins.config.js');
-  if (custom_conf.skins)
-    skins = custom_conf.skins;
-  else if (custom_conf.additional_skins) {
-    for (target in custom_conf.additional_skins)
-      skins[target] = custom_conf.additional_skins[target];
+var buildInSkins = {
+  'default': {
+    themes: ['default']
+  },
+  'horchiTft': {
+    themes: ['plain', 'blue']
   }
-  if (custom_conf.targetFolder)
-    targetFolder = custom_conf.targetFolder;
-  if (custom_conf.targetFolder_dev)
-    targetFolder_dev = custom_conf.targetFolder_dev;
-} catch (e) { };
+};
+var customSkins= {};
+
+const fs = require('fs');
+fs.readdirSync('./src/custom/').filter(function(skinName) {
+  try {
+    
+    if ('config.js' == skinName){
+        // Eine vorhandene skins.config.js kann Einstellungen überschreiben
+          let custom_conf = require('./src/custom/' + skinName);
+          if (custom_conf.targetFolder)
+            targetFolder = custom_conf.targetFolder;
+          if (custom_conf.targetFolder_dev)
+            targetFolder_dev = custom_conf.targetFolder_dev;
+    } else if (buildInSkins[skinName]){
+        let themes= buildInSkins[skinName].customThemes || ( buildInSkins[skinName].customThemes= []);
+        fs.readdirSync('./src/custom/' + skinName).filter(function(file) {
+          if (/\.scss$/.test(file))
+            themes.push(file.slice(0,-5));
+        });
+    } else {
+        let themes= [];
+        fs.readdirSync('./src/custom/' + skinName).filter(function(file) {
+          if (/\.scss$/.test(file)){
+            themes.push(file.slice(0,-5));
+          } else if ('main.js' == file){
+            customSkins[skinName]= {customThemes:themes};
+          }
+        });
+        if (!themes.length){
+          delete customSkins[skinName];
+          console.error("no theme found in " + skinName);
+        }
+    }
+  } catch (e) { 
+    console.error(e);
+  };
+});
 
 
 const skin = process.env.npm_config_skin || null;
@@ -119,26 +144,39 @@ if (skin){
   conf = (process.env.npm_config_common ? [common_conf,getSkinConfig(skin)] : getSkinConfig(skin));
 }else {
   conf = [common_conf];
-  for (target in skins) {
+  for (target in buildInSkins) {
+    conf.push(getSkinConfig(target));
+  }
+  for (target in customSkins) {
     conf.push(getSkinConfig(target));
   }
 }
 
-
 function getSkinConfig(target) {
+  let skin= buildInSkins[target];
+  let skinPath= 'src/skins/';
+  if (!skin){
+      skin= customSkins[target];
+      if (!skin)
+         return !console.error('Could not find skin ' + target);
+      skinPath= 'src/custom/';
+  }
   let entries = {
-    'skin.js': './src/skins/' + target + '/main.js'
+    'skin.js': './' + skinPath + target + '/main.js'
   };
-  let themes = skins[target];
-  for (i in themes)
-    entries['themes/' + themes[i]] = themes[i] + '.scss';
+  if (skin.themes)
+    for (i in skin.themes)
+      entries['themes/' + skin.themes[i]] = './src/skins/' + target + '/' + skin.themes[i] + '.scss';
+  if (skin.customThemes)
+    for (i in skin.customThemes)
+      entries['themes/' + skin.customThemes[i]] = './src/custom/' + target + '/' + skin.customThemes[i] + '.scss';
   return webpackMerge(baseConf, {
     entry: entries,
     output: {
       path: baseConf.output.path + '/skins/' + target
     },
     resolve: {
-      modules: [resolve(__dirname, 'src/skins/' + target), resolve(__dirname, 'src/components'), resolve(__dirname, 'src/themes'), resolve(__dirname, 'node_modules')]
+      modules: [resolve(__dirname, skinPath + target), resolve(__dirname, 'src/components'), resolve(__dirname, 'node_modules')]
     },
     plugins: [
       new HtmlWebpackPlugin({
