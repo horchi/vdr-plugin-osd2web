@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.1.11"
-#define VERSION_DATE  "14.06.2017"
+#define _VERSION      "0.1.12"
+#define VERSION_DATE  "21.06.2017"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -19,10 +19,16 @@
 /*
  * ------------------------------------
 
+2017-06-21: version 0.1.12 (horchi)
+   - Change: further improvements of skin horchiTft
+              - menu color
+              - display running timer in 'red'
+              - fixed epg image scaling
+
 2017-06-13: version 0.1.11 (rechner)
    - Change: compileroptions for skins
    - fixed: skin horchiTft/theme blue missed
-   
+
 2017-06-13: version 0.1.10 (horchi)
    - Change: further improvements of skin horchiTft
 

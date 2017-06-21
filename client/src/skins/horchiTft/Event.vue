@@ -13,9 +13,9 @@
         </div>
         <div class="clearfix">
           <div v-if="event.epg2vdr" :id="'evImages' + event.eventid" class="img-fluid float-right img-thumbnail carousel slide" data-ride="carousel" data-interval="5000">
-            <div class="carousel-inner" role="listbox">
+            <div class="carousel-inner epg-image" role="listbox">
               <div v-for="n in imagecnt" class="carousel-item" :class="{'active':n==1}">
-                <img class="d-block" :src="'/data/eventimg?id=' + event.eventid + '&no=' + (n-1)" alt="">
+                <img class="d-block" :src="'/data/eventimg?id=' + event.eventid + '&no=' + (n-1)" style="width: 100%;" alt="">
               </div>
             </div>
           </div>
