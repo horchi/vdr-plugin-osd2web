@@ -95,6 +95,9 @@ void cUpdate::Replaying(const cControl* Control, const char* Name,
       activeControl = 0;
       activeReplayFile = "";
       activeReplayName = "";
+
+      nextPresentUpdateAt = time(0);   // update 'actual' on stop of replay
+
       return ;
    }
 
@@ -125,6 +128,9 @@ void cUpdate::TimerChange(const cTimer* Timer, eTimerChange Change)
 
 void cUpdate::updatePresentFollowing()
 {
+   if (activeControl)         // skip if replay is running
+      return;
+
    if (!currentChannelNr)
    {
       nextPresentUpdateAt = time(0) + 60;
@@ -133,31 +139,15 @@ void cUpdate::updatePresentFollowing()
 
    haveActualEpg = no;
 
-#if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
-   LOCK_TIMERS_READ;
-   const cTimers* timers = Timers;
-#else
-   cTimers* timers = &Timers;
-#endif
+   GET_TIMERS_READ(timers);
+   GET_CHANNELS_READ(channels);
+   GET_SCHEDULES_READ(schedules);
 
-#if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
-   LOCK_CHANNELS_READ;
-   const cChannel* channel = Channels->GetByNumber(currentChannelNr);
-#else
-   const cChannel* channel = Channels.GetByNumber(currentChannelNr);
-#endif
+   const cChannel* channel = channels->GetByNumber(currentChannelNr);
 
    if (channel)
    {
       tell(3, "update present/following for channel '%s'", channel->Name());
-
-#if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
-      LOCK_SCHEDULES_READ;
-      const cSchedules* schedules = Schedules;
-#else
-      cSchedulesLock schedulesLock;
-      const cSchedules* schedules = (cSchedules*)cSchedules::Schedules(schedulesLock);
-#endif
 
       json_t* obj = json_object();
       json_t* oStreamInfo = json_object();
@@ -284,15 +274,8 @@ void cUpdate::updateReplay()
    if (!activeControl)
       return;
 
-#if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
-   const cRecordings* recordings;
-   cStateKey stateKey;
-
-   if (!(recordings = cRecordings::GetRecordingsRead(stateKey, 500)))
-      tell(1, "Can't get lock for recordings, retrying later");
-#else
-   cRecordings* recordings = &Recordings;
-#endif
+   GET_TIMERS_READ(timers);
+   GET_RECORDINGS_READ(recordings);
 
    json_t* oRecording = json_object();
    const cRecording* recording = recordings ? recordings->GetByName(activeReplayFile.c_str()) : 0;
@@ -300,18 +283,13 @@ void cUpdate::updateReplay()
    if (recording)
    {
       activeControlFps = recording->Info() ? recording->Info()->FramesPerSecond() : 1;
-      recording2Json(oRecording, recording);
+      recording2Json(oRecording, timers, recording);
    }
    else
    {
       addToJson(oRecording, "name", activeReplayName.c_str());
       addToJson(oRecording, "filename", activeReplayFile.c_str());
    }
-
-#if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
-   if (recordings)
-      stateKey.Remove();
-#endif
 
    cUpdate::pushMessage(oRecording, "replay");
    updateControl();

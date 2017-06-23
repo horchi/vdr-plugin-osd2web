@@ -54,13 +54,7 @@ int getScraperMediaPath(const cEventCopy* event, const cRecording* recording,
       return fail;
    }
 
-#if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
-   LOCK_SCHEDULES_READ;
-   const cSchedules* schedules = Schedules;
-#else
-   cSchedulesLock schedulesLock;
-   const cSchedules* schedules = (cSchedules*)cSchedules::Schedules(schedulesLock);
-#endif
+   GET_SCHEDULES_READ(schedules);
 
    if (recording)
    {

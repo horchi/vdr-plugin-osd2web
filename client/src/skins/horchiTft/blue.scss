@@ -40,6 +40,17 @@ body {
     background: linear-gradient(to bottom right, #051526, #0275d8);
 }
 
+.replay {
+    height: 75vh;
+    overflow: hidden;
+    background-color: #0275d8;
+    background: linear-gradient(to bottom right, #051526, #0275d8);
+}
+
+replay-control {
+    height: 5vh;
+}
+
 // channel logo
 
 .chlogo {

@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.1.12"
-#define VERSION_DATE  "21.06.2017"
+#define _VERSION      "0.1.13"
+#define VERSION_DATE  "23.06.2017"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -19,6 +19,12 @@
 /*
  * ------------------------------------
 
+2017-06-23: version 0.1.13 (horchi)
+   - fixed:  lock sequence
+   - fixed:  disappear of replay control
+   - change: removed obsolete libarchive
+   - change: 'started' to implement replay view for skin horchiTft
+
 2017-06-21: version 0.1.12 (horchi)
    - Change: further improvements of skin horchiTft
               - menu color
@@ -27,7 +33,7 @@
 
 2017-06-13: version 0.1.11 (rechner)
    - Change: compileroptions for skins
-   - fixed: skin horchiTft/theme blue missed
+   - fixed:  skin horchiTft/theme blue missed
 
 2017-06-13: version 0.1.10 (horchi)
    - Change: further improvements of skin horchiTft

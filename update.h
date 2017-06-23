@@ -28,6 +28,7 @@
 
 #include "lib/json.h"
 #include "lib/common.h"
+#include "lib/vdrlocks.h"
 
 #include "epg2vdr.h"
 
@@ -85,7 +86,7 @@ const cTimer* getTimerMatch(const cTimers* timers, const cEvent* event, eTimerMa
 int event2Json(json_t* obj, const cEvent* event, const cChannel* channel = 0,
                eTimerMatch TimerMatch = (eTimerMatch)na, int Current = no,
                cOsdService::ObjectShape shape = cOsdService::osText);
-int recording2Json(json_t* obj, const cRecording* recording);
+int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recording);
 int channel2Json(json_t* obj, const cChannel* channel);
 int timer2Json(json_t* obj, const cTimer* timer);
 int stream2Json(json_t* obj, const cChannel* channel);

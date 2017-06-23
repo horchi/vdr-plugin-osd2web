@@ -6,6 +6,7 @@ export var Vue= common.Vue;
 
 // Registrieren aller Komponenten:
 Vue.component('o2w-event', require('Event'))
+Vue.component('o2w-replay', require('Replay'))
 Vue.component('o2w-textmenu', require('Textmenu'))
 Vue.component('o2w-textarea', require('Textarea'))
 Vue.component('o2w-actual', require('Actual'))

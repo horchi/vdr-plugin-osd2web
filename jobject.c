@@ -178,15 +178,7 @@ int stream2Json(json_t* obj, const cChannel* channel)
 
 int channels2Json(json_t* obj)
 {
-#if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
-   LOCK_CHANNELS_READ;
-   const cChannels* channels = Channels;
-#else
-   const cChannels* channels = &Channels;
-#endif
-
-   if (!channels)
-      return fail;
+   GET_CHANNELS_READ(channels);
 
    for (const cChannel* channel = channels->First(); channel; channel = channels->Next(channel))
    {
@@ -202,7 +194,7 @@ int channels2Json(json_t* obj)
 // Recording To Json
 //***************************************************************************
 
-int recording2Json(json_t* obj, const cRecording* recording)
+int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recording)
 {
    if (!recording)
    {
@@ -227,20 +219,14 @@ int recording2Json(json_t* obj, const cRecording* recording)
       json_t* oInfo = json_object();
       json_t* oEvent = json_object();
 
-#if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
-      LOCK_TIMERS_READ;
-      const cTimers* timers = Timers;
-#else
-      cTimers* timers = &Timers;
-#endif
-
       addToJson(oInfo, "channelid", info->ChannelID().ToString());
       addToJson(oInfo, "channelname", info->ChannelName());
       addToJson(oInfo, "framespersecond", info->FramesPerSecond());
+      addToJson(oInfo, "description", info->Description());
       addToJson(oInfo, "aux", info->Aux());
 
       getTimerMatch(timers, info->GetEvent(), &timerMatch);
-      event2Json(oEvent, info->GetEvent(), 0, timerMatch);
+      event2Json(oEvent, info->GetEvent(), 0, timerMatch, no, cOsdService::osLarge);
 
       addToJson(obj, "info", oInfo);
       addToJson(obj, "event", oEvent);

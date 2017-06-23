@@ -1,13 +1,12 @@
 <template>
-  <o2w-fullevent v-if="isFullevent" :event="event" />
-  <div v-else="" class="event card mt-1">
+  <div v-else="" class="replay card mt-1">
     <div v-show="event.title" style="height: 100%;">
       <div class="card-block p-1" style="height: 100%;">
         <div class="progress" v-show="progress">
           <div class="progress-bar" role="progressbar" :style="{width: progress + '%'}" :aria-valuenow="{progress}" aria-valuemin="0" aria-valuemax="100">{{progress}}%</div>
         </div>
         <div class="row">
-          <h3 class="card-title col-12 col-md-10 titletxt">{{$root.formatTime(event.starttime)}}&nbsp;{{event.title}}</h3>
+          <h3 class="card-title col-12 col-md-10 titletxt">{{event.title}}</h3>
           <div v-if="elapsed > 0" class="ml-auto col-12 col-md-2 desctxt">{{elapsed}}/{{parseInt(event.duration/60,10)}} min</div>
           <div v-if="elapsed <= 0" class="ml-auto col-12 col-md-2 desctxt">{{parseInt(event.duration/60,10)}} min</div>
         </div>
@@ -37,18 +36,14 @@
 </template>
 
 <script>
-var common= require("common");
-common.Vue.component('o2w-fullevent', require('../../components/Event'))
-
 export default {
-    name: 'o2wEvent',
+    name: 'o2wReplay',
     props: {
         event: Object
     },
     data(){
         return {
             now: parseInt(new Date().getTime() / 1000, 10),
-            isFullevent: this.$parent.$options._componentTag != 'o2w-actual'
         }
     },
     computed: {

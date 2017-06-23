@@ -277,7 +277,9 @@ bool cSkinOsd2WebDisplayMenu::SetItemRecording(const cRecording* Recording, int 
    json_t* oMenuItem = json_object();
    json_t* oRecording = json_object();
 
-   recording2Json(oRecording, Recording);
+   GET_TIMERS_READ(timers);
+
+   recording2Json(oRecording, timers, Recording);
 
    addToJson(oMenuItem, "index", Index);
    addToJson(oMenuItem, "current", Current);
@@ -297,7 +299,9 @@ void cSkinOsd2WebDisplayMenu::SetRecording(const cRecording *Recording)
    tell(4, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetRecording()");
 
    json_t* oRecording = json_object();
-   recording2Json(oRecording, Recording);
+
+   GET_TIMERS_READ(timers);
+   recording2Json(oRecording, timers, Recording);
 
    cUpdate::pushMessage(oRecording, "recording");
 }
@@ -341,12 +345,7 @@ void cSkinOsd2WebDisplayMenu::SetEvent(const cEvent *Event)
    eTimerMatch timerMatch;
    tell(4, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetEvent()");
 
-#if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
-   LOCK_TIMERS_READ;
-   const cTimers* timers = Timers;
-#else
-   cTimers* timers = &Timers;
-#endif
+   GET_TIMERS_READ(timers);
 
    json_t* oEvent = json_object();
    getTimerMatch(timers, Event, &timerMatch);
