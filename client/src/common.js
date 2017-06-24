@@ -1,3 +1,13 @@
+if (!global.Intl) {
+    require.ensure([/* webpackChunkName: "intl" */ 
+        'intl',
+        'intl/locale-data/jsonp/de.js'
+    ], function (require) {
+        require(/* webpackChunkName: "intl" */ 'intl');
+        require('intl/locale-data/jsonp/de.js');
+    },"intl");
+}
+
 import VueInst from 'vue';
 
 export var Vue = VueInst;
@@ -15,7 +25,6 @@ export var maxLinesCalc= {
     getMax: function(){
         return parseInt((window.innerHeight - document.body.firstElementChild.offsetTop - this.headlineHeight - this.buttongroupHeight) / this.lineHeight, 10)
     }
-
 }
 
 VueInst.component('icon', Icon);
@@ -37,15 +46,6 @@ import 'bootstrap/js/src/tab';
 import 'bootstrap/js/src/tooltip';
 */
 
-if (!global.Intl) {
-    require.ensure([/* webpackChunkName: "intl" */ 
-        'intl',
-        'intl/locale-data/jsonp/de.js'
-    ], function (require) {
-        require(/* webpackChunkName: "intl" */ 'intl');
-        require('intl/locale-data/jsonp/de.js');
-    },"intl");
-}
 
 // Einbetten des styles, der in der Url mit ?theme=xxxangegeben werden muss
 (function(){

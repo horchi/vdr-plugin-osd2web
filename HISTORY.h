@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.1.13"
-#define VERSION_DATE  "23.06.2017"
+#define _VERSION      "0.1.14"
+#define VERSION_DATE  "24.06.2017"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2017-06-24: version 0.1.14 (rechner)
+   - fixed: access from polyfill intl before loaded
 
 2017-06-23: version 0.1.13 (horchi)
    - fixed:  lock sequence

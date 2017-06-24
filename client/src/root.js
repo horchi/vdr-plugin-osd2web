@@ -122,7 +122,7 @@ export var root = {
             if (key) this.sendKey(key);
         },
         formatDateTime(unixTime) {
-            if (!unixTime)
+            if (!unixTime || !global.Intl)
                 return "";
             var d = new Date(unixTime * 1000); // - this.timeOffset
             return new Intl.DateTimeFormat('de-DE', {
@@ -133,7 +133,7 @@ export var root = {
             }).format(d) + ' ' + new String(100 + d.getHours()).slice(1) + ':' + new String(100 + d.getMinutes()).slice(1);
         },
         formatDateTimeLong(unixTime) {
-            if (!unixTime)
+            if (!unixTime  || !global.Intl)
                 return "";
             var d = new Date(unixTime * 1000); // - this.timeOffset
             return new Intl.DateTimeFormat('de-DE', {
@@ -144,7 +144,7 @@ export var root = {
             }).format(d) + ' ' + new String(100 + d.getHours()).slice(1) + ':' + new String(100 + d.getMinutes()).slice(1);
         },
         formatDateLong(unixTime) {
-            if (!unixTime)
+            if (!unixTime  || !global.Intl)
                 return "";
             var d = new Date(unixTime * 1000); // - this.timeOffset
             return new Intl.DateTimeFormat('de-DE', {
