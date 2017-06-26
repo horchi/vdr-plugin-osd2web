@@ -113,7 +113,7 @@ int cUpdate::parseVariableFiles()
 
    // clear all variables
 
-   serviceVariables.clear();
+   serviceVariableFiles.clear();
 
    // create path of custom data files
 
@@ -167,12 +167,13 @@ int cUpdate::parseVariableFiles()
 
 int cUpdate::parseVariableFile(const char* path, const char* service)
 {
+   std::map<std::string,FileVariable> serviceVariables;
+
    FILE* fp;
    char line[500+TB]; *line = 0;
    char* p;
    char* value;
    FileVariable var;
-   int count = 0;
 
    if (!(fp = fopen(path, "r")))
    {
@@ -216,12 +217,14 @@ int cUpdate::parseVariableFile(const char* path, const char* service)
       var.value = value;
 
       serviceVariables[service + std::string(".") + line] = var;
-      count++;
 
       tell(1, "Append variable '%s.%s' with value '%s'", var.file.c_str(), var.name.c_str(), var.value.c_str());
    }
 
+   if (serviceVariables.size())
+      serviceVariableFiles.push_back(serviceVariables);
+
    fclose(fp);
 
-   return count;
+   return serviceVariables.size();
 }

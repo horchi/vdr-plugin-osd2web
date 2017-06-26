@@ -353,7 +353,8 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
       int fdInotify;
       int wdInotify;
-      std::map<std::string,FileVariable> serviceVariables;
+
+      std::list<std::map<std::string,FileVariable>> serviceVariableFiles;
 };
 
 //***************************************************************************

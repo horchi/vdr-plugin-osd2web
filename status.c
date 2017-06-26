@@ -343,15 +343,31 @@ void cUpdate::updateControl()
 
 void cUpdate::updateCustomData()
 {
+   std::map<std::string,FileVariable> serviceVariables;
    json_t* obj = json_object();
 
-   for (auto it = serviceVariables.begin(); it != serviceVariables.end(); it++)
+   tell(0, "got %d serviceVariableFiles", (int)serviceVariableFiles.size());
+
+   for (auto it = serviceVariableFiles.begin(); it != serviceVariableFiles.end(); it++)
    {
-      FileVariable var = it->second;
-      addToJson(obj, it->first.c_str(), var.value.c_str());
+      json_t* oVariables = json_object();
+      std::string fileName;
+
+      serviceVariables = *it;
+
+      for (auto it = serviceVariables.begin(); it != serviceVariables.end(); it++)
+      {
+         FileVariable var = it->second;
+
+         fileName = var.file;
+         addToJson(oVariables, var.name.c_str(), var.value.c_str());
+      }
+
+      tell(0, "append variables of '%s'", fileName.c_str());
+      addToJson(obj, fileName.c_str(), oVariables);
    }
 
-   cUpdate::pushMessage(obj, "system");
+   cUpdate::pushMessage(obj, "customdata");
 }
 
 //***************************************************************************

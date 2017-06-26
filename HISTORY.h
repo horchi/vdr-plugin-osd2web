@@ -7,7 +7,7 @@
  *
  */
 
-#define _VERSION      "0.1.15"
+#define _VERSION      "0.1.16"
 #define VERSION_DATE  "26.06.2017"
 
 #ifdef GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2017-06-26: version 0.1.16 (horchi)
+   - added: Send user-data variables of files in folder <pluginconf> to client
 
 2017-06-26: version 0.1.15 (horchi)
    - change: Improved skin horchiTft for midori browser
