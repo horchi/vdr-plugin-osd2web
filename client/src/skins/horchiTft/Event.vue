@@ -17,10 +17,10 @@
           <div v-if="elapsed <= 0" class="ml-auto col-12 col-md-2 desctxt">{{parseInt(event.duration/60,10)}} min</div>
         </div>
         <div class="clearfix">
-          <div v-if="event.epg2vdr" :id="'evImages' + event.eventid" class="img-fluid float-right img-thumbnail carousel slide" data-ride="carousel" data-interval="5000">
+          <div v-if="event.epg2vdr && imagecnt > 0" :id="'evImages' + event.eventid" class="img-fluid float-right img-thumbnail carousel slide" data-ride="carousel" data-interval="5000">
             <div class="carousel-inner epg-image" role="listbox">
               <div v-for="n in imagecnt" class="carousel-item" :class="{'active':n==1}">
-                <img class="d-block" :src="'/data/eventimg?id=' + event.eventid + '&no=' + (n-1)" style="width: 100%;" alt="">
+                <img class="d-block" :src="'/data/eventimg?id=' + event.eventid + '&no=' + (n-1)" alt="">
               </div>
             </div>
           </div>
@@ -84,6 +84,9 @@ export default {
             let cnt= this.event.epg2vdr ? parseInt(this.event.epg2vdr.imagecount, 10) : 0;
             return isNaN(cnt) ? 0 : cnt;
         }
+    },
+    updated:function(){
+      console.log($('.carousel').carousel());
     }
 }
 </script>
