@@ -9,20 +9,24 @@ body {
 // container
 
 .dataarea {
-    height: 93vh;
+    height: 92vh;
 }
 
 .statusbar {
     height: 6vh;
     background-color: #27567e;
     color: white;
+    position: fixed;
+    bottom: 2px;
+    width: 98%;
+    z-index: 99;
 }
 
 .eventarea {
 }
 
 .timerarea {
-    height: 93vh;
+    height: 92vh;
     overflow: hidden;
 }
 
@@ -41,7 +45,7 @@ body {
 }
 
 .replay {
-    height: 75vh;
+    height: 82vh;
     overflow: hidden;
     background-color: #0275d8;
     background: linear-gradient(to bottom right, #051526, #0275d8);

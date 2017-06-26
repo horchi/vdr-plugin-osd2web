@@ -3,7 +3,12 @@
     <div v-show="event.title" style="height: 100%;">
       <div class="card-block p-1" style="height: 100%;">
         <div class="progress" v-show="progress">
-          <div class="progress-bar" role="progressbar" :style="{width: progress + '%'}" :aria-valuenow="{progress}" aria-valuemin="0" aria-valuemax="100">{{progress}}%</div>
+          <div class="progress-bar" role="progressbar"
+               :style="{width: progress + '%'}"
+               :aria-valuenow="{progress}"
+               aria-valuemin="0"
+               aria-valuemax="100">{{progress}}%
+          </div>
         </div>
         <div class="row">
           <h3 class="card-title col-12 col-md-10 titletxt">{{event.title}}</h3>
@@ -50,27 +55,27 @@ export default {
         description:  function () {
             return this.event.epg2vdr && this.event.epg2vdr.longdescription ?
                 this.event.epg2vdr.longdescription.replace(/\n/g, '<br />') :
-                  this.event.epg2vdr && this.event.epg2vdr.shortdescription ?
-                  this.event.epg2vdr.shortdescription.replace(/\n/g, '<br />') :
-                    this.event.description ? this.event.description.replace(/\n/g, '<br />') : '';
+                this.event.epg2vdr && this.event.epg2vdr.shortdescription ?
+                this.event.epg2vdr.shortdescription.replace(/\n/g, '<br />') :
+                this.event.description ? this.event.description.replace(/\n/g, '<br />') : '';
         },
         progress: function () {
-            if (this.event.title){
-                window.setTimeout(()=>{
-                    this.now= parseInt(new Date().getTime() / 1000, 10);
-                },60000);
+            if (this.event.title) {
+                window.setTimeout(() => {
+                    this.now = parseInt(new Date().getTime() / 1000, 10);
+                }, 60000);
             }
             return Math.max(parseInt((this.now - this.event.starttime) / this.event.duration * 100,10),0);
         },
         elapsed: function () {
             if (this.event.title){
-                window.setTimeout(()=>{
-                    this.now= parseInt(new Date().getTime() / 1000, 10);
-                },60000);
+                window.setTimeout(()=> {
+                    this.now = parseInt(new Date().getTime() / 1000, 10);
+                }, 60000);
             }
             return Math.max(parseInt((this.now - this.event.starttime)/60,10),0);
         },
-        imagecnt: function(){
+        imagecnt: function() {
             let cnt= this.event.epg2vdr ? parseInt(this.event.epg2vdr.imagecount, 10) : 0;
             return isNaN(cnt) ? 0 : cnt;
         }

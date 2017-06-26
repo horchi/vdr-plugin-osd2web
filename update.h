@@ -245,6 +245,13 @@ class cUpdate : public cStatus, cThread, public cOsdService
          ObjectShape shape;
       };
 
+      struct FileVariable
+      {
+         std::string file;
+         std::string name;
+         std::string value;
+      };
+
       // object
 
       cUpdate();
@@ -257,6 +264,8 @@ class cUpdate : public cStatus, cThread, public cOsdService
       int initFileService();
       int exitFileService();
       int checkFileService();
+      int parseVariableFiles();
+      int parseVariableFile(const char* path, const char* service);
 
       int setSkinAttachState(int state, int bySvdrp = no);
       int isDefaultSkin()                              { return strcmp(Setup.OSDSkin, SKIN_NAME) == 0; }
@@ -339,8 +348,12 @@ class cUpdate : public cStatus, cThread, public cOsdService
       cWebSock* webSock;
       bool active;
       int actualClientCount;
+
+      // file service stuff
+
       int fdInotify;
       int wdInotify;
+      std::map<std::string,FileVariable> serviceVariables;
 };
 
 //***************************************************************************

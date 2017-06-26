@@ -343,7 +343,15 @@ void cUpdate::updateControl()
 
 void cUpdate::updateCustomData()
 {
+   json_t* obj = json_object();
 
+   for (auto it = serviceVariables.begin(); it != serviceVariables.end(); it++)
+   {
+      FileVariable var = it->second;
+      addToJson(obj, it->first.c_str(), var.value.c_str());
+   }
+
+   cUpdate::pushMessage(obj, "system");
 }
 
 //***************************************************************************

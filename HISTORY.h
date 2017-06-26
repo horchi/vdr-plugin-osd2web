@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.1.14"
-#define VERSION_DATE  "24.06.2017"
+#define _VERSION      "0.1.15"
+#define VERSION_DATE  "26.06.2017"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2017-06-26: version 0.1.15 (horchi)
+   - change: Improved skin horchiTft for midori browser
 
 2017-06-24: version 0.1.14 (rechner)
    - fixed: access from polyfill intl before loaded

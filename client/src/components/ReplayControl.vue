@@ -1,6 +1,6 @@
 <template>
     <div v-if="buttons">
-        <div>class="replay-control" {{controlInfo}}</div>
+        <div class="replay-control" />
         <div class="btn-group btn-group-sm justify-content-center">
             <a v-for="(button,index) in buttons" @click="$root.sendKey(button.key)" class="btn btn-secondary" :style="{'color':button.color}"><icon :name="button.icon" /></a>
         </div>

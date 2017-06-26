@@ -4,7 +4,12 @@
     <div v-show="event.title" style="height: 100%;">
       <div class="card-block p-1" style="height: 100%;">
         <div class="progress" v-show="progress">
-          <div class="progress-bar" role="progressbar" :style="{width: progress + '%'}" :aria-valuenow="{progress}" aria-valuemin="0" aria-valuemax="100">{{progress}}%</div>
+          <div class="progress-bar" role="progressbar"
+               :style="{width: progress + '%'}"
+               :aria-valuenow="{progress}"
+               aria-valuemin="0"
+               aria-valuemax="100">{{progress}}%
+          </div>
         </div>
         <div class="row">
           <h3 class="card-title col-12 col-md-10 titletxt">{{$root.formatTime(event.starttime)}}&nbsp;{{event.title}}</h3>

@@ -381,6 +381,7 @@ int cUpdate::performLogin(json_t* oObject)
    }
 
    updateSkinState();
+   updateCustomData();
    updatePresentFollowing();  // trigger update of present/following
    updateTimers();
    updateReplay();
