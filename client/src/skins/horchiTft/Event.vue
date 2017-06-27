@@ -57,7 +57,7 @@ export default {
         }
     },
     computed: {
-        description:  function () {
+        description: function () {
             return this.event.epg2vdr && this.event.epg2vdr.longdescription ?
                 this.event.epg2vdr.longdescription.replace(/\n/g, '<br />') :
                   this.event.epg2vdr && this.event.epg2vdr.shortdescription ?
@@ -80,7 +80,7 @@ export default {
             }
             return Math.max(parseInt((this.now - this.event.starttime)/60,10),0);
         },
-        imagecnt: function(){
+        imagecnt: function() {
             let cnt= this.event.epg2vdr ? parseInt(this.event.epg2vdr.imagecount, 10) : 0;
             return isNaN(cnt) ? 0 : cnt;
         }

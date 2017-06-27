@@ -177,6 +177,7 @@ class cWebSock : public cOsdService
       static int serveFile(lws* wsi, const char* path);
       static int dispatchDataRequest(lws* wsi, SessionData* sessionData, const char* url);
       static int doEventImg(lws* wsi);
+      static int doRecordingImg(lws* wsi);
       static int doChannelLogo(lws* wsi);
       static int doEnvironment(lws* wsi, SessionData* sessionData);
 

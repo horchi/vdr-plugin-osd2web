@@ -10,7 +10,7 @@ var buildInSkins = {
     themes: ['default']
   },
   'horchiTft': {
-    themes: ['plain', 'blue']
+      themes: ['plain', 'blue', 'bluecd']
   }
 };
 var customSkins= {};
@@ -18,7 +18,7 @@ var customSkins= {};
 const fs = require('fs');
 fs.readdirSync('./src/custom/').filter(function(skinName) {
   try {
-    
+
     if ('config.js' == skinName){
         // Eine vorhandene skins.config.js kann Einstellungen überschreiben
           let custom_conf = require('./src/custom/' + skinName);
@@ -46,7 +46,7 @@ fs.readdirSync('./src/custom/').filter(function(skinName) {
           console.error("no theme found in " + skinName);
         }
     }
-  } catch (e) { 
+  } catch (e) {
     console.error(e);
   };
 });

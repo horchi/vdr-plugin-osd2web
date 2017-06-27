@@ -285,6 +285,8 @@ void cUpdate::updateReplay(int force)
 
    const cRecording* recording = recordings ? recordings->GetByName(activeReplayFile.c_str()) : 0;
 
+   addToJson(oRecording, "active", yes);
+
    if (recording)
    {
       activeControlFps = recording->Info() ? recording->Info()->FramesPerSecond() : 1;
@@ -296,7 +298,6 @@ void cUpdate::updateReplay(int force)
       addToJson(oRecording, "filename", activeReplayFile.c_str());
    }
 
-   addToJson(oRecording, "active", yes);
    cUpdate::pushMessage(oRecording, "replay");
    updateControl(force);
 }
@@ -326,10 +327,6 @@ void cUpdate::updateControl(int force)
       return;
    }
 
-   int total, current, speed;
-   bool play, forward;
-   cControl* control = (cControl*)activeControl;  // type cast only for vdr 2.2.0 needed :(
-
    // check only once per second for changes
 
    if (!force && lastCheckAt == time(0))
@@ -337,12 +334,16 @@ void cUpdate::updateControl(int force)
 
    lastCheckAt = time(0);
 
+   int total, current, speed;
+   bool play, forward;
+   cControl* control = (cControl*)activeControl;  // type cast only for vdr 2.2.0 needed :(
+
    control->GetReplayMode(play, forward, speed);
    control->GetIndex(current, total);
 
-   // any changes ..
+   // any changes ... except of 'current' position
 
-   if (!force && total == ltotal && speed == lspeed && play == lplay && forward == lforward)
+   if (!force && lactive && total == ltotal && speed == lspeed && play == lplay && forward == lforward)
       return ;
 
    lspeed = speed; lplay = play; lforward = forward;
@@ -366,27 +367,25 @@ void cUpdate::updateControl(int force)
 void cUpdate::updateCustomData()
 {
    std::map<std::string,FileVariable> serviceVariables;
-   json_t* obj = json_object();
+   json_t* obj = json_array();
 
    tell(0, "got %d serviceVariableFiles", (int)serviceVariableFiles.size());
 
    for (auto it = serviceVariableFiles.begin(); it != serviceVariableFiles.end(); it++)
    {
-      json_t* oVariables = json_object();
-      std::string fileName;
-
       serviceVariables = *it;
 
       for (auto it = serviceVariables.begin(); it != serviceVariables.end(); it++)
       {
+         json_t* oVariable = json_object();
          FileVariable var = it->second;
 
-         fileName = var.file;
-         addToJson(oVariables, var.name.c_str(), var.value.c_str());
-      }
+         addToJson(oVariable, "file", var.file.c_str());
+         addToJson(oVariable, "name", var.name.c_str());
+         addToJson(oVariable, "value", var.value.c_str());
 
-      tell(0, "append variables of '%s'", fileName.c_str());
-      addToJson(obj, fileName.c_str(), oVariables);
+         json_array_append_new(obj, oVariable);
+      }
    }
 
    cUpdate::pushMessage(obj, "customdata");

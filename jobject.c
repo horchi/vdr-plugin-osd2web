@@ -198,7 +198,7 @@ int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recordi
 {
    if (!recording)
    {
-      addToJson(obj, "name", "<null>");
+      addToJson(obj, "name", "");
       return done;
    }
 

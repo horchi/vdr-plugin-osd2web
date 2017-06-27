@@ -1,113 +1,52 @@
-@import "../../common.scss";
+@import "plain.scss";
 
 body {
-    padding-top: 0px;
     background-color: black;
-    line-height: 1.2;
 }
 
 // container
 
-.dataarea {
-    height: 92vh;
-}
-
 .statusbar {
-    height: 6vh;
     background-color: #27567e;
     color: white;
-    position: fixed;
-    bottom: 2px;
-    width: 98%;
-    z-index: 99;
-}
-
-.eventarea {
-}
-
-.timerarea {
-    height: 92vh;
-    overflow: hidden;
 }
 
 .channel {
-    height: 10vh;
-    overflow: hidden;
     background-color: #27567e;
     color: white;
 }
 
 .event {
-    height: 40vh;
-    overflow: hidden;
     background-color: #0275d8;
     background: linear-gradient(to bottom right, #051526, #0275d8);
-
-    .carousel-item.active {
-        display: block;
-         > img {
-            width: 100%;
-            max-width: 100%;
-            min-width: 100%;
-            height: auto;
-         }
-    }
 }
 
 .replay {
-    height: 77vh;
-    overflow: hidden;
     background-color: #0275d8;
     background: linear-gradient(to bottom right, #051526, #0275d8);
 }
 
-replay-control {
-    height: 5vh;
-}
-
-// channel logo
-
-.chlogo {
-    height: 100%;
-    margin-right: 20px;
+.replay-control {
+    background-color: #27567e;
+    color: #27567e;
 }
 
 // text elemente
 
 .chtxt {
-    font-size: 8vh !important;
     color: #ffffed;
 }
 
 .titletxt {
-    font-size: 6vh;
     color: white;
 }
 
 .htxt {
     color: #d2e00d;
-    font-size: 3.8vh;
 }
 
 .desctxt {
-    font-size: 3.5vh;
     color: white;
-}
-
-.progress-bar {
-    background-color: #d2e00d;
-    color: black;
-}
-
-// status bar
-
-.sdatetxt {
-    font-size: 3.0vh;
-}
-
-.stimetxt {
-    font-size: 4.0vh;
-    font-weight: bold;
 }
 
 // timer list
@@ -122,41 +61,27 @@ replay-control {
     color: white !important;
 }
 
-.tmtxt {   // timer text
-    font-size: 2.7vh;
-}
-
-.tltmch {  // timer channel
-}
-
 .tltmtxt {  // timer time text
     color: #b2aec3;
-    font-size: 2.0vh;
 }
 
 .tlvdrtxt{  // timer vdr name text
     color: #d2e00d;
-    font-size: 2.0vh;
 }
+
+.customdata  {
+    background: linear-gradient(to bottom right, #051526, #0275d8);
+    color: #b2aec3 !important;
+}
+
+// menu
 
 .textmenu {
     background: linear-gradient(to bottom right, #051526, #0275d8);
     color: #b2aec3;
-    font-size: 2.7vh;
-    border-radius: .25rem;
 }
 
 .textmenu-current {
     background: linear-gradient(to bottom right, #051526, #0275d8);
-    border-radius: .25rem;
     color: white;
-    font-size: 3.0vh;
-}
-
-.epg-image {
-    width: 14vw;
-}
-
-.img-thumbnail {
-    background-color: transparent;
 }

@@ -608,6 +608,8 @@ int cWebSock::dispatchDataRequest(lws* wsi, SessionData* sessionData, const char
       statusCode = doChannelLogo(wsi);
    else if (strcmp(method, "getenv") == 0)
       statusCode = doEnvironment(wsi, sessionData);
+   else if (strcmp(method, "recordingimg") == 0)
+      statusCode = doRecordingImg(wsi);
 
    return statusCode;
 }
@@ -625,6 +627,30 @@ int cWebSock::doEventImg(lws* wsi)
 
    asprintf(&path, "%s/%d_%d.jpg", config.epgImagePath, id, no);
    tell(2, "DEBUG: Image for event (%d/%d) was requested [%s]", id, no, path);
+
+   result = serveFile(wsi, path);
+
+   free(path);
+
+   return result;
+}
+
+//***************************************************************************
+// Do Recording Img
+//***************************************************************************
+
+int cWebSock::doRecordingImg(lws* wsi)
+{
+   int result;
+   char* path = strdup(getStrParameter(wsi, "path=", ""));
+
+   if (!path || !strstr(path, ".jpg"))
+   {
+      free(path);
+      return fail;
+   }
+
+   tell(2, "DEBUG: Image for recording was requested [%s]", path);
 
    result = serveFile(wsi, path);
 

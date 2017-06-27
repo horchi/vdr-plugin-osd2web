@@ -2,7 +2,10 @@
   <div>
     <div class="row dataarea">
       <o2w-actual class="eventarea col-12 col-md-9" />
-      <o2w-timer class="timerarea col-12 col-md-3" />
+      <div class="rightarea col-12 col-md-3">
+        <o2w-timer class="timerarea" />
+        <o2w-customdata class="customarea" />
+      </div>
     </div>
     <div class="card statusbar">
       <div class="row my-auto ml-auto">
@@ -13,6 +16,9 @@
   </div>
 </template>
 <script>
+
+var common = require("common");
+common.Vue.component('o2w-customdata', require('CustomData'))
 
 export default {
     name: 'o2wOverview',

@@ -7,7 +7,7 @@
  *
  */
 
-#define _VERSION      "0.1.17"
+#define _VERSION      "0.1.18"
 #define VERSION_DATE  "27.06.2017"
 
 #ifdef GIT_REV
@@ -18,6 +18,12 @@
 
 /*
  * ------------------------------------
+
+2017-06-27: version 0.1.18 (horchi)
+   - added: EPG image to replay view
+   - added: 'CustomData', display all data which found in files located in <pluginconf>/customdata/...
+            Line-Syntax: <name> = <value>;  // <optional comment>
+   - added: Theme 'bluecd' identical to 'blue' but additional displays the custom-data below the timerlist
 
 2017-06-27: version 0.1.17 (horchi)
    - change: Improved epg image for various browsers
