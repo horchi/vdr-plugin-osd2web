@@ -312,8 +312,8 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
       void updatePresentFollowing();
       void updateTimers();
-      void updateControl();
-      void updateReplay();
+      void updateControl(int force = no);
+      void updateReplay(int force = no);
       void updateCustomData();
       void updateSkinState();
 

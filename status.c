@@ -97,14 +97,14 @@ void cUpdate::Replaying(const cControl* Control, const char* Name,
       activeReplayName = "";
 
       nextPresentUpdateAt = time(0);   // update 'actual' on stop of replay
-
-      return ;
    }
-
-   activeControlFps = 1;
-   activeControl = Control;
-   activeReplayFile = FileName;
-   activeReplayName = Name;
+   else
+   {
+      activeControlFps = 1;
+      activeControl = Control;
+      activeReplayFile = FileName;
+      activeReplayName = Name;
+   }
 
    triggerReplayUpdate = yes;
 }
@@ -267,17 +267,22 @@ void cUpdate::updateTimers()
 // Replaying
 //***************************************************************************
 
-void cUpdate::updateReplay()
+void cUpdate::updateReplay(int force)
 {
+   json_t* oRecording = json_object();
    triggerReplayUpdate = no;
 
    if (!activeControl)
+   {
+      addToJson(oRecording, "active", no);
+      cUpdate::pushMessage(oRecording, "replay");
+      updateControl(force);
       return;
+   }
 
    GET_TIMERS_READ(timers);
    GET_RECORDINGS_READ(recordings);
 
-   json_t* oRecording = json_object();
    const cRecording* recording = recordings ? recordings->GetByName(activeReplayFile.c_str()) : 0;
 
    if (recording)
@@ -291,43 +296,60 @@ void cUpdate::updateReplay()
       addToJson(oRecording, "filename", activeReplayFile.c_str());
    }
 
+   addToJson(oRecording, "active", yes);
    cUpdate::pushMessage(oRecording, "replay");
-   updateControl();
+   updateControl(force);
 }
 
 //***************************************************************************
 // Update Control
 //***************************************************************************
 
-void cUpdate::updateControl()
+void cUpdate::updateControl(int force)
 {
-   static time_t lastCeckAt = na;
+   static time_t lastCheckAt = na;
    static int ltotal = 0, lspeed = 0;
    static bool lplay = false, lforward = false;
+   static bool lactive = no;
 
    json_t* oControl = json_object();
+
+   if (!activeControl)
+   {
+      if (force || lactive)
+      {
+         lactive = no;
+         addToJson(oControl, "active", lactive);
+         cUpdate::pushMessage(oControl, "replaycontrol");
+      }
+
+      return;
+   }
+
    int total, current, speed;
    bool play, forward;
    cControl* control = (cControl*)activeControl;  // type cast only for vdr 2.2.0 needed :(
 
    // check only once per second for changes
 
-   if (lastCeckAt == time(0))
+   if (!force && lastCheckAt == time(0))
       return ;
 
-   lastCeckAt = time(0);
+   lastCheckAt = time(0);
 
    control->GetReplayMode(play, forward, speed);
    control->GetIndex(current, total);
 
    // any changes ..
 
-   if (total == ltotal && speed == lspeed && play == lplay && forward == lforward)
+   if (!force && total == ltotal && speed == lspeed && play == lplay && forward == lforward)
       return ;
 
    lspeed = speed; lplay = play; lforward = forward;
    ltotal = total;
+   lactive = yes;
 
+   addToJson(oControl, "active", lactive);
    addToJson(oControl, "play", play);
    addToJson(oControl, "speed", speed);
    addToJson(oControl, "forward", forward);

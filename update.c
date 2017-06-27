@@ -220,13 +220,10 @@ void cUpdate::atMeanwhile()
    if (triggerTimerUpdate)
       updateTimers();
 
-   if (activeControl)
-   {
-      if (triggerReplayUpdate)
-         updateReplay();   // calls updateControl()
-      else
-         updateControl();
-   }
+   if (triggerReplayUpdate)
+      updateReplay();   // calls updateControl()
+   else
+      updateControl();
 
    if (menuCloseTrigger)
    {
@@ -384,7 +381,7 @@ int cUpdate::performLogin(json_t* oObject)
    updateCustomData();
    updatePresentFollowing();  // trigger update of present/following
    updateTimers();
-   updateReplay();
+   updateReplay(yes);
 
    if (menuCategory > mcUnknown)
       updateMenu();

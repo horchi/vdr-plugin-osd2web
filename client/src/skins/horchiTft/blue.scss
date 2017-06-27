@@ -43,11 +43,12 @@ body {
     background-color: #0275d8;
     background: linear-gradient(to bottom right, #051526, #0275d8);
 
-    .carousel-item.active{
+    .carousel-item.active {
         display: block;
-
          > img {
+            width: 100%;
             max-width: 100%;
+            min-width: 100%;
             height: auto;
          }
     }

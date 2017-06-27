@@ -30,12 +30,13 @@ Wenn es bei Ubuntu klemmt weil ggf das mitgelieferte node-js zu alt ist:
 *****************************************************************
 * Skins / Themes Entwicklung
 *****************************************************************
+
 Eine zusätzliche Entwicklung, die nicht in das osd2web-Plugin einfliessen soll, findet im Ordner
-src/custom 
+src/custom
 statt. Dieser Ordner wird beim git pull ignoriert.
 Beispiele, bzw. Vorlagen finden sich im Ordner custom_sample
 
-Dabei entspricht der Ordnername unterhalb von custom dem Skinname. 
+Dabei entspricht der Ordnername unterhalb von custom dem Skinname.
  - Dieser Ordner muss mindestesens ein theme-file (xxx.scss) haben.
  - Entspricht der Orndername einem vorhanden (build-in) Skin,
    werden die gefunden themes dem Skin hinzugefügt;
@@ -46,6 +47,7 @@ Um ein zusätzliches Skin oder Theme hinzuzufügen, welches nicht in der Branch 
 
 Compilieren der Skins / Themes:
 ==========================================================
+
 Alle Skins:
 #> npm run build
 oder ein einzelnes:
@@ -56,6 +58,7 @@ oder ein einzelnes:
 
 Praktisches auto-build nach 'dev' während der Entwicklung:
 ==========================================================
+
 #> npm --skin=<the skin> run dev
 oder wenn man auch an den allgemeinen code etwas ändern möchte
 #> npm --skin=skin-example --common=1 run dev

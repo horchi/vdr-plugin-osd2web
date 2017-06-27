@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.1.16"
-#define VERSION_DATE  "26.06.2017"
+#define _VERSION      "0.1.17"
+#define VERSION_DATE  "27.06.2017"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,11 @@
 
 /*
  * ------------------------------------
+
+2017-06-27: version 0.1.17 (horchi)
+   - change: Improved epg image for various browsers
+   - bugfix: Fixed epg image slider
+   - change: Improved replay view of skin horchiTft
 
 2017-06-26: version 0.1.16 (horchi)
    - added: Send user-data variables of files in folder <pluginconf> to client

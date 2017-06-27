@@ -12,13 +12,13 @@
           </div>
         </div>
         <div class="row">
-          <h3 class="card-title col-12 col-md-10 titletxt">{{$root.formatTime(event.starttime)}}&nbsp;{{event.title}}</h3>
-          <div v-if="elapsed > 0" class="ml-auto col-12 col-md-2 desctxt">{{elapsed}}/{{parseInt(event.duration/60,10)}} min</div>
-          <div v-if="elapsed <= 0" class="ml-auto col-12 col-md-2 desctxt">{{parseInt(event.duration/60,10)}} min</div>
+          <h3 class="card-title col-12 col-md-9 titletxt">{{$root.formatTime(event.starttime)}}&nbsp;{{event.title}}</h3>
+          <div v-if="elapsed > 0" class="ml-auto col-12 col-md-3 desctxt">{{elapsed}}/{{parseInt(event.duration/60,10)}} min</div>
+          <div v-if="elapsed <= 0" class="ml-auto col-12 col-md-3 desctxt">{{parseInt(event.duration/60,10)}} min</div>
         </div>
         <div class="clearfix">
-          <div v-if="event.epg2vdr && imagecnt > 0" :id="'evImages' + event.eventid" class="img-fluid float-right img-thumbnail carousel slide" data-ride="carousel" data-interval="5000">
-            <div class="carousel-inner epg-image" role="listbox">
+          <div v-if="event.epg2vdr && imagecnt > 0" :id="'evImages' + event.eventid" class="img-fluid float-right epg-image carousel slide" data-ride="carousel" data-interval="5000">
+            <div class="carousel-inner img-thumbnail" role="listbox">
               <div v-for="n in imagecnt" class="carousel-item" :class="{'active':n==1}">
                 <img class="d-block" :src="'/data/eventimg?id=' + event.eventid + '&no=' + (n-1)" alt="">
               </div>
@@ -85,8 +85,8 @@ export default {
             return isNaN(cnt) ? 0 : cnt;
         }
     },
-    updated:function(){
-      console.log($('.carousel').carousel());
+      updated:function() {
+        $('.carousel').carousel().each(function(){ $('.carousel-item',this).removeClass('active').first().addClass('active')});
     }
 }
 </script>

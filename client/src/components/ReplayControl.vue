@@ -36,24 +36,21 @@ export default {
     name: 'o2wReplayControl',
     data() {
         return {
-            buttons:{},
-            controlInfo:null
+            buttons: null
         }
     },
     created() {
-        this.$root.$on("actual", (data) => {
-            this.buttons= null;
-            this.controlInfo=null;
-        });
-        this.$root.$on("replay", (data) => {
-            this.controlInfo= data.filename;
-        })
         this.$root.$on("replaycontrol", (data) => {
-            this.buttons= replayButtons;
-            if (data.play == 1)
-                this.buttons[1].color= 'red'
-            if (data.speed >= 0)
-                this.buttons[data.forward == 1 ? 4:0].color= 'red'
+            if (data.active)
+            {
+               this.buttons= replayButtons;
+               if (data.play == 1)
+                  this.buttons[1].color= 'red'
+               if (data.speed >= 0)
+                  this.buttons[data.forward == 1 ? 4:0].color= 'red'
+            }
+            else
+               this.buttons = null;
         });
     }
 }

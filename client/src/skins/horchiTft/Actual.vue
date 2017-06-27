@@ -9,9 +9,9 @@
         </div>
       </div>
     </div>
-    <div v-if="replay.name">
+    <div v-if="replay.active">
+      <o2w-replay :replay="replay"></o2w-replay>
       <o2w-replaycontrol />
-      <o2w-replay :event="replay"></o2w-replay>
     </div>
     <div v-else="">
       <o2w-replaycontrol />
@@ -40,23 +40,18 @@ export default {
             this.following = data.following;
         });
         this.$root.$on("replay", (data) => {
-            this.channel = {};
-            this.present = {};
-            this.following = {};
             let ev = data.event || {};
+            ev.active = null;
             ev.name = data.name;
-            if (!ev.name) {
-                ev.name = "<null>";
-            }
-            if (!data.event) {
-                ev.title = data.name;
-                ev.duration = data.lengthinseconds;
-            }
+            ev.duration = data.lengthinseconds;
             this.channel.channelid = data.info.channelid;
             this.channel.channelname = data.info.channelname;
-            ev.starttime = parseInt(new Date().getTime() / 1000,10);
-            ev.endtime = ev.starttime + ev.duration;
+            if (!data.event)
+               ev.title = data.name;
+            if (data.active)
+               ev.active = 1;
             this.replay = ev;
+            // this.replay = data;
         });
     }
 }
