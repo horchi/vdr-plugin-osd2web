@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.1.18"
-#define VERSION_DATE  "27.06.2017"
+#define _VERSION      "0.1.19"
+#define VERSION_DATE  "28.06.2017"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,11 @@
 
 /*
  * ------------------------------------
+
+2017-06-28: version 0.1.19 (horchi)
+   - added: provide list of last recordings to client
+   - added: display last recordings in theme horchiTft
+   - added: provide epg images of recordings to client
 
 2017-06-27: version 0.1.18 (horchi)
    - added: EPG image to replay view

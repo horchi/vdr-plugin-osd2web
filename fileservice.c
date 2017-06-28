@@ -140,12 +140,12 @@ int cUpdate::parseVariableFiles()
    while (readdir_r(dir, pEntry, &res) == 0 && res)
 #endif
    {
-      char* fPath = 0;
-
       if (dirTypeOf(path, pEntry) != DT_REG || pEntry->d_name[0] == '.')
          continue;
 
       tell(4, "Checking variables of '%s'", pEntry->d_name);
+
+      char* fPath = 0;
 
       asprintf(&fPath, "%s/%s/%s", config.confPath, "customdata", pEntry->d_name);
 

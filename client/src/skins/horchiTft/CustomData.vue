@@ -18,13 +18,11 @@ export default {
     name: 'o2wCustomData',
     data: function () {
         return {
-            customdata: null,
-            detail: -1
+            customdata: null
         };
     },
     created() {
         this.$root.$on("customdata", (data) => {
-            detail:-1;
             this.customdata = data && data.length ? data : null;
         });
     },

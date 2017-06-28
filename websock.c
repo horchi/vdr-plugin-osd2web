@@ -641,10 +641,13 @@ int cWebSock::doEventImg(lws* wsi)
 
 int cWebSock::doRecordingImg(lws* wsi)
 {
+   const char* suffixFilter = "jpg jpeg";
+
    int result;
    char* path = strdup(getStrParameter(wsi, "path=", ""));
+   const char* suffix = suffixOf(path);
 
-   if (!path || !strstr(path, ".jpg"))
+   if (isEmpty(suffix) || !strstr(suffixFilter, suffix))
    {
       free(path);
       return fail;

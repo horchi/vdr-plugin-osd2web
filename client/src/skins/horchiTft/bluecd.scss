@@ -1,11 +1,9 @@
 @import "blue.scss";
 
-.timerarea {
-    max-height: 46vh;
-    overflow: hidden;
+.recordingarea {
+    height: 0px;
 }
 
 .customarea {
-    height: 46vh;
-    overflow: hidden;
+    height: 100%;
 }

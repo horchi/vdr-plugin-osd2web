@@ -36,7 +36,7 @@ void cUpdate::ChannelSwitch(const cDevice* device, int channelNumber, bool liveV
 }
 
 //***************************************************************************
-// Recording
+// Osd Programme
 //***************************************************************************
 
 void cUpdate::OsdProgramme(time_t PresentTime, const char* PresentTitle,
@@ -62,6 +62,7 @@ void cUpdate::OsdProgramme(time_t PresentTime, const char* PresentTitle,
 void cUpdate::Recording(const cDevice* Device, const char* Name,
                         const char* FileName, bool On)
 {
+   triggerRecordingsUpdate = yes;
 /*
   not needed - since 'timers' support all needed data
 
@@ -264,12 +265,43 @@ void cUpdate::updateTimers()
 }
 
 //***************************************************************************
-// Replaying
+// Update Recordings
+//***************************************************************************
+
+void cUpdate::updateRecordings()
+{
+   json_t* oRecordings = json_array();
+   int count = 0;
+
+   triggerRecordingsUpdate = no;
+
+   GET_TIMERS_READ(timers);
+   GET_RECORDINGS_READ(recordings);
+
+   for (const cRecording* recording = recordings->First(); recording; recording = recordings->Next(recording ))
+   {
+      // olny recordings of the last 8 days
+
+      if (recording->Start() > time(0)-8*tmeSecondsPerDay)
+      {
+         json_t* oRecording = json_object();
+         recording2Json(oRecording, timers, recording, cOsdService::ObjectShape::osSmall);
+         json_array_append_new(oRecordings, oRecording);
+         count++;
+      }
+   }
+
+   cUpdate::pushMessage(oRecordings, "recordings");
+}
+
+//***************************************************************************
+// Update Replay
 //***************************************************************************
 
 void cUpdate::updateReplay(int force)
 {
    json_t* oRecording = json_object();
+
    triggerReplayUpdate = no;
 
    if (!activeControl)

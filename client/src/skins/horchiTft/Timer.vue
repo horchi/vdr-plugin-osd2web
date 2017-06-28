@@ -1,5 +1,5 @@
 <template>
-  <div v-if="timers" class="list-group" id="actual-timer" style="overflow: hidden;">
+  <div v-if="timers" class="list-group" id="actual-timer">
     <div v-for="(timer,n) in timers"
          class="mt-2 list-group-item card flex-column p-1 active"
          v-bind:class="{ timeron : timer.recording, timer : !timer.recording }">

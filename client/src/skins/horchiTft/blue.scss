@@ -28,7 +28,10 @@ body {
 
 .replay-control {
     background-color: #27567e;
-    color: #27567e;
+}
+
+.replay-btn {
+   color: white;
 }
 
 // text elemente
@@ -47,6 +50,12 @@ body {
 
 .desctxt {
     color: white;
+}
+
+// recording list
+
+.recording  {
+    background: linear-gradient(to bottom right, #a8004d, #004c65);
 }
 
 // timer list

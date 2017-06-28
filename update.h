@@ -86,11 +86,14 @@ const cTimer* getTimerMatch(const cTimers* timers, const cEvent* event, eTimerMa
 int event2Json(json_t* obj, const cEvent* event, const cChannel* channel = 0,
                eTimerMatch TimerMatch = (eTimerMatch)na, int Current = no,
                cOsdService::ObjectShape shape = cOsdService::osText);
-int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recording);
+int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recording,
+                   cOsdService::ObjectShape shape = cOsdService::ObjectShape::osLarge);
 int channel2Json(json_t* obj, const cChannel* channel);
 int timer2Json(json_t* obj, const cTimer* timer);
 int stream2Json(json_t* obj, const cChannel* channel);
 int channels2Json(json_t* obj);
+
+int imagePaths2Json(json_t* obj, const char* path, const char* suffixFilter = "jpg jpeg");
 
 //***************************************************************************
 // Class cWebSock
@@ -280,6 +283,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       // public data
 
       int triggerTimerUpdate;
+      int triggerRecordingsUpdate;
       int triggerReplayUpdate;
 
       // static message interface to web thread
@@ -313,6 +317,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
       void updatePresentFollowing();
       void updateTimers();
+      void updateRecordings();
       void updateControl(int force = no);
       void updateReplay(int force = no);
       void updateCustomData();

@@ -25,17 +25,21 @@ body {
 }
 
 .rightarea {
+    height: 93vh;
+    overflow: hidden;
     padding: 0px;
 }
 
 .timerarea {
-    max-height: 92vh;
+    max-height: 46vh;
     overflow: hidden;
 }
 
 .customarea {
     height: 0px;
-    overflow: hidden;
+}
+
+.recordingarea {
 }
 
 .channel {
@@ -69,6 +73,18 @@ body {
     padding: 5px;
     border: 1px solid rgba(0,0,0,.125);
     border-radius: .25rem;
+}
+
+.replay-btn {
+   min-height: 100%;
+   max-height: 100%;
+   width: auto;
+   margin-left: 20px;
+   color: black;
+}
+
+.replay-btn-act {
+   color: red !important;
 }
 
 // channel logo
@@ -139,6 +155,10 @@ body {
 }
 
 .customdata  {
+    font-size: 2.7vh;
+}
+
+.recording  {
     font-size: 2.7vh;
 }
 

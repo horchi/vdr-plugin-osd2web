@@ -194,7 +194,7 @@ int channels2Json(json_t* obj)
 // Recording To Json
 //***************************************************************************
 
-int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recording)
+int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recording, cOsdService::ObjectShape shape)
 {
    if (!recording)
    {
@@ -212,22 +212,33 @@ int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recordi
    addToJson(obj, "isnew", recording->IsNew());
    addToJson(obj, "isedited", recording->IsEdited());
    addToJson(obj, "hasmarks", ((cRecording*)recording)->HasMarks()); // cast due to vdr 2.2.0 ' const' issue
+   addToJson(obj, "start", recording->Start());
 
    if (const cRecordingInfo* info = recording->Info())
    {
-      eTimerMatch timerMatch;
+      eTimerMatch timerMatch = tmNone;
       json_t* oInfo = json_object();
       json_t* oEvent = json_object();
 
       addToJson(oInfo, "channelid", info->ChannelID().ToString());
       addToJson(oInfo, "channelname", info->ChannelName());
       addToJson(oInfo, "framespersecond", info->FramesPerSecond());
-      addToJson(oInfo, "description", info->Description());
-      addToJson(oInfo, "aux", info->Aux());
 
-      getTimerMatch(timers, info->GetEvent(), &timerMatch);
-      event2Json(oEvent, info->GetEvent(), 0, timerMatch, no, cOsdService::osLarge);
+      if (shape == cOsdService::ObjectShape::osLarge)
+      {
+         addToJson(oInfo, "description", info->Description());
+         addToJson(oInfo, "aux", info->Aux());
+      }
 
+      if (timers)
+         getTimerMatch(timers, info->GetEvent(), &timerMatch);
+
+      event2Json(oEvent, info->GetEvent(), 0, timerMatch, no, shape);
+
+      json_t* oImages = json_array();
+      imagePaths2Json(oImages, recording->FileName());
+
+      addToJson(obj, "images", oImages);
       addToJson(obj, "info", oInfo);
       addToJson(obj, "event", oEvent);
    }
@@ -302,4 +313,52 @@ int timer2Json(json_t* obj, const cTimer* timer)
    }
 
    return success;
+}
+
+//***************************************************************************
+// Timer To Json
+//***************************************************************************
+
+int imagePaths2Json(json_t* obj, const char* path, const char* suffixFilter)
+{
+   DIR* dir;
+
+   if (!(dir = opendir(path)))
+   {
+      tell(1, "Can't open directory '%s', '%s'", path, strerror(errno));
+      return fail;
+   }
+
+#ifndef HAVE_READDIR_R
+   dirent* pEntry;
+
+   while ((pEntry = readdir(dir)))
+#else
+   dirent entry;
+   dirent* pEntry = &entry;
+   dirent* res;
+
+   // deprecated but the only reentrant with old libc!
+
+   while (readdir_r(dir, pEntry, &res) == 0 && res)
+#endif
+   {
+      char* jpegPath = 0;
+      const char* suffix = suffixOf(pEntry->d_name);
+
+      if (dirTypeOf(path, pEntry) != DT_REG || pEntry->d_name[0] == '.')
+         continue;
+
+      if (isEmpty(suffix) || !strstr(suffixFilter, suffix))
+         continue;
+
+      asprintf(&jpegPath, "%s/%s", path, pEntry->d_name);
+      json_array_append_new(obj, json_string(jpegPath));
+
+      free(jpegPath);
+   }
+
+   closedir(dir);
+
+   return done;
 }

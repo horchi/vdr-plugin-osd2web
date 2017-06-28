@@ -73,6 +73,7 @@ cOsdService::Event cOsdService::toEvent(const char* name)
 cUpdate::cUpdate()
 {
    triggerTimerUpdate = no;
+   triggerRecordingsUpdate = no;
    triggerReplayUpdate = no;
    nextPresentUpdateAt = time(0);
    epg2vdrIsLoaded = no;
@@ -219,6 +220,9 @@ void cUpdate::atMeanwhile()
 
    if (triggerTimerUpdate)
       updateTimers();
+
+   if (triggerRecordingsUpdate)
+      updateRecordings();
 
    if (triggerReplayUpdate)
       updateReplay();   // calls updateControl()
@@ -382,6 +386,7 @@ int cUpdate::performLogin(json_t* oObject)
    updatePresentFollowing();  // trigger update of present/following
    updateTimers();
    updateReplay(yes);
+   updateRecordings();
 
    if (menuCategory > mcUnknown)
       updateMenu();
