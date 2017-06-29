@@ -275,21 +275,20 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
 
 int cWebSock::serveFile(lws* wsi, const char* path)
 {
-   const char* extension;
+   const char* suffix = suffixOf(path ? path : "");
    const char* mime = "text/plain";
-
-   extension = strrchr(path, '.');
 
    // choose mime type based on the file extension
 
-   if (!isEmpty(extension))
+   if (!isEmpty(suffix))
    {
-      if      (strcmp(extension, ".png") == 0)   mime = "image/png";
-      else if (strcmp(extension, ".jpg") == 0)   mime = "image/jpg";
-      else if (strcmp(extension, ".gif") == 0)   mime = "image/gif";
-      else if (strcmp(extension, ".svg") == 0)   mime = "image/svg+xml";
-      else if (strcmp(extension, ".html") == 0)  mime = "text/html";
-      else if (strcmp(extension, ".css") == 0)   mime = "text/css";
+      if      (strcmp(suffix, "png") == 0)   mime = "image/png";
+      else if (strcmp(suffix, "jpg") == 0)   mime = "image/jpg";
+      else if (strcmp(suffix, "jpeg") == 0)  mime = "image/jpg";
+      else if (strcmp(suffix, "gif") == 0)   mime = "image/gif";
+      else if (strcmp(suffix, "svg") == 0)   mime = "image/svg+xml";
+      else if (strcmp(suffix, "html") == 0)  mime = "text/html";
+      else if (strcmp(suffix, "css") == 0)   mime = "text/css";
    }
 
    return lws_serve_http_file(wsi, path, mime, 0, 0);
@@ -349,7 +348,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 
                strncpy(msgBuffer + sizeLwsPreFrame, msg.c_str(), msgSize);
 
-               tell(2, "DEBUG: Write (%d) [%.*s] to (%p)\n",
+               tell(2, "DEBUG: Write (%d) < %.*s > to (%p)\n",
                     msgSize, msgSize,
                     msgBuffer+sizeLwsPreFrame, (void*)wsi);
 
@@ -572,8 +571,8 @@ int cWebSock::getIntParameter(lws* wsi, const char* name, int def)
 
 const char* cWebSock::getStrParameter(lws* wsi, const char* name, const char* def)
 {
-   static char buf[100];
-   const char* arg = lws_get_urlarg_by_name(wsi, name, buf, 100);
+   static char buf[512+TB];
+   const char* arg = lws_get_urlarg_by_name(wsi, name, buf, 512);
 
    return arg ? arg : def;
 }
@@ -647,16 +646,16 @@ int cWebSock::doRecordingImg(lws* wsi)
    char* path = strdup(getStrParameter(wsi, "path=", ""));
    const char* suffix = suffixOf(path);
 
+   tell(2, "DEBUG: Image for recording was requested [%s] suffix is '%s'", path, suffix);
+
    if (isEmpty(suffix) || !strstr(suffixFilter, suffix))
    {
       free(path);
       return fail;
    }
 
-   tell(2, "DEBUG: Image for recording was requested [%s]", path);
-
    result = serveFile(wsi, path);
-
+   tell(0, "serveFile result was (%d)", result);
    free(path);
 
    return result;

@@ -399,12 +399,14 @@ void cUpdate::updateControl(int force)
 void cUpdate::updateCustomData()
 {
    std::map<std::string,FileVariable> serviceVariables;
-   json_t* obj = json_array();
+   json_t* obj = json_object();
 
    tell(0, "got %d serviceVariableFiles", (int)serviceVariableFiles.size());
 
    for (auto it = serviceVariableFiles.begin(); it != serviceVariableFiles.end(); it++)
    {
+      json_t* oFile = json_array();
+      std::string file = "";
       serviceVariables = *it;
 
       for (auto it = serviceVariables.begin(); it != serviceVariables.end(); it++)
@@ -412,12 +414,14 @@ void cUpdate::updateCustomData()
          json_t* oVariable = json_object();
          FileVariable var = it->second;
 
-         addToJson(oVariable, "file", var.file.c_str());
+         file = var.file.c_str();
          addToJson(oVariable, "name", var.name.c_str());
          addToJson(oVariable, "value", var.value.c_str());
 
-         json_array_append_new(obj, oVariable);
+         json_array_append_new(oFile, oVariable);
       }
+
+      addToJson(obj, file.c_str(), oFile);
    }
 
    cUpdate::pushMessage(obj, "customdata");

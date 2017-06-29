@@ -1,13 +1,9 @@
 <template>
-  <div v-if="customdata" class="list-group" id="customdata" style="overflow: hidden;">
-    <div v-for="(custom,n) in customdata"
-         class="mt-2 customdata list-group-item card flex-column p-1 active">
-      <div class="d-flex w-100 justify-content-between tmtxt">
-        <div>
-          <small>{{custom.file}}</small>
-          <small>{{custom.name}}: </small>
-          <small>{{custom.value}}</small>
-        </div>
+  <div v-if="customdata" id="customdata" style="overflow: hidden;">
+    <div v-for="(item, key, index) in customdata" class="mt-2 w-100 justify-content-between customdata card flex-column p-1 active">
+      <small class="customfiletxt">{{key}}</small><br/>
+      <div v-for="(variable, n) in item">
+        <small>  {{variable.name}}: {{variable.value}}</small>
       </div>
     </div>
   </div>
@@ -23,7 +19,7 @@ export default {
     },
     created() {
         this.$root.$on("customdata", (data) => {
-            this.customdata = data && data.length ? data : null;
+            this.customdata = data;
         });
     },
     components: {

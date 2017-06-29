@@ -1,7 +1,7 @@
 <template>
    <div v-show="event.title" class="card">
       <div class="card-block">
-        <h3 class="card-title">{{event.title}}</h3>
+        <h3 class="card-title">{{$root.formatTime(event.starttime)}}&nbsp;{{event.title}}</h3>
         <div class="card-text">{{event.shorttext}}</div>
         <div class="progress" v-show="progress">
           <div class="progress-bar" role="progressbar" :style="{width: progress + '%'}" :aria-valuenow="{progress}" aria-valuemin="0" aria-valuemax="100">{{progress}}%</div>
@@ -15,7 +15,7 @@
         </div>
         <div v-if="event.epg2vdr" :id="'evImages' + event.eventid" class="carousel slide" data-ride="carousel" data-interval="5000">
           <div class="carousel-inner" role="listbox">
-            <div v-for="n in imagecnt" class="carousel-item" :class="{'active':n==1}">
+            <div v-for="n in imagecnt" class="carousel-item" :class="{'active':n==0}">
               <img class="d-block" :src="'/data/eventimg?id=' + event.eventid + '&no=' + (n-1)" alt="">
             </div>
           </div>
@@ -29,12 +29,6 @@
           </a>
            <p v-html="event.epg2vdr.longdescription"></p>
         </div>
-<!--
-        <div v-if="event.epg2vdr" class="row">
-            <img v-for="n in images" class="mx-auto d-block mb-1" :src="'/data/eventimg?id=' + event.eventid + '&no=' + (n-1)" alt="" />
-            <p v-html="event.epg2vdr.longdescription"></p>
-        </div>
-        -->
       </div>
       <hr />
       <div class="card-block">
@@ -118,6 +112,9 @@ export default {
          let cnt= this.event.epg2vdr ? parseInt(this.event.epg2vdr.imagecount, 10) : 0;
          return isNaN(cnt) ? 0 : cnt;
        }
+    },
+    updated: function() {
+        $('.carousel').carousel().each(function(){ $('.carousel-item',this).removeClass('active').first().addClass('active')});
     }
 }
 </script>

@@ -18,8 +18,8 @@
         <div class="clearfix">
           <div :id="'evImages' + replay.event.eventid" class="img-fluid float-right img-thumbnail carousel slide" data-ride="carousel" data-interval="5000">
             <div class="carousel-inner epg-image" role="listbox">
-              <div v-for="n in imagecnt" class="carousel-item" :class="{'active':n==1}">
-                <img class="d-block" :src="'/data/recordingimg?path=' + replay.filename + '/thumbnail_0.jpg'" style="width: 100%;" alt="">
+              <div v-for="(img, n) in replay.images" class="carousel-item" :class="{'active':n==0}">
+                <img class="d-block" :src="'/data/recordingimg?path=' + img" style="width: 100%;" alt="">
               </div>
             </div>
           </div>
@@ -49,7 +49,6 @@
 var common = require("common");
 common.Icon.register({"pause":{"width":1536,"height":1792,"paths":[{"d":"M1536 192v1408q0 26-19 45t-45 19h-512q-26 0-45-19t-19-45v-1408q0-26 19-45t45-19h512q26 0 45 19t19 45zM640 192v1408q0 26-19 45t-45 19h-512q-26 0-45-19t-19-45v-1408q0-26 19-45t45-19h512q26 0 45 19t19 45z"}]}}) ;
 common.Icon.register({"play":{"width":1408,"height":1792,"paths":[{"d":"M1384 927l-1328 738q-23 13-39.5 3t-16.5-36v-1472q0-26 16.5-36t39.5 3l1328 738q23 13 23 31t-23 31z"}]}});
-//common.Icon.register({"_play":{"width":485,"height":485,"paths":[{"d":"M242.872 0C108.732 0 0.004 108.736 0.004 242.864c0 134.14 108.728 242.876 242.868 242.876 c134.136 0 242.864-108.736 242.864-242.876C485.736 108.736 377.008 0 242.872 0z M338.412 263.94l-134.36 92.732    c-16.776 11.588-30.584 4.248-30.584-16.316V145.38c0-20.556 13.808-27.9 30.584-16.312l134.32 92.732 C355.136 233.384 355.176 252.348 338.412 263.94z"}]}})
 common.Icon.register({"stop":{"width":1536,"height":1792,"paths":[{"d":"M1536 192v1408q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-1408q0-26 19-45t45-19h1408q26 0 45 19t19 45z"}]}})
 common.Icon.register({"fast-backward":{"width":1792,"height":1792,"paths":[{"d":"M1747 141q19-19 32-13t13 32v1472q0 26-13 32t-32-13l-710-710q-9-9-13-19v710q0 26-13 32t-32-13l-710-710q-9-9-13-19v678q0 26-19 45t-45 19h-128q-26 0-45-19t-19-45v-1408q0-26 19-45t45-19h128q26 0 45 19t19 45v678q4-10 13-19l710-710q19-19 32-13t13 32v710q4-10 13-19z"}]}})
 common.Icon.register({"fast-forward":{"width":1792,"height":1792,"paths":[{"d":"M45 1651q-19 19-32 13t-13-32v-1472q0-26 13-32t32 13l710 710q9 9 13 19v-710q0-26 13-32t32 13l710 710q9 9 13 19v-678q0-26 19-45t45-19h128q26 0 45 19t19 45v1408q0 26-19 45t-45 19h-128q-26 0-45-19t-19-45v-678q-4 10-13 19l-710 710q-19 19-32 13t-13-32v-710q-4 10-13 19z"}]}})
@@ -114,12 +113,10 @@ export default {
         },
         elapsed: function () {
             return Math.max(parseInt(this.current/60, 10), 0);
-        },
-        imagecnt: function() {
-            let cnt = this.replay.event.epg2vdr ? parseInt(this.replay.event.epg2vdr.imagecount, 10) : 0;
-            // return isNaN(cnt) ? 0 : cnt;
-            return 1;
         }
+    },
+    updated: function() {
+        $('.carousel').carousel().each(function(){ $('.carousel-item',this).removeClass('active').first().addClass('active')});
     }
 }
 </script>

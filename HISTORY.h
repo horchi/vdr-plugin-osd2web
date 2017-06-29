@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.1.19"
-#define VERSION_DATE  "28.06.2017"
+#define _VERSION      "0.1.20"
+#define VERSION_DATE  "29.06.2017"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,10 @@
 
 /*
  * ------------------------------------
+
+2017-06-29: version 0.1.20 (horchi)
+   - added:  further skin improvements
+   - change: ported default skin
 
 2017-06-28: version 0.1.19 (horchi)
    - added: provide list of last recordings to client

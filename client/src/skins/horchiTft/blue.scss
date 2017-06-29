@@ -80,7 +80,8 @@ body {
 
 .customdata  {
     background: linear-gradient(to bottom right, #051526, #0275d8);
-    color: #b2aec3 !important;
+    background: linear-gradient(to bottom right,#1a2cba,#f3f911);
+    color: black !important;
 }
 
 // menu
@@ -93,4 +94,8 @@ body {
 .textmenu-current {
     background: linear-gradient(to bottom right, #051526, #0275d8);
     color: white;
+}
+
+.customfiletxt {
+   color: white;
 }

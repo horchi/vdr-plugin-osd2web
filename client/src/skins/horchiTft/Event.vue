@@ -19,7 +19,7 @@
         <div class="clearfix">
           <div v-if="event.epg2vdr && imagecnt > 0" :id="'evImages' + event.eventid" class="img-fluid float-right epg-image carousel slide" data-ride="carousel" data-interval="5000">
             <div class="carousel-inner img-thumbnail" role="listbox">
-              <div v-for="n in imagecnt" class="carousel-item" :class="{'active':n==1}">
+              <div v-for="n in imagecnt" class="carousel-item" :class="{'active':n==0}">
                 <img class="d-block" :src="'/data/eventimg?id=' + event.eventid + '&no=' + (n-1)" alt="">
               </div>
             </div>
@@ -85,7 +85,7 @@ export default {
             return isNaN(cnt) ? 0 : cnt;
         }
     },
-      updated:function() {
+    updated: function() {
         $('.carousel').carousel().each(function(){ $('.carousel-item',this).removeClass('active').first().addClass('active')});
     }
 }

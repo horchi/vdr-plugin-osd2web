@@ -36,7 +36,8 @@ body {
 }
 
 .customarea {
-    height: 0px;
+    max-height: 0px;
+    overflow: hidden;
 }
 
 .recordingarea {
@@ -60,6 +61,14 @@ body {
             height: auto;
          }
     }
+}
+
+.epg-image {
+    width: 14vw;
+}
+
+.img-thumbnail {
+    background-color: transparent;
 }
 
 .replay {
@@ -155,7 +164,9 @@ body {
 }
 
 .customdata  {
-    font-size: 2.7vh;
+    line-height: 1.0;
+    font-size: 2.5vh;
+    text-align: center;
 }
 
 .recording  {
@@ -172,12 +183,4 @@ body {
 .textmenu-current {
     border-radius: .25rem;
     font-size: 3.0vh;
-}
-
-.epg-image {
-    width: 14vw;
-}
-
-.img-thumbnail {
-    background-color: transparent;
 }

@@ -1,13 +1,13 @@
 <template>
-    <div v-if="buttons">
-        <div class="replay-control" />
-        <div class="btn-group btn-group-sm justify-content-center">
-            <a v-for="(button,index) in buttons" @click="$root.sendKey(button.key)" class="btn btn-secondary" :style="{'color':button.color}"><icon :name="button.icon" /></a>
-        </div>
+  <div class="mt-1 replay-control">
+    <div class="btn-group btn-group-sm justify-content-center">
+      <a v-for="(button,index) in buttons" @click="$root.sendKey(button.key)" class="btn btn-secondary" :style="{'color':button.color}"><icon :name="button.icon" /></a>
     </div>
+  </div>
 </template>
 
 <script>
+
 var common=require("common");
 common.Icon.register({"pause":{"width":1536,"height":1792,"paths":[{"d":"M1536 192v1408q0 26-19 45t-45 19h-512q-26 0-45-19t-19-45v-1408q0-26 19-45t45-19h512q26 0 45 19t19 45zM640 192v1408q0 26-19 45t-45 19h-512q-26 0-45-19t-19-45v-1408q0-26 19-45t45-19h512q26 0 45 19t19 45z"}]}}) ;
 common.Icon.register({"play":{"width":1408,"height":1792,"paths":[{"d":"M1384 927l-1328 738q-23 13-39.5 3t-16.5-36v-1472q0-26 16.5-36t39.5 3l1328 738q23 13 23 31t-23 31z"}]}});
@@ -41,17 +41,20 @@ export default {
     },
     created() {
         this.$root.$on("replaycontrol", (data) => {
+            this.buttons = replayButtons;
             if (data.active)
             {
-               this.buttons= replayButtons;
-               if (data.play == 1)
-                  this.buttons[1].color= 'red'
-               if (data.speed >= 0)
-                  this.buttons[data.forward == 1 ? 4:0].color= 'red'
+                if (data.play == 1)
+                    this.buttons[1].color = 'red'
+                else
+                    this.buttons[2].color = 'red'
+                if (data.speed >= 0)
+                    this.buttons[data.forward == 1 ? 4 : 0].color = 'red'
             }
             else
-               this.buttons = null;
+                this.buttons = null;
         });
     }
 }
+
 </script>

@@ -5,6 +5,7 @@ common.Icon.register({"skinfocus":{"width":2048,"height":1792,"paths":[{"d":"M17
 export var Vue= common.Vue;
 
 // Registrieren aller Komponenten:
+
 Vue.component('o2w-event', require('Event'))
 Vue.component('o2w-replay', require('Replay'))
 Vue.component('o2w-textmenu', require('Textmenu'))
@@ -17,6 +18,8 @@ Vue.component('o2w-osd', require('Osd'))
 Vue.component('o2w-statusmessage', require('Statusmessage'))
 Vue.component('o2w-overview', require('Overview'))
 Vue.component('o2w-replaycontrol', require('ReplayControl'))
+Vue.component('o2w-customdata', require('CustomData'))
+Vue.component('o2w-recording', require('Recording'))
 
 export var root = {
     data: {

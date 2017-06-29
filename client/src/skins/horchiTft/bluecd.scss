@@ -1,9 +1,9 @@
 @import "blue.scss";
 
 .recordingarea {
-    height: 0px;
+    height: 100%;
 }
 
 .customarea {
-    height: 100%;
+    max-height: 46vh;
 }

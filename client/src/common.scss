@@ -1,6 +1,5 @@
 @import '~bootstrap/scss/bootstrap.scss';
 
-
 body {
     padding-top: 4rem;
 }
@@ -14,13 +13,32 @@ body {
 .dataarea {
 }
 
-.statusbar {
+.channel {
+    height: 10vh;
+    overflow: hidden;
+}
+
+.chlogo {
+   height: 100%;
+   margin-right: 23px;
 }
 
 .eventarea {
 }
 
+.rightarea {
+}
+
 .timerarea {
+}
+
+.customarea {
+}
+
+.recordingarea {
+}
+
+.statusbar {
 }
 
 button.but-red {

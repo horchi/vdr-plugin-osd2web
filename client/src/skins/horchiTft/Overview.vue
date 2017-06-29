@@ -3,7 +3,9 @@
     <div class="row dataarea">
       <o2w-actual class="eventarea col-12 col-md-9" />
       <div class="rightarea pr-2 col-12 col-md-3">
-        <o2w-timer class="timerarea" />
+        <div class="timerarea">
+          <o2w-timer />
+        </div>
         <o2w-customdata class="customarea" />
         <o2w-recording class="recordingarea" />
       </div>
@@ -16,11 +18,8 @@
     </div>
   </div>
 </template>
-<script>
 
-var common = require("common");
-common.Vue.component('o2w-customdata', require('CustomData'))
-common.Vue.component('o2w-recording', require('Recording'))
+<script>
 
 export default {
     name: 'o2wOverview',
@@ -38,4 +37,5 @@ export default {
         }
     }
 }
+
 </script>
