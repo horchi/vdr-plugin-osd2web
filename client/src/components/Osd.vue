@@ -1,19 +1,32 @@
 <template>
-    <div v-show="$root.curView == 'osd'" id="osdCon">
-        <div class="container" @click="$root.sendKey('Back')">
-            <h3 class=""><icon v-if="!$root.isOnlyView" name="osd-back"></icon> {{ title }}</h3>
-        </div>
+  <div v-show="$root.curView == 'osd'" id="osdCon">
+    <div class="row dataarea">
+      <div class="container menutitle" @click="$root.sendKey('Back')">
+        <h3 class="">
+          <icon v-if="!$root.isOnlyView" name="osd-back"></icon>
+          {{ title }}
+        </h3>
+      </div>
+      <div class="eventarea col-12 col-md-9">
         <o2w-textmenu></o2w-textmenu>
         <o2w-event :event="event"></o2w-event>
         <o2w-textarea></o2w-textarea>
-        <div class="btn-group btn-group-sm justify-content-center fixed-bottom" id="buttons">
-            <a v-show="pageUp" class="btn btn-secondary" @click="$root.sendKey('Up',maxLines)"><icon name="caret-up" /></a>
-            <button v-for="(button,index) in buttons" @click="$root.sendKey(button.color)" :class="'but-' + button.color" class="btn btn-primary" type="button">{{button.label}}</button>
-            <a v-show="pageDn" class="btn btn-secondary" @click="$root.sendKey('Down',maxLines)"><icon name="caret-down" /></a>
+        <o2w-osdbuttons />
+      </div>
+      <div class="rightarea pr-2 col-12 col-md-3">
+        <div class="timerarea">
+          <o2w-timer />
         </div>
+        <o2w-customdata class="customarea" />
+        <o2w-recording class="recordingarea" />
+      </div>
+      <o2w-statusbar />
     </div>
+  </div>
 </template>
+
 <script>
+
 var common=require("common");
 common.Icon.register({"osd-back":{"width":1280,"height":1792,"paths":[{"d":"M1171 301l-531 531 531 531q19 19 19 45t-19 45l-166 166q-19 19-45 19t-45-19l-742-742q-19-19-19-45t19-45l742-742q19-19 45-19t45 19l166 166q19 19 19 45t-19 45z"}]}})
 
@@ -23,10 +36,7 @@ function getClearData(){
   return {
       title: '',
       category: -1,
-      pageUp: false,
-      pageDn: false,
-      event:{},
-      buttons: [],
+      event: {},
       maxLines: maxLines                                       // maximale Anzahl Zeilen, die der Client darstellen kann
   }
 }
@@ -45,34 +55,22 @@ export default {
         };
         this.$root.$data.menuItems.push(menuItem);
         this.$root.$on("clearmenu", (data) => {
-           let clearData= getClearData();
-           for (let key in clearData)
+            let clearData= getClearData();
+            for (let key in clearData)
                 this[key]= clearData[key];
-                this.$root.$set(menuItem, "on",false);
+            this.$root.$set(menuItem, "on",false);
         });
         this.$root.$on("menu", (data) => {
             this.category = data.category;
             this.title = data.title;
-                this.$root.$set(menuItem, "on",true);
-        });
-        this.$root.$on("scrollbar", (data) => {
-            this.pageUp= data.Offset > 0;
-            this.pageDn= (data.Total - maxLines) > data.Offset;
+            this.$root.$set(menuItem, "on",true);
         });
         this.$root.$on("event", (data) => {
             this.event = data;
         });
-        this.$root.$on("buttons", (data) => {
-            this.buttons = [];
-            for (let color in data)
-                this.buttons.push({
-                    'color': color,
-                    label: data[color]
-                });
-        })
         this.$root.$on("rolechange", (data) => {
             this.sendMaxLines(null, this.$root.isOnlyView ? null : 50);
-        })
+        });
 
         if (this.$root.isOnlyView){
             let lastResize= 0;
@@ -91,7 +89,7 @@ export default {
             }
             window.addEventListener('resize', checkResize);
         }
-        
+
         //window.addEventListener('resize', this.checkButtonHeight);
     },
     updated() {

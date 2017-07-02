@@ -3,14 +3,11 @@
     <div v-for="(timer,n) in timers"
          class="mt-2 list-group-item card flex-column p-1 active"
          v-bind:class="{ timeron : timer.recording, timer : !timer.recording }">
-      <div class="d-flex w-100 justify-content-between tmtxt">
+      <div class="w-100 justify-content-between tmtxt">
+        <small class="tltmtxt">{{$root.formatDateTime(timer.starttime)}}</small>
         <div class="">{{timer.file}}</div>
-        <div>
-          <small v-if="timer.channel" class="tltmch">{{timer.channel.channelname}}</small>
-          <small v-if="timer.epg2vdr" class="tlvdrtxt">[{{timer.epg2vdr.vdrname}}]</small>
-          <br/>
-          <small class="tltmtxt">{{$root.formatDateTime(timer.starttime)}}</small>
-        </div>
+        <small v-if="timer.channel" class="tltmch">{{timer.channel.channelname}}</small>
+        <small v-if="timer.epg2vdr" class="tlvdrtxt">[{{timer.epg2vdr.vdrname}}]</small>
       </div>
     </div>
   </div>

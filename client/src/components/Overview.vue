@@ -8,9 +8,7 @@
         <o2w-recording class="recordingarea" />
       </div>
     </div>
-    <div class="card statusbar">
-      <h4 align="right" class="my-auto mr-2">{{ $root.formatDateTime(parseInt(new Date().getTime() / 1000, 10)) }}</h4>
-    </div>
+    <o2w-statusbar />
   </div>
 </template>
 

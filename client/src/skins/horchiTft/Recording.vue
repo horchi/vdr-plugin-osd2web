@@ -2,7 +2,7 @@
   <div v-if="recordings" class="list-group" id="recordings" style="overflow: hidden;">
     <div v-for="(recording,n) in recordings"
          class="mt-2 recording list-group-item card flex-column p-1 active">
-      <div class="d-flex w-100 justify-content-between tmtxt">
+      <div class="w-100 justify-content-between tmtxt">
         <div>
           <small class="tltmtxt">{{$root.formatDateTime(recording.start)}}</small>
           <br/>

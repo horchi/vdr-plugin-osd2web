@@ -20,6 +20,8 @@ Vue.component('o2w-overview', require('Overview'))
 Vue.component('o2w-replaycontrol', require('ReplayControl'))
 Vue.component('o2w-customdata', require('CustomData'))
 Vue.component('o2w-recording', require('Recording'))
+Vue.component('o2w-statusbar', require('StatusBar'))
+Vue.component('o2w-osdbuttons', require('OsdButtons'))
 
 export var root = {
     data: {

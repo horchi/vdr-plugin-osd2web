@@ -70,7 +70,15 @@ body {
     color: white !important;
 }
 
+.tmtxt {
+    color: white;
+}
+
 .tltmtxt {  // timer time text
+    color: #b2aec3;
+}
+
+.tltmch {  // channel name
     color: #b2aec3;
 }
 
@@ -94,6 +102,10 @@ body {
 .textmenu-current {
     background: linear-gradient(to bottom right, #051526, #0275d8);
     color: white;
+}
+
+.menutitle {
+   color: white;
 }
 
 .customfiletxt {

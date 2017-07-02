@@ -9,6 +9,7 @@ body {
 
 .dataarea {
     height: 92vh;
+    overflow: hidden;
 }
 
 .statusbar {
@@ -47,6 +48,14 @@ body {
     height: 10vh;
     overflow: hidden;
 }
+
+.menutitle {
+   height: 4vh;
+   overflow: hidden;
+   margin-top: 1vh;
+   text-align: center;
+}
+
 
 .event {
     height: 40vh;
@@ -166,6 +175,9 @@ body {
 .customdata  {
     line-height: 1.0;
     font-size: 2.5vh;
+}
+
+.customfiletxt {
     text-align: center;
 }
 

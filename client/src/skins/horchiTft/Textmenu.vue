@@ -1,17 +1,20 @@
 <template>
-    <table v-if="colCount > 0" class="table table-hover textmenu" :class="{'text-nowrap':$root.isOnlyView}">
-        <tbody>
-            <tr v-for="(row, rowIndex) in rows" :key="rowIndex" :class="{'table-active': rowIndex == textmenucurrent, 'textmenu-current': rowIndex == textmenucurrent}" @click="row.selectable && doAction(rowIndex)">
-                <td v-for="(col, index) in row.cols" :key="index" :class="{'bg-warning': rowIndex == textmenucurrent && index== 1 && canEdit == 1}">{{col}}</td>
-                <td v-if="row.selectable && canEdit==1" class="btn-group btn-group-sm">
-                    <a class="btn btn-secondary" @click.stop="doAction(rowIndex,'Left')" ><icon name="caret-left" /></a>
-                    <a v-show="row.textEdit" class="btn btn-secondary" @click.stop="$root.sendKey('Up')"><icon name="caret-up" /></a>
-                    <a v-show="row.textEdit" class="btn btn-secondary" @click.stop="$root.sendKey('Down')"><icon name="caret-down" /></a>
-                    <a class="btn btn-secondary" @click.stop="doAction(rowIndex,'Right')"><icon name="caret-right" /></a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+  <table v-if="colCount > 0" class="table table-hover textmenu" :class="{'text-nowrap':$root.isOnlyView}">
+    <tbody>
+      <tr v-for="(row, rowIndex) in rows" :key="rowIndex"
+          :class="{'table-active': rowIndex == textmenucurrent, 'textmenu-current': rowIndex == textmenucurrent}"
+          @click="row.selectable && doAction(rowIndex)">
+        <td v-for="(col, index) in row.cols" :key="index"
+            :class="{'bg-warning': rowIndex == textmenucurrent && index== 1 && canEdit == 1}">{{col}}</td>
+        <td v-if="row.selectable && canEdit==1" class="btn-group btn-group-sm">
+          <a class="btn btn-secondary" @click.stop="doAction(rowIndex,'Left')" ><icon name="caret-left" /></a>
+          <a v-show="row.textEdit" class="btn btn-secondary" @click.stop="$root.sendKey('Up')"><icon name="caret-up" /></a>
+          <a v-show="row.textEdit" class="btn btn-secondary" @click.stop="$root.sendKey('Down')"><icon name="caret-down" /></a>
+          <a class="btn btn-secondary" @click.stop="doAction(rowIndex,'Right')"><icon name="caret-right" /></a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </template>
 
 <script>
@@ -23,12 +26,12 @@ Icon.register({"caret-down":{"width":1024,"height":1792,"paths":[{"d":"M1024 704
 Icon.register({"caret-up":{"width":1024,"height":1792,"paths":[{"d":"M1024 1216q0 26-19 45t-45 19h-896q-26 0-45-19t-19-45 19-45l448-448q19-19 45-19t45 19l448 448q19 19 19 45z"}]}})
 
 function getClearData(){
-  return {
-      rows: [],
-      colCount: 0,
-      textmenucurrent: 0,
-      canEdit: 0,
-  }
+    return {
+        rows: [],
+        colCount: 0,
+        textmenucurrent: 0,
+        canEdit: 0,
+    }
 }
 export default {
     name: 'o2wTextmenu',
@@ -38,9 +41,9 @@ export default {
     created() {
 
         this.$root.$on("clearmenu", (data) => {
-           let clearData= getClearData();
-           for (let key in clearData)
-               this[key]= clearData[key];
+            let clearData= getClearData();
+            for (let key in clearData)
+                this[key]= clearData[key];
         });
         this.$root.$on("menu", (data) => {
             this.canEdit = data.editable || 0;
@@ -67,23 +70,23 @@ export default {
         doAction(rowIndex, key) {
             let delta = rowIndex - this.textmenucurrent;
             if (delta != 0){
-               let rep=0;
-               let row;
-               if (delta > 0){
-                  for(delta= this.textmenucurrent; delta < rowIndex; delta++){
-                     row= this.rows[delta];
-                     if (row && row.selectable)
-                        rep++;
-                  }
-                  this.$root.sendKey("Down", rep);
-               } else {
-                  for(delta= rowIndex; delta < this.textmenucurrent; delta++){
-                     row= this.rows[delta];
-                     if (row && row.selectable)
-                        rep++;
-                  }
-                  this.$root.sendKey("Up", rep);
-               }
+                let rep=0;
+                let row;
+                if (delta > 0){
+                    for(delta= this.textmenucurrent; delta < rowIndex; delta++){
+                        row= this.rows[delta];
+                        if (row && row.selectable)
+                            rep++;
+                    }
+                    this.$root.sendKey("Down", rep);
+                } else {
+                    for(delta= rowIndex; delta < this.textmenucurrent; delta++){
+                        row= this.rows[delta];
+                        if (row && row.selectable)
+                            rep++;
+                    }
+                    this.$root.sendKey("Up", rep);
+                }
             }
             else
                 this.$root.sendKey(key || "Ok");
