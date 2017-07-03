@@ -18,19 +18,15 @@
 
 <script>
 
-function getClearData() {
-    return {
-        now: parseInt(new Date().getTime() / 1000, 10),
-        buttons: [],
-        pageUp: false,
-        pageDn: false
-    }
-}
-
 export default {
     name: 'o2wStatusBar',
     data: function() {
-        return getClearData();
+        return  {
+           now: parseInt(new Date().getTime() / 1000, 10),
+           buttons: [],
+           pageUp: false,
+           pageDn: false
+        };
     },
     created() {
         this.$root.$on("buttons", (data) => {
@@ -41,12 +37,6 @@ export default {
         this.$root.$on("scrollbar", (data) => {
             this.pageUp= data.Offset > 0;
             this.pageDn= (data.Total - maxLines) > data.Offset;
-        });
-        this.$root.$on("clearmenu", (data) => {
-            let clearData= getClearData();
-            for (let key in clearData)
-                this[key]= clearData[key];
-            this.$root.$set(menuItem, "on", false);
         });
     },
     computed: {

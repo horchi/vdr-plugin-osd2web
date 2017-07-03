@@ -161,6 +161,7 @@ void cSkinOsd2WebDisplayMenu::Clear()
 
    addToJson(obj, "clear", yes);
    cUpdate::pushMessage(obj, "clearmenu");
+   cUpdate::pushMessage(json_object(), "buttons");  // send empty button object
 }
 
 void cSkinOsd2WebDisplayMenu::SetTitle(const char *Title)
