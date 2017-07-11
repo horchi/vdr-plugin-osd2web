@@ -5,7 +5,7 @@
         <h3 v-if="!replay_active" class="d-block my-auto ml-3 card-title htxt chtxt">&nbsp;{{channel.channelnumber}}</h3>
         <h3 class="d-block my-auto card-title chtxt">&nbsp;{{channel.channelname}}</h3>
         <div v-if="$root.hasChannelLogos" class="media my-auto d-flex flex-column ml-auto p-1 chlogo">
-          <img align="right" class="d-block" style="max-height: 95%" :src="'/data/channellogo?name=' + channel.channelname + '&id=' + channel.channelid" />
+          <img align="right" class="d-block" style="max-height: 95%" :src="'/data/channellogo?name=' + logoname + '&id=' + channel.channelid" />
         </div>
       </div>
     </div>
@@ -44,6 +44,11 @@ export default {
             this.channel.channelname = data.info.channelname;
             this.replay = data;
         });
+    },
+    computed: {
+        logoname: function () {
+            return encodeURIComponent(this.channel.channelname);
+        }
     }
 }
 </script>

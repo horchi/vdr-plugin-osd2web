@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.1.21"
-#define VERSION_DATE  "03.07.2017"
+#define _VERSION      "0.1.22"
+#define VERSION_DATE  "10.07.2017"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2017-07-10: version 0.1.22 (horchi)
+   - Change: VDR 2.3.8 porting
 
 2017-07-03: version 0.1.21 (horchi)
    - change:  some skin improvements

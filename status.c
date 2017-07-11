@@ -63,22 +63,6 @@ void cUpdate::Recording(const cDevice* Device, const char* Name,
                         const char* FileName, bool On)
 {
    triggerRecordingsUpdate = yes;
-/*
-  not needed - since 'timers' support all needed data
-
-   tell(3, "Recording: Recording '%s', Name '%s', FileName '%s'",
-        On ? "Start" : "Stop" , notNull(Name), FileName);
-
-   // to be implemented finally ... add loookup of recording ..
-
-   json_t* oRecording = json_object();
-
-   addToJson(oRecording, "state", On ? "started" : "endet");
-   addToJson(oRecording, "name", Name);
-   addToJson(oRecording, "filename", FileName);
-
-   cUpdate::pushMessage(oRecording, "recording");
-*/
 }
 
 //***************************************************************************
@@ -268,27 +252,41 @@ void cUpdate::updateTimers()
 // Update Recordings
 //***************************************************************************
 
+bool compareTime(const cRecording*& first, const cRecording*& second)
+{
+   if (first->Start() > second->Start())
+      return true;
+
+   return false;
+}
+
 void cUpdate::updateRecordings()
 {
    json_t* oRecordings = json_array();
    int count = 0;
+
+   std::list<const cRecording*> recList;
 
    triggerRecordingsUpdate = no;
 
    GET_TIMERS_READ(timers);
    GET_RECORDINGS_READ(recordings);
 
-   for (const cRecording* recording = recordings->First(); recording; recording = recordings->Next(recording ))
+   for (const cRecording* recording = recordings->First(); recording; recording = recordings->Next(recording))
    {
-      // olny recordings of the last 8 days
+      // if (recording->Start() <= time(0)-8*tmeSecondsPerDay)  // only last 8 days
+      //   continue;
 
-      if (recording->Start() > time(0)-8*tmeSecondsPerDay)
-      {
-         json_t* oRecording = json_object();
-         recording2Json(oRecording, timers, recording, cOsdService::ObjectShape::osSmall);
-         json_array_append_new(oRecordings, oRecording);
-         count++;
-      }
+      recList.push_back(recording);
+   }
+
+   recList.sort(compareTime);
+
+   for (auto it = recList.begin(); it != recList.end() && count < 10; it++, count++)
+   {
+      json_t* oRecording = json_object();
+      recording2Json(oRecording, timers, *it, cOsdService::ObjectShape::osSmall);
+      json_array_append_new(oRecordings, oRecording);
    }
 
    cUpdate::pushMessage(oRecordings, "recordings");

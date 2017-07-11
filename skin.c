@@ -91,7 +91,9 @@ class cSkinOsd2WebDisplayMenu : public cSkinDisplayMenu
       virtual void SetButtons(const char* Red, const char* Green = NULL, const char* Yellow = NULL, const char* Blue = NULL);
       virtual void SetMessage(eMessageType Type, const char* Text);
       virtual void SetItem(const char* Text, int Index, bool Current, bool Selectable);
-      virtual bool SetItemEvent(const cEvent* Event, int Index, bool Current, bool Selectable, const cChannel *Channel, bool WithDate, eTimerMatch TimerMatch);
+      virtual bool SetItemEvent(const cEvent *Event, int Index, bool Current, bool Selectable, const cChannel *Channel, bool WithDate, eTimerMatch TimerMatch, bool TimerActive);
+      virtual bool SetItemEvent(const cEvent *Event, int Index, bool Current, bool Selectable, const cChannel *Channel, bool WithDate, eTimerMatch TimerMatch)
+         { return SetItemEvent(Event, Index, Current, Selectable, Channel, WithDate, TimerMatch, yes); }
       virtual bool SetItemChannel(const cChannel* Channel, int Index, bool Current, bool Selectable, bool WithProvider);
       virtual bool SetItemRecording(const cRecording* Recording, int Index, bool Current, bool Selectable, int Level, int Total, int New);
       virtual bool SetItemTimer(const cTimer* Timer, int Index, bool Current, bool Selectable);
@@ -218,9 +220,9 @@ void cSkinOsd2WebDisplayMenu::SetItem(const char* Text, int Index, bool Current,
    cUpdate::pushMessage(oMenuItem, "menuitem");
 }
 
-bool cSkinOsd2WebDisplayMenu::SetItemEvent(const cEvent* Event, int Index, bool Current,
+bool cSkinOsd2WebDisplayMenu::SetItemEvent(const cEvent *Event, int Index, bool Current,
                                            bool Selectable, const cChannel *Channel,
-                                           bool WithDate, eTimerMatch TimerMatch)
+                                           bool WithDate, eTimerMatch TimerMatch, bool TimerActive)
 {
    tell(4, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetItemEvent()");
 
@@ -234,6 +236,7 @@ bool cSkinOsd2WebDisplayMenu::SetItemEvent(const cEvent* Event, int Index, bool 
 
    addToJson(oMenuItem, "index", Index);
    addToJson(oMenuItem, "current", Current);
+   addToJson(oMenuItem, "active", TimerActive);
    addToJson(oMenuItem, "selectable", Selectable);
    addToJson(oMenuItem, "withdate", WithDate);
    addToJson(oMenuItem, "event", oEvent);

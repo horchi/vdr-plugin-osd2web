@@ -172,6 +172,8 @@ const char** cPluginOsd2Web::SVDRPHelpPages()
       "    Attach osd2web to the skin interface",
       "DETACH\n"
       "    Detach osd2web to the skin interface (if it isn't the default skin)",
+      "UPDREC\n"
+      "    Update Recording List",
 
       0
    };
@@ -216,6 +218,12 @@ cString cPluginOsd2Web::SVDRPCommand(const char* cmd, const char* Option, int& R
       // call always, independent of check states above!!
 
       update->setSkinAttachState(no, yes);
+   }
+
+   else if (strcasecmp(cmd, "UPDREC") == 0)
+   {
+      update->triggerRecordingsUpdate = yes;
+      result = "recording update triggered";
    }
 
    return result;
