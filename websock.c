@@ -283,8 +283,8 @@ int cWebSock::serveFile(lws* wsi, const char* path)
    if (!isEmpty(suffix))
    {
       if      (strcmp(suffix, "png") == 0)   mime = "image/png";
-      else if (strcmp(suffix, "jpg") == 0)   mime = "image/jpg";
-      else if (strcmp(suffix, "jpeg") == 0)  mime = "image/jpg";
+      else if (strcmp(suffix, "jpg") == 0)   mime = "image/jpeg";
+      else if (strcmp(suffix, "jpeg") == 0)  mime = "image/jpeg";
       else if (strcmp(suffix, "gif") == 0)   mime = "image/gif";
       else if (strcmp(suffix, "svg") == 0)   mime = "image/svg+xml";
       else if (strcmp(suffix, "html") == 0)  mime = "text/html";
