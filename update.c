@@ -543,7 +543,7 @@ void cUpdate::updateDiaShow(int force)
       if (force)
       {
          json_t* oDiaShow = json_object();
-         addToJson(oDiaShow, "active", yes);
+         addToJson(oDiaShow, "active", no);
          cUpdate::pushMessage(oDiaShow, "diashow");
       }
 
