@@ -29,10 +29,12 @@ export default {
     data() {
         return {
             replay_active: null,
+            diashow_active: null,
             channel: {},
             present: {},
             following: {},
-            replay: {}
+            replay: {},
+            diashow: {}
         }
     },
     created() {
@@ -48,6 +50,7 @@ export default {
             this.replay = data;
         });
         this.$root.$on("diashow", (data) => {
+            this.replay_active = null;
             this.diashow_active = data.active;
             this.diashow = data;
         });

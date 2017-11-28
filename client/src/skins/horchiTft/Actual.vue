@@ -49,6 +49,7 @@ export default {
             this.replay = data;
         });
         this.$root.$on("diashow", (data) => {
+            this.replay_active = null;
             this.diashow_active = data.active;
             this.diashow = data;
         });

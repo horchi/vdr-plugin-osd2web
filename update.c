@@ -75,6 +75,7 @@ cUpdate::cUpdate()
    triggerTimerUpdate = no;
    triggerRecordingsUpdate = no;
    triggerReplayUpdate = no;
+   triggerForce = no;
    nextPresentUpdateAt = time(0);
    epg2vdrIsLoaded = no;
    actualClientCount = 0;
@@ -199,8 +200,10 @@ int cUpdate::setSkinAttachState(int attach, int bySvdrp)
 int cUpdate::toggleView(int next)
 {
    viewMode = viewMode == vmNormal ? vmDia : vmNormal;
+   triggerForce = yes;
 
    tell(0, "View mode toggled to (%d)", viewMode);
+
    return done;
 }
 
@@ -237,12 +240,12 @@ void cUpdate::atMeanwhile()
    if (triggerRecordingsUpdate)
       updateRecordings();
 
-   if (triggerReplayUpdate)
-      updateReplay();   // calls updateControl()
+   if (triggerReplayUpdate || triggerForce)
+      updateReplay(triggerForce);   // calls updateControl()
    else
       updateControl();
 
-   updateDiaShow();
+   updateDiaShow(triggerForce);
 
    if (menuCloseTrigger)
    {
@@ -278,6 +281,7 @@ void cUpdate::atMeanwhile()
    }
 
    actualClientCount = webSock->getClientCount();
+   triggerForce = no;
 }
 
 //***************************************************************************
@@ -535,9 +539,18 @@ void cUpdate::updateDiaShow(int force)
    static time_t nextAt = time(0);
 
    if (viewMode != vmDia)
-      return;
+   {
+      if (force)
+      {
+         json_t* oDiaShow = json_object();
+         addToJson(oDiaShow, "active", yes);
+         cUpdate::pushMessage(oDiaShow, "diashow");
+      }
 
-   if (time(0) < nextAt)
+      return;
+   }
+
+   if (time(0) < nextAt && !force)
       return;
 
    tell(0, "updateDiaShow #3");
@@ -554,6 +567,7 @@ void cUpdate::updateDiaShow(int force)
 
    json_t* oDiaShow = json_object();
 
+   addToJson(oDiaShow, "active", yes);
    addToJson(oDiaShow, "titel", "Test Image");
    addToJson(oDiaShow, "filename", file->path.c_str());
    addToJson(oDiaShow, "width", file->width);

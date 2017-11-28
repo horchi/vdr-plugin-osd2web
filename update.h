@@ -293,6 +293,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       int triggerTimerUpdate;
       int triggerRecordingsUpdate;
       int triggerReplayUpdate;
+      int triggerForce;
 
       // static message interface to web thread
 
