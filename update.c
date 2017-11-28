@@ -276,6 +276,7 @@ void cUpdate::Action()
    // init File Service
 
    initFileService();
+   initDia("/dia");
 
    // init web socket
 

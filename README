@@ -8,6 +8,8 @@ Gedacht haben wir, Dirk (Rechner) und ich es einerseits als Ergänzung des 'epgd
 
 Voraussetzung:
   libwebsocket Version >= 2.1.0.
+  libtinyxml2-dev
+  libexif-dev
 
 Installation:
   git clone git@github.com:horchi/vdr-plugin-osd2web.git
@@ -38,14 +40,11 @@ osd2web (0.0.3-GITf19cff5) - osd2web plugin
    -e,              --epgimgpath              path to epg images
                                               (default: /var/cache/vdr/epgimages)
 
-
-
-setup.conf
+setup.conf:
 
 osd2web.LogLevel = 1   (0-4, default 1)
 
-
-Verwendung
+Verwendung:
 
 Wenn der VDR gestartet ist zugriff über den Browser:
 

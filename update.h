@@ -361,6 +361,27 @@ class cUpdate : public cStatus, cThread, public cOsdService
       int wdInotify;
 
       std::list<std::map<std::string,FileVariable>> serviceVariableFiles;
+
+      // dia show stuff
+
+      int initDia(const char* path);
+
+      struct ImageFile
+      {
+         int initialized;
+         std::string path;
+         unsigned int width;
+         unsigned int height;
+         unsigned int orientation;
+         unsigned int landscape;
+      };
+
+      int getNextDia(std::vector<ImageFile>::iterator& it, ImageFile*& file);
+      int scanDiaDir(const char* path, int level = 0);
+
+      std::vector<ImageFile> diaImages;
+      std::vector<ImageFile>::iterator current;
+
 };
 
 //***************************************************************************
