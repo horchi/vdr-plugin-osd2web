@@ -200,6 +200,7 @@ int cUpdate::toggleView(int next)
 {
    viewMode = viewMode == vmNormal ? vmDia : vmNormal;
 
+   tell(0, "View mode toggled to (%d)", viewMode);
    return done;
 }
 
@@ -544,7 +545,10 @@ void cUpdate::updateDiaShow(int force)
    nextAt = time(0) + 20;
 
    if (getNextDia(itCurrentDiaImage, file) != success)
+   {
+      tell(0, "No next image for diasho found!");
       return;
+   }
 
    json_t* oDiaShow = json_object();
 
@@ -555,5 +559,6 @@ void cUpdate::updateDiaShow(int force)
    addToJson(oDiaShow, "orientation", file->orientation);
    addToJson(oDiaShow, "landscape", file->landscape);
 
+   tell(0, "Update diashow image to '%s'", file->path.c_str());
    cUpdate::pushMessage(oDiaShow, "diashow");
 }
