@@ -174,6 +174,10 @@ const char** cPluginOsd2Web::SVDRPHelpPages()
       "    Detach osd2web to the skin interface (if it isn't the default skin)",
       "UPDREC\n"
       "    Update Recording List",
+      "PREV \n"
+      "    Set the normal view to the previous section\n",
+      "NEXT \n"
+      "    Set the normal view to the next section\n",
 
       0
    };
@@ -224,6 +228,16 @@ cString cPluginOsd2Web::SVDRPCommand(const char* cmd, const char* Option, int& R
    {
       update->triggerRecordingsUpdate = yes;
       result = "recording update triggered";
+   }
+   else if (strcasecmp(cmd, "PREV") == 0)
+   {
+      update->toggleView(no);
+      result = "switched view";
+   }
+   else if (strcasecmp(cmd, "NEXT") == 0)
+   {
+      update->toggleView(yes);
+      result = "switched view";
    }
 
    return result;

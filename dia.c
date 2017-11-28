@@ -98,7 +98,7 @@ int cUpdate::initDia(const char* path)
    scanDiaDir(path);
 
    tell(0, "Info: Added (%ld) images of path '%s'", diaImages.size(), path);
-   current = diaImages.end();
+   itCurrentDiaImage = diaImages.end();
 
    return success;
 }
@@ -210,13 +210,10 @@ int cUpdate::getNextDia(std::vector<ImageFile>::iterator& it, ImageFile*& file)
       file->orientation = getJpegOrientation(file->path.c_str());
       jpegDimensions(file->path.c_str(), file->width, file->height);
 
-      file->landscape = (file->orientation < 5 && file->width < file->height) || (file->orientation >= 5 && file->width > file->height) ? no : yes;
+      file->landscape =
+         (file->orientation < 5 && file->width < file->height) ||
+         (file->orientation >= 5 && file->width > file->height) ? no : yes;
    }
 
    return success;
 }
-
-   // ImageFile* file;
-
-   // if (getNextDia(current, file) != success)
-   //     return done;

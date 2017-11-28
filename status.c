@@ -116,6 +116,9 @@ void cUpdate::updatePresentFollowing()
    if (activeControl)         // skip if replay is running
       return;
 
+   if (viewMode != vmNormal)
+      return;
+
    if (!currentChannelNr)
    {
       nextPresentUpdateAt = time(0) + 60;
@@ -309,6 +312,9 @@ void cUpdate::updateReplay(int force)
       updateControl(force);
       return;
    }
+
+   if (viewMode != vmNormal)
+      return;
 
    GET_TIMERS_READ(timers);
    GET_RECORDINGS_READ(recordings);

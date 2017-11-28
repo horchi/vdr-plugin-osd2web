@@ -91,6 +91,7 @@ cUpdate::cUpdate()
    wdInotify = 0;
    lastClientActionAt = time(0);
    attachedBySvdrp = no;
+   viewMode = vmNormal;
 
    for (int i = 0; i <= mcCam; i++)
    {
@@ -192,6 +193,17 @@ int cUpdate::setSkinAttachState(int attach, int bySvdrp)
 }
 
 //***************************************************************************
+// Toggel View
+//***************************************************************************
+
+int cUpdate::toggleView(int next)
+{
+   viewMode = viewMode == vmNormal ? vmDia : vmNormal;
+
+   return done;
+}
+
+//***************************************************************************
 // Stop
 //***************************************************************************
 
@@ -228,6 +240,8 @@ void cUpdate::atMeanwhile()
       updateReplay();   // calls updateControl()
    else
       updateControl();
+
+   updateDiaShow();
 
    if (menuCloseTrigger)
    {
@@ -509,4 +523,37 @@ int cUpdate::performPing()
    }
 
    return done;
+}
+
+//***************************************************************************
+// Update Dia Show
+//***************************************************************************
+
+void cUpdate::updateDiaShow(int force)
+{
+   static time_t nextAt = time(0);
+
+   if (viewMode != vmDia)
+      return;
+
+   if (time(0) >= nextAt)
+      return;
+
+   ImageFile* file;
+
+   nextAt = time(0) + 20;
+
+   if (getNextDia(itCurrentDiaImage, file) != success)
+      return;
+
+   json_t* oDiaShow = json_object();
+
+   addToJson(oDiaShow, "titel", "Test Image");
+   addToJson(oDiaShow, "filename", file->path.c_str());
+   addToJson(oDiaShow, "width", file->width);
+   addToJson(oDiaShow, "height", file->height);
+   addToJson(oDiaShow, "orientation", file->orientation);
+   addToJson(oDiaShow, "landscape", file->landscape);
+
+   cUpdate::pushMessage(oDiaShow, "diashow");
 }

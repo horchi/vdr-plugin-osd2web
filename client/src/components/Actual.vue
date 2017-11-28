@@ -13,6 +13,9 @@
       <o2w-replaycontrol />
       <o2w-replay :replay="replay"></o2w-replay>
     </div>
+    <div v-else-if="diashow_active">
+      <o2w-diashow :diashow="diashow"></o2w-diashow>
+    </div>
     <div v-else="">
       <o2w-event :event="present"></o2w-event>
       <o2w-event :event="following"></o2w-event>
@@ -43,6 +46,10 @@ export default {
             this.channel.channelid = data.info.channelid;
             this.channel.channelname = data.info.channelname;
             this.replay = data;
+        });
+        this.$root.$on("diashow", (data) => {
+            this.diashow_active = data.active;
+            this.diashow = data;
         });
     },
     computed: {
