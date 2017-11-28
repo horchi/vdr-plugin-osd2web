@@ -106,6 +106,9 @@ cUpdate::cUpdate()
    if (!config.logoPath)
       asprintf(&config.logoPath, "%s/channellogos", config.confPath);
 
+   if (!config.diaPath)
+      asprintf(&config.diaPath, "%s/dia/", config.httpPath);
+
    webSock = new cWebSock(config.httpPath);
 }
 
@@ -295,7 +298,7 @@ void cUpdate::Action()
    // init File Service
 
    initFileService();
-   initDia("/dia");
+   initDia(config.diaPath);
 
    // init web socket
 
@@ -567,7 +570,7 @@ void cUpdate::updateDiaShow(int force)
 
    addToJson(oDiaShow, "active", yes);
    addToJson(oDiaShow, "titel", "Test Image");
-   addToJson(oDiaShow, "filename", file->path.c_str());
+   addToJson(oDiaShow, "filename", file->path.c_str() + strlen(config.httpPath));
    addToJson(oDiaShow, "width", file->width);
    addToJson(oDiaShow, "height", file->height);
    addToJson(oDiaShow, "orientation", file->orientation);

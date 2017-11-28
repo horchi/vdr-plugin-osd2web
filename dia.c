@@ -192,6 +192,10 @@ int cUpdate::scanDiaDir(const char* path, int level)
    return success;
 }
 
+//***************************************************************************
+// Get Next Dia Image
+//***************************************************************************
+
 int cUpdate::getNextDia(std::vector<ImageFile>::iterator& it, ImageFile*& file)
 {
    if (it != diaImages.end())

@@ -29,6 +29,7 @@ cOsd2WebConfig::cOsd2WebConfig()
    httpPath = 0;
    confPath = 0;
    logoPath = 0;
+   diaPath = 0;
    logoSuffix = strdup("png");
    epgImagePath = strdup("/var/cache/vdr/epgimages");
 }
@@ -40,4 +41,5 @@ cOsd2WebConfig::~cOsd2WebConfig()
    free(epgImagePath);
    free(logoSuffix);
    free(logoPath);
+   free(diaPath);
 }

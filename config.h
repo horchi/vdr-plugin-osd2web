@@ -26,6 +26,7 @@ struct cOsd2WebConfig : public cConfigBase
       void setLogoSuffix(const char* s)   { free(logoSuffix); logoSuffix = strdup(s); }
       void setLogoPath(const char* p)     { free(logoPath); logoPath = strdup(p); }
       void setEpgImagePath(const char* s) { free(epgImagePath); epgImagePath = strdup(s); }
+      void setDiaPath(const char* p)      { free(diaPath); diaPath = strdup(p); }
 
       int webPort;
       char* httpPath;
@@ -33,6 +34,7 @@ struct cOsd2WebConfig : public cConfigBase
       char* confPath;
       char* logoSuffix;
       char* logoPath;
+      char* diaPath;
       int logoNotLower;
       int logoById;
       int clientOsdTimeout;
