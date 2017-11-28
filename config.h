@@ -38,6 +38,7 @@ struct cOsd2WebConfig : public cConfigBase
       int logoNotLower;
       int logoById;
       int clientOsdTimeout;
+      int diaCycleTime;            // in seconds
 };
 
 extern cOsd2WebConfig config;

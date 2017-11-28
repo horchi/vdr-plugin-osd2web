@@ -30,6 +30,7 @@ cOsd2WebConfig::cOsd2WebConfig()
    confPath = 0;
    logoPath = 0;
    diaPath = 0;
+   diaCycleTime = 20;           // seconds
    logoSuffix = strdup("png");
    epgImagePath = strdup("/var/cache/vdr/epgimages");
 }

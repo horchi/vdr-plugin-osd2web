@@ -87,7 +87,7 @@ int event2Json(json_t* obj, const cEvent* event, const cChannel* channel,
       }
       else
       {
-         tell(0, "Debug: Parsing of xml data in aux failed");
+         tell(0, "Info: Parsing of xml data in events 'aux' value failed");
       }
    }
 #endif

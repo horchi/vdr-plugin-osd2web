@@ -558,7 +558,7 @@ void cUpdate::updateDiaShow(int force)
 
    ImageFile* file;
 
-   nextAt = time(0) + 20;
+   nextAt = time(0) + config.diaCycleTime;
 
    if (getNextDia(itCurrentDiaImage, file) != success)
    {
@@ -567,9 +567,11 @@ void cUpdate::updateDiaShow(int force)
    }
 
    json_t* oDiaShow = json_object();
+   std::string title = file->path.c_str() + strlen(config.diaPath);
+   title = strReplace("/", " - ", title);
 
    addToJson(oDiaShow, "active", yes);
-   addToJson(oDiaShow, "titel", "Test Image");
+   addToJson(oDiaShow, "title", title.c_str());
    addToJson(oDiaShow, "filename", file->path.c_str() + strlen(config.httpPath));
    addToJson(oDiaShow, "width", file->width);
    addToJson(oDiaShow, "height", file->height);
