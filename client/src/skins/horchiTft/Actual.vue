@@ -28,10 +28,12 @@ export default {
     data() {
         return {
             replay_active: null,
+            diashow_active: null,
             channel: {},
             present: {},
             following: {},
-            replay: {}
+            replay: {},
+            diashow: {}
         }
     },
     created() {
