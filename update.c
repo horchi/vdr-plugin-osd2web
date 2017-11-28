@@ -553,15 +553,13 @@ void cUpdate::updateDiaShow(int force)
    if (time(0) < nextAt && !force)
       return;
 
-   tell(0, "updateDiaShow #3");
-
    ImageFile* file;
 
    nextAt = time(0) + 20;
 
    if (getNextDia(itCurrentDiaImage, file) != success)
    {
-      tell(0, "No next image for diasho found!");
+      tell(0, "Info: No next image for diashow found!");
       return;
    }
 
