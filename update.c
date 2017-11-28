@@ -534,11 +534,17 @@ void cUpdate::updateDiaShow(int force)
 {
    static time_t nextAt = time(0);
 
+   tell(0, "updateDiaShow #1");
+
    if (viewMode != vmDia)
       return;
 
+   tell(0, "updateDiaShow #2");
+
    if (time(0) >= nextAt)
       return;
+
+   tell(0, "updateDiaShow #3");
 
    ImageFile* file;
 

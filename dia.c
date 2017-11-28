@@ -161,13 +161,13 @@ int cUpdate::scanDiaDir(const char* path, int level)
 
       if (isEmpty(ext))
       {
-         tell(0, "skipping file '%s' without extension", pEntry->d_name);
+         tell(4, "skipping file '%s' without extension", pEntry->d_name);
          continue;
       }
 
       if (!strcasestr(extensions, ext))
       {
-         tell(0, "skipping file '%s' with extension '%s'", pEntry->d_name, ext);
+         tell(4, "skipping file '%s' with extension '%s'", pEntry->d_name, ext);
          continue;
       }
 
