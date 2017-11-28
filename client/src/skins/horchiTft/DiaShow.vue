@@ -2,8 +2,6 @@
   <div >
     <div class="diashow card mt-1">
       <div v-show="diashow.title" style="height: 100%;">
-        <div class="card-block p-1" style="height: 100%;">
-        </div>
         <div class="row">
           <h3 class="card-title col-12 col-md-9 titletxt">{{diashow.title}}</h3>
         </div>
