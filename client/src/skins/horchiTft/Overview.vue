@@ -14,8 +14,8 @@
           <o2w-recording class="recordingarea" />
         </div>
       </div>
+      <o2w-statusbar />
     </div>
-    <o2w-statusbar />
   </div>
 </template>
 

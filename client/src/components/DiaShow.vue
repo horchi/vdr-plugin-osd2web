@@ -27,9 +27,6 @@ export default {
         diashow: Object
     },
     data() {
-        return {
-            current: 0
-        }
     },
     created() {
     },
