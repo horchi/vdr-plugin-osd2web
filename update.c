@@ -160,7 +160,7 @@ int cUpdate::setSkinAttachState(int attach, int bySvdrp)
 {
    if (isDefaultSkin())
    {
-      tell(1, "Ignoring '%s' skin request, osd2web ist configured as the default sikn",
+      tell(1, "Ignoring '%s' skin request, osd2web is configured as the default sikn",
            attach ? "attach" : "detach");
       return done;
    }
@@ -567,8 +567,13 @@ void cUpdate::updateDiaShow(int force)
    }
 
    json_t* oDiaShow = json_object();
-   std::string title = file->path.c_str() + strlen(config.diaPath);
-   title = strReplace("/", " - ", title);
+
+   const char* start = file->path.c_str() + strlen(config.diaPath);
+
+   while (*start && *start == '/')
+      start++;
+
+   title = strReplace("/", " - ", start);
 
    addToJson(oDiaShow, "active", yes);
    addToJson(oDiaShow, "title", title.c_str());
