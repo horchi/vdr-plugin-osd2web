@@ -388,8 +388,6 @@ int cUpdate::dispatchClientRequest()
 
 void cUpdate::forceRefresh()
 {
-   updateSkinState();
-
    updateDiaShow(yes);
    updateReplay(yes);
 
@@ -432,6 +430,7 @@ int cUpdate::performLogin(json_t* oObject)
       cUpdate::pushMessage(oRole, "rolechange", client);
    }
 
+   updateSkinState();
    forceRefresh();
 
    return done;
