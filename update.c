@@ -251,8 +251,8 @@ void cUpdate::atMeanwhile()
       if (triggerRecordingsUpdate)
          updateRecordings();
 
-      if (triggerReplayUpdate || triggerForce)
-         updateReplay(triggerForce);   // calls updateControl()
+      if (triggerReplayUpdate)
+         updateReplay();   // calls updateControl()
       else
          updateControl();
    }
@@ -291,7 +291,6 @@ void cUpdate::atMeanwhile()
    }
 
    actualClientCount = webSock->getClientCount();
-   triggerForce = no;
 }
 
 //***************************************************************************
@@ -399,6 +398,8 @@ void cUpdate::forceRefresh()
 
    if (menuCategory > mcUnknown)
       updateMenu();
+
+   triggerForce = no;
 }
 
 //***************************************************************************
