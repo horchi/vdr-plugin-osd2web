@@ -1,6 +1,6 @@
 <template>
   <div class="diashow">
-    <img class="img-fluid float-right carousel slide" :src="diashow.filename" style="width: 100%;" alt="">
+    <img class="img-fluid" :src="diashow.filename">
   </div>
 </div>
 </template>
@@ -16,9 +16,6 @@ export default {
     created() {
     },
     computed: {
-    },
-    updated: function() {
-        $('.carousel').carousel().each(function(){ $('.carousel-item',this).removeClass('active').first().addClass('active')});
     }
 }
 </script>

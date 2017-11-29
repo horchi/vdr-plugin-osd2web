@@ -85,6 +85,10 @@ body {
     background-color: transparent;
 }
 
+.img-fluid {
+    max-height: 100%;
+}
+
 .replay {
     height: 76vh;
     overflow: hidden;
