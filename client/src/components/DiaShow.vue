@@ -1,12 +1,6 @@
 <template>
-  <div class="diashow card mt-1">
-    <div class="clearfix">
-      <div :id="'diaImages' + diashow.filename" class="img-fluid float-right img-thumbnail carousel slide" data-ride="carousel" data-interval="5000">
-        <div class="carousel-inner dia-image" role="listbox">
-          <img class="d-block" :src="diashow.filename" style="width: 100%;" alt="">
-        </div>
-      </div>
-    </div>
+  <div class="diashow">
+    <img class="img-fluid float-right carousel slide" :src="diashow.filename" style="width: 100%;" alt="">
   </div>
 </div>
 </template>

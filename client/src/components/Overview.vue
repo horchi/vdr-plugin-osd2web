@@ -1,9 +1,7 @@
 <template>
   <div id="Overview">
     <div v-if="diashow_active">
-      <div class="row diaarea">
-        <o2w-diashow :diashow="diashow"></o2w-diashow>
-      </div>
+      <o2w-diashow :diashow="diashow" class="row diaarea" />
     </div>
     <div v-else="">
       <div class="row dataarea">
