@@ -237,6 +237,8 @@ void cUpdate::atMeanwhile()
    }
    else
    {
+      updateDiaShow();
+
       if (checkFileService() > 0)
          updateCustomData();
 
@@ -253,8 +255,6 @@ void cUpdate::atMeanwhile()
          updateReplay(triggerForce);   // calls updateControl()
       else
          updateControl();
-
-      updateDiaShow();
    }
 
    if (menuCloseTrigger)
@@ -388,13 +388,13 @@ int cUpdate::dispatchClientRequest()
 
 void cUpdate::forceRefresh()
 {
+   updateDiaShow(yes);
    updateSkinState();
    updateCustomData();
    updatePresentFollowing();  // trigger update of present/following
    updateTimers();
    updateReplay(yes);
    updateRecordings();
-   updateDiaShow(yes);
 
    if (menuCategory > mcUnknown)
       updateMenu();
