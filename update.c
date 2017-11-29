@@ -231,24 +231,31 @@ void cUpdate::atMeanwhile()
 {
    // dispatch pending triggers
 
-   if (checkFileService() > 0)
-      updateCustomData();
-
-   if (nextPresentUpdateAt <= time(0))
-      updatePresentFollowing();
-
-   if (triggerTimerUpdate)
-      updateTimers();
-
-   if (triggerRecordingsUpdate)
-      updateRecordings();
-
-   if (triggerReplayUpdate || triggerForce)
-      updateReplay(triggerForce);   // calls updateControl()
+   if (triggerForce)
+   {
+      forceRefresh();
+   }
    else
-      updateControl();
+   {
+      if (checkFileService() > 0)
+         updateCustomData();
 
-   updateDiaShow(triggerForce);
+      if (nextPresentUpdateAt <= time(0))
+         updatePresentFollowing();
+
+      if (triggerTimerUpdate)
+         updateTimers();
+
+      if (triggerRecordingsUpdate)
+         updateRecordings();
+
+      if (triggerReplayUpdate || triggerForce)
+         updateReplay(triggerForce);   // calls updateControl()
+      else
+         updateControl();
+
+      updateDiaShow();
+   }
 
    if (menuCloseTrigger)
    {
@@ -376,6 +383,24 @@ int cUpdate::dispatchClientRequest()
 }
 
 //***************************************************************************
+// Force Refresh
+//***************************************************************************
+
+void cUpdate::forceRefresh()
+{
+   updateSkinState();
+   updateCustomData();
+   updatePresentFollowing();  // trigger update of present/following
+   updateTimers();
+   updateReplay(yes);
+   updateRecordings();
+   updateDiaShow(yes);
+
+   if (menuCategory > mcUnknown)
+      updateMenu();
+}
+
+//***************************************************************************
 // Perform Login
 //***************************************************************************
 
@@ -404,15 +429,7 @@ int cUpdate::performLogin(json_t* oObject)
       cUpdate::pushMessage(oRole, "rolechange", client);
    }
 
-   updateSkinState();
-   updateCustomData();
-   updatePresentFollowing();  // trigger update of present/following
-   updateTimers();
-   updateReplay(yes);
-   updateRecordings();
-
-   if (menuCategory > mcUnknown)
-      updateMenu();
+   forceRefresh();
 
    return done;
 }

@@ -333,6 +333,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       void updateCustomData();
       void updateSkinState();
 
+      void forceRefresh();
       int dispatchClientRequest();
       int performLogin(json_t* oObject);
       int performPing();
