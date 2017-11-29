@@ -388,12 +388,15 @@ int cUpdate::dispatchClientRequest()
 
 void cUpdate::forceRefresh()
 {
-   updateDiaShow(yes);
    updateSkinState();
-   updateCustomData();
-   updatePresentFollowing();  // trigger update of present/following
-   updateTimers();
+
+   updateDiaShow(yes);
    updateReplay(yes);
+
+   updatePresentFollowing();  // trigger update of present/following
+
+   updateCustomData();
+   updateTimers();
    updateRecordings();
 
    if (menuCategory > mcUnknown)

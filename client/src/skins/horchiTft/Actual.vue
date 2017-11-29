@@ -1,6 +1,6 @@
 <template>
   <div id="Actual">
-    <div v-if="channel.channelid" class="channel card mt-1">
+    <div class="channel card mt-1">
       <div class="row" style="height: 100%;">
         <h3 v-if="!replay_active" class="d-block my-auto ml-3 card-title htxt chtxt">&nbsp;{{channel.channelnumber}}</h3>
         <h3 class="d-block my-auto card-title chtxt">&nbsp;{{channel.channelname}}</h3>
