@@ -573,7 +573,7 @@ void cUpdate::updateDiaShow(int force)
    while (*start && *start == '/')
       start++;
 
-   title = strReplace("/", " - ", start);
+   std::string title = strReplace("/", " - ", start);
 
    addToJson(oDiaShow, "active", yes);
    addToJson(oDiaShow, "title", title.c_str());
