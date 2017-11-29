@@ -1,13 +1,11 @@
 <template>
   <div id="Overview">
     <div v-if="diashow_active">
-      <div class="row diaarea">
-        <o2w-diashow :diashow="diashow"></o2w-diashow>
-      </div>
+      <o2w-diashow :diashow="diashow" class="row diaarea" />
     </div>
     <div v-else="">
       <div class="row dataarea">
-        <o2w-actual class="eventarea col-12 col-md-9" />
+        <o2w-actual :actual="actual" class="eventarea col-12 col-md-9" />
         <div class="rightarea pr-2 col-12 col-md-3">
           <div class="timerarea">
             <o2w-timer />
@@ -28,13 +26,17 @@ export default {
     data() {
         return {
             diashow_active: null,
-            diashow: {}
+            diashow: {},
+            actual: {}
         }
     },
     created() {
         this.$root.$on("diashow", (data) => {
             this.diashow_active = data.active;
             this.diashow = data;
+        });
+        this.$root.$on("actual", (data) => {
+            this.actual = data;
         });
     },
     computed: {
