@@ -4,8 +4,8 @@
       <div class="row" style="height: 100%;">
         <h3 v-if="!replay_active" class="col-12 col-sm-1 d-block my-auto card-title htxt chtxt">&nbsp;{{channel.channelnumber}}</h3>
         <h3 class="col-12 col-sm-6 d-block my-auto card-title chtxt">&nbsp;{{channel.channelname}}</h3>
-        <div v-if="$root.hasChannelLogos" class="col-12 col-sm-5 my-auto d-flex flex-column ml-auto chlogo">
-          <img class="d-block" style="max-height: 95%; align-content: right;" :src="'/data/channellogo?name=' + logoname + '&id=' + channel.channelid" />
+        <div v-if="$root.hasChannelLogos" class="col-12 col-sm-5 my-auto d-flex flex-column ml-auto" style="height: 100%;">
+          <img class="chlogo d-block" :src="'/data/channellogo?name=' + logoname + '&id=' + channel.channelid" />
         </div>
       </div>
     </div>

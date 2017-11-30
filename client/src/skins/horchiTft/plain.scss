@@ -117,8 +117,9 @@ body {
 // channel logo
 
 .chlogo {
-    // height: 100%;
-    // margin-right: 20px;
+   max-height: 95%;
+   align-content: right;
+   object-fit: scale-down;
 }
 
 // text elemente
