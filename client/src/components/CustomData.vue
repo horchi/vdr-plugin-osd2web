@@ -1,7 +1,7 @@
 <template>
   <div v-if="customdata" id="customdata" style="overflow: hidden;">
     <div v-for="(item, key, index) in customdata" class="mt-2 w-100 justify-content-between customdata card flex-column p-1 active">
-      <small class="customfiletxt">{{key}}</small><br/>
+      <small class="customfiletxt">{{key}}</small>
       <div v-for="(variable, n) in item" class="row">
         <small class="col-12 col-sm-8 customname">{{variable.name}}</small>
         <small class="col-12 col-sm-4 customvalue">{{variable.value}}</small>
