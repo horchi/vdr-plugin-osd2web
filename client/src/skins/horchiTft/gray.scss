@@ -4,6 +4,10 @@ body {
     background-color: black;
 }
 
+.list-group-item.active {
+   border-color: black;
+}
+
 // container
 
 .statusbar {
@@ -42,6 +46,10 @@ body {
     color: white;
 }
 
+.durationtxt  {
+    color: white;
+}
+
 .htxt {
     color: #3e53f2;
 }
@@ -59,7 +67,7 @@ body {
 // recording list
 
 .recording  {
-    background: linear-gradient(to bottom right, #a8004d, black);
+    background: linear-gradient(to bottom right, #000, #5e9fa4);
 }
 
 // timer list

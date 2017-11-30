@@ -120,6 +120,7 @@ body {
    max-height: 95%;
    align-content: right;
    object-fit: scale-down;
+   align-self: flex-end;
 }
 
 // text elemente
@@ -133,6 +134,12 @@ body {
 .titletxt {
     font-size: 6vh;
     margin-bottom: 0px;
+}
+
+.durationtxt {
+    font-size: 6vh;
+    margin-bottom: 0px;
+    text-align: right;
 }
 
 .htxt {

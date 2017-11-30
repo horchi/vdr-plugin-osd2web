@@ -13,8 +13,8 @@
         </div>
         <div class="row">
           <h3 class="card-title col-12 col-md-9 titletxt">{{$root.formatTime(event.starttime)}}&nbsp;{{event.title}}</h3>
-          <div v-if="elapsed > 0" class="ml-auto col-12 col-md-3 desctxt">{{elapsed}}/{{parseInt(event.duration/60,10)}} min</div>
-          <div v-if="elapsed <= 0" class="ml-auto col-12 col-md-3 desctxt">{{parseInt(event.duration/60,10)}} min</div>
+          <div v-if="elapsed > 0" class="ml-auto col-12 col-md-3 durationtxt">{{elapsed}}/{{parseInt(event.duration/60,10)}} min</div>
+          <div v-if="elapsed <= 0" class="ml-auto col-12 col-md-3 durationtxt">{{parseInt(event.duration/60,10)}} min</div>
         </div>
         <div class="clearfix">
           <div v-if="event.epg2vdr && imagecnt > 0" :id="'evImages' + event.eventid" class="img-fluid float-right epg-image carousel slide" data-ride="carousel" data-interval="5000">
