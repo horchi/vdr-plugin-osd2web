@@ -192,6 +192,7 @@ body {
 }
 
 .customdata  {
+    overflow: hidden;
     line-height: 1.0;
     font-size: 3.3vh;
 }
@@ -199,6 +200,13 @@ body {
 .customfiletxt {
     text-align: center;
     font-size: 3.0vh;
+}
+
+.customname  {
+}
+
+.customvalue  {
+    text-align: right;
 }
 
 .recording  {
