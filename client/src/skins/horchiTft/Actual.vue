@@ -2,10 +2,10 @@
   <div id="Actual">
     <div class="channel card mt-1">
       <div class="row" style="height: 100%;">
-        <h3 v-if="!replay_active" class="d-block my-auto ml-3 card-title htxt chtxt">&nbsp;{{channel.channelnumber}}</h3>
-        <h3 class="d-block my-auto card-title chtxt">&nbsp;{{channel.channelname}}</h3>
-        <div v-if="$root.hasChannelLogos" class="media my-auto d-flex flex-column ml-auto p-1 chlogo">
-          <img align="right" class="d-block" style="max-height: 95%" :src="'/data/channellogo?name=' + logoname + '&id=' + channel.channelid" />
+        <h3 v-if="!replay_active" class="col-12 col-sm-1 d-block my-auto card-title htxt chtxt">&nbsp;{{channel.channelnumber}}</h3>
+        <h3 class="col-12 col-sm-6 d-block my-auto card-title chtxt">&nbsp;{{channel.channelname}}</h3>
+        <div v-if="$root.hasChannelLogos" class="col-12 col-sm-5 my-auto d-flex flex-column ml-auto chlogo">
+          <img class="d-block" style="max-height: 95%; align-content: right;" :src="'/data/channellogo?name=' + logoname + '&id=' + channel.channelid" />
         </div>
       </div>
     </div>
