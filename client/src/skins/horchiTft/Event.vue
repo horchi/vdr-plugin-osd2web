@@ -25,10 +25,10 @@
             </div>
           </div>
           <div v-if="event.epg2vdr">
-            <div v-if="event.epg2vdr.shorttext" class="card-text htxt">{{event.shorttext}}</div>
-            <div v-if="event.epg2vdr.genre" class="card-text htxt">{{event.epg2vdr.genre}}&nbsp;/&nbsp;{{event.epg2vdr.category}}</div>
-            <div v-if="event.epg2vdr.episodepartname" class="card-text htxt">{{event.epg2vdr.episodepartname}}</div>
-            <div v-if="event.epg2vdr.country" class="card-text htxt">{{event.epg2vdr.country}}&nbsp;{{event.epg2vdr.year}}</div>
+            <div v-if="event.epg2vdr.shorttext" class="card-text htxt">{{event.shorttext}}&nbsp;/&nbsp;{{event.epg2vdr.genre}}&nbsp;/&nbsp;{{event.epg2vdr.category}}</div>
+<!--            <div v-if="event.epg2vdr.genre" class="card-text htxt">{{event.epg2vdr.genre}}&nbsp;/&nbsp;{{event.epg2vdr.category}}</div> -->
+            <div v-if="event.epg2vdr.episodepartname" class="card-text htxt">{{event.epg2vdr.episodepartname}}&nbsp;&nbsp;({{event.epg2vdr.country}}&nbsp;{{event.epg2vdr.year}})</div>
+<!--            <div v-if="event.epg2vdr.country" class="card-text htxt">({{event.epg2vdr.country}}&nbsp;{{event.epg2vdr.year}})</div> -->
             <div v-if="event.epg2vdr.tipp" class="card-text htxt">{{event.epg2vdr.tipp}}&nbsp;&nbsp;{{event.epg2vdr.txtrating}}</div>
           </div>
           <div v-else="">

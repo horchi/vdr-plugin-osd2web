@@ -127,6 +127,7 @@ body {
 .chtxt {
     font-size: 8vh !important;
     height: 100%;
+    padding: 0px;
 }
 
 .titletxt {
@@ -175,7 +176,7 @@ body {
 }
 
 .tmtxt {   // timer text
-    font-size: 2.7vh;
+    font-size: 3.2vh;
 }
 
 .tltmch {  // timer channel
@@ -194,12 +195,12 @@ body {
 .customdata  {
     overflow: hidden;
     line-height: 1.0;
-    font-size: 3.3vh;
+    font-size: 4.3vh;
 }
 
 .customfiletxt {
     text-align: center;
-    font-size: 3.0vh;
+    font-size: 5.0vh;
 }
 
 .customname  {
@@ -213,6 +214,14 @@ body {
     font-size: 2.7vh;
 }
 
+.rectxt {   // recording list text
+    font-size: 4.2vh;
+}
+
+.rltmtxt {  // recording list time text
+    color: #3e53f2;
+    font-size: 3.0vh;
+}
 // menu
 
 .textmenu {

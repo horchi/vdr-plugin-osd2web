@@ -138,6 +138,15 @@ export var root = {
                 day: 'numeric'
             }).format(d) + ' ' + new String(100 + d.getHours()).slice(1) + ':' + new String(100 + d.getMinutes()).slice(1);
         },
+        formatDateTimeShort(unixTime) {
+            if (!unixTime || !global.Intl)
+                return "";
+            var d = new Date(unixTime * 1000); // - this.timeOffset
+            return new Intl.DateTimeFormat('de-DE', {
+                month: 'short',
+                day: 'numeric'
+            }).format(d) + ' ' + new String(100 + d.getHours()).slice(1) + ':' + new String(100 + d.getMinutes()).slice(1);
+        },
         formatDateTimeLong(unixTime) {
             if (!unixTime  || !global.Intl)
                 return "";

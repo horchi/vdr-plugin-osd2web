@@ -12,16 +12,16 @@ body {
 }
 
 .channel {
-    background-color: #090909;
+    background-color: black;
     color: white;
 }
 
 .event {
-    background: linear-gradient(to bottom right, #090909, #696969);
+    background: linear-gradient(to bottom right, black, #696969);
 }
 
 .replay {
-    background: linear-gradient(to bottom right, #090909, #696969);
+    background: linear-gradient(to bottom right, black, #696969);
 }
 
 .replay-control {
@@ -59,13 +59,13 @@ body {
 // recording list
 
 .recording  {
-    background: linear-gradient(to bottom right, #a8004d, #090909);
+    background: linear-gradient(to bottom right, #a8004d, black);
 }
 
 // timer list
 
 .timer {
-    background: linear-gradient(to bottom right, #090909, #696969);
+    background: linear-gradient(to bottom right, black, #696969);
     color: #b2aec3 !important;
 }
 
@@ -79,7 +79,7 @@ body {
 }
 
 .tltmtxt {  // timer time text
-    color: white; // #b2aec3;
+    color: #3e53f2; // #b2aec3;
 }
 
 .tltmch {  // channel name
@@ -91,19 +91,19 @@ body {
 }
 
 .customdata  {
-    background: linear-gradient(to bottom right, #090909, #4274c0);
+    background: linear-gradient(to bottom right, black, #4274c0);
     color: white !important;
 }
 
 // menu
 
 .textmenu {
-    background: linear-gradient(to bottom right, #090909, #696969);
+    background: linear-gradient(to bottom right, black, #696969);
     color: #f2f1f3;
 }
 
 .textmenu-current {
-    background: linear-gradient(to bottom right, #090909, #696969);
+    background: linear-gradient(to bottom right, black, #696969);
     color: white;
 }
 

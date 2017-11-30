@@ -4,10 +4,10 @@
          class="mt-2 list-group-item card flex-column p-1 active"
          v-bind:class="{ timeron : timer.recording, timer : !timer.recording }">
       <div class="w-100 justify-content-between tmtxt">
-        <small class="tltmtxt">{{$root.formatDateTime(timer.starttime)}}</small>
-        <div class="">{{timer.file}}</div>
+        <small class="tltmtxt">{{$root.formatDateTimeShort(timer.starttime)}}</small>
         <small v-if="timer.channel" class="tltmch">{{timer.channel.channelname}}</small>
         <small v-if="timer.epg2vdr" class="tlvdrtxt">[{{timer.epg2vdr.vdrname}}]</small>
+        <div class="">{{timer.file}}</div>
       </div>
     </div>
   </div>
@@ -35,6 +35,7 @@ export default {
     components: {
     }
 }
+
 /*
 {
    "event":"timers",
