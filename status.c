@@ -116,8 +116,8 @@ void cUpdate::updatePresentFollowing()
    if (activeControl)         // skip if replay is running
       return;
 
-   if (viewMode != vmNormal)
-      return;
+//   if (viewMode != vmNormal)
+//      return;
 
    if (!currentChannelNr)
    {

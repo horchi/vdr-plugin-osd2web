@@ -2,13 +2,13 @@
 
 body {
     padding-top: 0px;
-    line-height: 1.2;
+    line-height: 1.1;
 }
 
 // container
 
 .dataarea {
-    height: 92vh;
+    height: 94vh;
     overflow: hidden;
 }
 
@@ -27,7 +27,7 @@ body {
 }
 
 .eventarea {
-    padding: 5px;
+    padding: 0px 5px 0px 5px;
 }
 
 .rightarea {
@@ -63,7 +63,7 @@ body {
 
 
 .event {
-    height: 40vh;
+    height: 41vh;
     overflow: hidden;
 
     .carousel-item.active {
@@ -129,18 +129,26 @@ body {
 
 .titletxt {
     font-size: 6vh;
+    margin-bottom: 0px;
 }
 
 .htxt {
     color: #0275d8;
-    font-size: 3.8vh;
+    font-size: 4.2vh;
 }
 
 .desctxt {
     font-size: 3.5vh;
 }
 
+.progress {
+    background-color: #4f5d65;
+    font-size: 1.6em;
+    line-height: 1.4em;
+}
+
 .progress-bar {
+    height: 1.4em;
     background-color: #d2e00d;
     color: black;
 }
@@ -148,12 +156,12 @@ body {
 // status bar
 
 .sdatetxt {
-    font-size: 3.0vh;
+    font-size: 3.3vh;
 }
 
 .stimetxt {
-    font-size: 4.0vh;
-    font-weight: bold;
+    font-size: 5.3vh;
+    // font-weight: bold;
 }
 
 // timer list
@@ -173,7 +181,7 @@ body {
 
 .tltmtxt {  // timer time text
     color: #b2aec3;
-    font-size: 2.0vh;
+    font-size: 3.0vh;
 }
 
 .tlvdrtxt{  // timer vdr name text
@@ -183,11 +191,12 @@ body {
 
 .customdata  {
     line-height: 1.0;
-    font-size: 2.5vh;
+    font-size: 3.3vh;
 }
 
 .customfiletxt {
     text-align: center;
+    font-size: 3.0vh;
 }
 
 .recording  {

@@ -1,5 +1,5 @@
 <template>
-  <div v-show="text" class="card">
+  <div v-show="text" class="textmenu card">
       <div class="card-block" v-html="text"></div>
   </div>
 </template>

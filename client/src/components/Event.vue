@@ -1,5 +1,5 @@
 <template>
-   <div v-show="event.title" class="card">
+   <div v-show="event.title" class="card textmenu">
       <div class="card-block">
         <h3 class="card-title">{{$root.formatTime(event.starttime)}}&nbsp;{{event.title}}</h3>
         <div class="card-text">{{event.shorttext}}</div>
