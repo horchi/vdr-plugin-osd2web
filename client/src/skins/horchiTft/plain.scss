@@ -61,13 +61,6 @@ body {
    text-align: center;
 }
 
-.eventsep  {
-    margin-top: 2px;
-    border: 2px solid;
-    border-color: white;
-    border-radius: 1rem;
-}
-
 .event {
     height: 40.5vh;
     overflow: hidden;
@@ -82,6 +75,13 @@ body {
             height: auto;
          }
     }
+}
+
+.eventsep  {
+    margin-top: 2px;
+    border: 2px solid;
+    border-color: white;
+    border-radius: 1rem;
 }
 
 .epg-image {
@@ -150,7 +150,6 @@ body {
 }
 
 .htxt {
-    color: #0275d8;
     font-size: 4.2vh;
 }
 
@@ -159,15 +158,12 @@ body {
 }
 
 .progress {
-    background-color: #4f5d65;
     font-size: 1.6em;
     line-height: 1.4em;
 }
 
 .progress-bar {
     height: 1.4em;
-    background-color: #d2e00d;
-    color: black;
 }
 
 // status bar
@@ -197,12 +193,10 @@ body {
 }
 
 .tltmtxt {  // timer time text
-    color: #b2aec3;
     font-size: 3.0vh;
 }
 
 .tlvdrtxt{  // timer vdr name text
-    color: #d2e00d;
     font-size: 2.0vh;
 }
 
