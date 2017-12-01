@@ -13,7 +13,7 @@
         </div>
         <div class="row">
           <h3 class="card-title col-12 col-md-9 titletxt">{{$root.formatTime(event.starttime)}}&nbsp;{{event.title}}</h3>
-          <div v-if="elapsed > 0" class="ml-auto col-12 col-md-3 durationtxt">{{elapsed}}/{{parseInt(event.duration/60,10)}} min</div>
+          <div v-if="elapsed > 0" class="ml-auto col-12 col-md-3 durationtxt">{{remaining}}/{{parseInt(event.duration/60,10)}} min</div>
           <div v-if="elapsed <= 0" class="ml-auto col-12 col-md-3 durationtxt">{{parseInt(event.duration/60,10)}} min</div>
         </div>
         <div class="clearfix">
@@ -80,9 +80,17 @@ export default {
             }
             return Math.max(parseInt((this.now - this.event.starttime)/60,10),0);
         },
+        remaining: function () {
+            if (this.event.title){
+                window.setTimeout(()=>{
+                    this.now= parseInt(new Date().getTime() / 1000, 10);
+                },60000);
+            }
+            return Math.max(parseInt((this.event.duration - (this.now - this.event.starttime))/60,10),0);
+        },
         imagecnt: function() {
             let cnt= this.event.epg2vdr ? parseInt(this.event.epg2vdr.imagecount, 10) : 0;
-            return isNaN(cnt) ? 0 : cnt;
+            return isNaN(cnt) ? 0 : cnt ;
         }
     },
     updated: function() {

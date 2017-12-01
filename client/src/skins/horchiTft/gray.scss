@@ -39,7 +39,7 @@ body {
 // text elemente
 
 .chtxt {
-    color: #ffffed;
+    color: white;
 }
 
 .titletxt {
@@ -51,7 +51,7 @@ body {
 }
 
 .htxt {
-    color: #3e53f2;
+    color: #fad600;
 }
 
 .desctxt {
@@ -60,14 +60,22 @@ body {
 
 .progress-bar {
     height: 1.4em;
-    background-color: #0d26e0;
+    background-color: #fad600;
     color: white;
+}
+
+.progress {
+    background-color: #675807;
 }
 
 // recording list
 
 .recording  {
     background: linear-gradient(to bottom right, #000, #5e9fa4);
+}
+
+.rltmtxt {  // recording list time text
+    color: #fad600;
 }
 
 // timer list
@@ -87,7 +95,7 @@ body {
 }
 
 .tltmtxt {  // timer time text
-    color: #3e53f2; // #b2aec3;
+    color: #fad600; // #b2aec3;
 }
 
 .tltmch {  // channel name
@@ -95,7 +103,7 @@ body {
 }
 
 .tlvdrtxt{  // timer vdr name text
-    color: #3e53f2;
+    color: #fad600;
 }
 
 .customdata  {
