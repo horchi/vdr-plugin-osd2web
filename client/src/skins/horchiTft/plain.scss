@@ -61,10 +61,17 @@ body {
    text-align: center;
 }
 
+.eventsep  {
+    margin-top: 2px;
+    border: 2px solid;
+    border-color: white;
+    border-radius: 1rem;
+}
 
 .event {
-    height: 41vh;
+    height: 40.5vh;
     overflow: hidden;
+    border-radius: 0.3rem;
 
     .carousel-item.active {
         display: block;

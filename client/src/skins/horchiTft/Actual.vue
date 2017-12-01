@@ -14,6 +14,7 @@
     </div>
     <div v-else="">
       <o2w-event :event="present"></o2w-event>
+      <div class="eventsep"/>
       <o2w-event :event="following"></o2w-event>
     </div>
   </div>
