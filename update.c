@@ -72,9 +72,11 @@ cOsdService::Event cOsdService::toEvent(const char* name)
 
 cUpdate::cUpdate()
 {
+   browserPid = 0;
    triggerTimerUpdate = no;
    triggerRecordingsUpdate = no;
    triggerReplayUpdate = no;
+   triggerReplayControlUpdate = no;
    triggerForce = no;
    nextPresentUpdateAt = time(0);
    epg2vdrIsLoaded = no;
@@ -293,6 +295,41 @@ void cUpdate::atMeanwhile()
    actualClientCount = webSock->getClientCount();
 }
 
+int cUpdate::startScript(const char* script)
+{
+   tell(0, "Starting '%s'", script);
+
+   if ((browserPid = fork()) < 0)
+   {
+      tell(0, "Error: Fork failed with %s", strerror(errno));
+      return -1;
+   }
+
+   if (browserPid == 0)
+   {
+      char* argv[30]; memset(argv, 0, sizeof(argv));
+      int argc = 0;
+
+      // child code
+
+      argv[argc++] = strdup(script);
+      asprintf(&argv[argc++], "http://localhost:%d/skins/horchiTft/index.html?onlyView&theme=", config.webPort);
+      argv[argc] = 0;
+
+      execv(script, argv);
+
+      tell(0, "Process '%s' ended unexpectedly, reason was '%s'",
+           script, strerror(errno));
+
+      for (int i = 0; i < argc; i++)
+         free(argv[i]);
+
+      ::exit(0);
+   }
+
+   return done;
+}
+
 //***************************************************************************
 // Action
 //***************************************************************************
@@ -310,6 +347,17 @@ void cUpdate::Action()
 
    if (webSock->init(config.webPort, pingTime) == success)
       active = yes;
+
+   // start browser ?
+
+   char* browserScript = 0;
+
+   asprintf(&browserScript, "%s/%s", config.confPath, "startBrowser.sh");
+
+   if (fileExists(browserScript))
+      startScript(browserScript);
+
+   free(browserScript);
 
    // main loop
 
@@ -334,7 +382,7 @@ void cUpdate::Action()
 }
 
 //***************************************************************************
-// Perform Client Data
+// Dispatch Client Data
 //***************************************************************************
 
 int cUpdate::dispatchClientRequest()
@@ -368,7 +416,7 @@ int cUpdate::dispatchClientRequest()
       case evKeyPress:   status = performKeyPressRequest(oObject);    break;
       case evChannels:   status = performChannelsRequest(oObject);    break;
       case evMaxLines:   status = performMaxLineRequest(oObject);     break;
-      case evLogin  :    status = performLogin(oObject);              break;
+      case evLogin:      status = performLogin(oObject);              break;
 
       default:
          tell(0, "Error: Received unexpected client request '%s' at [%s]",

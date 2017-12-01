@@ -294,6 +294,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       int triggerTimerUpdate;
       int triggerRecordingsUpdate;
       int triggerReplayUpdate;
+      int triggerReplayControlUpdate;
       int triggerForce;
 
       // static message interface to web thread
@@ -322,9 +323,11 @@ class cUpdate : public cStatus, cThread, public cOsdService
       virtual void Replaying(const cControl *Control, const char *Name, const char *FileName, bool On);
       virtual void Recording(const cDevice *Device, const char *Name, const char *FileName, bool On);
       virtual void TimerChange(const cTimer *Timer, eTimerChange Change);
+      virtual void UserAction(const eKeys key);
 
    private:
 
+      int startScript(const char* script);
       void updatePresentFollowing();
       void updateTimers();
       void updateRecordings();
@@ -366,7 +369,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       cWebSock* webSock;
       bool active;
       int actualClientCount;
-
+      pid_t browserPid;
       ViewMode viewMode;
 
       // file service stuff

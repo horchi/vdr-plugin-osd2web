@@ -97,7 +97,7 @@ int cUpdate::initDia(const char* path)
    diaImages.clear();
    scanDiaDir(path);
 
-   tell(0, "Info: Added (%ld) images of path '%s'", diaImages.size(), path);
+   tell(1, "Info: Added (%ld) images of path '%s'", diaImages.size(), path);
    itCurrentDiaImage = diaImages.end();
 
    return success;
@@ -124,7 +124,7 @@ int cUpdate::scanDiaDir(const char* path, int level)
 
    // iterate ..
 
-   tell(1, "Info: Scanning %sdirectory '%s' for dia-show images", level ? "sub-" : "", path);
+   tell(3, "Info: Scanning %sdirectory '%s' for dia-show images", level ? "sub-" : "", path);
 
 #ifndef HAVE_READDIR_R
    dirent* pEntry;
@@ -183,10 +183,12 @@ int cUpdate::scanDiaDir(const char* path, int level)
       diaImages.push_back(f);
       count++;
 
-      tell(3, "Info: Added '%s'", f.path.c_str());
+      tell(4, "Info: Added '%s'", f.path.c_str());
    }
 
-   tell(0, "Info: Added (%d) images of %sdirectory '%s' for dia-show", count, level ? "sub-" : "", path);
+   if (count)
+      tell(3, "Info: Added (%d) images of %sdirectory '%s' for dia-show", count, level ? "sub-" : "", path);
+
    closedir(dir);
 
    return success;

@@ -236,7 +236,7 @@ int cUpdate::parseVariableFile(const char* path, const char* service)
          *color = 0;
          color += strlen("color ");
          allTrim(color);
-         tell(0, "Info: Found color '%s' for '%s' in '%s'", color, line, path);
+         tell(3, "Info: Found color '%s' for '%s' in '%s'", color, line, path);
       }
 
       allTrim(line);

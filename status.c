@@ -95,6 +95,22 @@ void cUpdate::Replaying(const cControl* Control, const char* Name,
 }
 
 //***************************************************************************
+// User Action
+//***************************************************************************
+
+void cUpdate::UserAction(const eKeys key)
+{
+   if (activeControl)
+   {
+      if (key == kFastFwd || key == kFastRew ||
+         key == kGreen || key == kYellow)
+      {
+         triggerReplayControlUpdate = yes;
+      }
+   }
+}
+
+//***************************************************************************
 // Timer Change
 //***************************************************************************
 
@@ -113,12 +129,6 @@ void cUpdate::TimerChange(const cTimer* Timer, eTimerChange Change)
 
 void cUpdate::updatePresentFollowing()
 {
-   if (activeControl)         // skip if replay is running
-      return;
-
-//   if (viewMode != vmNormal)
-//      return;
-
    if (!currentChannelNr)
    {
       nextPresentUpdateAt = time(0) + 60;
@@ -349,6 +359,9 @@ void cUpdate::updateControl(int force)
    static bool lplay = false, lforward = false;
    static bool lactive = no;
 
+   force |= triggerReplayControlUpdate;
+   triggerReplayControlUpdate = no;
+
    json_t* oControl = json_object();
 
    if (!activeControl)
@@ -405,7 +418,7 @@ void cUpdate::updateCustomData()
    std::map<std::string,FileVariable> serviceVariables;
    json_t* obj = json_object();
 
-   tell(0, "got %d serviceVariableFiles", (int)serviceVariableFiles.size());
+   tell(3, "Info: Got %d serviceVariableFiles", (int)serviceVariableFiles.size());
 
    for (auto it = serviceVariableFiles.begin(); it != serviceVariableFiles.end(); it++)
    {
