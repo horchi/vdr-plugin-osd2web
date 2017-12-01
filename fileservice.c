@@ -70,9 +70,11 @@ int cUpdate::checkFileService()
 {
    const int sizeBuf = 1024 * (sizeof(inotify_event) + 16);
    char buffer[sizeBuf];
-//   char* path = 0;
-   //   int count = 0;
+   int updatedNeeded = no;
    inotify_event* event = 0;
+
+   // char* path = 0;
+   // int count = 0;
 
    int bytes = read(fdInotify, buffer, sizeBuf);
 
@@ -80,11 +82,20 @@ int cUpdate::checkFileService()
    {
       event = (inotify_event*)&buffer[pos];
 
+      // ignore directories and files without the ".data" extension
+
       if (event->mask & IN_ISDIR || strcmp(suffixOf(event->name), "data") != 0)
          continue;
 
+      // file deleted ?
+
+      if (event->mask & IN_DELETE)
+         updatedNeeded = yes;
+
+      // created or modified ?
+
       if (event->mask & IN_CREATE || event->mask & IN_MODIFY)
-         return parseVariableFiles();
+         updatedNeeded = yes;
 /*
       if (event->mask & IN_CREATE || event->mask & IN_MODIFY)
       {
@@ -97,6 +108,9 @@ int cUpdate::checkFileService()
          free(path);
          }*/
    }
+
+   if (updatedNeeded)
+      return parseVariableFiles();
 
    return done;
 }
@@ -143,6 +157,11 @@ int cUpdate::parseVariableFiles()
       if (dirTypeOf(path, pEntry) != DT_REG || pEntry->d_name[0] == '.')
          continue;
 
+      // ignore files without the ".data" extension
+
+      if (strcmp(suffixOf(pEntry->d_name), "data") != 0)
+         continue;
+
       tell(4, "Checking variables of '%s'", pEntry->d_name);
 
       char* fPath = 0;
@@ -173,6 +192,7 @@ int cUpdate::parseVariableFile(const char* path, const char* service)
    char line[500+TB]; *line = 0;
    char* p;
    char* value;
+   char* color;
    FileVariable var;
 
    if (!(fp = fopen(path, "r")))
@@ -209,12 +229,27 @@ int cUpdate::parseVariableFile(const char* path, const char* service)
       *value = 0;
       value++;
 
+      // search optinal color
+
+      if ((color = strstr(value, "color ")))
+      {
+         *color = 0;
+         color += strlen("color ");
+         allTrim(color);
+         tell(0, "Info: Found color '%s' for '%s' in '%s'", color, line, path);
+      }
+
       allTrim(line);
       allTrim(value);
 
+      // special - in case variable name starting with '*' use the name as value!
+
+      int xchg = *line == '*';
+
+      var.name = xchg ? value : line;
+      var.value = xchg ? "" : value;
       var.file = service;
-      var.name = line;
-      var.value = value;
+      var.color = notNull(color, "");
 
       var.file = var.file.substr(0, var.file.find_last_of("."));
 

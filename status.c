@@ -421,6 +421,7 @@ void cUpdate::updateCustomData()
          file = var.file.c_str();
          addToJson(oVariable, "name", var.name.c_str());
          addToJson(oVariable, "value", var.value.c_str());
+         addToJson(oVariable, "color", var.color.c_str());
 
          json_array_append_new(oFile, oVariable);
       }

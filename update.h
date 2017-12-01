@@ -260,6 +260,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
          std::string file;
          std::string name;
          std::string value;
+         std::string color;
       };
 
       // object
