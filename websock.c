@@ -148,6 +148,11 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
 
    switch (reason)
    {
+      case LWS_CALLBACK_CLOSED:
+      {
+         tell(0, "DEBUG: Got unecpected LWS_CALLBACK_CLOSED");
+         break;
+      }
       case LWS_CALLBACK_HTTP_BODY:
       {
          const char* message = (const char*)in;
@@ -236,9 +241,22 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
             res = serveFile(wsi, file);
             free(file);
 
-            if (res < 0 || (res > 0 && lws_http_transaction_completed(wsi)))
+            if (res < 0)
+            {
+               tell(2, "HTTP: Failed, uri: '%s' (%d)", url, res);
                return -1;
+            }
+
+            tell(3, "HTTP: Done, uri: '%s'", url);
          }
+
+         break;
+      }
+
+      case LWS_CALLBACK_HTTP_FILE_COMPLETION:
+      {
+         if (lws_http_transaction_completed(wsi))
+            return -1;
 
          break;
       }
@@ -248,7 +266,6 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
       case LWS_CALLBACK_FILTER_HTTP_CONNECTION:
       case LWS_CALLBACK_CLOSED_HTTP:
       case LWS_CALLBACK_WSI_CREATE:
-      case LWS_CALLBACK_HTTP_FILE_COMPLETION:
       case LWS_CALLBACK_FILTER_NETWORK_CONNECTION:
       case LWS_CALLBACK_ADD_POLL_FD:
       case LWS_CALLBACK_DEL_POLL_FD:
