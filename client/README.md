@@ -59,8 +59,10 @@ oder ein einzelnes:
 Praktisches auto-build nach 'dev' während der Entwicklung:
 ==========================================================
 
+#> npm run dev
+für ein spezifisches skin:
 #> npm --skin=<the skin> run dev
-oder wenn man auch an den allgemeinen code etwas ändern möchte
+oder wenn man auch an den allgemeinen code etwas ändern möchte:
 #> npm --skin=skin-example --common=1 run dev
 
   -> alle Änderungen an den Quellen werden überwacht und es wird automatisch nach 'dev' gebaut
