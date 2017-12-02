@@ -12,6 +12,7 @@ export default {
         diashow: Object
     },
     data() {
+      return {};
     },
     created() {
     },

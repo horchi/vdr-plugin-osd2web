@@ -39,10 +39,13 @@ export default {
             this.following = data.following;
         });
         this.$root.$on("replay", (data) => {
-            this.replay_active = data.active;
-            this.channel.channelid = data.info.channelid;
-            this.channel.channelname = data.info.channelname;
-            this.replay = data;
+            if (data.info){
+                this.replay_active = data.active;
+                this.channel.channelid = data.info.channelid;
+                this.channel.channelname = data.info.channelname;
+                this.replay = data;
+            } else
+                this.replay = null;
         });
     },
     computed: {
