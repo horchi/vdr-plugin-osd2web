@@ -1,6 +1,7 @@
 <template>
   <o2w-fullevent v-if="isFullevent" :event="event" />
-  <div v-else="" class="event card mt-1">
+  <div v-else="" class="event card mt-1"
+       v-bind:class="{ eventpresent : isPresent, eventfollowing : !isPresent }">
     <div v-show="event.title" style="height: 100%;">
       <div class="card-block p-1" style="height: 100%;">
         <div class="progress" v-show="progress">
@@ -25,11 +26,11 @@
             </div>
           </div>
           <div v-if="event.epg2vdr">
-            <div v-if="event.epg2vdr.shorttext" class="card-text htxt">{{event.shorttext}}&nbsp;/&nbsp;{{event.epg2vdr.genre}}&nbsp;/&nbsp;{{event.epg2vdr.category}}</div>
-<!--            <div v-if="event.epg2vdr.genre" class="card-text htxt">{{event.epg2vdr.genre}}&nbsp;/&nbsp;{{event.epg2vdr.category}}</div> -->
-            <div v-if="event.epg2vdr.episodepartname" class="card-text htxt">{{event.epg2vdr.episodepartname}}&nbsp;&nbsp;({{event.epg2vdr.country}}&nbsp;{{event.epg2vdr.year}})</div>
+            <div v-if="event.epg2vdr.episodepartname" class="card-text htxt">{{event.episodepartname}}</div>
+            <div v-else="" class="card-text htxt">{{event.epg2vdr.shorttext}}</div>
+            <div class="card-text htxt">{{event.epg2vdr.genre}}&nbsp;/&nbsp;{{event.epg2vdr.category}}&nbsp;/&nbsp;{{county_year}}</div>
 <!--            <div v-if="event.epg2vdr.country" class="card-text htxt">({{event.epg2vdr.country}}&nbsp;{{event.epg2vdr.year}})</div> -->
-            <div v-if="event.epg2vdr.tipp" class="card-text htxt">{{event.epg2vdr.tipp}}&nbsp;&nbsp;{{event.epg2vdr.txtrating}}</div>
+            <div class="card-text htxt">{{rating}}</div>
           </div>
           <div v-else="">
             <div v-if="event.shorttext" class="card-text htxt">{{event.shorttext}}</div>
@@ -48,7 +49,8 @@ common.Vue.component('o2w-fullevent', require('../../components/Event'))
 export default {
     name: 'o2wEvent',
     props: {
-        event: Object
+        event: Object,
+        'isPresent': Object
     },
     data(){
         return {
@@ -88,6 +90,30 @@ export default {
             }
             return Math.max(parseInt((this.event.duration - (this.now - this.event.starttime))/60,10),0);
         },
+        county_year: function() {
+            if (!this.event.epg2vdr)
+                return "";
+
+            this.event.epg2vdr.year = this.event.epg2vdr.year ? this.event.epg2vdr.year : "";
+            this.event.epg2vdr.county = this.event.epg2vdr.county ? this.event.epg2vdr.county : "";
+
+            return this.event.epg2vdr.country && this.event.epg2vdr.year ?
+                this.event.epg2vdr.country + " " + this.event.epg2vdr.year :
+                this.event.epg2vdr.country ? this.event.epg2vdr.country : this.event.epg2vdr.year;
+        },
+        rating: function() {
+            if (!this.event.epg2vdr)
+                return "";
+
+            this.event.epg2vdr.txtrating = this.event.epg2vdr.txtrating ? this.event.epg2vdr.txtrating : "";
+            this.event.epg2vdr.tipp = this.event.epg2vdr.tipp ? this.event.epg2vdr.tipp : "";
+
+            return this.event.epg2vdr.tipp && this.event.epg2vdr.txtrating ?
+                this.event.epg2vdr.tipp + " / " + this.event.epg2vdr.txtrating :
+                this.event.epg2vdr.tipp ? this.event.epg2vdr.tipp :
+                this.event.epg2vdr.txtrating;
+        },
+
         imagecnt: function() {
             let cnt= this.event.epg2vdr ? parseInt(this.event.epg2vdr.imagecount, 10) : 0;
             return isNaN(cnt) ? 0 : cnt ;
