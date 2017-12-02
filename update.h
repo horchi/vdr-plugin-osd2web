@@ -292,6 +292,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       // public data
 
       int triggerTimerUpdate;
+      time_t initialRecordingsUpdateAt;
       int triggerRecordingsUpdate;
       int triggerReplayUpdate;
       int triggerReplayControlUpdate;
@@ -327,7 +328,9 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
    private:
 
-      int startScript(const char* script);
+      int forkScript(const char* script);  // #TODO move to lib
+
+      int startBrowser();
       void updatePresentFollowing();
       void updateTimers();
       void updateRecordings();

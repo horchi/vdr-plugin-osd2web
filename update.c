@@ -75,6 +75,7 @@ cUpdate::cUpdate()
    browserPid = 0;
    triggerTimerUpdate = no;
    triggerRecordingsUpdate = no;
+   initialRecordingsUpdateAt = 0;
    triggerReplayUpdate = no;
    triggerReplayControlUpdate = no;
    triggerForce = no;
@@ -253,6 +254,12 @@ void cUpdate::atMeanwhile()
       if (triggerRecordingsUpdate)
          updateRecordings();
 
+      if (initialRecordingsUpdateAt && time(0) >= initialRecordingsUpdateAt)
+      {
+         initialRecordingsUpdateAt = 0;
+         updateRecordings();
+      }
+
       if (triggerReplayUpdate)
          updateReplay();   // calls updateControl()
       else
@@ -295,7 +302,11 @@ void cUpdate::atMeanwhile()
    actualClientCount = webSock->getClientCount();
 }
 
-int cUpdate::startScript(const char* script)
+//***************************************************************************
+// Fork Script
+//***************************************************************************
+
+int cUpdate::forkScript(const char* script)
 {
    tell(0, "Starting '%s'", script);
 
@@ -331,12 +342,35 @@ int cUpdate::startScript(const char* script)
 }
 
 //***************************************************************************
+// Start Browser
+//***************************************************************************
+
+int cUpdate::startBrowser()
+{
+   int res = success;
+   char* browserScript = 0;
+
+   asprintf(&browserScript, "%s/%s", config.confPath, "startBrowser.sh");
+
+   // start browser?
+
+   if (fileExists(browserScript))
+      res = forkScript(browserScript);
+
+   free(browserScript);
+
+   return res;
+}
+
+//***************************************************************************
 // Action
 //***************************************************************************
 
 void cUpdate::Action()
 {
    tell(0, "osd2web plugin thread started (pid=%d)", getpid());
+
+   initialRecordingsUpdateAt = time(0) + 30;
 
    // init File Service
 
@@ -348,16 +382,9 @@ void cUpdate::Action()
    if (webSock->init(config.webPort, pingTime) == success)
       active = yes;
 
-   // start browser ?
+   // start browser
 
-   char* browserScript = 0;
-
-   asprintf(&browserScript, "%s/%s", config.confPath, "startBrowser.sh");
-
-   if (fileExists(browserScript))
-      startScript(browserScript);
-
-   free(browserScript);
+   startBrowser();
 
    // main loop
 

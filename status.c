@@ -285,15 +285,16 @@ void cUpdate::updateRecordings()
    GET_TIMERS_READ(timers);
    GET_RECORDINGS_READ(recordings);
 
-   for (const cRecording* recording = recordings->First(); recording; recording = recordings->Next(recording))
-   {
-      // if (recording->Start() <= time(0)-8*tmeSecondsPerDay)  // only last 8 days
-      //   continue;
+   // firyst add all recordings to the list
 
+   for (const cRecording* recording = recordings->First(); recording; recording = recordings->Next(recording))
       recList.push_back(recording);
-   }
+
+   // now sort the list by date
 
    recList.sort(compareTime);
+
+   // and now use only the youngest 10
 
    for (auto it = recList.begin(); it != recList.end() && count < 10; it++, count++)
    {
