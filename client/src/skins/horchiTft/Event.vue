@@ -28,8 +28,7 @@
           <div v-if="event.epg2vdr">
             <div v-if="event.epg2vdr.episodepartname" class="card-text htxt">{{event.episodepartname}}</div>
             <div v-else="" class="card-text htxt">{{event.epg2vdr.shorttext}}</div>
-            <div class="card-text htxt">{{event.epg2vdr.genre}}&nbsp;/&nbsp;{{event.epg2vdr.category}}&nbsp;/&nbsp;{{county_year}}</div>
-<!--            <div v-if="event.epg2vdr.country" class="card-text htxt">({{event.epg2vdr.country}}&nbsp;{{event.epg2vdr.year}})</div> -->
+            <div class="card-text htxt">{{county_year}}</div>
             <div class="card-text htxt">{{rating}}</div>
           </div>
           <div v-else="">
@@ -93,25 +92,21 @@ export default {
         county_year: function() {
             if (!this.event.epg2vdr)
                 return "";
-
-            this.event.epg2vdr.year = this.event.epg2vdr.year ? this.event.epg2vdr.year : "";
-            this.event.epg2vdr.county = this.event.epg2vdr.county ? this.event.epg2vdr.county : "";
-
-            return this.event.epg2vdr.country && this.event.epg2vdr.year ?
-                this.event.epg2vdr.country + " " + this.event.epg2vdr.year :
-                this.event.epg2vdr.country ? this.event.epg2vdr.country : this.event.epg2vdr.year;
+            return this.event.epg2vdr.category && this.event.epg2vdr.genre && this.event.epg2vdr.country && this.event.epg2vdr.year ?
+                this.event.epg2vdr.category + " / " + this.event.epg2vdr.genre + " / " + this.event.epg2vdr.country + " " + this.event.epg2vdr.year :
+                this.event.epg2vdr.genre && this.event.epg2vdr.country && this.event.epg2vdr.year ?
+                this.event.epg2vdr.genre + " / " + this.event.epg2vdr.country + " " + this.event.epg2vdr.year :
+                this.event.epg2vdr.country ? this.event.epg2vdr.country :
+                this.event.epg2vdr.year ? this.event.epg2vdr.year : "";
         },
         rating: function() {
             if (!this.event.epg2vdr)
                 return "";
 
-            this.event.epg2vdr.txtrating = this.event.epg2vdr.txtrating ? this.event.epg2vdr.txtrating : "";
-            this.event.epg2vdr.tipp = this.event.epg2vdr.tipp ? this.event.epg2vdr.tipp : "";
-
             return this.event.epg2vdr.tipp && this.event.epg2vdr.txtrating ?
                 this.event.epg2vdr.tipp + " / " + this.event.epg2vdr.txtrating :
                 this.event.epg2vdr.tipp ? this.event.epg2vdr.tipp :
-                this.event.epg2vdr.txtrating;
+                this.event.epg2vdr.txtrating ? this.event.epg2vdr.txtrating : "";
         },
 
         imagecnt: function() {

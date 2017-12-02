@@ -75,7 +75,8 @@ body {
 // recording list
 
 .recording  {
-    background: linear-gradient(to bottom right, #000, #5e9fa4);
+    background: linear-gradient(to bottom right, #006fff, #000);
+    // background: linear-gradient(to bottom right, #000, #5e9fa4);
 }
 
 .rltmtxt {  // recording list time text
@@ -111,7 +112,7 @@ body {
 }
 
 .customdata  {
-    background: linear-gradient(to bottom right, black, #4274c0);
+    background: linear-gradient(to bottom right, black, #006fff);
     color: white !important;
 }
 
