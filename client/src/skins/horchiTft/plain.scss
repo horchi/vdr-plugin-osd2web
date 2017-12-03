@@ -146,15 +146,19 @@ body {
     padding: 0px;
 }
 
-.titletxt {
+.eventtitlerow {
+    width: 100%;
     font-size: 6vh;
-    margin-bottom: 0px;
+    margin-bottom: 4px;
+}
+
+.titletxt {
+    display: inline; // inline-block;
 }
 
 .durationtxt {
-    font-size: 6vh;
-    margin-bottom: 0px;
-    text-align: right;
+    float: right;
+    margin-left: 20px;
 }
 
 .htxt {
