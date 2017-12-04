@@ -9,6 +9,7 @@
 export default {
     name: 'o2wStatusBar',
     data: function () {
+      return {}
     },
     created() {
     },
