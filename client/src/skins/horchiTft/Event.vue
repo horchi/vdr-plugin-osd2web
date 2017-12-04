@@ -12,10 +12,10 @@
                aria-valuemax="100">{{progress}}%
           </div>
         </div>
-        <div class="row">
-          <h3 class="card-title col-12 col-md-9 titletxt">{{$root.formatTime(event.starttime)}}&nbsp;{{event.title}}</h3>
-          <div v-if="elapsed > 0" class="ml-auto col-12 col-md-3 durationtxt">{{remaining}}/{{parseInt(event.duration/60,10)}} min</div>
-          <div v-if="elapsed <= 0" class="ml-auto col-12 col-md-3 durationtxt">{{parseInt(event.duration/60,10)}} min</div>
+        <div class="eventtitlerow clearfix">
+          <div class="titletxt">{{$root.formatTime(event.starttime)}}&nbsp;{{event.title}}</div>
+          <div v-if="elapsed > 0" class="durationtxt">{{remaining}}/{{parseInt(event.duration/60,10)}}</div>
+          <div v-if="elapsed <= 0" class="durationtxt">{{parseInt(event.duration/60,10)}}</div>
         </div>
         <div class="clearfix">
           <div v-if="event.epg2vdr && imagecnt > 0" :id="'evImages' + event.eventid" class="img-fluid float-right epg-image carousel slide" data-ride="carousel" data-interval="5000">
