@@ -39,8 +39,8 @@ export default {
             this.following = data.following;
         });
         this.$root.$on("replay", (data) => {
-            if (data.info){
-                this.replay_active = data.active;
+            this.replay_active = data.active;
+            if (data.info) {
                 this.channel.channelid = data.info.channelid;
                 this.channel.channelname = data.info.channelname;
                 this.replay = data;
