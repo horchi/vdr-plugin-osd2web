@@ -30,7 +30,8 @@ export var maxLinesCalc= {
 VueInst.component('icon', Icon);
 
 global.jQuery = global.$= require('jquery-slim');
-global.Tether = require('tether');
+global.Popper = require('popper.js');
+
 
 require('bootstrap');
 /* Einzelne Komponenten von bootstrap:
