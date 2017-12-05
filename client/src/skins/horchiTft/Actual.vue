@@ -15,7 +15,7 @@
     <div v-else="">
       <o2w-event :event="present" :isPresent="true"></o2w-event>
       <div class="eventsep"/>
-      <o2w-event :event="following" :isPresent="fasle"></o2w-event>
+      <o2w-event :event="following" :isPresent="false"></o2w-event>
     </div>
   </div>
 </template>

@@ -1,7 +1,7 @@
 <template>
   <o2w-fullevent v-if="isFullevent" :event="event" />
   <div v-else="" class="event card mt-1"
-       v-bind:class="{ eventpresent : isPresent, eventfollowing : !isPresent }">
+       v-bind:class="{ 'eventpresent' : isPresent, 'eventfollowing' : !isPresent }">
     <div v-show="event.title" style="height: 100%;">
       <div class="card-block p-1" style="height: 100%;">
         <div class="progress" v-show="progress">
@@ -49,7 +49,7 @@ export default {
     name: 'o2wEvent',
     props: {
         event: Object,
-        'isPresent': Object
+        'isPresent': Boolean
     },
     data(){
         return {
