@@ -1,10 +1,10 @@
 <template>
   <div v-if="customdata" id="customdata" style="overflow: hidden;">
-    <div v-for="(item, key, index) in customdata" class="mt-2 w-100 justify-content-between customdata card flex-column p-1 active">
-      <small class="customfiletxt">{{key}}</small>
-      <div v-for="(variable, n) in item" class="row">
-        <small :style="{color: variable.color}" class="col-12 col-sm-8 customname">{{variable.name}}</small>
-        <small class="col-12 col-sm-4 customvalue">{{variable.value}}</small>
+    <div v-for="(item, key, index) in customdata" class="customdata">
+      <div class="customtitle">{{key}}</div>
+      <div v-for="(variable, n) in item" class="customrow">
+        <div :style="{color: variable.color}" class="customname">{{variable.name}}</div>
+        <div class="customvalue">{{variable.value}}</div>
       </div>
     </div>
   </div>

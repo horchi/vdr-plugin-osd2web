@@ -5,4 +5,4 @@ window.v = new Vue({
 }).$mount("#app")
 
 import xsnow from "../../lib/xsnow/snow";
-new xsnow().start();
+// new xsnow().start();

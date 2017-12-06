@@ -49,11 +49,6 @@ body {
 .recordingarea {
 }
 
-.channel {
-    height: 10vh;
-    overflow: hidden;
-}
-
 .menutitle {
    height: 4vh;
    overflow: hidden;
@@ -61,12 +56,12 @@ body {
    text-align: center;
 }
 
-.event {
+.event  {
     height: 40.5vh;
     overflow: hidden;
     border-radius: 0.3rem;
 
-    .carousel-item.active {
+    .carousel-item.active  {
         display: block;
          > img {
             width: 100%;
@@ -77,12 +72,12 @@ body {
     }
 }
 
-.eventpresent {
+.eventpresent  {
     height: 50vh;
 }
 
-.eventfollowing {
-    height: 30.5vh;
+.eventfollowing  {
+    height: 31.5vh;
 }
 
 .eventsep  {
@@ -96,20 +91,20 @@ body {
     width: 14vw;
 }
 
-.img-thumbnail {
+.img-thumbnail  {
     background-color: transparent;
 }
 
-.img-fluid {
+.img-fluid  {
     max-height: 100%;
 }
 
-.replay {
-    height: 76vh;
+.replay  {
+    height: 87vh;
     overflow: hidden;
 }
 
-.replay-control {
+.replay-control  {
     width: 100%;
     height: 5vh;
     padding: 5px;
@@ -125,131 +120,147 @@ body {
    color: black;
 }
 
-.replay-btn-act {
+.replay-btn-act  {
    color: red !important;
 }
 
-// channel logo
-
-.chlogo {
-   max-height: 95%;
-   align-content: right;
-   object-fit: scale-down;
-   align-self: flex-end;
+.channel  {
+    height: 10vh;
+    overflow: hidden;
+    width: 100%;
+    padding-top: 10px;
+    padding-left: 10px;
 }
 
-// text elemente
-
-.chtxt {
+.chnr  {                        // channel text
     font-size: 8vh !important;
-    height: 100%;
-    padding: 0px;
+    display: inline;
+    margin: 10px;
 }
 
-.eventtitlerow {
+.chtxt  {                       // channel text
+    font-size: 8vh !important;
+    display: inline;
+    margin: 10px;
+    overflow: hidden;
+}
+
+.chlogo  {                      // channel logo
+    max-height: 95%;
+    float: right;
+}
+
+.eventtitlerow  {
     width: 100%;
     font-size: 6vh;
     margin-bottom: 4px;
 }
 
-.titletxt {
-    display: inline; // inline-block;
+.titletxt  {
+    display: inline;            // or inline-block?
 }
 
-.durationtxt {
+.durationtxt  {
     float: right;
     margin-left: 20px;
 }
 
-.htxt {
+.htxt  {
     font-size: 4.2vh;
 }
 
-.desctxt {
+.desctxt  {
     font-size: 3.5vh;
 }
 
-.progress {
-    font-size: 1.6em;
-    line-height: 1.4em;
+.progress  {
+    font-size: 1.8em;
+    height: auto;
 }
 
 .progress-bar {
-    height: 1.4em;
 }
 
 // status bar
 
-.sdatetxt {
+.sdatetxt  {
     font-size: 3.3vh;
 }
 
-.stimetxt {
+.stimetxt  {
     font-size: 5.3vh;
-    // font-weight: bold;
 }
 
 // timer list
 
-.timer {
+.timer  {
 }
 
-.timeron {
+.timeron  {
 }
 
-.tmtxt {   // timer text
+.tmtxt  {                  // timer text
     font-size: 3.2vh;
 }
 
-.tltmch {  // timer channel
+.tltmch  {                 // timer channel
 }
 
-.tltmtxt {  // timer time text
+.tltmtxt  {                // timer time text
     font-size: 3.0vh;
 }
 
-.tlvdrtxt{  // timer vdr name text
+.tlvdrtxt  {               // timer vdr name text
     font-size: 2.0vh;
 }
 
 .customdata  {
     overflow: hidden;
     line-height: 1.0;
-    font-size: 4.3vh;
+    font-size: 4.1vh;
 }
 
-.customfiletxt {
+.customtitle  {
     text-align: center;
+    height: 0px;           // don't like to see
+    overflow: hidden;
     font-size: 5.0vh;
 }
 
+.customrow  {
+    width: 100%;
+}
+
 .customname  {
+    display: inline;
+    overflow: hidden;
 }
 
 .customvalue  {
-    text-align: right;
+    float: right;
+    margin-left: 10px;
 }
 
 .recording  {
     font-size: 2.7vh;
 }
 
-.rectxt {   // recording list text
+.rectxt  {               // recording list text
     font-size: 3.2vh;
 }
 
-.rltmtxt {  // recording list time text
+.rltmtxt  {              // recording list time text
     font-size: 3.0vh;
 }
 
 // menu
 
-.textmenu {
+.textmenu  {
     font-size: 2.7vh;
     border-radius: .25rem;
 }
 
-.textmenu-current {
+.textmenu-current  {
     border-radius: .25rem;
     font-size: 3.0vh;
 }

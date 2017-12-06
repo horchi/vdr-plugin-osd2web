@@ -1,0 +1,53 @@
+@import "gray.scss";
+
+.chnr {
+    display: none;
+}
+
+.chtxt {
+    margin: 0px;
+}
+
+.tlvdrtxt{
+    display: none;
+}
+
+.event {
+    background: linear-gradient(to bottom right, black, #404040);
+    border-radius: 0;
+}
+
+.replay {
+    background: linear-gradient(to bottom right, black, #404040);
+    border-radius: 0;
+}
+
+.progress  {
+    border-radius: 0;
+}
+
+.timer {
+    background: linear-gradient(to bottom right, black, #404040);
+}
+
+.textmenu {
+    background: linear-gradient(to bottom right, black, #404040);
+    border-radius: 0;
+}
+
+.textmenu-current {
+    background: linear-gradient(to bottom right, black, #404040);
+    border-radius: 0;
+}
+
+.eventsep  {
+    border-radius: 0;
+}
+
+.replay-control  {
+    border-radius: 0;
+}
+
+.card  {
+    border-radius: 0;
+}

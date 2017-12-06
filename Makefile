@@ -133,7 +133,10 @@ $(SOFILE): hlib $(OBJS)
 	$(CC) $(LDFLAGS) -shared $(OBJS) $(LIBS) -o $@
 
 cbuild:
-	(cd client && $(MAKE) client)
+	(cd client && $(MAKE) cbuild)
+
+buildenv:
+	(cd client && $(MAKE) buildenv)
 
 install-lib: $(SOFILE)
 	install -D -m644 $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)

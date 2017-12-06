@@ -11,9 +11,9 @@
                  aria-valuemax="100">{{progress}}%
           </div>
         </div>
-        <div class="row">
-          <h3 class="card-title col-12 col-md-9 titletxt">{{replay.event.title}}</h3>
-          <div v-if="elapsed >= 0" class="ml-auto col-12 col-md-3 desctxt">{{elapsed}}/{{parseInt(replay.lengthinseconds/60,10)}} min</div>
+        <div class="eventtitlerow clearfix">
+          <div class="titletxt">{{replay.event.title}}</div>
+          <div v-if="elapsed >= 0" class="durationtxt">{{remaining}}/{{parseInt(replay.lengthinseconds/60,10)}}</div>
         </div>
         <div class="clearfix">
           <div :id="'evImages' + replay.event.eventid" class="img-fluid float-right img-thumbnail carousel slide" data-ride="carousel" data-interval="5000">
@@ -110,6 +110,9 @@ export default {
                 }, 10000);
             }
             return Math.max(parseInt(this.current / this.replay.lengthinseconds * 100, 10), 1);
+        },
+        remaining: function () {
+            return Math.max(parseInt((this.replay.lengthinseconds - this.current)/60, 10), 0);
         },
         elapsed: function () {
             return Math.max(parseInt(this.current/60, 10), 0);

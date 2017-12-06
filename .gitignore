@@ -9,3 +9,4 @@ po/*.pot
 client/node_modules/
 client/npm-debug.log
 client/custom/*
+client/package-lock.json

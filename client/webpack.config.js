@@ -10,7 +10,7 @@ var buildInSkins = {
     themes: ['default']
   },
   'horchiTft': {
-      themes: ['plain', 'blue', 'bluecd', 'gray', 'graycd']
+      themes: ['plain', 'blue', 'bluecd', 'gray', 'graycd', 'anthraize']
   }
 };
 var customSkins= {};

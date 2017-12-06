@@ -34,7 +34,7 @@
           <div v-else="">
             <div v-if="event.shorttext" class="card-text htxt">{{event.shorttext}}</div>
           </div>
-        <p class="desctxt" v-show="description" v-html="description"></p>
+          <p class="desctxt" v-show="description" v-html="description"></p>
         </div>
       </div>
     </div>
