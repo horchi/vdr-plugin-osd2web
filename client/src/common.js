@@ -57,3 +57,15 @@ import 'bootstrap/js/src/tooltip';
    styleEl.setAttribute("href", 'themes/' + (theme ? theme[1] : 'default') + '.css');
    document.head.appendChild(styleEl);
 })();
+
+
+$(function(){
+    if (/[?&]xsnow=1/.test(location.search)) {
+        require.ensure([/* webpackChunkName: "xsnow" */ 
+            './lib/xsnow/snow'
+        ], function (require) {
+            var snow= require(/* webpackChunkName: "xsnow" */ './lib/xsnow/snow');
+            snow.start();
+        },"xsnow");
+    }
+})

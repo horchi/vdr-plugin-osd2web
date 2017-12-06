@@ -32,9 +32,6 @@ import snow5 from "./snow5.gif";
 import snow6 from "./snow6.gif";
 import sleigh from "./sleigh3.gif"
 
-export default function snow(opt) {
-
-	opt= opt || {};
 	//window.onerror = null;
 
 	var ns6 = (!document.all && document.getElementById);
@@ -52,7 +49,7 @@ export default function snow(opt) {
 
 
 	// <---- Customizable part ----
-	var infoLayer  = opt.infoLayer || false;					// set to false if you don't need f/s display
+	var infoLayer  = false;					// set to false if you don't need f/s display
 
 	var flakes = 25;						// total number of snowflakes
 	var santa_mass = 5;                     // santa's effective mass during storms
@@ -80,7 +77,7 @@ export default function snow(opt) {
 	// ---- Customizable part ---->
 
 
-	var refresh_FperS = 20;					// initial frames/second, recalculated.
+	var refresh_FperS = 5;//20;					// initial frames/second, recalculated.
 	var refresh 	  = 1000/refresh_FperS;	// ms/frame
 
 	var santa_speed 	= 0;				// santa speed in pixel/frame
@@ -466,7 +463,7 @@ export default function snow(opt) {
 	// initialize all objects & timer
 	//-------------------------------------------------------------------------
 
-	this.start= function()
+	export function start()
 	{
 		var a = '';
 
@@ -485,8 +482,7 @@ export default function snow(opt) {
 		}
 
 
-		// write private layers to destination layer - this works for opera,too
-		document.write(a);
+		document.body.innerHTML += a;
 
 		// recalculate page dimension every second
 		window.setInterval(get_page_dimension,1000);
@@ -497,10 +493,11 @@ export default function snow(opt) {
 
 		// place snowflakes, santa & trees
 		rebuild_speed_and_timer(refresh);
-
+console.log(refresh)
 		// start the animation
 		timer_id = window.setInterval(move_snow_and_santa,refresh);
 		storm_id = window.setInterval(storm_proc,1800);					// init with visible storm
 		flake_id = window.setInterval(make_flake_visible_proc,2000);	// after the storm, let snowflakes fall :-)
 	}
-}
+
+

@@ -78,18 +78,20 @@ export default {
     data() {
         return {
             buttons: null,
-            current: 0
+            current: 0,
+            isPlaying: false
         }
     },
     created() {
         this.$root.$on("replaycontrol", (data) => {
             this.buttons = null;
             this.current = data.current;
+            this.isPlaying= data.play == 1;
             if (data.active) {
                 this.buttons = replayButtons;
                 this.buttons[0].cls = data.speed >= 0 && data.forward != 1 ? 'replay-btn replay-btn-act' : 'replay-btn'
-                this.buttons[1].cls = data.play == 1 ? 'replay-btn replay-btn-act' : 'replay-btn'
-                this.buttons[2].cls = data.play != 1 ? 'replay-btn replay-btn-act' : 'replay-btn'
+                this.buttons[1].cls = this.isPlaying ? 'replay-btn replay-btn-act' : 'replay-btn'
+                this.buttons[2].cls = this.isPlaying ? 'replay-btn' : 'replay-btn replay-btn-act'
                 this.buttons[3].cls = 'replay-btn'
                 this.buttons[4].cls = data.speed >= 0 && data.forward == 1 ? 'replay-btn replay-btn-act' : 'replay-btn'
             }
@@ -106,7 +108,8 @@ export default {
         progress: function () {
             if (this.current >= 0) {
                 window.setTimeout(() => {
-                    this.current += 10;
+                    if (this.isPlaying)
+                        this.current += 10;
                 }, 10000);
             }
             return Math.max(parseInt(this.current / this.replay.lengthinseconds * 100, 10), 1);

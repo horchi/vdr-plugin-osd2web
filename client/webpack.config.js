@@ -127,7 +127,7 @@ const common_conf = webpackMerge(baseConf, {
     chunkFilename: '[name].js'
   },
   resolve: {
-    modules: [resolve(__dirname, 'node_modules')]
+    modules: [resolve(__dirname, 'node_modules'),]
   },
   plugins: [
     new HtmlWebpackPlugin({
