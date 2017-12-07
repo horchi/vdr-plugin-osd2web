@@ -154,6 +154,7 @@ body {
     width: 100%;
     font-size: 6vh;
     margin-bottom: 4px;
+    word-break: break-all;
 }
 
 .titletxt  {
@@ -207,7 +208,7 @@ body {
 }
 
 .tltmtxt  {                // timer time text
-    font-size: 3.0vh;
+    font-size: 2.9vh;
 }
 
 .tlvdrtxt  {               // timer vdr name text
@@ -217,7 +218,7 @@ body {
 .customdata  {
     overflow: hidden;
     line-height: 1.0;
-    font-size: 4.1vh;
+    font-size: 3.8vh;
 }
 
 .customtitle  {
