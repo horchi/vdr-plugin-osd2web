@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.1.22"
-#define VERSION_DATE  "10.07.2017"
+#define _VERSION      "0.2.00"
+#define VERSION_DATE  "07.12.2017"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -19,10 +19,19 @@
 /*
  * ------------------------------------
 
+2017-12-07: version 0.2.0 (horchi)
+   - Change: merged dev branch
+   - Added:  snow (URL option xsnow=1) thx to Dirk!
+   - Fixed:  Fixed many skin issues thx to Dirk!
+   - Change: Updated bootstrab
+   - Added:  Theme anthraize to skin horchiTft
+   - Added:  View Mode dia show
+   - Chnage: Many changes in skin horchiTft
+
 2017-07-10: version 0.1.22 (horchi)
    - Change: VDR 2.3.8 porting
 
-2017-07-03: version 0.1.21 (horchi)
+017-07-03: version 0.1.21 (horchi)
    - change:  some skin improvements
 
 2017-06-29: version 0.1.20 (horchi)
