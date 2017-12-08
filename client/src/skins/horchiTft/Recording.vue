@@ -3,9 +3,8 @@
     <div v-for="(recording,n) in recordings"
          class="recording mt-1 list-group-item card flex-column p-0 active">
       <div class="w-100 justify-content-between rectxt">
-        <small class="rltmtxt">{{$root.formatDateTimeShort(recording.start)}}</small>
-        <br/>
-        <small>{{recording.name}}</small>
+        <div class="rltmtxt">{{$root.formatDateTimeShort(recording.start)}}</div>
+        <div>{{recording.name}}</div>
       </div>
     </div>
   </div>

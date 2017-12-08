@@ -7,9 +7,10 @@ Gedacht haben wir, Dirk (Rechner) und ich es einerseits als Ergänzung des 'epgd
 
 
 Voraussetzung:
-  libwebsocket Version >= 2.1.0.
+  libwebsocket Version >= 2.1.0
   libtinyxml2-dev
   libexif-dev
+  VDR patch of plugin vdr-plugin-pin
 
 Installation:
   git clone git@github.com:horchi/vdr-plugin-osd2web.git

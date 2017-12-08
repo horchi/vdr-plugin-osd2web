@@ -325,6 +325,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       virtual void Recording(const cDevice *Device, const char *Name, const char *FileName, bool On);
       virtual void TimerChange(const cTimer *Timer, eTimerChange Change);
       virtual void UserAction(const eKeys key);
+      virtual void UserAction(const eKeys key, const cOsdObject*) { UserAction(key); }
 
    private:
 
