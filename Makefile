@@ -161,7 +161,7 @@ install-http:
 	fi
 	cp -r ./client/dist/* $(DESTDIR)$(HTTPDEST)
 	chmod -R a+rX $(DESTDIR)$(HTTPDEST)
-	cp ./scripts/* $(DESTDIR)
+	cp ./scripts/* $(DESTDIR)$(CONFDEST)
 ifdef VDR_USER
 	if test -n $(VDR_USER); then \
 		chown -R $(VDR_USER) $(DESTDIR)$(HTTPDEST); \
