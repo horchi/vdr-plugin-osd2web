@@ -74,7 +74,7 @@ bool cPluginOsd2Web::ProcessArgs(int argc, char* argv[])
 
    // check the arguments
 
-   while ((c = getopt_long(argc, argv, "p:s:e:l:L:i", long_options, 0)) != -1)
+   while ((c = getopt_long(argc, argv, "p:s:e:l:Lib", long_options, 0)) != -1)
    {
       switch (c)
       {

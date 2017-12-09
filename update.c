@@ -330,6 +330,8 @@ int cUpdate::forkScript(const char* script, const char* options)
 
       argv[argc] = 0;
 
+      tell(1, "Starting '%s' with '%s'", script, argv[1] ? argv[1] : "");
+
       execv(script, argv);
 
       tell(0, "Process '%s' ended unexpectedly, reason was '%s'",
@@ -351,24 +353,25 @@ int cUpdate::forkScript(const char* script, const char* options)
 int cUpdate::startBrowser()
 {
    int res = success;
-   char* browserScript;
-   char* options;
-
-   asprintf(&browserScript, "%s/%s", config.confPath, "startBrowser.sh");
-   asprintf(&options, "http://localhost:%d/skins", config.webPort);
 
    // start browser?
 
    if (config.startBrowser)
    {
+      char* browserScript;
+      char* options;
+
+      asprintf(&browserScript, "%s/%s", config.confPath, "startBrowser.sh");
+      asprintf(&options, "http://localhost:%d/skins", config.webPort);
+
       if (fileExists(browserScript))
          res = forkScript(browserScript, options);
       else
          tell(0, "Error: Can't start browser '%s' not found!", browserScript);
-   }
 
-   free(browserScript);
-   free(options);
+      free(browserScript);
+      free(options);
+   }
 
    return res;
 }
