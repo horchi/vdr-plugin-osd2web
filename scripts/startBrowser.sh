@@ -4,25 +4,29 @@
 # Changes settings in browser.conf instead of here
 # Skript may overwritten at update!
 #
+# don't toch below
+#
 
 MYPATH="`dirname \"$0\"`"
 MONTH=`date +%m`
 BASE="$1"
+
 SKIN="horchiTft"
 THEME="graycd"
+
+SNOW_START=11
+SNOW_END=2
+SANTA_MONTH=12
 
 [ -r "$MYPATH/browser.conf" ] && . "$MYPATH/browser.conf"
 
 URL="$BASE/$SKIN/index.html?theme=$THEME&onlyView"
 
-# until xsow not working properly
-MONTH=6
-
-if [ $MONTH -ge 11 ] || [ $MONTH -le 2 ]; then
-    if [ $MONTH = 12 ]; then
-        URL="$URL&xsnow=1"      # with snow
+if [ $MONTH -ge $SNOW_START ] || [ $MONTH -le $SNOW_END ]; then
+    if [ $MONTH = $SANTA_MONTH ]; then
+        URL="$URL&xsnow=1"          # with snow
     else
-        URL="$URL&xsnow=2"      # with snow and sanata
+        URL="$URL&xsnow=1&santa=1"  # with snow and sanata
     fi
 fi
 
