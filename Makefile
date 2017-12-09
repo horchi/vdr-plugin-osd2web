@@ -162,7 +162,7 @@ install-http:
 	cp -r ./client/dist/* $(DESTDIR)$(HTTPDEST)
 	chmod -R a+rX $(DESTDIR)$(HTTPDEST)
 	cp ./scripts/startBrowser.sh $(DESTDIR)$(CONFDEST)
-	if ! test $(DESTDIR)$(CONFDEST)/browser.conf; then \
+	if ! test -f $(DESTDIR)$(CONFDEST)/browser.conf; then \
 		cp ./scripts/browser.conf $(DESTDIR)$(CONFDEST); \
    fi
 ifdef VDR_USER
