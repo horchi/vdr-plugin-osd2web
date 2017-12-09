@@ -26,14 +26,14 @@
             </div>
           </div>
           <div v-if="event.epg2vdr">
-            <div v-if="event.epg2vdr.episodepartname" class="card-text htxt">{{event.episodepartname}}</div>
+            <div v-if="event.epg2vdr.episodepartname" class="card-text htxt">{{event.epg2vdr.episodepartname}}</div>
             <div v-else="" class="card-text htxt">{{event.epg2vdr.shorttext}}</div>
-            <div class="card-text htxt">{{county_year}}</div>
-            <div class="card-text htxt">{{rating}}</div>
           </div>
           <div v-else="">
             <div v-if="event.shorttext" class="card-text htxt">{{event.shorttext}}</div>
           </div>
+          <div class="card-text htxt">{{country_year}}</div>
+          <div class="card-text htxt">{{rating}}</div>
           <p class="desctxt" v-show="description" v-html="description"></p>
         </div>
       </div>
@@ -89,24 +89,29 @@ export default {
             }
             return Math.max(parseInt((this.event.duration - (this.now - this.event.starttime))/60,10),0);
         },
-        county_year: function() {
+        country_year: function() {
+            var text = "";
             if (!this.event.epg2vdr)
-                return "";
-            return this.event.epg2vdr.category && this.event.epg2vdr.genre && this.event.epg2vdr.country && this.event.epg2vdr.year ?
-                this.event.epg2vdr.category + " / " + this.event.epg2vdr.genre + " / " + this.event.epg2vdr.country + " " + this.event.epg2vdr.year :
-                this.event.epg2vdr.genre && this.event.epg2vdr.country && this.event.epg2vdr.year ?
-                this.event.epg2vdr.genre + " / " + this.event.epg2vdr.country + " " + this.event.epg2vdr.year :
-                this.event.epg2vdr.country ? this.event.epg2vdr.country :
-                this.event.epg2vdr.year ? this.event.epg2vdr.year : "";
+                return text;
+            if (this.event.epg2vdr.category)
+                text += this.event.epg2vdr.category;
+            if (this.event.epg2vdr.genre)
+                text += " / " + this.event.epg2vdr.genre
+            if (this.event.epg2vdr.country)
+                text += " / " + this.event.epg2vdr.country;
+            if (this.event.epg2vdr.year)
+                text += " " + this.event.epg2vdr.year;
+            return text;
         },
         rating: function() {
+            var text = "";
             if (!this.event.epg2vdr)
-                return "";
-
-            return this.event.epg2vdr.tipp && this.event.epg2vdr.txtrating ?
-                this.event.epg2vdr.tipp + " / " + this.event.epg2vdr.txtrating :
-                this.event.epg2vdr.tipp ? this.event.epg2vdr.tipp :
-                this.event.epg2vdr.txtrating ? this.event.epg2vdr.txtrating : "";
+                return text;
+            if (this.event.epg2vdr.tipp)
+                text += this.event.epg2vdr.tipp;
+            if (this.event.epg2vdr.txtrating)
+                text += text.length() > 0 ? " / " + this.event.epg2vdr.txtrating : this.event.epg2vdr.txtrating;
+            return text;
         },
 
         imagecnt: function() {
