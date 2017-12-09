@@ -110,7 +110,7 @@ export default {
             if (this.event.epg2vdr.tipp)
                 text += this.event.epg2vdr.tipp;
             if (this.event.epg2vdr.txtrating)
-                text += text.length() > 0 ? " / " + this.event.epg2vdr.txtrating : this.event.epg2vdr.txtrating;
+                text += text.length > 0 ? " / " + this.event.epg2vdr.txtrating : this.event.epg2vdr.txtrating;
             return text;
         },
 
