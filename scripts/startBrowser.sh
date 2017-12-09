@@ -24,9 +24,9 @@ URL="$BASE/$SKIN/index.html?theme=$THEME&onlyView"
 
 if [ $MONTH -ge $SNOW_START ] || [ $MONTH -le $SNOW_END ]; then
     if [ $MONTH = $SANTA_MONTH ]; then
-        URL="$URL&xsnow=1"          # with snow
-    else
         URL="$URL&xsnow=1&santa=1"  # with snow and sanata
+    else
+        URL="$URL&xsnow=1"          # with snow
     fi
 fi
 
