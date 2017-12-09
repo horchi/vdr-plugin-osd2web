@@ -1,6 +1,6 @@
 <template>
   <div v-show="text" class="textmenu card">
-      <div class="card-block" v-html="text"></div>
+      <div class="card-body" v-html="text"></div>
   </div>
 </template>
 <script>

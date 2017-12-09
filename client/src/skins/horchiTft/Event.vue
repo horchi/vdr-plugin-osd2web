@@ -3,7 +3,7 @@
   <div v-else="" class="event card mt-1"
        v-bind:class="{ 'eventpresent' : isPresent, 'eventfollowing' : !isPresent }">
     <div v-show="event.title" style="height: 100%;">
-      <div class="card-block p-1" style="height: 100%;">
+      <div class="card-body p-1" style="height: 100%;">
         <div class="progress" v-show="progress">
           <div class="progress-bar" role="progressbar"
                :style="{width: progress + '%'}"

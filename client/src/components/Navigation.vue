@@ -1,6 +1,6 @@
 <template>
 
-  <nav class="navbar navbar-toggleable-xl navbar-light bg-faded fixed-top">
+  <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbar"
             aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
