@@ -4,7 +4,7 @@
 # Changes settings in browser.conf instead of here
 # Skript may overwritten at update!
 #
-# don't toch below
+# don't touch below
 #
 
 MYPATH="`dirname \"$0\"`"
