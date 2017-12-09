@@ -1,6 +1,6 @@
 <template>
    <div v-show="event.title" class="card">
-      <div class="card-block">
+      <div class="card-body">
         <h3 class="card-title">{{event.title}}</h3>
         <div class="row">
           <div class="col">
@@ -19,7 +19,7 @@
         </div>
       </div>
       <hr />
-      <div v__-else class="card-block">
+      <div v__-else class="card-body">
          <p v-show="description" v-html="description"></p>
       </div>
    </div>

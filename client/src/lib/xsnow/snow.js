@@ -32,24 +32,8 @@ import snow5 from "./snow5.gif";
 import snow6 from "./snow6.gif";
 import sleigh from "./sleigh3.gif"
 
-	//window.onerror = null;
-
-	var ns6 = (!document.all && document.getElementById);
-	var ie4 = (document.all);
-	var ns4 = (document.layers);
-	var BV  = (parseFloat(navigator.appVersion.indexOf("MSIE")>0 ?
-				navigator.appVersion.split(";")[1].substr(6)	 :
-				navigator.appVersion));
-	var op  = (navigator.userAgent.indexOf('Opera')!=-1 && BV>=4);
-
 	var pageWidth  = 0;						// page dimension & visible offset
 	var pageHeight = 0;
-	var pageOffX   = 0;
-	var pageOffY   = 0;
-
-
-	// <---- Customizable part ----
-	var infoLayer  = false;					// set to false if you don't need f/s display
 
 	var flakes = 25;						// total number of snowflakes
 	var santa_mass = 5;                     // santa's effective mass during storms
@@ -77,8 +61,9 @@ import sleigh from "./sleigh3.gif"
 	// ---- Customizable part ---->
 
 
-	var refresh_FperS = 5;//20;					// initial frames/second, recalculated.
+	var refresh_FperS = 20;					// initial frames/second, recalculated.
 	var refresh 	  = 1000/refresh_FperS;	// ms/frame
+	var minRefresh	  = 200;				// minRefresh Time
 
 	var santa_speed 	= 0;				// santa speed in pixel/frame
 	var flake_speed 	= 0;				// flake speed in pixel/frame
@@ -87,11 +72,10 @@ import sleigh from "./sleigh3.gif"
 	var storm_v_sin     = 0;                // storm speed's sine
 	var storm_v_cos     = 1;                // storm speed's cosine
 	var storm_direction = 0;				// storm X-direction, -1/0=quiet/+1
-	var storm_id    	= 0;				// ID of storm timer
 
 	var storm_blowing	= 1;				// start with storm=ON
 
-	var santa;
+	var santa= null;
 	var santaX	= 0;			// X-position of santa
 	var santaY	= 0;			// Y-position of santa
 	var santaSY = 0;			// frames till Y-movement changes
@@ -113,13 +97,10 @@ import sleigh from "./sleigh3.gif"
 
 
 
-	var timer_id    = 0;		// ID if timer proc.
 	var timer_sum   = refresh;	// Inital values for speed calculation
 	var timer_count = 1;		// --''--
 
-	var flake_visible = op;		// start with visble flakes for Opera, all others start invisible
-	var flake_id	  = 0;		// timer id of make_flake_visible
-
+	var flake_visible = false;		// start with visble flakes for Opera, all others start invisible
 
 	//-------------------------------------------------------------------------
 	// preload images
@@ -150,20 +131,13 @@ import sleigh from "./sleigh3.gif"
 	function rebuild_speed_and_timer()
 	{
 		var old = refresh_FperS;
-		refresh = Math.floor(timer_sum/timer_count*2)+10;	// ms/Frame + spare
+		refresh = Math.max(minRefresh, Math.floor(timer_sum/timer_count*2)+10);	// ms/Frame + spare
 		refresh_FperS = Math.floor(1000/refresh);			// frames/second
 
 		santa_speed = santa_speed_PperS/refresh_FperS;		// pixel/second  --> pixel/frame
 		flake_speed = flake_speed_PperS/refresh_FperS;		// pixel/second  --> pixel/frame
 		storm_speed = storm_speed_PperS/refresh_FperS; 		// pixel/second  --> pixel/frame
 
-		if (timer_id) window.clearInterval(timer_id);		// adapt timer
-		timer_id = window.setInterval(move_snow_and_santa,refresh);
-
-		// FRAMES PER SECOND DISPLAY: REMOVE IF NOT NEEDED
-		if(infoLayer){
-			if (old!=refresh_FperS) write_to_layer(infoLayer,refresh_FperS+'f/s');
-		}
 
 		// adapt speed - for smoothness
 		if (old != refresh_FperS) {
@@ -187,7 +161,6 @@ import sleigh from "./sleigh3.gif"
 
 	function make_flake_visible_proc()
 	{
-		window.clearInterval(flake_id);
 		flake_visible = true;
 	}
 
@@ -197,9 +170,6 @@ import sleigh from "./sleigh3.gif"
 
 	function storm_proc()
 	{
-		// keep ourself from restarting while running
-		window.clearInterval(storm_id);
-
 		if (storm_blowing == 0) {
 			// turn storm on
 			storm_blowing = (Math.random()<0.5) ? -1 : 1 ;
@@ -209,16 +179,16 @@ import sleigh from "./sleigh3.gif"
 			var storm_theta = Math.atan(storm_YperX_current);
 			storm_v_cos = Math.cos(storm_theta);
 			storm_v_sin = Math.sin(storm_theta);
-			storm_id = window.setInterval(storm_proc,storm_duration_S*1000.0);
+			window.setTimeout(storm_proc,storm_duration_S*1000.0);
 
 		} else {
 			// turn storm off
 			storm_blowing *= 0.7;
 			if ((Math.abs(storm_blowing)<0.05) || (!flake_visible)) {
 				storm_blowing = 0;
-				storm_id = window.setInterval(storm_proc,storm_lag_S*1000.0);
+				window.setTimeout(storm_proc,storm_lag_S*1000.0);
 			} else {
-				storm_id = window.setInterval(storm_proc,500.0);
+				window.setTimeout(storm_proc,500.0);
 			}
 		}
 
@@ -226,13 +196,15 @@ import sleigh from "./sleigh3.gif"
 		flakeDX = storm_v_cos*storm_speed*storm_blowing;
 		flakeDY = Math.abs(storm_v_sin*storm_speed*storm_blowing);
 
-		// preapare movement vektor for santa, caused by storm & santa_mass
-		if(santa_mass>0) {
-			santaDX = flakeDX/santa_mass;
-			santaDY = flakeDY/santa_mass;
-		} else {
-			santaDX=0;
-			santaDY=0;
+		if (santa){
+			// preapare movement vektor for santa, caused by storm & santa_mass
+			if(santa_mass>0) {
+				santaDX = flakeDX/santa_mass;
+				santaDY = flakeDY/santa_mass;
+			} else {
+				santaDX=0;
+				santaDY=0;
+			}
 		}
 	}
 
@@ -243,19 +215,20 @@ import sleigh from "./sleigh3.gif"
 	function init_snow_and_santa()
 	{
 		// create santa
-		santa   = get_layer_by_name('santa0');
-		santaX  = santa_init_x;
-		santaY  = Math.random()*pageHeight;
-		santaSY = 0;
+		santa   = document.getElementById('santa0');
+		if (santa){
+			santaX  = santa_init_x;
+			santaY  = Math.random()*pageHeight;
+			santaSY = 0;
 
-		if (santa_direction != 0) {
-			santaMX =  Math.cos(santa_direction/180*Math.PI);
-			santaMY = -Math.sin(santa_direction/180*Math.PI);
+			if (santa_direction != 0) {
+				santaMX =  Math.cos(santa_direction/180*Math.PI);
+				santaMY = -Math.sin(santa_direction/180*Math.PI);
+			}
 		}
-
 		// create flake
 		for (var i=0; i<flakes; i++) {
-			flake[i]    = get_layer_by_name('flake'+i);
+			flake[i]    = document.getElementById('flake'+i);
 			flakeX[i]   = Math.random()*pageWidth;
 			flakeY[i]   = Math.random()*pageHeight;
 			flakeSX[i]  = 0;
@@ -266,26 +239,15 @@ import sleigh from "./sleigh3.gif"
 	}
 
 	//-------------------------------------------------------------------------
-	// get the named layer
-	//-------------------------------------------------------------------------
-
-	function get_layer_by_name(id)
-	{
-		if (op) 	{	return document.getElementById(id);	}
-		if (ns6)	{	return document.getElementById(id);	}
-		if (ie4)	{	return document.all[id];			}
-		if (ns4)	{	return document.layers[id];			}
-	}
-
-	//-------------------------------------------------------------------------
 	// move all objects
 	//-------------------------------------------------------------------------
 
 	function move_snow_and_santa()
 	{
 		var beginn = new Date().getMilliseconds();
-		move_santa();
+		santa && move_santa();
 		move_snow();
+		window.setTimeout(move_snow_and_santa, refresh);
 		var ende = new Date().getMilliseconds();
 		var diff = (beginn>ende?1000+ende-beginn:ende-beginn);
 		timer_sum   += diff;
@@ -378,55 +340,11 @@ import sleigh from "./sleigh3.gif"
 	function move_to(obj, x, y, visible)
 	{
 		if (visible) {
-			if (op) {
-				obj.style.left		= x+"px";
-				obj.style.top 		= y+"px";
-				// FIX THIS: SHOW DOES NOT WORK OPERA
-				obj.style.display 	= "block";
-			} else if (ie4) {
-				obj.style.pixelLeft = x;
-				obj.style.pixelTop  = y;
-				obj.style.visibility= "visible";
-			} else if (ns4) {
-				obj.left 			= x;
-				obj.top				= y;
-				obj.visibility 		= "show";
-			} else if (ns6) {
-				obj.style.left 		= x+"px";
-				obj.style.top		= y+"px";
-				obj.style.display 	= "block";
-			}
+			obj.style.left 		= x+"px";
+			obj.style.top		= y+"px";
+			obj.style.display 	= "block";
 		} else {
-			if (ie4 || op) { obj.style.visibility = "hidden";}
-			if (ns4) { obj.visibility 		= "hide";}
-			if (ns6) { obj.style.display 	= "none";}
-		}
-	}
-
-	//-------------------------------------------------------------------------
-	// fill a layer with new content
-	// --- parameter: layer-name, new content
-	//-------------------------------------------------------------------------
-
-	function write_to_layer(layer,txt)
-	{
-		if (op) {
-			// FIX THIS: DOES NOT WORK FOR OPERA
-			document.getElementById(layer).innerHTML = txt;
-		} else if (ie4) {
-			document.all[layer].innerHTML = txt;
-		} else if (ns4) {
-			document[layer].document.write(txt);
-			document[layer].document.close();
-		} else if (ns6) {
-			var over = document.getElementById(layer);
-			var range = document.createRange();
-			range.setStartBefore(over);
-			var domfrag = range.createContextualFragment(txt);
-			while (over.hasChildNodes()) {
-				over.removeChild(over.lastChild);
-			}
-			over.appendChild(domfrag);
+ 			obj.style.display 	= "none";
 		}
 	}
 
@@ -436,56 +354,37 @@ import sleigh from "./sleigh3.gif"
 
 	function get_page_dimension()
 	{
-		if(op) {
-			pageOffX   = 0;
-			pageOffY   = 25;
-			pageWidth  = innerWidth  + pageOffX;
-			pageHeight = innerHeight + pageOffY;
-		} else if(ns6) {
-			pageOffX   = scrollX;
-			pageOffY   = scrollY;
-			pageWidth  = innerWidth  + pageOffX;
-			pageHeight = innerHeight + pageOffY;
-		} else if(ns4) {
-			pageOffX   = window.pageXOffset;
-			pageOffY   = window.pageYOffset;
-			pageWidth  = innerWidth  + pageOffX;
-			pageHeight = innerHeight + pageOffY;
-		} else if(ie4) {
-			pageOffX   = document.body.scrollLeft;
-			pageOffY   = document.body.scrollTop;
-			pageWidth  = document.body.clientWidth  + pageOffX;
-			pageHeight = document.body.clientHeight + pageOffY;
-		}
+		pageWidth  = innerWidth;//  + scrollX;
+		pageHeight = innerHeight;// + scrollY;
 	}
 
 	//-------------------------------------------------------------------------
 	// initialize all objects & timer
 	//-------------------------------------------------------------------------
 
-	export function start()
+	export function start(showSanta)
 	{
 		var a = '';
 
-		// santa's private layer
-		a += '<div id="santa0" '
-		+  'style="position: absolute; '
-		+  'left:-1px; top:-1px; z-index:0;">'
-		+  '<img src="'+santa_image.src+'"></div>\n';
-
+		if (showSanta){
+			// santa's private layer
+			a += '<div id="santa0" '
+			+  'style="position: absolute; '
+			+  'left:-1px; top:-1px; z-Index:9999">'
+			+  '<img src="'+santa_image.src+'"></div>\n';
+		}
 		// each snowflake's private layer
 		for (var i=0; i<flakes; i++) {
 			a += '<div id="flake'+i+'" '
 			+  'style="position: absolute; '
-			+  'left:-1px; top:-1px; z-index:0;">'
+			+  'left:-1px; top:-1px; z-Index:9999">'
 			+  '<img src="' +flake_images[i % kFlakeImages].src+ '"></div>\n';
 		}
 
 
-		document.body.innerHTML += a;
+		document.body.innerHTML += '<div style="width:97%; height:97%; overflow:hidden; position:fixed;left:1%;top:1%; z-index:0">' + a + '</div>';
 
-		// recalculate page dimension every second
-		window.setInterval(get_page_dimension,1000);
+		window.addEventListener("resize", get_page_dimension);
 		get_page_dimension();
 
 		// init all objects
@@ -493,11 +392,11 @@ import sleigh from "./sleigh3.gif"
 
 		// place snowflakes, santa & trees
 		rebuild_speed_and_timer(refresh);
-console.log(refresh)
+
 		// start the animation
-		timer_id = window.setInterval(move_snow_and_santa,refresh);
-		storm_id = window.setInterval(storm_proc,1800);					// init with visible storm
-		flake_id = window.setInterval(make_flake_visible_proc,2000);	// after the storm, let snowflakes fall :-)
+		move_snow_and_santa();
+		window.setTimeout(storm_proc,1800);					// init with visible storm
+		window.setTimeout(make_flake_visible_proc,2000);	// after the storm, let snowflakes fall :-)
 	}
 
 

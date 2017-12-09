@@ -65,7 +65,7 @@ $(function(){
             './lib/xsnow/snow'
         ], function (require) {
             var snow= require(/* webpackChunkName: "xsnow" */ './lib/xsnow/snow');
-            snow.start();
+            snow.start(/[?&]santa=1/.test(location.search));
         },"xsnow");
     }
 })

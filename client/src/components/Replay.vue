@@ -2,7 +2,7 @@
   <div >
     <div class="replay card mt-1">
       <div v-show="replay.event.title" style="height: 100%;">
-        <div class="card-block p-1" style="height: 100%;">
+        <div class="card-body p-1" style="height: 100%;">
           <div class="progress" v-show="progress">
             <div class="progress-bar" role="progressbar"
                  :style="{width: progress + '%'}"

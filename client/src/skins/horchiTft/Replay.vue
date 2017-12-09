@@ -2,7 +2,7 @@
   <div >
     <div class="replay card mt-1">
       <div v-show="replay.event.title" style="height: 100%;">
-        <div class="card-block p-1" style="height: 100%;">
+        <div class="card-body p-1" style="height: 100%;">
           <div class="progress" v-show="progress">
             <div class="progress-bar" role="progressbar"
                  :style="{width: progress + '%'}"
@@ -86,6 +86,7 @@ export default {
         this.$root.$on("replaycontrol", (data) => {
             this.buttons = null;
             this.current = data.current;
+            this.curTime= new Date().getTime();
             this.isPlaying= data.play == 1;
             if (data.active) {
                 this.buttons = replayButtons;
@@ -108,8 +109,11 @@ export default {
         progress: function () {
             if (this.current >= 0) {
                 window.setTimeout(() => {
-                    if (this.isPlaying)
-                        this.current += 10;
+                    if (this.isPlaying){
+                        var now= new Date().getTime();
+                        this.current += parseInt((now - this.curTime)/1000,10);
+                        this.curTime= now;
+                    }
                 }, 10000);
             }
             return Math.max(parseInt(this.current / this.replay.lengthinseconds * 100, 10), 1);

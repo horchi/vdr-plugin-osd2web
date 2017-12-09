@@ -1,6 +1,6 @@
 <template>
    <div v-show="event.title" class="card textmenu">
-      <div class="card-block">
+      <div class="card-body">
         <h3 class="card-title">{{$root.formatTime(event.starttime)}}&nbsp;{{event.title}}</h3>
         <div class="card-text">{{event.shorttext}}</div>
         <div class="progress" v-show="progress">
@@ -31,7 +31,7 @@
         </div>
       </div>
       <hr />
-      <div class="card-block">
+      <div class="card-body">
          <p v-show="description" v-html="description"></p>
       </div>
    </div>

@@ -1,5 +1,20 @@
 @import "../../common.scss";
 
+.navbar {
+    bottom: 2px;
+    left:5px;
+    right:5px;
+    width: 40px;
+    top: unset;
+    overflow: hidden;
+    background: none;
+    padding: 3px 10px;
+}
+.navbar:hover {
+    width: auto;
+}   
+
+
 body {
     padding-top: 0px;
     line-height: 1.1;
