@@ -61,11 +61,10 @@ import 'bootstrap/js/src/tooltip';
 
 $(function(){
     if (/[?&]xsnow=1/.test(location.search)) {
-        require.ensure([/* webpackChunkName: "xsnow" */ 
-            './lib/xsnow/snow'
+        require.ensure([/* webpackChunkName: "xsnow" */ './lib/xsnow/snow'
         ], function (require) {
             var snow= require(/* webpackChunkName: "xsnow" */ './lib/xsnow/snow');
-            snow.start(/[?&]santa=1/.test(location.search));
+            snow.start(/[?&]santa=1/.test(location.search)); 
         },"xsnow");
     }
 })
