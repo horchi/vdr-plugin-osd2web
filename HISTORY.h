@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.1"
-#define VERSION_DATE  "07.12.2017"
+#define _VERSION      "0.2.2"
+#define VERSION_DATE  "09.12.2017"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,10 @@
 
 /*
  * ------------------------------------
+
+2017-12-09: version 0.2.2 (horchi)
+   - added: Script for browser autostart
+            to enable set plugin start option -b (or --browser)
 
 2017-12-07: version 0.2.1 (horchi)
    - bugfix: Fixed compile with VDR 2.2.0

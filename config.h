@@ -39,6 +39,7 @@ struct cOsd2WebConfig : public cConfigBase
       int logoById;
       int clientOsdTimeout;
       int diaCycleTime;            // in seconds
+      int startBrowser;
 };
 
 extern cOsd2WebConfig config;

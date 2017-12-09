@@ -28,6 +28,9 @@ body {
 
 .eventarea {
     padding: 0px 5px 0px 5px;
+
+    // flex: auto !important;    // without right area!
+    // max-width: 100%;          // without right area!
 }
 
 .rightarea {

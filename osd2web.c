@@ -51,6 +51,7 @@ const char* cPluginOsd2Web::CommandLineHelp()
       "   -L,              --logonotlower            do not search logo names in lower case\n"
       "   -i,              --logobyid                logo names by channel id instead of name\n"
       "   -e,              --epgimgpath              path to epg images\n"
+      "   -b,              --browser                 start browser (via startBrowser script)\n"
       "                                              (default: /var/cache/vdr/epgimages)\n"
       ;
 }
@@ -67,6 +68,7 @@ bool cPluginOsd2Web::ProcessArgs(int argc, char* argv[])
       { "logopath",       required_argument, 0, 'l' },
       { "logonotlower",         no_argument, 0, 'L' },
       { "logobyid",             no_argument, 0, 'i' },
+      { "browser",              no_argument, 0, 'b' },
       { 0, 0, 0, 0 }
    };
 
@@ -82,6 +84,7 @@ bool cPluginOsd2Web::ProcessArgs(int argc, char* argv[])
          case 'l': config.setLogoPath(optarg);     break;
          case 'L': config.logoNotLower = yes;      break;
          case 'i': config.logoById = yes;          break;
+         case 'b': config.startBrowser = yes;      break;
 
          default:  tell(0, "Ignoring unknown argument '%c' '%s'", c, optarg);
       }

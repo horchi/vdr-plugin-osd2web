@@ -306,7 +306,7 @@ void cUpdate::atMeanwhile()
 // Fork Script
 //***************************************************************************
 
-int cUpdate::forkScript(const char* script)
+int cUpdate::forkScript(const char* script, const char* options)
 {
    tell(0, "Starting '%s'", script);
 
@@ -324,7 +324,10 @@ int cUpdate::forkScript(const char* script)
       // child code
 
       argv[argc++] = strdup(script);
-      asprintf(&argv[argc++], "http://localhost:%d/skins/horchiTft/index.html?onlyView&theme=", config.webPort);
+
+      if (!isEmpty(options))
+         argv[argc++] = strdup(options);
+
       argv[argc] = 0;
 
       execv(script, argv);
@@ -348,16 +351,24 @@ int cUpdate::forkScript(const char* script)
 int cUpdate::startBrowser()
 {
    int res = success;
-   char* browserScript = 0;
+   char* browserScript;
+   char* options;
 
    asprintf(&browserScript, "%s/%s", config.confPath, "startBrowser.sh");
+   asprintf(&options, "http://localhost:%d/skins/horchiTft/index.html", config.webPort);
 
    // start browser?
 
-   if (fileExists(browserScript))
-      res = forkScript(browserScript);
+   if (config.startBrowser)
+   {
+      if (fileExists(browserScript))
+         res = forkScript(browserScript, options);
+      else
+         tell(0, "Error: Can't start browser '%s' not found!", browserScript);
+   }
 
    free(browserScript);
+   free(options);
 
    return res;
 }

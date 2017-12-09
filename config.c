@@ -33,6 +33,7 @@ cOsd2WebConfig::cOsd2WebConfig()
    diaCycleTime = 20;           // seconds
    logoSuffix = strdup("png");
    epgImagePath = strdup("/var/cache/vdr/epgimages");
+   startBrowser = no;
 }
 
 cOsd2WebConfig::~cOsd2WebConfig()

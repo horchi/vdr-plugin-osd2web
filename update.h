@@ -329,7 +329,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
    private:
 
-      int forkScript(const char* script);  // #TODO move to lib
+      int forkScript(const char* script, const char* options);  // #TODO move to lib
 
       int startBrowser();
       void updatePresentFollowing();
