@@ -1,13 +1,15 @@
 #!/bin/bash
 
-$BASE="$1"
-THEME="graycd"
 MONTH=`date +%m`
+BASE="$1"
 
-URL="$BASE?theme=$THEME&onlyView"
+SKIN="horchiTft"
+THEME="graycd"
+
+URL="$BASE/$SKIN/index.html?theme=$THEME&onlyView"
 
 # until xsow not working properly
-$MONTH=6
+MONTH=6
 
 if [ $MONTH -ge 11 ] || [ $MONTH -le 2 ]; then
     if [ $MONTH = 12 ]; then

@@ -355,7 +355,7 @@ int cUpdate::startBrowser()
    char* options;
 
    asprintf(&browserScript, "%s/%s", config.confPath, "startBrowser.sh");
-   asprintf(&options, "http://localhost:%d/skins/horchiTft/index.html", config.webPort);
+   asprintf(&options, "http://localhost:%d/skins", config.webPort);
 
    // start browser?
 
