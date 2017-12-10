@@ -1,6 +1,6 @@
 <template>
   <div v-if="customdata" id="customdata" style="overflow: hidden;">
-    <div v-for="(item, key, index) in customdata" class="customdata">
+    <div v-for="(item, key, index) in customdata" class="customdata mt-1 card">
       <div class="customtitle">{{key}}</div>
       <div v-for="(variable, n) in item" class="customrow">
         <div :style="{color: variable.color}" class="customname">{{variable.name}}</div>

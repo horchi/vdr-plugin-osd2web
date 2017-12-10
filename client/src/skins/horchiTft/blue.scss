@@ -7,23 +7,27 @@ body {
 // container
 
 .statusbar {
-    background-color: #27567e;
+    background-color: #053258;
     color: white;
+    border: 1px solid #004590;
 }
 
 .channel {
-    background-color: #27567e;
+    background-color: #053258;
     color: white;
+    border: 1px solid #004590;
 }
 
 .event {
-    background-color: #0275d8;
-    background: linear-gradient(to bottom right, #051526, #0275d8);
+    background: linear-gradient(to bottom right, #090909, #005caa);
+}
+
+.eventsep  {
+    border-color: #fad600;
 }
 
 .replay {
-    background-color: #0275d8;
-    background: linear-gradient(to bottom right, #051526, #0275d8);
+    background: linear-gradient(to bottom right, #090909, #005caa);
 }
 
 .replay-control {
@@ -49,7 +53,7 @@ body {
 }
 
 .htxt {
-    color: #d2e00d;
+    color: #fad600;
 }
 
 .desctxt {
@@ -61,63 +65,63 @@ body {
 }
 
 .progress-bar {
-    background-color: #d2e00d;
+    background-color: #fad600;
     color: black;
 }
 
 // recording list
 
 .recording  {
-    background: linear-gradient(to bottom right, #a8004d, #004c65);
+    background: linear-gradient(to bottom right, #090909, #005caa);
 }
 
 .rltmtxt {  // recording list time text
-    color: white;
+    color: #fad600;
 }
 
 // timer list
 
 .timer {
-    background: linear-gradient(to bottom right, #051526, #0275d8);
+    background: linear-gradient(to bottom right, #090909, #005caa);
     color: #b2aec3 !important;
 }
 
 .timeron {
-    background: linear-gradient(to bottom right, #ed0d0d, #000);
+    background: linear-gradient(to bottom right, #090909, #005caa);
     color: white !important;
 }
 
 .tmtxt {
-    color: #e2f208; // white;
+    color: white;
 }
 
 .tltmtxt {  // timer time text
-    color: white; // #b2aec3;
+    color: #fad600;
 }
 
 .tltmch {  // channel name
-    color: white; // #b2aec3;
+    color: white;
 }
 
 .tlvdrtxt{  // timer vdr name text
-    color: #d2e00d;
+    color: #fad600;
+    float: right;
 }
 
 .customdata  {
-    background: linear-gradient(to bottom right, #051526, #0275d8);
-    background: linear-gradient(to bottom right,#1a2cba,#f3f911);
-    color: black !important;
+    background: linear-gradient(to bottom right, #005caa, #090909);
+    color: white !important;
 }
 
 // menu
 
 .textmenu {
-    background: linear-gradient(to bottom right, #051526, #0275d8);
+    background: linear-gradient(to bottom right, #090909, #005caa);
     color: #b2aec3;
 }
 
 .textmenu-current {
-    background: linear-gradient(to bottom right, #051526, #0275d8);
+    background: linear-gradient(to bottom right, #090909, #005caa);
     color: white;
 }
 

@@ -1,7 +1,7 @@
 <template>
   <div v-if="timers" class="list-group" id="actual-timer">
     <div v-for="(timer,n) in timers"
-         class="mt-2 list-group-item card flex-column p-1 active"
+         class="mt-1 list-group-item card flex-column p-1 active"
          v-bind:class="{ timeron : timer.recording, timer : !timer.recording }">
       <div class="w-100 justify-content-between tmtxt">
         <div v-if="timer.epg2vdr" class="tlvdrtxt">[{{timer.epg2vdr.vdrname}}]</div>

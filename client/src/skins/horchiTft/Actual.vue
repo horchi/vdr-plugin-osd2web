@@ -4,7 +4,7 @@
       <o2w-replay :replay="replay"></o2w-replay>
     </div>
     <div v-else="">
-      <div class="channel">
+      <div class="channel mt-1">
         <div class="chnr">{{channel.channelnumber}}</div>
         <div class="chtxt">{{channel.channelname}}</div>
         <div v-if="$root.hasChannelLogos" class="chlogo">

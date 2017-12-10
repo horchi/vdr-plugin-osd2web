@@ -62,14 +62,13 @@ body {
     color: white;
 }
 
-.progress-bar {
-    height: 1.4em;
-    background-color: #fad600;
-    color: black;
-}
-
 .progress {
     background-color: #675807;
+}
+
+.progress-bar {
+    background-color: #fad600;
+    color: black;
 }
 
 // recording list
@@ -108,7 +107,7 @@ body {
 }
 
 .tlvdrtxt{  // timer vdr name text
-    color: white;
+    color: #fad600;
     float: right;
 }
 
