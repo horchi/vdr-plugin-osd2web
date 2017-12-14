@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# Changes settings in browser.conf instead of here
+# Change settings (SKIN/THEME, SONW/SANTA) in browser.conf instead here!
 # Skript may overwritten at update!
 #
 # don't touch below
@@ -14,16 +14,15 @@ BASE="$1"
 SKIN="horchiTft"
 THEME="graycd"
 
-SNOW_START=11
-SNOW_END=2
-SANTA_MONTH=12
+SNOW_MONTHS="Nov Dec Jan Feb"
+SANTA_MONTHS="Dec"
 
 [ -r "$MYPATH/browser.conf" ] && . "$MYPATH/browser.conf"
 
 URL="$BASE/$SKIN/index.html?theme=$THEME&onlyView"
 
-if [ $MONTH -ge $SNOW_START ] || [ $MONTH -le $SNOW_END ]; then
-    if [ $MONTH = $SANTA_MONTH ]; then
+if [[ "$SNOW_MONTHS" != "${LIST/$MONTH/}" ]] ; then
+    if [[ "$SANTA_MONTHS" != "${LIST/$MONTH/}" ]] ; then
         URL="$URL&xsnow=1&santa=1"  # with snow and sanata
     else
         URL="$URL&xsnow=1"          # with snow

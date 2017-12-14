@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.5"
-#define VERSION_DATE  "10.12.2017"
+#define _VERSION      "0.2.6"
+#define VERSION_DATE  "14.12.2017"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,10 @@
 
 /*
  * ------------------------------------
+
+2017-12-14: version 0.2.6 (horchi)
+   - change: Improved config og browser options
+   - change: Improved update of progressbar
 
 2017-12-10: version 0.2.5 (horchi)
    - change: Finetuning for TV view of skin horchiTft

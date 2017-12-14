@@ -94,6 +94,11 @@ void cUpdate::Replaying(const cControl* Control, const char* Name,
    triggerReplayUpdate = yes;
 }
 
+void cUpdate::ReplayProgress(const cControl* Control, int Current, int Total)
+{
+   triggerReplayControlUpdate = yes;
+}
+
 //***************************************************************************
 // User Action
 //***************************************************************************
