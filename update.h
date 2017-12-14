@@ -295,7 +295,6 @@ class cUpdate : public cStatus, cThread, public cOsdService
       time_t initialRecordingsUpdateAt;
       int triggerRecordingsUpdate;
       int triggerReplayUpdate;
-      int triggerReplayControlUpdate;
       int triggerForce;
 
       // static message interface to web thread
@@ -308,7 +307,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       static std::queue<std::string> messagesIn;
       static std::map<int,CategoryConfig> menuMaxLines;
       static int menuCloseTrigger;
-
+      static int triggerReplayControlUpdate;
       static eMenuCategory menuCategory;
       static std::string menuTitle;
 

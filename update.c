@@ -23,6 +23,7 @@
 std::queue<std::string> cUpdate::messagesIn;
 std::map<int,cUpdate::CategoryConfig> cUpdate::menuMaxLines;
 int cUpdate::menuCloseTrigger = no;
+int triggerReplayControlUpdate = no;
 
 eMenuCategory cUpdate::menuCategory = mcUnknown;
 std::string cUpdate::menuTitle = "";
