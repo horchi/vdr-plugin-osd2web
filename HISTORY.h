@@ -7,7 +7,7 @@
  *
  */
 
-#define _VERSION      "0.2.6"
+#define _VERSION      "0.2.7"
 #define VERSION_DATE  "14.12.2017"
 
 #ifdef GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2017-12-14: version 0.2.7 (horchi)
+   - added: VDR patch to update replay progress
 
 2017-12-14: version 0.2.6 (horchi)
    - change: Improved config og browser options

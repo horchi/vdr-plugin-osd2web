@@ -103,17 +103,17 @@ void cUpdate::ReplayProgress(const cControl* Control, int Current, int Total)
 // User Action
 //***************************************************************************
 
-void cUpdate::UserAction(const eKeys key)
-{
-   if (activeControl)
-   {
-      if (key == kFastFwd || key == kFastRew ||
-         key == kGreen || key == kYellow)
-      {
-         triggerReplayControlUpdate = yes;
-      }
-   }
-}
+// void cUpdate::UserAction(const eKeys key)
+// {
+//    if (activeControl)
+//    {
+//       if (key == kFastFwd || key == kFastRew ||
+//          key == kGreen || key == kYellow)
+//       {
+//          triggerReplayControlUpdate = yes;
+//       }
+//    }
+// }
 
 //***************************************************************************
 // Timer Change
