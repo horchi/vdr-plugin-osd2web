@@ -23,7 +23,7 @@
 std::queue<std::string> cUpdate::messagesIn;
 std::map<int,cUpdate::CategoryConfig> cUpdate::menuMaxLines;
 int cUpdate::menuCloseTrigger = no;
-int cUpdate::triggerReplayControlUpdate = no;
+// int cUpdate::triggerReplayControlUpdate = no;
 
 eMenuCategory cUpdate::menuCategory = mcUnknown;
 std::string cUpdate::menuTitle = "";
@@ -262,9 +262,9 @@ void cUpdate::atMeanwhile()
       }
 
       if (triggerReplayUpdate)
-         updateReplay();   // calls updateControl()
+         updateReplay();   // calls updateReplayControl()
       else
-         updateControl();
+         updateReplayControl();
    }
 
    if (menuCloseTrigger)

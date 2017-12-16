@@ -405,7 +405,7 @@ class cSkinOsd2WebDisplayReplay : public cSkinDisplayReplay
 
 void cSkinOsd2WebDisplayReplay::SetProgress(int Current, int Total)
 {
-   cUpdate::triggerReplayControlUpdate = yes;
+//   cUpdate::triggerReplayControlUpdate = yes;
 }
 
 //***************************************************************************

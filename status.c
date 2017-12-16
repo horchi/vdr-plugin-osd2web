@@ -94,10 +94,11 @@ void cUpdate::Replaying(const cControl* Control, const char* Name,
    triggerReplayUpdate = yes;
 }
 
-void cUpdate::ReplayProgress(const cControl* Control, int Current, int Total)
-{
-   triggerReplayControlUpdate = yes;
-}
+// void cUpdate::ReplayProgress(const cControl* Control, int Current, int Total)
+// {
+//    tell(3, "DEBUG: cUpdate::ReplayProgress");
+//    triggerReplayControlUpdate = yes;
+// }
 
 //***************************************************************************
 // User Action
@@ -325,7 +326,7 @@ void cUpdate::updateReplay(int force)
    {
       addToJson(oRecording, "active", no);
       cUpdate::pushMessage(oRecording, "replay");
-      updateControl(force);
+      updateReplayControl(force);
       return;
    }
 
@@ -351,14 +352,14 @@ void cUpdate::updateReplay(int force)
    }
 
    cUpdate::pushMessage(oRecording, "replay");
-   updateControl(force);
+   updateReplayControl(force);
 }
 
 //***************************************************************************
-// Update Control
+// Update Replay Control
 //***************************************************************************
 
-void cUpdate::updateControl(int force)
+void cUpdate::updateReplayControl(int force)
 {
    static time_t lastCheckAt = na;
    static int ltotal = 0, lspeed = 0;
@@ -398,8 +399,8 @@ void cUpdate::updateControl(int force)
 
    // any changes ... except of 'current' position
 
-   if (!force && lactive && total == ltotal && speed == lspeed && play == lplay && forward == lforward)
-      return ;
+   // if (!force && lactive && total == ltotal && speed == lspeed && play == lplay && forward == lforward)
+   //    return ;
 
    lspeed = speed; lplay = play; lforward = forward;
    ltotal = total;

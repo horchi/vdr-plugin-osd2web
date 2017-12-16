@@ -295,6 +295,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       time_t initialRecordingsUpdateAt;
       int triggerRecordingsUpdate;
       int triggerReplayUpdate;
+      int triggerReplayControlUpdate;
       int triggerForce;
 
       // static message interface to web thread
@@ -307,7 +308,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       static std::queue<std::string> messagesIn;
       static std::map<int,CategoryConfig> menuMaxLines;
       static int menuCloseTrigger;
-      static int triggerReplayControlUpdate;
+      // static int triggerReplayControlUpdate;
       static eMenuCategory menuCategory;
       static std::string menuTitle;
 
@@ -321,7 +322,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       virtual void OsdProgramme(time_t PresentTime, const char *PresentTitle, const char *PresentSubtitle, time_t FollowingTime, const char *FollowingTitle, const char *FollowingSubtitle);
       virtual void ChannelSwitch(const cDevice* Device, int ChannelNumber, bool LiveView);
       virtual void Replaying(const cControl *Control, const char *Name, const char *FileName, bool On);
-      virtual void ReplayProgress(const cControl *Control, int Current, int Total);
+      // virtual void ReplayProgress(const cControl *Control, int Current, int Total);
       virtual void Recording(const cDevice *Device, const char *Name, const char *FileName, bool On);
       virtual void TimerChange(const cTimer *Timer, eTimerChange Change);
       // virtual void UserAction(const eKeys key);
@@ -335,7 +336,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       void updatePresentFollowing();
       void updateTimers();
       void updateRecordings();
-      void updateControl(int force = no);
+      void updateReplayControl(int force = no);
       void updateReplay(int force = no);
       void updateDiaShow(int force = no);
       void updateCustomData();
