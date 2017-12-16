@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.7"
-#define VERSION_DATE  "14.12.2017"
+#define _VERSION      "0.2.8"
+#define VERSION_DATE  "16.12.2017"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2017-12-16: version 0.2.8 (horchi)
+   - added: now use firefox as the default browser for the TFT display
 
 2017-12-14: version 0.2.7 (horchi)
    - added: VDR patch to update replay progress

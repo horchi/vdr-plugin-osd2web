@@ -362,8 +362,8 @@ void cUpdate::updateReplay(int force)
 void cUpdate::updateReplayControl(int force)
 {
    static time_t lastCheckAt = na;
-   static int ltotal = 0, lspeed = 0;
-   static bool lplay = false, lforward = false;
+   // static int ltotal = 0, lspeed = 0;
+   // static bool lplay = false, lforward = false;
    static bool lactive = no;
 
    force |= triggerReplayControlUpdate;
@@ -402,8 +402,8 @@ void cUpdate::updateReplayControl(int force)
    // if (!force && lactive && total == ltotal && speed == lspeed && play == lplay && forward == lforward)
    //    return ;
 
-   lspeed = speed; lplay = play; lforward = forward;
-   ltotal = total;
+   // lspeed = speed; lplay = play; lforward = forward;
+   // ltotal = total;
    lactive = yes;
 
    addToJson(oControl, "active", lactive);

@@ -11,11 +11,16 @@ MYPATH="`dirname \"$0\"`"
 MONTH=`date +%m`
 BASE="$1"
 
+BROWSER="/usr/bin/firefox"
+
 SKIN="horchiTft"
 THEME="graycd"
 
 SNOW_MONTHS="Nov Dec Jan Feb"
 SANTA_MONTHS="Dec"
+
+SEND_F11="yes"
+PAUSE_BEFORE_KEY=3
 
 [ -r "$MYPATH/browser.conf" ] && . "$MYPATH/browser.conf"
 
@@ -29,6 +34,22 @@ if [[ "$SNOW_MONTHS" != "${LIST/$MONTH/}" ]] ; then
     fi
 fi
 
-DISPLAY=:1.1 /usr/bin/midori -a "$URL"
+if [[ "$BROWSER" =~ "firefox" ]]; then
+    URL_OPT="-url"
+else
+    URL_OPT="-a"
+fi
+
+(DISPLAY=:1.1 "$BROWSER" "$URL_OPT" "$URL" > /dev/null 2>&1 &)
+
+if [ "$SEND_F11" == "yes" ]; then
+
+   sleep $PAUSE_BEFORE_KEY
+
+   for id in `xdotool search --onlyvisible --name firefox`; do
+       xdotool key --window "$id" "F11"
+   done
+
+fi
 
 exit 0
