@@ -312,6 +312,13 @@ class cUpdate : public cStatus, cThread, public cOsdService
       static eMenuCategory menuCategory;
       static std::string menuTitle;
 
+      // static interface fpr browser start/stop
+
+      static pid_t browserPid;
+      static int startBrowser(int byUser = no);
+      static int stopBrowser();
+      static int forkScript(int& pid, const char* script, const char* options);  // #TODO move to lib
+
    protected:
 
       virtual void Action();
@@ -330,9 +337,6 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
    private:
 
-      int forkScript(const char* script, const char* options);  // #TODO move to lib
-
-      int startBrowser();
       void updatePresentFollowing();
       void updateTimers();
       void updateRecordings();
@@ -374,7 +378,6 @@ class cUpdate : public cStatus, cThread, public cOsdService
       cWebSock* webSock;
       bool active;
       int actualClientCount;
-      pid_t browserPid;
       ViewMode viewMode;
 
       // file service stuff

@@ -181,7 +181,10 @@ const char** cPluginOsd2Web::SVDRPHelpPages()
       "    Set the normal view to the previous section\n",
       "NEXT \n"
       "    Set the normal view to the next section\n",
-
+      "BRSTART \n"
+      "    Start the local browser\n",
+      "BRSTOP \n"
+      "    Stop the local browser\n",
       0
    };
 
@@ -241,6 +244,20 @@ cString cPluginOsd2Web::SVDRPCommand(const char* cmd, const char* Option, int& R
    {
       update->toggleView(yes);
       result = "switched view";
+   }
+   else if (strcasecmp(cmd, "BRSTART") == 0)
+   {
+      if (cUpdate::startBrowser(yes) == success)
+         result = "browser started";
+      else
+         result = "stopping browser failed";
+   }
+   else if (strcasecmp(cmd, "BRSTOP") == 0)
+   {
+      if (cUpdate::stopBrowser() == success)
+         result = "browser stopped";
+      else
+         result = "stopping browser failed";
    }
 
    return result;

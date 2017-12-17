@@ -14,6 +14,8 @@
 // Includes
 //***************************************************************************
 
+#include <signal.h>
+
 #include <vdr/remote.h>
 #include <vdr/plugin.h>
 
@@ -307,42 +309,50 @@ void cUpdate::atMeanwhile()
 // Fork Script
 //***************************************************************************
 
-int cUpdate::forkScript(const char* script, const char* options)
+int cUpdate::forkScript(int& pid, const char* script, const char* options)
 {
+   pid = 0;
+
    tell(0, "Starting '%s'", script);
 
-   if ((browserPid = fork()) < 0)
+   if ((pid = fork()) < 0)
    {
       tell(0, "Error: Fork failed with %s", strerror(errno));
+      pid = 0;
       return -1;
    }
 
-   if (browserPid == 0)
+   if (pid > 0)
    {
-      char* argv[30]; memset(argv, 0, sizeof(argv));
-      int argc = 0;
+      // parent process,
+      //  ... work is done
 
-      // child code
-
-      argv[argc++] = strdup(script);
-
-      if (!isEmpty(options))
-         argv[argc++] = strdup(options);
-
-      argv[argc] = 0;
-
-      tell(1, "Starting '%s' with '%s'", script, argv[1] ? argv[1] : "");
-
-      execv(script, argv);
-
-      tell(0, "Process '%s' ended unexpectedly, reason was '%s'",
-           script, strerror(errno));
-
-      for (int i = 0; i < argc; i++)
-         free(argv[i]);
-
-      ::exit(0);
+      return success;
    }
+
+   char* argv[30]; memset(argv, 0, sizeof(argv));
+   int argc = 0;
+
+   // child code
+
+   argv[argc++] = strdup(script);
+
+   if (!isEmpty(options))
+      argv[argc++] = strdup(options);
+
+   argv[argc] = 0;
+
+   tell(1, "Starting '%s' with '%s'", script, argv[1] ? argv[1] : "");
+
+   execv(script, argv);
+
+   tell(0, "Process '%s' ended unexpectedly, reason was '%s'",
+        script, strerror(errno));
+
+   for (int i = 0; i < argc; i++)
+      free(argv[i]);
+
+   ::exit(0);
 
    return done;
 }
@@ -351,13 +361,13 @@ int cUpdate::forkScript(const char* script, const char* options)
 // Start Browser
 //***************************************************************************
 
-int cUpdate::startBrowser()
+int cUpdate::startBrowser(int byUser)
 {
    int res = success;
 
    // start browser?
 
-   if (config.startBrowser)
+   if (config.startBrowser || byUser)
    {
       char* browserScript;
       char* options;
@@ -366,15 +376,44 @@ int cUpdate::startBrowser()
       asprintf(&options, "http://localhost:%d/skins", config.webPort);
 
       if (fileExists(browserScript))
-         res = forkScript(browserScript, options);
+      {
+         res = forkScript(browserPid, browserScript, options);
+
+         if (res == success)
+            tell(0, "Started browser, PID is (%d)", browserPid);
+      }
       else
+      {
+         res = fail;
          tell(0, "Error: Can't start browser '%s' not found!", browserScript);
+      }
 
       free(browserScript);
       free(options);
    }
 
    return res;
+}
+
+//***************************************************************************
+// Stop Browser
+//***************************************************************************
+
+int cUpdate::stopBrowser()
+{
+   if (!browserPid)
+      return done;
+
+   if (kill(browserPid, SIGTERM) < 0)
+   {
+      tell(0, "Error: Terminating browser with pid (%d) faild, error was '%s'",
+           browserPid, strerror(errno));
+      return fail;
+   }
+
+   browserPid = 0;
+
+   return success;
 }
 
 //***************************************************************************
