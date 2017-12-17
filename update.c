@@ -406,9 +406,11 @@ int cUpdate::stopBrowser()
    if (!browserPid)
       return done;
 
+   tell(0, "Try to terminate browser with with pid (%d)"  browserPid);
+
    if (kill(browserPid, SIGTERM) < 0)
    {
-      tell(0, "Error: Terminating browser with pid (%d) faild, error was '%s'",
+      tell(0, "Error: Terminating browser with pid (%d) failed, error was '%s'",
            browserPid, strerror(errno));
       return fail;
    }

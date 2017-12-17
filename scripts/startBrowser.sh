@@ -20,7 +20,17 @@ SNOW_MONTHS="Nov Dec Jan Feb"
 SANTA_MONTHS="Dec"
 
 SEND_F11="yes"
-PAUSE_BEFORE_KEY=3
+PAUSE_BEFORE_KEY=4
+
+if [ "$1" == "F11" ]; then
+    sleep $PAUSE_BEFORE_KEY
+
+    for id in `xdotool search --onlyvisible --name firefox`; do
+        xdotool key --window "$id" "F11"
+    done
+
+    exit 0
+fi
 
 [ -r "$MYPATH/browser.conf" ] && . "$MYPATH/browser.conf"
 
@@ -40,16 +50,21 @@ else
     URL_OPT="-a"
 fi
 
+if [ "$SEND_F11" == "yes" ]; then
+    echo "starting $0"
+    (DISPLAY=:1.1 "$0" "F11" &)
+fi
+
 (DISPLAY=:1.1 "$BROWSER" "$URL_OPT" "$URL" > /dev/null 2>&1 &)
 
-if [ "$SEND_F11" == "yes" ]; then
-
-   sleep $PAUSE_BEFORE_KEY
-
-   for id in `xdotool search --onlyvisible --name firefox`; do
-       xdotool key --window "$id" "F11"
-   done
-
-fi
+#if [ "$SEND_F11" == "yes" ]; then
+#
+#   sleep $PAUSE_BEFORE_KEY
+#
+#   for id in `xdotool search --onlyvisible --name firefox`; do
+#       xdotool key --window "$id" "F11"
+#   done
+#
+#fi
 
 exit 0
