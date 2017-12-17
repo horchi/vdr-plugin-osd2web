@@ -55,7 +55,7 @@ if [ "$SEND_F11" == "yes" ]; then
     (DISPLAY=:1.1 "$0" "F11" &)
 fi
 
-(DISPLAY=:1.1 "$BROWSER" "$URL_OPT" "$URL" > /dev/null 2>&1 &)
+DISPLAY=:1.1 "$BROWSER" "$URL_OPT" "$URL" > /dev/null 2>&1
 
 #if [ "$SEND_F11" == "yes" ]; then
 #
