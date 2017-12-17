@@ -30,6 +30,8 @@ int cUpdate::menuCloseTrigger = no;
 eMenuCategory cUpdate::menuCategory = mcUnknown;
 std::string cUpdate::menuTitle = "";
 
+pid_t cUpdate::browserPid = 0;
+
 //***************************************************************************
 // OSD Service
 //***************************************************************************
