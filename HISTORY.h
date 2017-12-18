@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.8"
-#define VERSION_DATE  "16.12.2017"
+#define _VERSION      "0.2.9"
+#define VERSION_DATE  "18.12.2017"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,11 @@
 
 /*
  * ------------------------------------
+
+2017-12-18: version 0.2.9 (horchi)
+   - change: snow now in foreground of all elements
+   - added:  svdr commannds to start and stop local browser
+   - added:  svdr commannd to switch display of local browser
 
 2017-12-16: version 0.2.8 (horchi)
    - added: now use firefox as the default browser for the TFT display

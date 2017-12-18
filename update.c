@@ -344,7 +344,7 @@ int cUpdate::forkScript(int& pid, const char* script, char* const arguments[])
 
    argv[argc] = 0;
 
-   tell(1, "Starting '%s' with '%s'", script, argv[1] ? argv[1] : "");
+   tell(1, "Starting '%s' with '%s'", script, notNull(argv[1]));
 
    execv(script, argv);
 
