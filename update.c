@@ -14,6 +14,7 @@
 // Includes
 //***************************************************************************
 
+#include <sys/wait.h>
 #include <signal.h>
 
 #include <vdr/remote.h>
@@ -415,6 +416,24 @@ int cUpdate::stopBrowser()
       return fail;
    }
 
+   // wait up to 5 secons for the browser to quit
+
+   time_t timeoutAt = time(0) + 5;
+   int status = 0;
+
+   while (waitpid(browserPid, &status, WNOHANG) == 0)
+   {
+      usleep(10000);
+
+      if (time(0) > timeoutAt)
+      {
+         browserPid = 0;
+         tell(0, "Giving up, browser seems not to be terminating");
+         return fail;
+      }
+   }
+
+   tell(0, "Browser exited with %d", WEXITSTATUS(status));
    browserPid = 0;
 
    return success;
