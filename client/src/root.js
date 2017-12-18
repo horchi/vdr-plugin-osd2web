@@ -180,13 +180,15 @@ export var root = {
                 return "";
             var d = new Date(unixTime * 1000); // - this.timeOffset
             return new String(100 + d.getHours()).slice(1) + ':' + new String(100 + d.getMinutes()).slice(1) + ':' + new String(100 + d.getSeconds()).slice(1);
+        },
+        formatDuration(dur) {
+            return new String(parseInt(dur/60)) + ':' + new String("00" + dur%60).slice(-2);
         }
-
         /*,
-                formatDate(unixTime) {
-                    var d = new Date(unixTime * 1000); // - this.timeOffset
-                    return d.toLocaleDateString('de-DE', { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' });
-                }*/
+          formatDate(unixTime) {
+               var d = new Date(unixTime * 1000); // - this.timeOffset
+             return d.toLocaleDateString('de-DE', { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' });
+         }*/
 
     },
     created() {

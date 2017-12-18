@@ -14,8 +14,8 @@
         </div>
         <div class="eventtitlerow clearfix">
           <div class="titletxt">{{$root.formatTime(event.starttime)}}&nbsp;{{event.title}}</div>
-          <div v-if="elapsed > 0" class="durationtxt">{{remaining}}/{{parseInt(event.duration/60,10)}}</div>
-          <div v-if="elapsed <= 0" class="durationtxt">{{parseInt(event.duration/60,10)}}</div>
+          <div v-if="elapsed > 0" class="durationtxt">{{remaining}}/{{duration}}</div>
+          <div v-if="elapsed <= 0" class="durationtxt">{{duration}}</div>
         </div>
         <div class="clearfix">
           <div v-if="event.epg2vdr && imagecnt > 0" :id="'evImages' + event.eventid" class="img-fluid float-right epg-image carousel slide" data-ride="carousel" data-interval="5000">
@@ -87,7 +87,10 @@ export default {
                     this.now= parseInt(new Date().getTime() / 1000, 10);
                 },60000);
             }
-            return Math.max(parseInt((this.event.duration - (this.now - this.event.starttime))/60,10),0);
+            return this.$root.formatDuration(Math.max(parseInt((this.event.duration - (this.now - this.event.starttime))/60,10),0));
+        },
+        duration: function () {
+            return this.$root.formatDuration(parseInt(this.event.duration/60,10));
         },
         country_year: function() {
             var text = "";
@@ -113,7 +116,6 @@ export default {
                 text += text.length > 0 ? " / " + this.event.epg2vdr.txtrating : this.event.epg2vdr.txtrating;
             return text;
         },
-
         imagecnt: function() {
             let cnt= this.event.epg2vdr ? parseInt(this.event.epg2vdr.imagecount, 10) : 0;
             return isNaN(cnt) ? 0 : cnt ;

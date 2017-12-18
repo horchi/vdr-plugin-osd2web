@@ -13,7 +13,7 @@
         </div>
         <div class="eventtitlerow clearfix">
           <div class="titletxt">{{replay.event.title}}</div>
-          <div v-if="elapsed >= 0" class="durationtxt">{{remaining}}/{{parseInt(replay.lengthinseconds/60,10)}}</div>
+          <div v-if="elapsed >= 0" class="durationtxt">{{remaining}}/{{duration}}</div>
         </div>
         <div class="clearfix">
           <div :id="'evImages' + replay.event.eventid" class="img-fluid float-right img-thumbnail carousel slide" data-ride="carousel" data-interval="5000">
@@ -24,16 +24,15 @@
             </div>
           </div>
           <div v-if="replay.event.epg2vdr">
-            <div v-if="replay.event.epg2vdr.shorttext" class="card-text htxt">{{replay.event.shorttext}}</div>
-            <div v-if="replay.event.epg2vdr.genre" class="card-text htxt">{{replay.event.epg2vdr.genre}}&nbsp;/&nbsp;{{replay.event.epg2vdr.category}}</div>
             <div v-if="replay.event.epg2vdr.episodepartname" class="card-text htxt">{{replay.event.epg2vdr.episodepartname}}</div>
-            <div v-if="replay.event.epg2vdr.country" class="card-text htxt">{{replay.event.epg2vdr.country}}&nbsp;{{replay.event.epg2vdr.year}}</div>
-            <div v-if="replay.event.epg2vdr.tipp" class="card-text htxt">{{replay.event.epg2vdr.tipp}}&nbsp;&nbsp;{{replay.event.epg2vdr.txtrating}}</div>
+            <div v-else="" class="card-text htxt">{{replay.event.epg2vdr.shorttext}}</div>
           </div>
           <div v-else="">
             <div v-if="replay.event.shorttext" class="card-text htxt">{{replay.event.shorttext}}</div>
           </div>
-        <p class="desctxt" v-show="description" v-html="description"></p>
+          <div class="card-text htxt">{{country_year}}</div>
+          <div class="card-text htxt">{{rating}}</div>
+          <p class="desctxt" v-show="description" v-html="description"></p>
         </div>
       </div>
     </div>
@@ -118,11 +117,38 @@ export default {
             }
             return Math.max(parseInt(this.current / this.replay.lengthinseconds * 100, 10), 1);
         },
-        remaining: function () {
-            return Math.max(parseInt((this.replay.lengthinseconds - this.current)/60, 10), 0);
-        },
         elapsed: function () {
             return Math.max(parseInt(this.current/60, 10), 0);
+        },
+        remaining: function () {
+            return this.$root.formatDuration(Math.max(parseInt((this.replay.lengthinseconds - this.current)/60, 10), 0));
+        },
+        duration: function () {
+            return this.$root.formatDuration(parseInt(this.replay.lengthinseconds/60,10));
+        },
+        country_year: function() {
+            var text = "";
+            if (!this.replay.event.epg2vdr)
+                return text;
+            if (this.replay.event.epg2vdr.category)
+                text += this.replay.event.epg2vdr.category;
+            if (this.replay.event.epg2vdr.genre)
+                text += " / " + this.replay.event.epg2vdr.genre
+            if (this.replay.event.epg2vdr.country)
+                text += " / " + this.replay.event.epg2vdr.country;
+            if (this.replay.event.epg2vdr.year)
+                text += " " + this.replay.event.epg2vdr.year;
+            return text;
+        },
+        rating: function() {
+            var text = "";
+            if (!this.replay.event.epg2vdr)
+                return text;
+            if (this.replay.event.epg2vdr.tipp)
+                text += this.replay.event.epg2vdr.tipp;
+            if (this.event.replay.epg2vdr.txtrating)
+                text += text.length > 0 ? " / " + this.replay.event.epg2vdr.txtrating : this.replay.event.epg2vdr.txtrating;
+            return text;
         }
     },
     updated: function() {
