@@ -384,7 +384,7 @@ int cUpdate::startBrowser(int byUser)
          res = forkScript(browserPid, browserScript, args);
 
          if (res == success)
-            tell(0, "Started browser, PID is (%d)", browserPid);
+            tell(0, "Started browser on display '%s', PID is (%d)", config.browserDisplay, browserPid);
       }
       else
       {

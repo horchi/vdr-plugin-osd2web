@@ -84,7 +84,7 @@ bool cPluginOsd2Web::ProcessArgs(int argc, char* argv[])
          case 'l': config.setLogoPath(optarg);     break;
          case 'L': config.logoNotLower = yes;      break;
          case 'i': config.logoById = yes;          break;
-         case 'b': config.setBrowser(optarg);      break;
+         case 'b': config.setBrowser(optarg, yes); break;
 
          default:  tell(0, "Ignoring unknown argument '%c' '%s'", c, optarg);
       }
@@ -271,7 +271,7 @@ cString cPluginOsd2Web::SVDRPCommand(const char* cmd, const char* Option, int& R
       else
       {
          cUpdate::stopBrowser();
-
+         config.setBrowser(Option);
          if (cUpdate::startBrowser(yes) == success)
             result = "browser started";
          else

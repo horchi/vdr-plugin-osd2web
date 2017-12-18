@@ -47,3 +47,12 @@ cOsd2WebConfig::~cOsd2WebConfig()
    free(diaPath);
    free(browserDisplay);
 }
+
+void cOsd2WebConfig::setBrowser(const char* p, int autoStart)
+{
+   free(browserDisplay);
+   browserDisplay = strdup(p);
+
+   if (autoStart != na)
+      startBrowser = autoStart;
+}
