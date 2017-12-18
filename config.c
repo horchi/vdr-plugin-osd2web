@@ -34,6 +34,7 @@ cOsd2WebConfig::cOsd2WebConfig()
    logoSuffix = strdup("png");
    epgImagePath = strdup("/var/cache/vdr/epgimages");
    startBrowser = no;
+   browserDisplay = strdup("");
 }
 
 cOsd2WebConfig::~cOsd2WebConfig()
@@ -44,4 +45,5 @@ cOsd2WebConfig::~cOsd2WebConfig()
    free(logoSuffix);
    free(logoPath);
    free(diaPath);
+   free(browserDisplay);
 }

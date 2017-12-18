@@ -94,28 +94,6 @@ void cUpdate::Replaying(const cControl* Control, const char* Name,
    triggerReplayUpdate = yes;
 }
 
-// void cUpdate::ReplayProgress(const cControl* Control, int Current, int Total)
-// {
-//    tell(3, "DEBUG: cUpdate::ReplayProgress");
-//    triggerReplayControlUpdate = yes;
-// }
-
-//***************************************************************************
-// User Action
-//***************************************************************************
-
-// void cUpdate::UserAction(const eKeys key)
-// {
-//    if (activeControl)
-//    {
-//       if (key == kFastFwd || key == kFastRew ||
-//          key == kGreen || key == kYellow)
-//       {
-//          triggerReplayControlUpdate = yes;
-//       }
-//    }
-// }
-
 //***************************************************************************
 // Timer Change
 //***************************************************************************

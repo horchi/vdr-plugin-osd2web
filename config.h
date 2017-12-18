@@ -27,6 +27,7 @@ struct cOsd2WebConfig : public cConfigBase
       void setLogoPath(const char* p)     { free(logoPath); logoPath = strdup(p); }
       void setEpgImagePath(const char* s) { free(epgImagePath); epgImagePath = strdup(s); }
       void setDiaPath(const char* p)      { free(diaPath); diaPath = strdup(p); }
+      void setBrowser(const char* p)      { free(browserDisplay); browserDisplay = strdup(p); startBrowser = yes;}
 
       int webPort;
       char* httpPath;
@@ -40,6 +41,7 @@ struct cOsd2WebConfig : public cConfigBase
       int clientOsdTimeout;
       int diaCycleTime;            // in seconds
       int startBrowser;
+      char* browserDisplay;
 };
 
 extern cOsd2WebConfig config;

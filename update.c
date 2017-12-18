@@ -26,7 +26,6 @@
 std::queue<std::string> cUpdate::messagesIn;
 std::map<int,cUpdate::CategoryConfig> cUpdate::menuMaxLines;
 int cUpdate::menuCloseTrigger = no;
-// int cUpdate::triggerReplayControlUpdate = no;
 
 eMenuCategory cUpdate::menuCategory = mcUnknown;
 std::string cUpdate::menuTitle = "";
@@ -312,7 +311,7 @@ void cUpdate::atMeanwhile()
 // Fork Script
 //***************************************************************************
 
-int cUpdate::forkScript(int& pid, const char* script, const char* options)
+int cUpdate::forkScript(int& pid, const char* script, char* const arguments[])
 {
    pid = 0;
 
@@ -340,8 +339,8 @@ int cUpdate::forkScript(int& pid, const char* script, const char* options)
 
    argv[argc++] = strdup(script);
 
-   if (!isEmpty(options))
-      argv[argc++] = strdup(options);
+   for (int i = 0; arguments[i]; i++)
+      argv[argc++] = strdup(arguments[i]);
 
    argv[argc] = 0;
 
@@ -372,15 +371,17 @@ int cUpdate::startBrowser(int byUser)
 
    if (config.startBrowser || byUser)
    {
+      char* args[30]; memset(args, 0, sizeof(args));
       char* browserScript;
-      char* options;
 
       asprintf(&browserScript, "%s/%s", config.confPath, "startBrowser.sh");
-      asprintf(&options, "http://localhost:%d/skins", config.webPort);
+      asprintf(&args[0], "http://localhost:%d/skins", config.webPort);
+      asprintf(&args[1], "%s", config.browserDisplay);
+      args[2] = 0;
 
       if (fileExists(browserScript))
       {
-         res = forkScript(browserPid, browserScript, options);
+         res = forkScript(browserPid, browserScript, args);
 
          if (res == success)
             tell(0, "Started browser, PID is (%d)", browserPid);
@@ -392,7 +393,9 @@ int cUpdate::startBrowser(int byUser)
       }
 
       free(browserScript);
-      free(options);
+
+      for (int i = 0; args[i]; i++)
+         free(args[i]);
    }
 
    return res;

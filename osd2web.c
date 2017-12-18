@@ -51,7 +51,7 @@ const char* cPluginOsd2Web::CommandLineHelp()
       "   -L,              --logonotlower            do not search logo names in lower case\n"
       "   -i,              --logobyid                logo names by channel id instead of name\n"
       "   -e,              --epgimgpath              path to epg images\n"
-      "   -b,              --browser                 start browser (via startBrowser script)\n"
+      "   -b <display>,    --browser <display>       start browser (via startBrowser script)\n"
       "                                              (default: /var/cache/vdr/epgimages)\n"
       ;
 }
@@ -68,13 +68,13 @@ bool cPluginOsd2Web::ProcessArgs(int argc, char* argv[])
       { "logopath",       required_argument, 0, 'l' },
       { "logonotlower",         no_argument, 0, 'L' },
       { "logobyid",             no_argument, 0, 'i' },
-      { "browser",              no_argument, 0, 'b' },
+      { "browser",        required_argument, 0, 'b' },
       { 0, 0, 0, 0 }
    };
 
    // check the arguments
 
-   while ((c = getopt_long(argc, argv, "p:s:e:l:Lib", long_options, 0)) != -1)
+   while ((c = getopt_long(argc, argv, "p:s:e:l:Lib:", long_options, 0)) != -1)
    {
       switch (c)
       {
@@ -84,7 +84,7 @@ bool cPluginOsd2Web::ProcessArgs(int argc, char* argv[])
          case 'l': config.setLogoPath(optarg);     break;
          case 'L': config.logoNotLower = yes;      break;
          case 'i': config.logoById = yes;          break;
-         case 'b': config.startBrowser = yes;      break;
+         case 'b': config.setBrowser(optarg);      break;
 
          default:  tell(0, "Ignoring unknown argument '%c' '%s'", c, optarg);
       }
@@ -185,6 +185,8 @@ const char** cPluginOsd2Web::SVDRPHelpPages()
       "    Start the local browser\n",
       "BRSTOP \n"
       "    Stop the local browser\n",
+      "DISP <display>\n"
+      "    switch xorg display of local browser instance\n",
       0
    };
 
@@ -250,7 +252,7 @@ cString cPluginOsd2Web::SVDRPCommand(const char* cmd, const char* Option, int& R
       if (cUpdate::startBrowser(yes) == success)
          result = "browser started";
       else
-         result = "stopping browser failed";
+         result = "starting browser failed";
    }
    else if (strcasecmp(cmd, "BRSTOP") == 0)
    {
@@ -258,6 +260,23 @@ cString cPluginOsd2Web::SVDRPCommand(const char* cmd, const char* Option, int& R
          result = "browser stopped";
       else
          result = "stopping browser failed";
+   }
+   else if (!strcasecmp(cmd, "DISP"))
+   {
+      if (isEmpty(Option))
+         return "Missing <display> option";
+
+      if (strcmp(Option, config.browserDisplay) == 0)
+         result = "don't need to switch display, nothing changed";
+      else
+      {
+         cUpdate::stopBrowser();
+
+         if (cUpdate::startBrowser(yes) == success)
+            result = "browser started";
+         else
+            result = "starting browser failed";
+      }
    }
 
    return result;
