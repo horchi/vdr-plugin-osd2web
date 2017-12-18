@@ -10,7 +10,7 @@
 MYPATH="`dirname \"$0\"`"
 MONTH=`date +%m`
 BASE="$1"
-
+DISP="$2"
 BROWSER="/usr/bin/firefox"
 
 SKIN="horchiTft"
@@ -52,10 +52,10 @@ fi
 
 #if [ "$SEND_F11" == "yes" ]; then
 #    echo "starting $0"
-#    (DISPLAY=:1.1 "$0" "F11" &)
+#    (DISPLAY="$DISP" "$0" "F11" &)
 #fi
 
-DISPLAY=:1.1 "$BROWSER" "$URL_OPT" "$URL" > /dev/null 2>&1 &
+DISPLAY="$DISP" "$BROWSER" "$URL_OPT" "$URL" > /dev/null 2>&1 &
 pid=$!
 trap "kill -TERM $pid" TERM
 
