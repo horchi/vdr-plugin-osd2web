@@ -382,7 +382,7 @@ import sleigh from "./sleigh3.gif"
 		}
 
 		var div= document.createElement("div");
-		div.style.cssText= "width:97%; height:97%; overflow:hidden; position:fixed;left:1%;top:1%; z-index:0";
+		div.style.cssText= "width:97%; height:97%; overflow:hidden; position:fixed;left:1%;top:1%; z-index:10";
 		div.innerHTML= a;
 		document.body.appendChild(div);
 		window.addEventListener("resize", get_page_dimension);
@@ -400,5 +400,3 @@ import sleigh from "./sleigh3.gif"
 		window.setTimeout(storm_proc,1800);					// init with visible storm
 		window.setTimeout(make_flake_visible_proc,2000);	// after the storm, let snowflakes fall :-)
 	}
-
-
