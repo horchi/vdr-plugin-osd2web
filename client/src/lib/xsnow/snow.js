@@ -362,19 +362,22 @@ import sleigh from "./sleigh3.gif"
 	// initialize all objects & timer
 	//-------------------------------------------------------------------------
 
-	export function start(showSanta)
+   export function start(showSanta)
 	{
 		var a = '';
 
-		if (showSanta){
-			// santa's private layer
+       // santa's private layer
+
+		if (showSanta) {
 			a += '<div id="santa0" '
 			+  'style="position: absolute; '
 			+  'left:-1px; top:-1px; z-Index:9999">'
 			+  '<img src="'+santa_image.src+'"></div>\n';
 		}
-		// each snowflake's private layer
-		for (var i=0; i<flakes; i++) {
+
+	 // each snowflake's private layer
+
+		for (var i=0; i<flakes; i++)  {
 			a += '<div id="flake'+i+'" '
 			+  'style="position: absolute; '
 			+  'left:-1px; top:-1px; z-Index:9999">'
@@ -382,7 +385,7 @@ import sleigh from "./sleigh3.gif"
 		}
 
 		var div= document.createElement("div");
-		div.style.cssText= "width:97%; height:97%; overflow:hidden; position:fixed;left:1%;top:1%; z-index:10";
+		div.style.cssText= "width:97%; height:97%; overflow:hidden; position:fixed;left:1%;top:1%; z-index:9999";
 		div.innerHTML= a;
 		document.body.appendChild(div);
 		window.addEventListener("resize", get_page_dimension);

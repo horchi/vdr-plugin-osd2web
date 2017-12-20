@@ -58,7 +58,7 @@ class cEpgTimer_Interface_V1 : public cTimer
 };
 
 //***************************************************************************
-// Timer Service Interfaces
+// Timer Service Interface
 //***************************************************************************
 
 struct cEpgTimer_Service_V1
@@ -66,8 +66,21 @@ struct cEpgTimer_Service_V1
    std::list<cEpgTimer_Interface_V1*> epgTimers;
 };
 
+//***************************************************************************
+// Recording Detail Service Interface
+//***************************************************************************
+
+struct cEpgRecording_Details_Service_V1
+{
+   cEpgRecording_Details_Service_V1(int aId) { id = aId; }
+
+   int id;
+   std::string details;
+};
+
 #define EPG2VDR_TIMER_UPDATED "Epg2Vdr_Timer_Updated-v1.0"
 #define EPG2VDR_TIMER_SERVICE "Epg2Vdr_Timer_Service-v1.0"
+#define EPG2VDR_REC_DETAIL_SERVICE "Epg2Vdr_RecDetail_Service-v1.0"
 
 #ifdef EPG2VDR
 

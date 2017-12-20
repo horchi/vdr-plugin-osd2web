@@ -19,10 +19,12 @@
 /*
  * ------------------------------------
 
-2017-12-18: version 0.2.9 (horchi)
+2017-12-19: version 0.2.9 (horchi)
    - change: snow now in foreground of all elements
-   - added:  svdr commannds to start and stop local browser
-   - added:  svdr commannd to switch display of local browser
+   - added:  svdr commands to start and stop local browser
+   - added:  svdr command to switch display of local browser
+   - added:  query of recording details by epg2vdr
+   - added:  deliver editing marks to client
 
 2017-12-16: version 0.2.8 (horchi)
    - added: now use firefox as the default browser for the TFT display

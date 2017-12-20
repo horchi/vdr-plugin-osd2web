@@ -92,6 +92,7 @@ int channel2Json(json_t* obj, const cChannel* channel);
 int timer2Json(json_t* obj, const cTimer* timer);
 int stream2Json(json_t* obj, const cChannel* channel);
 int channels2Json(json_t* obj);
+int getRecordingDetails2Json(json_t* obj, int recId);
 
 int imagePaths2Json(json_t* obj, const char* path, const char* suffixFilter = "jpg jpeg");
 

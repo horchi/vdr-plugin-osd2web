@@ -14,6 +14,8 @@
 // Includes
 //***************************************************************************
 
+#include <vdr/plugin.h>
+
 #include "lib/xml.h"
 
 #include "update.h"
@@ -196,6 +198,8 @@ int channels2Json(json_t* obj)
 
 int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recording, cOsdService::ObjectShape shape)
 {
+   int fps = 1;
+
    if (!recording)
    {
       addToJson(obj, "name", "");
@@ -211,7 +215,7 @@ int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recordi
    addToJson(obj, "filesizemb", recording->FileSizeMB());
    addToJson(obj, "isnew", recording->IsNew());
    addToJson(obj, "isedited", recording->IsEdited());
-   addToJson(obj, "hasmarks", ((cRecording*)recording)->HasMarks()); // cast due to vdr 2.2.0 ' const' issue
+   addToJson(obj, "hasmarks", ((cRecording*)recording)->HasMarks()); // cast due to vdr 2.2.0 'const' issue
    addToJson(obj, "start", recording->Start());
 
    if (const cRecordingInfo* info = recording->Info())
@@ -219,6 +223,8 @@ int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recordi
       eTimerMatch timerMatch = tmNone;
       json_t* oInfo = json_object();
       json_t* oEvent = json_object();
+
+      fps = info->FramesPerSecond();
 
       addToJson(oInfo, "channelid", info->ChannelID().ToString());
       addToJson(oInfo, "channelname", info->ChannelName());
@@ -235,6 +241,10 @@ int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recordi
 
       event2Json(oEvent, info->GetEvent(), 0, timerMatch, no, shape);
 
+#if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
+      getRecordingDetails2Json(oEvent, recording->Id());
+#endif
+
       json_t* oImages = json_array();
       imagePaths2Json(oImages, recording->FileName());
 
@@ -243,7 +253,67 @@ int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recordi
       addToJson(obj, "event", oEvent);
    }
 
+   if (recording->HasMarks())
+   {
+      json_t* oMarks = json_array();
+      cMarks marks;
+
+      marks.Load(recording->FileName(), recording->FramesPerSecond(), recording->IsPesRecording());
+
+      for (const cMark* mark = marks.First(); mark; mark = marks.Next(mark))
+      {
+         json_t* oMark = json_object();
+
+         addToJson(oMark, "position", mark->Position() / fps);
+         addToJson(oMark, "comment", mark->Comment());
+
+         json_array_append_new(oMarks, oMark);
+      }
+
+      addToJson(obj, "marks", oMarks);
+   }
+
    return success;
+}
+
+//***************************************************************************
+// Add Recording Details via epg2vdr Service
+//***************************************************************************
+
+int getRecordingDetails2Json(json_t* obj, int recId)
+{
+   cPlugin* pEpg2Vdr = cPluginManager::GetPlugin("epg2vdr");
+
+   if (!pEpg2Vdr)
+      return done;
+
+   cEpgRecording_Details_Service_V1 data(recId);
+
+   if (pEpg2Vdr->Service(EPG2VDR_REC_DETAIL_SERVICE, &data))
+   {
+      cXml xml;
+
+      if (xml.set(data.details.c_str()) == success)
+      {
+         json_t* oEpg2Vdr = json_object();
+
+         for (XMLElement* e = xml.getFirst(); e; e = xml.getNext(e))
+         {
+            char* tmp = strdup(e->Name());
+            addToJson(oEpg2Vdr, toCase(cLower, tmp), e->GetText());
+            free(tmp);
+         }
+
+         if (xml.getFirst())
+            addToJson(obj, "epg2vdr", oEpg2Vdr);
+      }
+      else
+      {
+         tell(0, "Info: Parsing xml data got by 'recording detail service' failed");
+      }
+   }
+
+   return done;
 }
 
 //***************************************************************************
