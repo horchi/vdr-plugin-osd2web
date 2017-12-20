@@ -4,6 +4,13 @@
       <div v-show="replay.event.title" style="height: 100%;">
         <div class="card-body p-1" style="height: 100%;">
           <div class="progress" v-show="progress">
+            <div v-for="(mark, index) in replay.marks">
+              <div v-if="(index+1) % 2">
+                <div class="cut-mark"
+                     v-bind:style="{left: posof(mark.position) + '%', width: widthof(index) + '%'}">
+                </div>
+              </div>
+            </div>
             <div class="progress-bar" role="progressbar"
                  :style="{width: progress + '%'}"
                  :aria-valuenow="{progress}"
@@ -79,6 +86,15 @@ export default {
             buttons: null,
             current: 0,
             isPlaying: false
+        }
+    },
+    methods: {
+        posof(p) {
+            return Math.max(parseInt(p / this.replay.lengthinseconds * 100, 10), 1);
+        },
+        widthof(index) {
+            var end = index+1 < this.replay.marks.length ? this.replay.marks[index+1].position : this.replay.lengthinseconds;
+            return Math.max(parseInt((end - this.replay.marks[index].position) / this.replay.lengthinseconds * 100, 10), 1);
         }
     },
     created() {

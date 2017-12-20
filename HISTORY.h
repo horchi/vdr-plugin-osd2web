@@ -8,7 +8,7 @@
  */
 
 #define _VERSION      "0.2.9"
-#define VERSION_DATE  "18.12.2017"
+#define VERSION_DATE  "20.12.2017"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -19,12 +19,13 @@
 /*
  * ------------------------------------
 
-2017-12-19: version 0.2.9 (horchi)
+2017-12-20: version 0.2.9 (horchi)
    - change: snow now in foreground of all elements
    - added:  svdr commands to start and stop local browser
    - added:  svdr command to switch display of local browser
    - added:  query of recording details by epg2vdr
    - added:  deliver editing marks to client
+   - added:  editing marks to replay progress-bar of skin horchiTft
 
 2017-12-16: version 0.2.8 (horchi)
    - added: now use firefox as the default browser for the TFT display

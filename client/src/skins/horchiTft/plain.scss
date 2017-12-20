@@ -199,10 +199,20 @@ body {
 .progress  {
    font-size: 1.4rem;
    height: auto;
+   position: relative;
 }
 
 .progress-bar  {
     border-radius: 0.3rem;
+    color: transparent;
+}
+
+.cut-mark {
+    position: absolute;
+    border: 1px solid;
+    height: 50%;
+    top: 25%;
+    background-color: rgba(3, 3, 3, 0.43);
 }
 
 // status bar
