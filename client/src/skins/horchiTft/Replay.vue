@@ -146,7 +146,7 @@ export default {
                 return text;
             if (this.replay.event.epg2vdr.tipp)
                 text += this.replay.event.epg2vdr.tipp;
-            if (this.event.replay.epg2vdr.txtrating)
+            if (this.replay.event.epg2vdr.txtrating)
                 text += text.length > 0 ? " / " + this.replay.event.epg2vdr.txtrating : this.replay.event.epg2vdr.txtrating;
             return text;
         }
