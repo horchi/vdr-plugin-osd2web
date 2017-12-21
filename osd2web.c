@@ -109,7 +109,7 @@ bool cPluginOsd2Web::Initialize()
 bool cPluginOsd2Web::Service(const char* id, void* data)
 {
    if (!data)
-      return fail;
+      return false;
 
    if (strcmp(id, OSD2WEB_PORT_SERVICE) == 0)
    {

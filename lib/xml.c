@@ -89,3 +89,12 @@ XMLElement* cXml::getNext(XMLNode* node)
 {
    return node->NextSiblingElement();
 }
+
+
+XMLElement* cXml::getElementByName(const char* name, XMLElement* element)
+{
+   if (element)
+      return element->FirstChildElement(name);
+
+   return root->FirstChildElement(name);
+}

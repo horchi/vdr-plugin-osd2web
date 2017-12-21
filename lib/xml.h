@@ -38,6 +38,8 @@ class cXml
       XMLElement* getFirst(XMLNode* node = 0);
       XMLElement* getNext(XMLNode* node);
 
+      XMLElement* getElementByName(const char* name, XMLElement* element = 0);
+
       const char* toText();
 
    private:

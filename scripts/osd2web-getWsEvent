@@ -1,0 +1,16 @@
+
+if [ "$#" -lt 1 ]; then
+    echo "Tool for debugging only - gets json of last WS event <event> from log an format it (log level >= 2 is needed)"
+    echo "Usage:"
+    echo "  osd2web-getWsEvent <event> [<expression>]"
+    exit 0
+fi
+
+EVENT="$1"
+EXPR="."
+
+if [ "$#" -ge 2 ]; then
+   EXPR="$2"
+fi
+
+grep "osd2web:" /var/log/syslog | grep "event.: \"$EVENT\"" | grep "$EXPR" | tail -1 | sed s/".* < {"/"{"/ | sed s/"} > to .*"/"}"/ | json_pp
