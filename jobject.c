@@ -253,7 +253,7 @@ int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recordi
       addToJson(obj, "event", oEvent);
    }
 
-   if (recording->HasMarks())
+   if (((cRecording*)recording)->HasMarks())
    {
       json_t* oMarks = json_array();
       cMarks marks;

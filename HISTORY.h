@@ -7,7 +7,7 @@
  *
  */
 
-#define _VERSION      "0.2.9"
+#define _VERSION      "0.2.10"
 #define VERSION_DATE  "22.12.2017"
 
 #ifdef GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2017-12-22: version 0.2.10 (horchi)
+   - change: VDR 2.2.0 backporting
 
 2017-12-22: version 0.2.9 (horchi)
    - change: snow now in foreground of all elements
