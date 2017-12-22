@@ -51,8 +51,8 @@ const char* cPluginOsd2Web::CommandLineHelp()
       "   -L,              --logonotlower            do not search logo names in lower case\n"
       "   -i,              --logobyid                logo names by channel id instead of name\n"
       "   -e,              --epgimgpath              path to epg images\n"
-      "   -b <display>,    --browser <display>       start browser (via startBrowser script)\n"
       "                                              (default: /var/cache/vdr/epgimages)\n"
+      "   -b <display>,    --browser <display>       start browser (via startBrowser script)\n"
       ;
 }
 
@@ -117,9 +117,11 @@ bool cPluginOsd2Web::Service(const char* id, void* data)
       req->webPort = config.webPort;
       return true;
    }
+
    else if (strcmp(id, EPG2VDR_TIMER_UPDATED) == 0)
    {
-      update->triggerTimerUpdate = yes;
+      if (update)
+         update->triggerTimerUpdate = yes;
    }
 
    return false;
