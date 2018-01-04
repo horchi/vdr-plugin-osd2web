@@ -19,6 +19,7 @@
 #include "lib/xml.h"
 
 #include "update.h"
+#include "scraper2vdr.h"
 
 //***************************************************************************
 // Event To Json
@@ -128,6 +129,28 @@ int event2Json(json_t* obj, const cEvent* event, const cChannel* channel,
       addToJson(obj, "timermatch", "partial");
    else
       addToJson(obj, "timermatch", "none");
+
+   // scraper data
+
+   std::string mediaPath;
+   std::string posterPath;
+
+   if (getScraperMediaPath(event, 0, mediaPath, posterPath) == success)
+   {
+      json_t* oScraper = json_object();
+
+      tell(3, "DEBUG: Got from scraper2vdr: banner path '%s'; poster path '%s'",
+           mediaPath.c_str(), posterPath.c_str());
+
+      if (mediaPath.length())
+         addToJson(oScraper, "banner", mediaPath.c_str());
+
+      if (posterPath.length())
+         addToJson(oScraper, "poster", posterPath.c_str());
+
+      if (mediaPath.length() || posterPath.length())
+         addToJson(obj, "scraper2vdr", oScraper);
+   }
 
    return done;
 }
@@ -271,6 +294,32 @@ int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recordi
       }
 
       addToJson(obj, "marks", oMarks);
+   }
+
+   // scraper data
+
+   std::string mediaPath;
+   std::string posterPath;
+
+   if (getScraperMediaPath(0, recording, mediaPath, posterPath) == success)
+   {
+      json_t* oScraper = json_object();
+
+      tell(2, "DEBUG: Got from scraper2vdr: banner path '%s'; poster path '%s' recording '%s'",
+           mediaPath.c_str(), posterPath.c_str(), recording->Name());
+
+      if (mediaPath.length())
+         addToJson(oScraper, "banner", mediaPath.c_str());
+
+      if (posterPath.length())
+         addToJson(oScraper, "poster", posterPath.c_str());
+
+      if (mediaPath.length() || posterPath.length())
+         addToJson(obj, "scraper2vdr", oScraper);
+   }
+   else
+   {
+      tell(2, "DEBUG: No scraper2vdr data found for recording '%s'", recording->Name());
    }
 
    return success;

@@ -1,20 +1,30 @@
+/**
+ *  osd2web plugin for the Video Disk Recorder
+ *
+ *  scraper2vdr.h
+ *
+ *  (c) 2018 Jörg Wendel
+ *
+ * This code is distributed under the terms and conditions of the
+ * GNU GENERAL PUBLIC LICENSE. See the file COPYING for details.
+ *
+ **/
 
 #ifndef __SCRAPER2VDRSERVICES_H
 #define __SCRAPER2VDRSERVICES_H
 
 #include <string>
 #include <vector>
+
 #include <vdr/epg.h>
 #include <vdr/recording.h>
-
-#include "update.h"
 
 //***************************************************************************
 // Functions
 //***************************************************************************
 
-// int getScraperMediaPath(const cEventCopy* event, const cRecording* recording,
-//                         std::string& mediaPath, std::string& posterPath);
+int getScraperMediaPath(const cEvent* event, const cRecording* recording,
+                        std::string& mediaPath, std::string& posterPath);
 
 //***************************************************************************
 // Types
@@ -116,6 +126,17 @@ class ScraperGetEventType
       int movieId;
       int seriesId;
       int episodeId;
+};
+
+// Data structure for enviromment ("GetEnvironment" call)
+
+class cEnvironment
+{
+   public:
+
+      std::string basePath;
+      std::string seriesPath;
+      std::string moviesPath;
 };
 
 // Data structure for full series and episode information

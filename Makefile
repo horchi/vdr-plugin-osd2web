@@ -48,7 +48,7 @@ APIVERSION = $(call PKGCFG,apiversion)
 -include $(PLGCFG)
 
 OBJS = $(PLUGIN).o \
-       config.o update.o dia.o websock.o fileservice.o status.o tools.o skin.o jobject.o
+       config.o update.o scraper2vdr.o dia.o websock.o fileservice.o status.o tools.o skin.o jobject.o
 
 LIBS  = $(HLIB)
 LIBS += -lrt -lcrypto

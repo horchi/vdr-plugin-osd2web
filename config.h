@@ -23,10 +23,11 @@ struct cOsd2WebConfig : public cConfigBase
       cOsd2WebConfig();
       ~cOsd2WebConfig();
 
-      void setLogoSuffix(const char* s)   { free(logoSuffix); logoSuffix = strdup(s); }
-      void setLogoPath(const char* p)     { free(logoPath); logoPath = strdup(p); }
-      void setEpgImagePath(const char* s) { free(epgImagePath); epgImagePath = strdup(s); }
-      void setDiaPath(const char* p)      { free(diaPath); diaPath = strdup(p); }
+      void setLogoSuffix(const char* s)     { free(logoSuffix); logoSuffix = strdup(s); }
+      void setLogoPath(const char* p)       { free(logoPath); logoPath = strdup(p); }
+      void setEpgImagePath(const char* s)   { free(epgImagePath); epgImagePath = strdup(s); }
+      void setDiaPath(const char* p)        { free(diaPath); diaPath = strdup(p); }
+      void setScaper2VdrPath(const char* p) { free(scraper2VdrPath); scraper2VdrPath = strdup(p); }
       void setBrowser(const char* p, int autoStart = na);
 
       int webPort;
@@ -36,6 +37,7 @@ struct cOsd2WebConfig : public cConfigBase
       char* logoSuffix;
       char* logoPath;
       char* diaPath;
+      char* scraper2VdrPath;
       int logoNotLower;
       int logoById;
       int clientOsdTimeout;

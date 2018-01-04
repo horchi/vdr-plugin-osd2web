@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.10"
-#define VERSION_DATE  "22.12.2017"
+#define _VERSION      "0.2.11"
+#define VERSION_DATE  "03.01.2018"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2018-01-03: version 0.2.11 (horchi)
+   - added: Scraper data to client communication
 
 2017-12-22: version 0.2.10 (horchi)
    - change: VDR 2.2.0 backporting

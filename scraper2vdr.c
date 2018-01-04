@@ -3,7 +3,7 @@
  *
  *  scraper2vdr.c
  *
- *  (c) 2017 Jörg Wendel
+ *  (c) 2018 Jörg Wendel
  *
  * This code is distributed under the terms and conditions of the
  * GNU GENERAL PUBLIC LICENSE. See the file COPYING for details.
@@ -18,63 +18,49 @@
 
 #include "lib/common.h"
 #include "scraper2vdr.h"
+#include "config.h"
 
 //***************************************************************************
 // Get Scraper Plugin
 //***************************************************************************
 
-cPlugin* GetScraperPlugin()
+cPlugin* getScraperPlugin()
 {
    static cPlugin* pScraper = cPluginManager::GetPlugin("scraper2vdr");
-
-   if (!pScraper)
-      pScraper = cPluginManager::GetPlugin("tvscraper");
 
    return pScraper;
 }
 
 //***************************************************************************
-// Get Media Path
+// Get Scraper Media Path
 //***************************************************************************
 
-int getScraperMediaPath(const cEventCopy* event, const cRecording* recording,
+int getScraperMediaPath(const cEvent* event, const cRecording* recording,
                         std::string& bannerPath, std::string& posterPath)
 {
-   static cPlugin* pScraper = GetScraperPlugin();
-   const cEvent* evt = 0;
-   const cSchedule* s = 0;
+   static cEnvironment environment;
+   static int envInit = no;
+
    ScraperGetPosterBannerV2 call;
+   cPlugin* pScraper = getScraperPlugin();
 
    bannerPath = "";
    posterPath = "";
 
    if (!pScraper)
    {
-      tell(0, "Warning: Plugin scraper2vdr not found");
+      tell(2, "Warning: Plugin scraper2vdr not found");
       return fail;
    }
 
-   GET_SCHEDULES_READ(schedules);
-
-   if (recording)
+   if (!envInit)
    {
-      event = 0;
-      call.recording = recording;
+      envInit = yes;
+      pScraper->Service("GetEnvironment", &environment);
    }
-   else if (event)
-   {
-      // lock und schedule (channel) holen
 
-      if (!schedules ||
-          !(s = (cSchedule*)schedules->GetSchedule(event->ChannelID())) ||
-          !(evt = s->GetEvent(event->EventID())))
-      {
-         tell(0, "Error, can't get lock on schedules or cant find event, aborting!");
-         return fail;
-      }
-
-      call.event = evt;
-   }
+   call.recording = recording;
+   call.event = event;
 
    if (pScraper->Service("GetPosterBannerV2", &call))
    {
@@ -84,7 +70,7 @@ int getScraperMediaPath(const cEventCopy* event, const cRecording* recording,
 
          bannerPath = call.banner.path;
 
-         callPoster.event = evt;                     // only one is set
+         callPoster.event = event;                   // only one is set
          callPoster.recording = recording;           //  "    "   "  "
 
          if (pScraper->Service("GetPoster", &callPoster))
@@ -95,6 +81,21 @@ int getScraperMediaPath(const cEventCopy* event, const cRecording* recording,
          posterPath = call.poster.path;
       }
    }
+
+   if (environment.basePath.size())
+   {
+      if (bannerPath.size())
+         removeWord(bannerPath, environment.basePath);
+
+      if (posterPath.size())
+         removeWord(posterPath, environment.basePath);
+   }
+
+   if (bannerPath.size())
+      bannerPath = config.scraper2VdrPath + bannerPath;
+
+   if (posterPath.size())
+      posterPath = config.scraper2VdrPath + posterPath;
 
    return bannerPath.size() || posterPath.size() ? success : fail;
 }

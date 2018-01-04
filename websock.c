@@ -672,7 +672,6 @@ int cWebSock::doRecordingImg(lws* wsi)
    }
 
    result = serveFile(wsi, path);
-   tell(0, "serveFile result was (%d)", result);
    free(path);
 
    return result;
