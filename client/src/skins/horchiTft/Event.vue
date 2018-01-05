@@ -18,10 +18,10 @@
           <div v-if="elapsed <= 0" class="durationtxt">{{duration}}</div>
         </div>
         <div class="clearfix">
-          <div v-if="event.epg2vdr && imagecnt > 0" :id="'evImages' + event.eventid" class="img-fluid float-right epg-image carousel slide" data-ride="carousel" data-interval="5000">
+          <div v-if="event.epg2vdr && imagecnt > 0" :id="'evImages' + event.eventid" class="img-fluid float-right event-image-frame carousel slide" data-ride="carousel" data-interval="5000">
             <div class="carousel-inner img-thumbnail" role="listbox">
               <div v-for="n in imagecnt" class="carousel-item" :class="{'active':n==0}">
-                <img class="d-block" :src="'/data/eventimg?id=' + event.eventid + '&no=' + (n-1)" alt="">
+                <img class="d-block epg-image" :src="'/data/eventimg?id=' + event.eventid + '&no=' + (n-1)" alt="">
               </div>
             </div>
           </div>

@@ -1,5 +1,5 @@
 <template>
-  <div >
+  <div>
     <div class="replay card mt-1">
       <div v-show="replay.event.title" style="height: 100%;">
         <div class="card-body p-1" style="height: 100%;">
@@ -23,10 +23,13 @@
           <div v-if="elapsed >= 0" class="durationtxt">{{remaining}}/{{duration}}</div>
         </div>
         <div class="clearfix">
-          <div :id="'evImages' + replay.event.eventid" class="img-fluid float-right img-thumbnail carousel slide" data-ride="carousel" data-interval="5000">
-            <div class="carousel-inner epg-image" role="listbox">
+          <div v-if="replay.scraper2vdr" class="img-thumbnail replay-image-frame float-right">
+            <img class="d-block epg-image" :src="replay.scraper2vdr.poster">
+          </div>
+          <div v-else="" :id="'evImages' + replay.event.eventid" class="img-fluid float-right img-thumbnail carousel slide" data-ride="carousel" data-interval="5000">
+            <div class="carousel-inner replay-image-frame" role="listbox">
               <div v-for="(img, n) in replay.images" class="carousel-item" :class="{'active':n==0}">
-                <img class="d-block" :src="'/data/recordingimg?path=' + img" style="width: 100%;" alt="">
+                <img class="d-block epg-image" :src="'/data/recordingimg?path=' + img" alt="">
               </div>
             </div>
           </div>
