@@ -7,7 +7,7 @@
  *
  */
 
-#define _VERSION      "0.2.14"
+#define _VERSION      "0.2.15"
 #define VERSION_DATE  "13.01.2018"
 
 #ifdef GIT_REV
@@ -19,8 +19,11 @@
 /*
  * ------------------------------------
 
-2018-01-13: version 0.2.14 (horchi)
+2018-01-13: version 0.2.15 (horchi)
    - added: Display of 'staffel/folge' to horchiTft
+
+2018-01-13: version 0.2.14 (rechner)
+   - added: autoScroll
 
 2018-01-13: version 0.2.13 (horchi)
    - bugfix: fixed display of replay length for skins default and horchiTft
