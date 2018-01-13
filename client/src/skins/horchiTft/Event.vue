@@ -32,8 +32,8 @@
           <div v-else="">
             <div v-if="event.shorttext" class="card-text htxt">{{event.shorttext}}</div>
           </div>
-          <div class="card-text htxt">{{country_year}}</div>
-          <div class="card-text htxt">{{rating}}</div>
+          <div class="card-text htxt">{{details1}}</div>
+          <div class="card-text htxt">{{details2}}</div>
           <p class="desctxt" v-show="description" v-html="description"></p>
         </div>
       </div>
@@ -92,7 +92,7 @@ export default {
         duration: function () {
             return this.$root.formatDuration(parseInt(this.event.duration/60,10));
         },
-        country_year: function() {
+        details1: function() {
             var text = "";
             if (!this.event.epg2vdr)
                 return text;
@@ -106,7 +106,7 @@ export default {
                 text += " " + this.event.epg2vdr.year;
             return text;
         },
-        rating: function() {
+        details2: function() {
             var text = "";
             if (!this.event.epg2vdr)
                 return text;
@@ -114,7 +114,14 @@ export default {
                 text += this.event.epg2vdr.tipp;
             if (this.event.epg2vdr.txtrating)
                 text += text.length > 0 ? " / " + this.event.epg2vdr.txtrating : this.event.epg2vdr.txtrating;
+            if (this.event.epg2vdr.episodepart)
+                text += (text.length > 0 ? " / Staffel " : "Staffel ") + this.event.epg2vdr.episodeseason + " Folge " + this.event.epg2vdr.episodepart + "/" + this.event.epg2vdr.episodeparts;
             return text;
+        },
+        series: function() {
+            if (!this.event.epg2vdr || !this.event.epg2vdr.episodepart)
+                return "";
+            return "Staffel " + this.event.epg2vdr.episodeseason + "Folge " + this.event.epg2vdr.episodepart + "/" + this.event.epg2vdr.episodeparts;
         },
         imagecnt: function() {
             let cnt= this.event.epg2vdr ? parseInt(this.event.epg2vdr.imagecount, 10) : 0;

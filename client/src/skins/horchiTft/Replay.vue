@@ -42,6 +42,7 @@
           </div>
           <div class="card-text htxt">{{country_year}}</div>
           <div class="card-text htxt">{{rating}}</div>
+          <div v-if="replay.event.epg2vdr && replay.event.epg2vdr.episodepart" class="card-text htxt">Staffel {{replay.event.epg2vdr.episodeseason}} Folge {{replay.event.epg2vdr.episodepart}}/{{replay.event.epg2vdr.episodeparts}}</div>
           <p class="desctxt" v-show="description" v-html="description"></p>
         </div>
       </div>
