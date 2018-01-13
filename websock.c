@@ -241,13 +241,13 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
 
             if (!isEmpty(config.scraper2VdrPath) && strncmp(url, config.scraper2VdrPath, strlen(config.scraper2VdrPath)) == 0)
             {
-               // acces to scraper2vdr cache is allowed
+               // access to scraper2vdr cache is allowed
 
                asprintf(&file, "%s", url);
             }
             else
             {
-               // otherwinse force httpPath path to inhibizt access to the whole filesystem
+               // otherwise force httpPath path to inhibit access to the whole filesystem
 
                asprintf(&file, "%s/%s", httpPath, url);
             }
