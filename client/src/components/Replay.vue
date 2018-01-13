@@ -13,7 +13,7 @@
         </div>
         <div class="row">
           <h3 class="card-title col-12 col-md-9 titletxt">{{replay.event.title}}</h3>
-          <div v-if="elapsed >= 0" class="ml-auto col-12 col-md-3 desctxt">{{elapsed}}/{{parseInt(replay.lengthinseconds/60,10)}} min</div>
+          <div v-if="elapsed >= 0" class="ml-auto col-12 col-md-3 desctxt">{{elapsed}}/{{duration}} min</div>
         </div>
         <div class="clearfix">
           <div :id="'evImages' + replay.event.eventid" class="img-fluid float-right img-thumbnail carousel slide" data-ride="carousel" data-interval="5000">
@@ -49,11 +49,13 @@ export default {
     },
     data() {
         return {
-            current: 0
+            current: 0,
+            total: 0
         }
     },
     created() {
         this.$root.$on("replaycontrol", (data) => {
+            this.total = data.total;
             this.current = data.current;
         });
     },
@@ -71,10 +73,16 @@ export default {
                     this.current += 10;
                 }, 10000);
             }
-            return Math.max(parseInt(this.current / this.replay.lengthinseconds * 100, 10), 1);
+            return Math.max(parseInt(this.current / this.total * 100, 10), 1);
         },
         elapsed: function () {
             return Math.max(parseInt(this.current/60, 10), 0);
+        },
+        remaining: function () {
+            return this.$root.formatDuration(Math.max(parseInt((this.total - this.current)/60, 10), 0));
+        },
+        duration: function () {
+            return this.$root.formatDuration(parseInt(this.total/60,10));
         }
     },
     updated: function() {

@@ -88,24 +88,24 @@ export default {
         return {
             buttons: null,
             current: 0,
-            lengthinseconds: 0,
+            total: 0,
             isPlaying: false
         }
     },
     methods: {
         posof(p) {
-            return Math.max(parseInt(p / this.lengthinseconds * 100, 10), 1);
+            return Math.max(parseInt(p / this.total * 100, 10), 1);
         },
         widthof(index) {
-            var end = index+1 < this.replay.marks.length ? this.replay.marks[index+1].position : this.lengthinseconds;
-            return Math.max(parseInt((end - this.replay.marks[index].position) / this.lengthinseconds * 100, 10), 1);
+            var end = index+1 < this.replay.marks.length ? this.replay.marks[index+1].position : this.total;
+            return Math.max(parseInt((end - this.replay.marks[index].position) / this.total * 100, 10), 1);
         }
     },
     created() {
         this.$root.$on("replaycontrol", (data) => {
             this.buttons = null;
+            this.total = data.total;
             this.current = data.current;
-            this.lengthinseconds = data.total;
             this.curTime= new Date().getTime();
             this.isPlaying= data.play == 1;
             if (data.active) {
@@ -136,16 +136,16 @@ export default {
                     }
                 }, 10000);
             }
-            return Math.max(parseInt(this.current / this.lengthinseconds * 100, 10), 1);
+            return Math.max(parseInt(this.current / this.total * 100, 10), 1);
         },
         elapsed: function () {
             return Math.max(parseInt(this.current/60, 10), 0);
         },
         remaining: function () {
-            return this.$root.formatDuration(Math.max(parseInt((this.lengthinseconds - this.current)/60, 10), 0));
+            return this.$root.formatDuration(Math.max(parseInt((this.total - this.current)/60, 10), 0));
         },
         duration: function () {
-            return this.$root.formatDuration(parseInt(this.lengthinseconds/60,10));
+            return this.$root.formatDuration(parseInt(this.total/60,10));
         },
         country_year: function() {
             var text = "";
