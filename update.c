@@ -117,9 +117,6 @@ cUpdate::cUpdate()
    if (!config.diaPath)
       asprintf(&config.diaPath, "%s/dia/", config.httpPath);
 
-   if (!config.scraper2VdrPath)
-      asprintf(&config.scraper2VdrPath, "/scraper2vdr/");
-
    webSock = new cWebSock(config.httpPath);
 }
 

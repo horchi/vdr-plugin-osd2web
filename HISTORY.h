@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.11"
-#define VERSION_DATE  "03.01.2018"
+#define _VERSION      "0.2.12"
+#define VERSION_DATE  "13.01.2018"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2018-01-13: version 0.2.12 (horchi)
+   - change: link for http scraper2vdr not necessary anymore
 
 2018-01-03: version 0.2.11 (horchi)
    - added: Scraper data to client communication

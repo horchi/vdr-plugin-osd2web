@@ -38,7 +38,6 @@ cPlugin* getScraperPlugin()
 int getScraperMediaPath(const cEvent* event, const cRecording* recording,
                         std::string& bannerPath, std::string& posterPath)
 {
-   static cEnvironment environment;
    static int envInit = no;
 
    ScraperGetPosterBannerV2 call;
@@ -55,8 +54,10 @@ int getScraperMediaPath(const cEvent* event, const cRecording* recording,
 
    if (!envInit)
    {
+      cEnvironment environment;
       envInit = yes;
       pScraper->Service("GetEnvironment", &environment);
+      config.setScaper2VdrPath(environment.basePath.c_str());
    }
 
    call.recording = recording;
@@ -81,21 +82,6 @@ int getScraperMediaPath(const cEvent* event, const cRecording* recording,
          posterPath = call.poster.path;
       }
    }
-
-   if (environment.basePath.size())
-   {
-      if (bannerPath.size())
-         removeWord(bannerPath, environment.basePath);
-
-      if (posterPath.size())
-         removeWord(posterPath, environment.basePath);
-   }
-
-   if (bannerPath.size())
-      bannerPath = config.scraper2VdrPath + bannerPath;
-
-   if (posterPath.size())
-      posterPath = config.scraper2VdrPath + posterPath;
 
    return bannerPath.size() || posterPath.size() ? success : fail;
 }
