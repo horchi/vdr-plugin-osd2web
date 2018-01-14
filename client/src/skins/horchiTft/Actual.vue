@@ -7,7 +7,7 @@
       <div class="channel mt-1">
         <div class="chnr">{{channel.channelnumber}}</div>
         <div class="chtxt">{{channel.channelname}}</div>
-        <div v-if="logoname" class="chlogo">
+        <div v-if="$root.hasChannelLogos" class="chlogo">
           <img class="chlogo" :src="'/data/channellogo?name=' + logoname + '&id=' + channel.channelid" />
         </div>
       </div>
@@ -48,7 +48,7 @@ export default {
     },
     computed: {
         logoname: function () {
-            return $root.hasChannelLogos ? encodeURIComponent(this.channel.channelname) : "";
+            return encodeURIComponent(this.channel.channelname);
         }
     }
 }
