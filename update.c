@@ -172,10 +172,7 @@ int cUpdate::checkAutoAttach()
    // if not already the default skin AND if iP configured
    //  => auto attach/detach is active!
 
-   if (isDefaultSkin() || !config.tvIp)
-      return done;
-
-   if (time(0) < nextAt)
+   if (isDefaultSkin() || !config.tvIp || time(0) < nextAt)
       return done;
 
    int tvAlive = isAlive(config.tvIp);
@@ -190,15 +187,11 @@ int cUpdate::checkAutoAttach()
    if (tvAlive != lastTvState)
       tell(1, "TV State change detected, TV is now '%s'", tvAlive ? "ON" : "OFF");
 
-   if (tvAlive && !isSkinAttached())
-      setSkinAttachState(no, yes);
+   setSkinAttachState(tvAlive ? no : yes, yes);
 
-   else if (!tvAlive && isSkinAttached())
-      setSkinAttachState(yes, yes);
+   // check every 2 seconds
 
-   // check every 60 seconds
-
-   nextAt = time(0) + 60;
+   nextAt = time(0) + 2;
    lastTvState = tvAlive;
 
    return done;
