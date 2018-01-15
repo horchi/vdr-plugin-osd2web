@@ -1502,6 +1502,39 @@ const char* getMacOf(const char* device)
    return mac;
 }
 
+//***************************************************************************
+// Is Alive  (fork ping therefore no root permissions needed)
+//***************************************************************************
+
+int isAlive(const char* ip)
+{
+   char* cmd;
+   int res;
+
+   // ping -W 1 -w 1 -c 1 -q <ip>
+
+   asprintf(&cmd, "%s -W 1 -w 1 -c 1 -q %s > /dev/null 2>&1", "ping", ip);
+   res = system(cmd);
+   free(cmd);
+
+   if (res == -1 || WEXITSTATUS(res) == 127)
+   {
+      tell(0, "Can't execute ping, result was (%d) '%d'", res,  WEXITSTATUS(res));
+      return na;
+   }
+   else if (res > 0)
+   {
+      tell(4, "Host '%s' not alive or not known\n", ip);
+      return no;
+   }
+   else
+   {
+      tell(4, "Host '%s' is alive!\n", ip);
+   }
+
+   return yes;
+}
+
 #ifdef USELIBARCHIVE
 
 //***************************************************************************

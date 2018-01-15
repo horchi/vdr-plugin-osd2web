@@ -53,6 +53,7 @@ const char* cPluginOsd2Web::CommandLineHelp()
       "   -e,              --epgimgpath              path to epg images\n"
       "                                              (default: /var/cache/vdr/epgimages)\n"
       "   -b <display>,    --browser <display>       start browser (via startBrowser script)\n"
+      "   -t <ip|name>,    --tv <ip|name>            auto attach/detach on TV off/on\n"
       ;
 }
 
@@ -69,12 +70,13 @@ bool cPluginOsd2Web::ProcessArgs(int argc, char* argv[])
       { "logonotlower",         no_argument, 0, 'L' },
       { "logobyid",             no_argument, 0, 'i' },
       { "browser",        required_argument, 0, 'b' },
+      { "tv",             required_argument, 0, 't' },
       { 0, 0, 0, 0 }
    };
 
    // check the arguments
 
-   while ((c = getopt_long(argc, argv, "p:s:e:l:Lib:", long_options, 0)) != -1)
+   while ((c = getopt_long(argc, argv, "p:s:e:l:Lib:t:", long_options, 0)) != -1)
    {
       switch (c)
       {
@@ -85,6 +87,7 @@ bool cPluginOsd2Web::ProcessArgs(int argc, char* argv[])
          case 'L': config.logoNotLower = yes;      break;
          case 'i': config.logoById = yes;          break;
          case 'b': config.setBrowser(optarg, yes); break;
+         case 't': config.setTvIp(optarg);         break;
 
          default:  tell(0, "Ignoring unknown argument '%c' '%s'", c, optarg);
       }

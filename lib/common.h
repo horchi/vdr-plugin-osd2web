@@ -258,6 +258,8 @@ const char* getMacOf(const char* device);
 const char* getMaskOf(const char* device);
 const char* bcastAddressOf(const char* ipStr, const char* maskStr = 0);
 
+int isAlive(const char* ip);
+
 //***************************************************************************
 
 #ifdef USEUUID

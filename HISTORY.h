@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.16"
-#define VERSION_DATE  "14.01.2018"
+#define _VERSION      "0.2.17"
+#define VERSION_DATE  "15.01.2018"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2018-01-15: version 0.2.17 (horchi)
+   - added: Auto attch/detach to skin intertace (by detecting TV state via network)
 
 2018-01-14: version 0.2.16 (horchi)
    - change: Minor change of timing at login sequence

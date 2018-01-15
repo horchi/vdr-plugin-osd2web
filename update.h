@@ -282,6 +282,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       int setSkinAttachState(int state, int bySvdrp = no);
       int isDefaultSkin()                              { return strcmp(Setup.OSDSkin, SKIN_NAME) == 0; }
       int isSkinAttached(const char* name = SKIN_NAME) { return Skins.Current() && strcmp(Skins.Current()->Name(), name) == 0; }
+      int checkAutoAttach();
 
       int toggleView(int next);
 

@@ -28,6 +28,7 @@ struct cOsd2WebConfig : public cConfigBase
       void setEpgImagePath(const char* s)   { free(epgImagePath); epgImagePath = strdup(s); }
       void setDiaPath(const char* p)        { free(diaPath); diaPath = strdup(p); }
       void setScaper2VdrPath(const char* p) { free(scraper2VdrPath); scraper2VdrPath = strdup(p); }
+      void setTvIp(const char* p)           { free(tvIp); tvIp = strdup(p); }
       void setBrowser(const char* p, int autoStart = na);
 
       int webPort;
@@ -44,6 +45,7 @@ struct cOsd2WebConfig : public cConfigBase
       int diaCycleTime;            // in seconds
       int startBrowser;
       char* browserDisplay;
+      char* tvIp;
 };
 
 extern cOsd2WebConfig config;

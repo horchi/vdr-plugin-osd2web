@@ -36,6 +36,7 @@ cOsd2WebConfig::cOsd2WebConfig()
    epgImagePath = strdup("/var/cache/vdr/epgimages");
    startBrowser = no;
    browserDisplay = strdup("");
+   tvIp = 0;
 }
 
 cOsd2WebConfig::~cOsd2WebConfig()
@@ -48,6 +49,7 @@ cOsd2WebConfig::~cOsd2WebConfig()
    free(diaPath);
    free(scraper2VdrPath);
    free(browserDisplay);
+   free(tvIp);
 }
 
 void cOsd2WebConfig::setBrowser(const char* p, int autoStart)
