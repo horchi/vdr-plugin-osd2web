@@ -215,8 +215,6 @@ export var root = {
             if (!this.$socket)
                 return !(this.$el.innerHTML = "Your Browser will not support Websockets!");
 
-            this.$socket.send({ "event": "login", "object": { "type": + (this.isOnlyView ? 1 : 0) } });
-
             // Nachrichten/Anfragen der Komponenten an den Server weiterleiten
             this.$on("send", this.$socket.send);
 
@@ -247,6 +245,8 @@ export var root = {
                 this.skinAttached = data.attached == 1;
                 this.$root.$set(skinMenuItem, "on", this.skinAttached);
             })
+
+            this.$socket.send({ "event": "login", "object": { "type": + (this.isOnlyView ? 1 : 0) } });
             this.menuItemsRight.push(skinMenuItem);
 
             if (!this.isOnlyView) {

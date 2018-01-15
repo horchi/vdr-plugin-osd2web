@@ -161,6 +161,43 @@ int cUpdate::isEditable(eMenuCategory category)
 }
 
 //***************************************************************************
+// Check Auto Attach
+//***************************************************************************
+
+int cUpdate::checkAutoAttach()
+{
+   static int lastTvState = na;
+   static time_t nextAt = time(0);
+
+   // if not already the default skin AND if iP configured
+   //  => auto attach/detach is active!
+
+   if (isDefaultSkin() || !config.tvIp || time(0) < nextAt)
+      return done;
+
+   int tvAlive = isAlive(config.tvIp);
+
+   if (tvAlive == na)
+   {
+      tell(0, "Auto check of TV failed");
+      nextAt = time(0) + 60;
+      return fail;
+   }
+
+   if (tvAlive != lastTvState)
+      tell(1, "TV State change detected, TV is now '%s'", tvAlive ? "ON" : "OFF");
+
+   setSkinAttachState(tvAlive ? no : yes, yes);
+
+   // check every 2 seconds
+
+   nextAt = time(0) + 2;
+   lastTvState = tvAlive;
+
+   return done;
+}
+
+//***************************************************************************
 // Set Skin Attach State
 //***************************************************************************
 
@@ -303,6 +340,11 @@ void cUpdate::atMeanwhile()
       // client count changed ...
       //    nothing yet
    }
+
+   //
+
+   if (webSock->getClientCount() && !isDefaultSkin())
+      checkAutoAttach();
 
    actualClientCount = webSock->getClientCount();
 }
@@ -685,10 +727,6 @@ int cUpdate::performMaxLineRequest(json_t* oRequest)
          menuMaxLines[i].shape = (ObjectShape)getIntFromJson(obj, "shape");
       }
    }
-
-// #if (defined (APIVERSNUM) && (APIVERSNUM >= 20303)) || (PATCHED)
-//    cOsdProvider::TriggerRecalcAndRefresh();
-// #endif
 
    return done;
 }

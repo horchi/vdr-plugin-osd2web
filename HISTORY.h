@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.14"
-#define VERSION_DATE  "13.01.2018"
+#define _VERSION      "0.2.18"
+#define VERSION_DATE  "15.01.2018"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,9 +18,21 @@
 
 /*
  * ------------------------------------
+ 
+2018-01-15: version 0.2.18 (rechner)
+   - added autoscroll for vertical and horizontal
+ 
+2018-01-15: version 0.2.17 (horchi)
+   - added: Auto attch/detach to skin intertace (by detecting TV state via network)
+
+2018-01-14: version 0.2.16 (horchi)
+   - change: Minor change of timing at login sequence
+
+2018-01-13: version 0.2.15 (horchi)
+   - added: Display of 'staffel/folge' to horchiTft
 
 2018-01-13: version 0.2.14 (rechner)
-   - added: autoScroll 
+   - added: autoScroll
 
 2018-01-13: version 0.2.13 (horchi)
    - bugfix: fixed display of replay length for skins default and horchiTft
