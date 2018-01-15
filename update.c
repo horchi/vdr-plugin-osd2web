@@ -191,10 +191,10 @@ int cUpdate::checkAutoAttach()
       tell(1, "TV State change detected, TV is now '%s'", tvAlive ? "ON" : "OFF");
 
    if (tvAlive && !isSkinAttached())
-      setSkinAttachState(yes, yes);
+      setSkinAttachState(no, yes);
 
    else if (!tvAlive && isSkinAttached())
-      setSkinAttachState(no, yes);
+      setSkinAttachState(yes, yes);
 
    // check every 60 seconds
 
