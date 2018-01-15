@@ -4,7 +4,7 @@
       <div class="row" style="height: 100%;">
         <h3 v-if="!replay_active" class="d-block my-auto ml-3 card-title htxt chtxt">&nbsp;{{channel.channelnumber}}</h3>
         <h3 class="d-block my-auto card-title chtxt">&nbsp;{{channel.channelname}}</h3>
-        <div v-if="$root.hasChannelLogos" class="media my-auto d-flex flex-column ml-auto p-1 chlogo">
+        <div v-if="logoname" class="media my-auto d-flex flex-column ml-auto p-1 chlogo">
           <img align="right" class="d-block" style="max-height: 95%" :src="'/data/channellogo?name=' + logoname + '&id=' + channel.channelid" />
         </div>
       </div>
@@ -50,7 +50,7 @@ export default {
     },
     computed: {
         logoname: function () {
-            return encodeURIComponent(this.channel.channelname);
+            return this.$root.hasChannelLogos && this.channel.channelname ? encodeURIComponent(this.channel.channelname) : '';
         }
     }
 }

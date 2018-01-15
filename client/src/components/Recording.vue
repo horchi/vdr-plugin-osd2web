@@ -7,7 +7,7 @@
         <div>
           <small class="tltmtxt">{{$root.formatDateTime(recording.start)}}</small>
           <br/>
-          <small>{{recording.name}}</small>
+          <small><div class="auto-h-scroll">{{recording.name}}</div></small>
         </div>
       </div>
     </div>

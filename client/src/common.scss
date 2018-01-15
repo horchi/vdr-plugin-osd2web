@@ -95,3 +95,11 @@ button.but-yellow {
 .nav-item.active>a {
     color: blue !important;
 }
+.auto-h-scroll {
+    overflow: hidden;
+    white-space: nowrap;
+}
+.auto-v-scroll {
+    overflow: hidden;
+    height: 100%;
+}

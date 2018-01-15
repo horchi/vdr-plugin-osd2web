@@ -34,7 +34,7 @@
           </div>
           <div class="card-text htxt">{{country_year}}</div>
           <div class="card-text htxt">{{rating}}</div>
-          <p class="desctxt" v-show="description" v-html="description"></p>
+          <div v-show="description"><p class="desctxt auto-v-scroll" v-html="description"></p></div>
         </div>
       </div>
     </div>

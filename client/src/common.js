@@ -67,4 +67,54 @@ $(function(){
             snow.start(/[?&]santa=1/.test(location.search)); 
         },"xsnow");
     }
+    window.autoScrollH= [];
+    window.autoScrollV= [];
+    window.autoScrollMove= 3;
+    window.autoScrollTime= 200;
+    window.autoScrollHorizontal = function (div){
+        div= div || this;
+        if (div.offsetWidth && (div.scrollWidth - div.offsetWidth) >window.autoScrollMove) {
+            div.scrollLeft += div.autoScrollMove;
+            if (div.scrollLeft <= 0 )
+                div.autoScrollMove= window.autoScrollMove;
+            else if (div.scrollLeft >= (div.scrollWidth - div.offsetWidth) )
+                div.autoScrollMove= -window.autoScrollMove;
+            window.setTimeout(window.autoScrollHorizontal, window.autoScrollTime,div);
+        } else
+           delete div.autoScrollMove;
+    }
+    window.autoScrollVertical = function (div){
+        div= div || this;
+        if (div.offsetHeight && (div.scrollHeight - div.offsetHeight) > window.autoScrollMove){
+            div.scrollTop += div.autoScrollMove;
+            if (div.scrollTop <= 0 )
+                div.autoScrollMove= window.autoScrollMove;
+            else if (div.scrollTop >= (div.scrollHeight - div.offsetHeight) )
+                div.autoScrollMove= -window.autoScrollMove;
+            window.setTimeout(window.autoScrollVertical, window.autoScrollTime, div);
+        } else
+            delete div.autoScrollMove;
+    }
+    window.autoScroll = function () {
+        $('.auto-h-scroll').each(function(){
+            if (!this.autoScrollMove)
+                window.autoScrollHorizontal(this)
+        });    
+        $('.auto-v-scroll').each(function(){
+            if (!this.autoScrollMove)
+                window.autoScrollVertical(this)
+        });          
+        window.setTimeout(window.autoScroll, 3000);
+    }    
+    let autoScroll= location.search.match(/[?&]autoScroll=([0-9]+(;[0-9]+)?)/);
+    if (autoScroll) {
+        let autoScrollTime= parseInt(autoScroll[1],10);
+        let autoScrollMove= autoScroll[2] ? parseInt(autoScroll[2].slice(1),10) : '*';
+        if (autoScrollTime != NaN)
+            window.autoScrollTime= autoScrollTime;
+        if (autoScrollMove != NaN)
+            window.autoScrollMove= autoScrollMove;
+    } 
+    window.setTimeout(window.autoScroll, 1000);    
 })
+

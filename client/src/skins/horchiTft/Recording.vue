@@ -4,7 +4,7 @@
          class="recording mt-1 list-group-item card flex-column p-0 active">
       <div class="w-100 justify-content-between rectxt">
         <div class="rltmtxt">{{$root.formatDateTimeShort(recording.start)}}</div>
-        <div>{{recording.name}}</div>
+        <div><div class="auto-h-scroll">{{recording.name}}</div></div>
       </div>
     </div>
   </div>
@@ -22,8 +22,6 @@ export default {
         this.$root.$on("recordings", (data) => {
             this.recordings = data && data.length ? data : null;
         });
-    },
-    components: {
     }
 }
 /*

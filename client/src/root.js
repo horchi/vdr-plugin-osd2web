@@ -249,32 +249,6 @@ export var root = {
             })
             this.menuItemsRight.push(skinMenuItem);
 
-            let autoScroll= location.search.match(/[?&]autoScroll=([0-9]+(;[0-9]+)?)/);
-            if (autoScroll) {
-                var autoScrollDelta= parseInt(autoScroll[1],10);
-                if (autoScrollDelta != NaN){
-                    var scrollingElement = document.scrollingElement || document.documentElement;
-                    window.autoScroll = function (delta) {
-                        let hasVScroll = document.body.scrollHeight > document.body.clientHeight;
-                        let cStyle = document.body.currentStyle || window.getComputedStyle(document.body, "");
-                        hasVScroll = cStyle.overflow == "visible"
-                            || cStyle.overflowY == "visible"
-                            || (hasVScroll && cStyle.overflow == "auto")
-                            || (hasVScroll && cStyle.overflowY == "auto");
-
-                        let nextCall = 3000;
-                        if (hasVScroll) {
-                            let curTop = scrollingElement.scrollTop;
-                            scrollingElement.scrollTop += delta;
-                            if (curTop == scrollingElement.scrollTop)
-                                delta *= -1;
-                            nextCall = autoScrollDelta;
-                        }
-                        window.setTimeout(window.autoScroll, nextCall, delta);
-                    }
-                    window.autoScroll(autoScroll[2] ? parseInt(autoScroll[2].slice(1),10): 5);
-                }
-            } 
             if (!this.isOnlyView) {
                 // Browserevent abfangen
                 window.addEventListener('keyup', (ev) => {
