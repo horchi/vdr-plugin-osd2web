@@ -166,7 +166,7 @@ int cUpdate::isEditable(eMenuCategory category)
 
 int cUpdate::checkAutoAttach()
 {
-   static int lastTvState = no;
+   static int lastTvState = na;
    static time_t nextAt = time(0);
 
    // if not already the default skin AND if iP configured
