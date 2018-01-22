@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.18"
-#define VERSION_DATE  "15.01.2018"
+#define _VERSION      "0.2.19"
+#define VERSION_DATE  "22.01.2018"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,10 +18,13 @@
 
 /*
  * ------------------------------------
- 
+
+2018-01-22: version 0.2.19 (horchi)
+   - added: autoscroll for event title for skin hiorchiTft
+
 2018-01-15: version 0.2.18 (rechner)
-   - added autoscroll for vertical and horizontal
- 
+   - added: autoscroll for vertical and horizontal
+
 2018-01-15: version 0.2.17 (horchi)
    - added: Auto attch/detach to skin intertace (by detecting TV state via network)
 

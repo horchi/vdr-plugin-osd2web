@@ -1,5 +1,5 @@
 if (!global.Intl) {
-    require.ensure([/* webpackChunkName: "intl" */ 
+    require.ensure([/* webpackChunkName: "intl" */
         'intl',
         'intl/locale-data/jsonp/de.js'
     ], function (require) {
@@ -64,7 +64,7 @@ $(function(){
         require.ensure([/* webpackChunkName: "xsnow" */ './lib/xsnow/snow'
         ], function (require) {
             var snow= require(/* webpackChunkName: "xsnow" */ './lib/xsnow/snow');
-            snow.start(/[?&]santa=1/.test(location.search)); 
+            snow.start(/[?&]santa=1/.test(location.search));
         },"xsnow");
     }
     window.autoScrollH= [];
@@ -99,13 +99,13 @@ $(function(){
         $('.auto-h-scroll').each(function(){
             if (!this.autoScrollMove)
                 window.autoScrollHorizontal(this)
-        });    
+        });
         $('.auto-v-scroll').each(function(){
             if (!this.autoScrollMove)
                 window.autoScrollVertical(this)
-        });          
+        });
         window.setTimeout(window.autoScroll, 3000);
-    }    
+    }
     let autoScroll= location.search.match(/[?&]autoScroll=([0-9]+(;[0-9]+)?)/);
     if (autoScroll) {
         let autoScrollTime= parseInt(autoScroll[1],10);
@@ -114,7 +114,8 @@ $(function(){
             window.autoScrollTime= autoScrollTime;
         if (autoScrollMove != NaN)
             window.autoScrollMove= autoScrollMove;
-    } 
-    window.setTimeout(window.autoScroll, 1000);    
-})
+    }
 
+    if (window.autoScrollTime)
+        window.setTimeout(window.autoScroll, 1000);
+})

@@ -184,16 +184,24 @@ body {
     width: 100%;
     font-size: 6vh;
     margin-bottom: 4px;
-    word-break: break-all;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+}
+
+.titletime  {
+    display: flex;
+    margin-right: 12px;
 }
 
 .titletxt  {
-    display: inline;            // or inline-block?
+    display: flex;
+    margin-right: 12px;
+    flex-grow: 1;
 }
 
 .durationtxt  {
-    float: right;
-    margin-left: 20px;
+    display: flex;
 }
 
 .htxt  {

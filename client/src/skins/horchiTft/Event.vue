@@ -12,8 +12,9 @@
                aria-valuemax="100">{{progress}}%
           </div>
         </div>
-        <div class="eventtitlerow clearfix">
-          <div class="titletxt">{{$root.formatTime(event.starttime)}}&nbsp;{{event.title}}</div>
+        <div class="eventtitlerow">
+          <div class="titletime">{{$root.formatTime(event.starttime)}}</div>
+          <div class="titletxt  auto-h-scroll">{{event.title}}</div>
           <div v-if="elapsed > 0" class="durationtxt">{{remaining}}/{{duration}}</div>
           <div v-if="elapsed <= 0" class="durationtxt">{{duration}}</div>
         </div>
