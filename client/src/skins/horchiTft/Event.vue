@@ -12,11 +12,11 @@
                aria-valuemax="100">{{progress}}%
           </div>
         </div>
-        <div class="eventtitlerow">
-          <div class="titletime">{{$root.formatTime(event.starttime)}}</div>
-          <div class="titletxt  auto-h-scroll">{{event.title}}</div>
-          <div v-if="elapsed > 0" class="durationtxt">{{remaining}}/{{duration}}</div>
-          <div v-if="elapsed <= 0" class="durationtxt">{{duration}}</div>
+        <div class="eventtitlerow flexrow">
+          <div class="titletime flexitem">{{$root.formatTime(event.starttime)}}</div>
+          <div class="titletxt flexitemgrow auto-h-scroll">{{event.title}}</div>
+          <div v-if="elapsed > 0" class="durationtxt flexitem">{{remaining}}/{{duration}}</div>
+          <div v-if="elapsed <= 0" class="durationtxt flexitem">{{duration}}</div>
         </div>
         <div class="clearfix">
           <div v-if="event.epg2vdr && imagecnt > 0" :id="'evImages' + event.eventid" class="img-fluid float-right event-image-frame carousel slide" data-ride="carousel" data-interval="5000">
@@ -27,11 +27,11 @@
             </div>
           </div>
           <div v-if="event.epg2vdr">
-            <div v-if="event.epg2vdr.episodepartname" class="card-text htxt">{{event.epg2vdr.episodepartname}}</div>
-            <div v-else="" class="card-text htxt">{{event.epg2vdr.shorttext}}</div>
+            <div v-if="event.epg2vdr.episodepartname" class="card-text subtitletxt">{{event.epg2vdr.episodepartname}}</div>
+            <div v-else="" class="card-text subtitletxt">{{event.epg2vdr.shorttext}}</div>
           </div>
           <div v-else="">
-            <div v-if="event.shorttext" class="card-text htxt">{{event.shorttext}}</div>
+            <div v-if="event.shorttext" class="card-text subtitletxt">{{event.shorttext}}</div>
           </div>
           <div class="card-text htxt">{{details1}}</div>
           <div class="card-text htxt">{{details2}}</div>

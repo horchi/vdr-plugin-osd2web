@@ -18,9 +18,9 @@
                  aria-valuemax="100">{{progress}}%
           </div>
         </div>
-        <div class="eventtitlerow clearfix">
-          <div class="titletxt">{{replay.event.title}}</div>
-          <div v-if="elapsed >= 0" class="durationtxt">{{remaining}}/{{duration}}</div>
+        <div class="eventtitlerow flexrow">
+          <div class="titletxt flexitemgrow auto-h-scroll">{{replay.event.title}}</div>
+          <div v-if="elapsed >= 0" class="durationtxt flexitem">{{remaining}}/{{duration}}</div>
         </div>
         <div class="clearfix">
           <div v-if="replay.scraper2vdr" class="img-thumbnail replay-image-frame float-right">
@@ -34,11 +34,11 @@
             </div>
           </div>
           <div v-if="replay.event.epg2vdr">
-            <div v-if="replay.event.epg2vdr.episodepartname" class="card-text htxt">{{replay.event.epg2vdr.episodepartname}}</div>
-            <div v-else="" class="card-text htxt">{{replay.event.shorttext}}</div>
+            <div v-if="replay.event.epg2vdr.episodepartname" class="card-text subtitletxt">{{replay.event.epg2vdr.episodepartname}}</div>
+            <div v-else="" class="card-text subtitletxt">{{replay.event.shorttext}}</div>
           </div>
           <div v-else="">
-            <div v-if="replay.event.shorttext" class="card-text htxt">{{replay.event.shorttext}}</div>
+            <div v-if="replay.event.shorttext" class="card-text subtitletxt">{{replay.event.shorttext}}</div>
           </div>
           <div class="card-text htxt">{{country_year}}</div>
           <div class="card-text htxt">{{rating}}</div>

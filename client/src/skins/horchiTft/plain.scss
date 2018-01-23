@@ -22,6 +22,23 @@ body {
     line-height: 1.1;
 }
 
+// flex stuff
+
+.flexitem {
+    display: flex;
+}
+
+.flexitemgrow {
+    display: flex;
+    flex-grow: 1;
+}
+
+.flexrow {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
 // container
 
 .dataarea {
@@ -46,9 +63,6 @@ body {
 
 .eventarea {
     padding: 0px 5px 0px 5px;
-
-    // flex: auto !important;    // without right area!
-    // max-width: 100%;          // without right area!
 }
 
 .rightarea {
@@ -184,24 +198,21 @@ body {
     width: 100%;
     font-size: 6vh;
     margin-bottom: 4px;
-    display: flex;
-    flex-wrap: nowrap;
-    flex-direction: row;
 }
 
 .titletime  {
-    display: flex;
     margin-right: 12px;
 }
 
 .titletxt  {
-    display: flex;
     margin-right: 12px;
-    flex-grow: 1;
+}
+
+.subtitletxt  {
+    font-size: 5vh;
 }
 
 .durationtxt  {
-    display: flex;
 }
 
 .htxt  {
@@ -235,6 +246,7 @@ body {
 
 .sdatetxt  {
     font-size: 3.3vh;
+    margin-right: 12px;
 }
 
 .stimetxt  {

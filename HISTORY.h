@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.19"
-#define VERSION_DATE  "22.01.2018"
+#define _VERSION      "0.2.20"
+#define VERSION_DATE  "23.01.2018"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,10 @@
 
 /*
  * ------------------------------------
+
+2018-01-23: version 0.2.20 (horchi)
+   - change: Improved display of time at hochiTft statusbar
+   - change: some minor skin hochiTft improvements
 
 2018-01-22: version 0.2.19 (horchi)
    - added: autoscroll for event title for skin hiorchiTft
