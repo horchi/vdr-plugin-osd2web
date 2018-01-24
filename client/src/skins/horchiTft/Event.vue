@@ -35,7 +35,7 @@
           </div>
           <div class="card-text htxt">{{details1}}</div>
           <div class="card-text htxt">{{details2}}</div>
-          <div v-show="description"><p class="desctxt auto-v-scroll" v-html="description"></p></div>
+          <div v-show="description"><p class="desctxt" v-html="description"></p></div>
         </div>
       </div>
     </div>
