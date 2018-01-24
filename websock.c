@@ -481,7 +481,14 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 
       case LWS_CALLBACK_RECEIVE_PONG:                      // ping / pong
       {
-         tell(2, "DEBUG: Got 'PONG'");
+         char clientName[50];
+         char clientIp[50];
+         lws_get_peer_addresses(wsi, lws_get_socket_fd(wsi),
+                                clientName, sizeof(clientName),
+                                clientIp, sizeof(clientIp));
+
+         tell(2, "DEBUG: Got 'PONG' from clientIp '%s/%s' (%p)",
+              clientName, clientIp, (void*)wsi);
 
          if (timeout)
             lws_set_timeout(wsi, PENDING_TIMEOUT_AWAITING_PING, timeout);
