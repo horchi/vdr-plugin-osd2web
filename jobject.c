@@ -305,7 +305,7 @@ int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recordi
    {
       json_t* oScraper = json_object();
 
-      tell(2, "DEBUG: Got from scraper2vdr: banner path '%s'; poster path '%s' recording '%s'",
+      tell(3, "DEBUG: Got from scraper2vdr: banner path '%s'; poster path '%s' recording '%s'",
            mediaPath.c_str(), posterPath.c_str(), recording->Name());
 
       if (mediaPath.length())

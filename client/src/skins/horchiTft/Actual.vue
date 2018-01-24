@@ -4,10 +4,12 @@
       <o2w-replay :replay="replay"></o2w-replay>
     </div>
     <div v-else="">
-      <div class="channel mt-1">
-        <div class="chnr">{{channel.channelnumber}}</div>
-        <div class="chtxt">{{channel.channelname}}</div>
-        <div v-if="logoname" class="chlogo">
+      <div class="channel flexrow mt-1">
+        <div class="chnr flexitem">{{channel.channelnumber}}</div>
+        <div class="chtxt flexitemgrow">
+          <p>{{channel.channelname}}</p>
+        </div>
+        <div v-if="logoname" class="chlogo flexitem">
           <img class="chlogo" :src="'/data/channellogo?name=' + logoname + '&id=' + channel.channelid" />
         </div>
       </div>

@@ -178,20 +178,23 @@ body {
 
 .chnr  {                        // channel text
     font-size: 8vh !important;
-    display: inline;
 }
 
 .chtxt  {                       // channel text
+    min-width: 0;
+}
+
+.chtxt p {
     font-size: 8vh !important;
-    display: inline;
-    margin-left: 6px;
+    margin-left: 10px;
+    white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .chlogo  {                      // channel logo
     max-height: 95%;
-    float: right;
-    padding-right: 2px;
+    justify-content: flex-end;
 }
 
 .eventtitlerow  {

@@ -379,7 +379,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 
                strncpy(msgBuffer + sizeLwsPreFrame, msg.c_str(), msgSize);
 
-               tell(2, "DEBUG: Write (%d) < %.*s > to (%p)\n",
+               tell(3, "DEBUG: Write (%d) < %.*s > to (%p)\n",
                     msgSize, msgSize,
                     msgBuffer+sizeLwsPreFrame, (void*)wsi);
 
@@ -469,6 +469,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
          break;
       }
 
+      case LWS_CALLBACK_ADD_HEADERS:
       case LWS_CALLBACK_PROTOCOL_INIT:
       case LWS_CALLBACK_FILTER_PROTOCOL_CONNECTION:
          break;
