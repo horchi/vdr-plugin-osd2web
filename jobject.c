@@ -319,7 +319,7 @@ int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recordi
    }
    else
    {
-      tell(2, "DEBUG: No scraper2vdr data found for recording '%s'", recording->Name());
+      tell(3, "DEBUG: No scraper2vdr data found for recording '%s'", recording->Name());
    }
 
    return success;

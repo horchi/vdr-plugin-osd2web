@@ -255,7 +255,7 @@ int cUpdate::parseVariableFile(const char* path, const char* service)
 
       serviceVariables[service + std::string(".") + line] = var;
 
-      tell(1, "Append variable '%s.%s' with value '%s'", var.file.c_str(), var.name.c_str(), var.value.c_str());
+      tell(2, "Append variable '%s.%s' with value '%s'", var.file.c_str(), var.name.c_str(), var.value.c_str());
    }
 
    if (serviceVariables.size())

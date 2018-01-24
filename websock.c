@@ -150,7 +150,14 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
    {
       case LWS_CALLBACK_CLOSED:
       {
-         tell(0, "DEBUG: Got unecpected LWS_CALLBACK_CLOSED");
+         char clientName[50];
+         char clientIp[50];
+         lws_get_peer_addresses(wsi, lws_get_socket_fd(wsi),
+                                clientName, sizeof(clientName),
+                                clientIp, sizeof(clientIp));
+
+         tell(0, "DEBUG: Got unecpected LWS_CALLBACK_CLOSED for client '%s/%s' (%p)",
+              clientName, clientIp, (void*)wsi);
          break;
       }
       case LWS_CALLBACK_HTTP_BODY:
@@ -341,7 +348,13 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
             if (clients[wsi].type != ctInactive)
             {
                char buffer[sizeLwsFrame];
-               tell(2, "DEBUG: Write 'PING' (%p)", (void*)wsi);
+               char clientName[50];
+               char clientIp[50];
+               lws_get_peer_addresses(wsi, lws_get_socket_fd(wsi),
+                                      clientName, sizeof(clientName),
+                                      clientIp, sizeof(clientIp));
+
+               tell(2, "DEBUG: Write 'PING' to '%s/%s' (%p)", clientName, clientIp, (void*)wsi);
                lws_write(wsi, (unsigned char*)buffer + sizeLwsPreFrame, 0, LWS_WRITE_PING);
             }
          }
@@ -440,7 +453,14 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
          if (timeout)
             lws_set_timeout(wsi, PENDING_TIMEOUT_AWAITING_PING, timeout);
 
-         tell(1, "Client connected (%p)", (void*)wsi);
+         char clientName[50];
+         char clientIp[50];
+         lws_get_peer_addresses(wsi, lws_get_socket_fd(wsi),
+                                clientName, sizeof(clientName),
+                                clientIp, sizeof(clientIp));
+
+         tell(1, "Client '%s/%s' connected (%p), ping time set to (%d)",
+              clientName, clientIp, (void*)wsi, timeout);
          clients[wsi].wsi = wsi;
          clients[wsi].type = ctInactive;
 
@@ -533,7 +553,13 @@ void cWebSock::atLogout(lws* wsi, const char* message)
 {
    cMutexLock lock(&clientsMutex);
 
-   tell(1, "%s (%p)", message, (void*)wsi);
+   char clientName[50];
+   char clientIp[50];
+   lws_get_peer_addresses(wsi, lws_get_socket_fd(wsi),
+                          clientName, sizeof(clientName),
+                          clientIp, sizeof(clientIp));
+
+   tell(1, "%s '%s/%s' (%p)", clientName, clientIp, message, (void*)wsi);
 
    clients.erase(wsi);
 
