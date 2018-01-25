@@ -13,7 +13,7 @@
 #include "update.h"
 #include "config.h"
 
-int wsLogLevel = LLL_ERR | LLL_WARN; // LLL_INFO | LLL_NOTICE | LLL_WARN | LLL_ERR
+int cWebSock::wsLogLevel = LLL_ERR | LLL_WARN; // LLL_INFO | LLL_NOTICE | LLL_WARN | LLL_ERR
 lws_context* cWebSock::context = 0;
 char* cWebSock::msgBuffer = 0;
 int cWebSock::msgBufferSize = 0;
