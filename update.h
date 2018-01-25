@@ -170,11 +170,13 @@ class cWebSock : public cOsdService
       // static interface
 
       static void activateAvailableClient();
-      static void atLogin(lws* wsi);
-      static void atLogout(lws* wsi, const char* message);
+      static void atLogin(lws* wsi, const char* message, const char* clientInfo);
+      static void atLogout(lws* wsi, const char* message, const char* clientInfo);
       static int getClientCount();
 
       static void pushMessage(const char* p, lws* wsi = 0);
+
+      static void writeLog(int level, const char* line);
 
    private:
 

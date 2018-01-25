@@ -3,7 +3,7 @@
  *
  *  websock.c
  *
- *  (c) 2017 Jörg Wendel
+ *  (c) 2017-2018 Jörg Wendel
  *
  * This code is distributed under the terms and conditions of the
  * GNU GENERAL PUBLIC LICENSE. See the file COPYING for details.
@@ -48,6 +48,8 @@ int cWebSock::init(int aPort, int aTimeout)
    const char* certPath = 0;           // we're not using ssl
    const char* keyPath = 0;
 
+   lws_set_log_level(LLL_INFO | LLL_NOTICE | LLL_WARN | LLL_ERR, writeLog);
+
    port = aPort;
    timeout = aTimeout;
 
@@ -76,6 +78,7 @@ int cWebSock::init(int aPort, int aTimeout)
    info.protocols = protocols;
    info.ssl_cert_filepath = certPath;
    info.ssl_private_key_filepath = keyPath;
+   info.ws_ping_pong_interval = timeout;
    info.gid = -1;
    info.uid = -1;
    info.options = 0;
@@ -94,6 +97,12 @@ int cWebSock::init(int aPort, int aTimeout)
    tell(1, "using libwebsocket version '%s'", lws_get_library_version());
 
    return success;
+}
+
+void cWebSock::writeLog(int level, const char* line)
+{
+   if (lwsl_visible(level))
+      tell(0, "WS: %s", line);
 }
 
 int cWebSock::exit()
@@ -138,6 +147,28 @@ int cWebSock::performData(MsgType type)
 }
 
 //***************************************************************************
+// Get Client Info of connection
+//***************************************************************************
+
+const char* getClientInfo(lws* wsi, std::string* clientInfo)
+{
+   char clientName[100+TB] = "unknown";
+   char clientIp[50+TB] = "";
+
+   if (wsi)
+   {
+      int fd = lws_get_socket_fd(wsi);
+
+      if (fd)
+         lws_get_peer_addresses(wsi, fd, clientName, sizeof(clientName), clientIp, sizeof(clientIp));
+   }
+
+   *clientInfo = clientName + std::string("/") + clientIp;
+
+   return clientInfo->c_str();
+}
+
+//***************************************************************************
 // HTTP Callback
 //***************************************************************************
 
@@ -145,19 +176,16 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
                            void* in, size_t len)
 {
    SessionData* sessionData = (SessionData*)user;
+   std::string clientInfo = "unknown";
 
    switch (reason)
    {
       case LWS_CALLBACK_CLOSED:
       {
-         char clientName[50];
-         char clientIp[50];
-         lws_get_peer_addresses(wsi, lws_get_socket_fd(wsi),
-                                clientName, sizeof(clientName),
-                                clientIp, sizeof(clientIp));
+         getClientInfo(wsi, &clientInfo);
 
-         tell(0, "DEBUG: Got unecpected LWS_CALLBACK_CLOSED for client '%s/%s' (%p)",
-              clientName, clientIp, (void*)wsi);
+         tell(0, "DEBUG: Got unecpected LWS_CALLBACK_CLOSED for client '%s' (%p)",
+              clientInfo.c_str(), (void*)wsi);
          break;
       }
       case LWS_CALLBACK_HTTP_BODY:
@@ -172,7 +200,7 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
 
       case LWS_CALLBACK_CLIENT_WRITEABLE:
       {
-         tell(2, "HTTP: Client connected");
+         tell(2, "HTTP: Client writeable");
          break;
       }
 
@@ -339,6 +367,24 @@ int cWebSock::serveFile(lws* wsi, const char* path)
 int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
                               void* user, void* in, size_t len)
 {
+   std::string clientInfo = "unknown";
+
+   switch (reason)
+   {
+      case LWS_CALLBACK_SERVER_WRITEABLE:
+      case LWS_CALLBACK_RECEIVE:
+      case LWS_CALLBACK_ESTABLISHED:
+      case LWS_CALLBACK_CLOSED:
+      case LWS_CALLBACK_WS_PEER_INITIATED_CLOSE:
+      case LWS_CALLBACK_RECEIVE_PONG:
+      {
+         getClientInfo(wsi, &clientInfo);
+         break;
+      }
+
+      default: break;
+   }
+
    switch (reason)
    {
       case LWS_CALLBACK_SERVER_WRITEABLE:                     // data to client
@@ -348,13 +394,8 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
             if (clients[wsi].type != ctInactive)
             {
                char buffer[sizeLwsFrame];
-               char clientName[50];
-               char clientIp[50];
-               lws_get_peer_addresses(wsi, lws_get_socket_fd(wsi),
-                                      clientName, sizeof(clientName),
-                                      clientIp, sizeof(clientIp));
 
-               tell(2, "DEBUG: Write 'PING' to '%s/%s' (%p)", clientName, clientIp, (void*)wsi);
+               tell(2, "DEBUG: Write 'PING' to '%s' (%p)", clientInfo.c_str(), (void*)wsi);
                lws_write(wsi, (unsigned char*)buffer + sizeLwsPreFrame, 0, LWS_WRITE_PING);
             }
          }
@@ -426,14 +467,14 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 
          if (event == evLogin)                             // { "event" : "login", "object" : { "type" : 0 } }
          {
-            tell(2, "DEBUG: Got '%s'", message);
+            tell(3, "DEBUG: Got '%s'", message);
             clients[wsi].type = (ClientType)getIntFromJson(oObject, "type", ctInteractive);
-            atLogin(wsi);
+            atLogin(wsi, message, clientInfo.c_str());
             activeClient = wsi;
          }
          else if (event == evLogout)                       // { "event" : "logout", "object" : { } }
          {
-            tell(2, "DEBUG: Got '%s'", message);
+            tell(3, "DEBUG: Got '%s'", message);
             clients[wsi].type = ctInactive;
             activateAvailableClient();
             clients[wsi].cleanupMessageQueue();
@@ -450,17 +491,11 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 
       case LWS_CALLBACK_ESTABLISHED:                       // someone connecting
       {
-         if (timeout)
-            lws_set_timeout(wsi, PENDING_TIMEOUT_AWAITING_PING, timeout);
+         // if (timeout)
+         //    lws_set_timeout(wsi, PENDING_TIMEOUT_AWAITING_PING, timeout);
 
-         char clientName[50];
-         char clientIp[50];
-         lws_get_peer_addresses(wsi, lws_get_socket_fd(wsi),
-                                clientName, sizeof(clientName),
-                                clientIp, sizeof(clientIp));
-
-         tell(1, "Client '%s/%s' connected (%p), ping time set to (%d)",
-              clientName, clientIp, (void*)wsi, timeout);
+         tell(1, "Client '%s' connected (%p), ping time set to (%d)",
+              clientInfo.c_str(), (void*)wsi, timeout);
          clients[wsi].wsi = wsi;
          clients[wsi].type = ctInactive;
 
@@ -469,29 +504,22 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 
       case LWS_CALLBACK_CLOSED:                            // someone dis-connecting
       {
-         atLogout(wsi, "Client disconnected");
+         atLogout(wsi, "Client disconnected", clientInfo.c_str());
          break;
       }
 
       case LWS_CALLBACK_WS_PEER_INITIATED_CLOSE:
       {
-         atLogout(wsi, "Client disconnected unsolicited");
+         atLogout(wsi, "Client disconnected unsolicited", clientInfo.c_str());
          break;
       }
 
       case LWS_CALLBACK_RECEIVE_PONG:                      // ping / pong
       {
-         char clientName[50];
-         char clientIp[50];
-         lws_get_peer_addresses(wsi, lws_get_socket_fd(wsi),
-                                clientName, sizeof(clientName),
-                                clientIp, sizeof(clientIp));
+         tell(2, "DEBUG: Got 'PONG' from client '%s' (%p)", clientInfo.c_str(), (void*)wsi);
 
-         tell(2, "DEBUG: Got 'PONG' from clientIp '%s/%s' (%p)",
-              clientName, clientIp, (void*)wsi);
-
-         if (timeout)
-            lws_set_timeout(wsi, PENDING_TIMEOUT_AWAITING_PING, timeout);
+         // if (timeout)
+         //    lws_set_timeout(wsi, PENDING_TIMEOUT_AWAITING_PING, timeout);
 
          break;
       }
@@ -537,9 +565,11 @@ void cWebSock::activateAvailableClient()
 // At Login / Logout
 //***************************************************************************
 
-void cWebSock::atLogin(lws* wsi)
+void cWebSock::atLogin(lws* wsi, const char* message, const char* clientInfo)
 {
    json_t* oContents = json_object();
+
+   tell(1, "Client login '%s' (%p) [%s]", clientInfo, (void*)wsi, message);
 
    addToJson(oContents, "type", clients[wsi].type);
    addToJson(oContents, "client", (long)wsi);
@@ -556,17 +586,11 @@ void cWebSock::atLogin(lws* wsi)
    free(p);
 }
 
-void cWebSock::atLogout(lws* wsi, const char* message)
+void cWebSock::atLogout(lws* wsi, const char* message, const char* clientInfo)
 {
    cMutexLock lock(&clientsMutex);
 
-   char clientName[50];
-   char clientIp[50];
-   lws_get_peer_addresses(wsi, lws_get_socket_fd(wsi),
-                          clientName, sizeof(clientName),
-                          clientIp, sizeof(clientIp));
-
-   tell(1, "%s '%s/%s' (%p)", clientName, clientIp, message, (void*)wsi);
+   tell(1, "%s '%s' (%p)", clientInfo, message, (void*)wsi);
 
    clients.erase(wsi);
 

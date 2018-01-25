@@ -5,7 +5,7 @@
          v-bind:class="{ timeron : timer.recording, timer : !timer.recording }">
       <div class="w-100 justify-content-between tmtxt">
         <div v-if="timer.epg2vdr" class="tlvdrtxt">[{{timer.epg2vdr.vdrname}}]</div>
-        <div class="tltmtxt">{{$root.formatDateTimeShort(timer.starttime)}}</div>
+        <div class="tltmtxt">{{formatDateTimeShortTo(timer.starttime, timer.stoptime)}}</div>
         <div v-if="timer.channel" class="tltmch">{{timer.channel.channelname}}</div>
         <div class="">{{timer.file}}</div>
       </div>
@@ -21,6 +21,19 @@ export default {
             timers: null,
             detail:-1
         };
+    },
+    methods: {
+        formatDateTimeShortTo(unixTimeFrom, unixTimeTo) {
+            if (!unixTimeFrom || !unixTimeTo || !global.Intl)
+                return "";
+            var dF = new Date(unixTimeFrom * 1000);
+            var dT = new Date(unixTimeTo * 1000);
+            return new Intl.DateTimeFormat('de-DE', {
+                month: 'short',
+                day: 'numeric'
+            }).format(dF) + ' ' + new String(100 + dF.getHours()).slice(1) + ':' + new String(100 + dF.getMinutes()).slice(1)
+                        + ' - ' + new String(100 + dT.getHours()).slice(1) + ':' + new String(100 + dT.getMinutes()).slice(1);
+        }
     },
     created() {
         this.$root.$on("timers", (data) => {

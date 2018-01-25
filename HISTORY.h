@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.21"
-#define VERSION_DATE  "24.01.2018"
+#define _VERSION      "0.2.22"
+#define VERSION_DATE  "25.01.2018"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,12 @@
 
 /*
  * ------------------------------------
+
+2018-01-25: version 0.2.22 (horchi)
+   - change: Reduced log messages
+   - change: Improved logging of libwebsockets
+   - bugfix: Fixed problem with keep alive (ping/pong) since libwebsockets 2.4.0
+   - change: Minor skin changes
 
 2018-01-24: version 0.2.21 (horchi)
    - change: Improved display channel logo for skin hochiTft

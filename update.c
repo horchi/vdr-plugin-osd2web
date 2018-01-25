@@ -527,7 +527,7 @@ void cUpdate::Action()
    }
 
    active = no;
-   isyslog("osd2web plugin thread ended (pid=%d)", getpid());
+   tell(0, "osd2web plugin thread ended (pid=%d)", getpid());
 }
 
 //***************************************************************************
