@@ -1,7 +1,6 @@
 <template>
-  <o2w-fullevent v-if="isFullevent" :event="event" />
-  <div v-else="" class="event card mt-1"
-       v-bind:class="{ 'eventpresent' : isPresent, 'eventfollowing' : !isPresent }">
+  <div class="event card mt-1"
+       v-bind:class="{ 'eventfull' : isFullevent, 'eventpresent' : !isFullevent && isPresent, 'eventfollowing' : !isFullevent && !isPresent }">
     <div v-show="event.title" style="height: 100%;">
       <div class="card-body p-1" style="height: 100%;">
         <div class="progress" v-show="progress">
@@ -44,7 +43,6 @@
 
 <script>
 var common= require("common");
-common.Vue.component('o2w-fullevent', require('../../components/Event'))
 
 export default {
     name: 'o2wEvent',

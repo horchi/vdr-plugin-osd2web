@@ -164,6 +164,7 @@ class cWebSock : public cOsdService
 
       // status callback methods
 
+      static int wsLogLevel;
       static int callbackHttp(lws* wsi, lws_callback_reasons reason, void* user, void* in, size_t len);
       static int callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason, void* user, void* in, size_t len);
 

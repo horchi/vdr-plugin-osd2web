@@ -7,7 +7,7 @@
  *
  */
 
-#define _VERSION      "0.2.22"
+#define _VERSION      "0.2.23"
 #define VERSION_DATE  "25.01.2018"
 
 #ifdef GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2018-01-25: version 0.2.23 (horchi)
+   - change: backward compatibility to 2.1.0
 
 2018-01-25: version 0.2.22 (horchi)
    - change: Reduced log messages
@@ -33,7 +36,7 @@
    - change: some minor skin hochiTft improvements
 
 2018-01-22: version 0.2.19 (horchi)
-   - added: autoscroll for event title for skin hiorchiTft
+   - added: autoscroll for event title for skin horchiTft
 
 2018-01-15: version 0.2.18 (rechner)
    - added: autoscroll for vertical and horizontal

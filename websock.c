@@ -13,6 +13,7 @@
 #include "update.h"
 #include "config.h"
 
+int wsLogLevel = LLL_ERR | LLL_WARN; // LLL_INFO | LLL_NOTICE | LLL_WARN | LLL_ERR
 lws_context* cWebSock::context = 0;
 char* cWebSock::msgBuffer = 0;
 int cWebSock::msgBufferSize = 0;
@@ -48,7 +49,7 @@ int cWebSock::init(int aPort, int aTimeout)
    const char* certPath = 0;           // we're not using ssl
    const char* keyPath = 0;
 
-   lws_set_log_level(LLL_INFO | LLL_NOTICE | LLL_WARN | LLL_ERR, writeLog);
+   lws_set_log_level(wsLogLevel, writeLog);
 
    port = aPort;
    timeout = aTimeout;
@@ -101,13 +102,13 @@ int cWebSock::init(int aPort, int aTimeout)
 
 void cWebSock::writeLog(int level, const char* line)
 {
-   if (lwsl_visible(level))
+   if (wsLogLevel & level)
       tell(0, "WS: %s", line);
 }
 
 int cWebSock::exit()
 {
-//   lws_context_destroy(context);  #TODO ?
+   // lws_context_destroy(context);  #TODO ?
 
    return success;
 }
