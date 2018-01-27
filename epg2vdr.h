@@ -67,6 +67,16 @@ struct cEpgTimer_Service_V1
 };
 
 //***************************************************************************
+// Has Timer
+//***************************************************************************
+
+struct cHas_Timer_V1
+{
+   long eventid;
+   int hastimer;
+};
+
+//***************************************************************************
 // Recording Detail Service Interface
 //***************************************************************************
 
@@ -78,8 +88,9 @@ struct cEpgRecording_Details_Service_V1
    std::string details;
 };
 
-#define EPG2VDR_TIMER_UPDATED "Epg2Vdr_Timer_Updated-v1.0"
-#define EPG2VDR_TIMER_SERVICE "Epg2Vdr_Timer_Service-v1.0"
+#define EPG2VDR_TIMER_UPDATED      "Epg2Vdr_Timer_Updated-v1.0"
+#define EPG2VDR_TIMER_SERVICE      "Epg2Vdr_Timer_Service-v1.0"
+#define EPG2VDR_HAS_TIMER          "Epg2Vdr_Has_Timer_Service-v1.0"
 #define EPG2VDR_REC_DETAIL_SERVICE "Epg2Vdr_RecDetail_Service-v1.0"
 
 #ifdef EPG2VDR

@@ -7,7 +7,7 @@
  *
  */
 
-#define _VERSION      "0.2.25"
+#define _VERSION      "0.2.26"
 #define VERSION_DATE  "27.01.2018"
 
 #ifdef GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2018-01-27: version 0.2.26 (horchi)
+   - bugfix: Fixed lock sequence issue
 
 2018-01-27: version 0.2.25 (horchi)
    - change: Update of cutting marks during replay (patch vdr-2.3.8-marks-upd.patch is needed!)

@@ -59,24 +59,19 @@ eTimerMatch Matches(const cTimer* ti, const cEvent* event)
 
 int getMatch(cPlugin* pEpg2Vdr, const cEvent* event, eTimerMatch* match)
 {
-   cEpgTimer_Service_V1 data;
+   cHas_Timer_V1 data;
+
+   tell(3, "DEBUG: check timer match for '%s' (%d)", event ? event->Title() : "<unknown>", event->EventID());
 
    *match = tmNone;
-   tell(2, "DEBUG: check timer match for '%s'", event ? event->Title() : "<unknown>" );
+   data.eventid = event->EventID();
 
-   if (pEpg2Vdr->Service(EPG2VDR_TIMER_SERVICE, &data))
+   if (pEpg2Vdr->Service(EPG2VDR_HAS_TIMER, &data))
    {
-      for (auto it = data.epgTimers.begin(); it != data.epgTimers.end(); ++it)
+      if (data.hastimer)
       {
-         cEpgTimer_Interface_V1* timer = (*it);
-
-         if (timer->EventId() == event->EventID())
-         {
-            tell(2, "DEBUG: Timer match for '%s' found", event ? event->Title() : "<unknown>" );
-            *match = tmFull;
-         }
-
-         delete timer;
+         tell(3, "DEBUG: Timer match for '%s' found", event ? event->Title() : "<unknown>" );
+         *match = tmFull;
       }
    }
 
