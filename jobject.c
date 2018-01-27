@@ -435,7 +435,7 @@ int timer2Json(json_t* obj, const cTimer* timer)
 }
 
 //***************************************************************************
-// Timer To Json
+// Image Path To Json
 //***************************************************************************
 
 int imagePaths2Json(json_t* obj, const char* path, const char* suffixFilter)

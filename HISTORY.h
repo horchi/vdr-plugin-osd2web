@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.23"
-#define VERSION_DATE  "25.01.2018"
+#define _VERSION      "0.2.24"
+#define VERSION_DATE  "26.01.2018"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2018-01-26: version 0.2.24 (horchi)
+   - change: Show recording state during replay (horchiTft)
 
 2018-01-25: version 0.2.23 (horchi)
    - change: backward compatibility to 2.1.0

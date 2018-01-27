@@ -1,11 +1,11 @@
 @import "../../common.scss";
 
 .navbar {
-    bottom: 2px;
+    bottom: 9px;
     left: 4px;
     right: 2px;
-    width: 6vh;
-    height: 6vh;
+    width: 40px;
+    height: 40px;
     top: unset;
     overflow: hidden;
     background-color: #2c4f7a !important;
@@ -61,6 +61,13 @@ body {
     border-radius: 0.3rem;
 }
 
+.btn  {
+   height: 40px
+}
+
+.osdbuttons  {
+    margin-left: 50px;
+}
 .eventarea {
     padding: 0px 5px 0px 5px;
 }
@@ -213,6 +220,10 @@ body {
 
 .titletxt  {
     margin-right: 12px;
+}
+
+.titletxtr {
+    color: red !important;
 }
 
 .subtitletxt  {

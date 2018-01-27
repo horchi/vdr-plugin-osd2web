@@ -16,37 +16,37 @@
                  :aria-valuenow="{progress}"
                  aria-valuemin="0"
                  aria-valuemax="100">{{progress}}%
-          </div>
-        </div>
-        <div class="eventtitlerow flexrow">
-          <div class="titletxt flexitemgrow auto-h-scroll">{{replay.event.title}}</div>
-          <div v-if="elapsed >= 0" class="durationtxt flexitem">{{remaining}}/{{duration}}</div>
-        </div>
-        <div class="clearfix">
-          <div v-if="replay.scraper2vdr" class="img-thumbnail replay-image-frame float-right">
-            <img class="d-block epg-image" :src="replay.scraper2vdr.poster">
-          </div>
-          <div v-else="" :id="'evImages' + replay.event.eventid" class="img-fluid float-right img-thumbnail carousel slide" data-ride="carousel" data-interval="5000">
-            <div class="carousel-inner replay-image-frame" role="listbox">
-              <div v-for="(img, n) in replay.images" class="carousel-item" :class="{'active':n==0}">
-                <img class="d-block epg-image" :src="'/data/recordingimg?path=' + img" alt="">
-              </div>
             </div>
           </div>
-          <div v-if="replay.event.epg2vdr">
-            <div v-if="replay.event.epg2vdr.episodepartname" class="card-text subtitletxt">{{replay.event.epg2vdr.episodepartname}}</div>
-            <div v-else="" class="card-text subtitletxt">{{replay.event.shorttext}}</div>
+          <div class="eventtitlerow flexrow">
+            <div class="titletxt flexitemgrow auto-h-scroll" v-bind:class="{ 'titletxtr' : isRecording }">{{replay.event.title}}</div>
+            <div v-if="elapsed >= 0" class="durationtxt flexitem">{{remaining}}/{{duration}}</div>
           </div>
-          <div v-else="">
-            <div v-if="replay.event.shorttext" class="card-text subtitletxt">{{replay.event.shorttext}}</div>
+          <div class="clearfix">
+            <div v-if="replay.scraper2vdr" class="img-thumbnail replay-image-frame float-right">
+              <img class="d-block epg-image" :src="replay.scraper2vdr.poster">
+            </div>
+            <div v-else="" :id="'evImages' + replay.event.eventid" class="img-fluid float-right img-thumbnail carousel slide" data-ride="carousel" data-interval="5000">
+              <div class="carousel-inner replay-image-frame" role="listbox">
+                <div v-for="(img, n) in replay.images" class="carousel-item" :class="{'active':n==0}">
+                  <img class="d-block epg-image" :src="'/data/recordingimg?path=' + img" alt="">
+                </div>
+              </div>
+            </div>
+            <div v-if="replay.event.epg2vdr">
+              <div v-if="replay.event.epg2vdr.episodepartname" class="card-text subtitletxt">{{replay.event.epg2vdr.episodepartname}}</div>
+              <div v-else="" class="card-text subtitletxt">{{replay.event.shorttext}}</div>
+            </div>
+            <div v-else="">
+              <div v-if="replay.event.shorttext" class="card-text subtitletxt">{{replay.event.shorttext}}</div>
+            </div>
+            <div class="card-text htxt">{{country_year}}</div>
+            <div class="card-text htxt">{{rating}}</div>
+            <div v-if="replay.event.epg2vdr && replay.event.epg2vdr.episodepart" class="card-text htxt">Staffel {{replay.event.epg2vdr.episodeseason}} Folge {{replay.event.epg2vdr.episodepart}}/{{replay.event.epg2vdr.episodeparts}}</div>
+            <p class="desctxt" v-show="description" v-html="description"></p>
           </div>
-          <div class="card-text htxt">{{country_year}}</div>
-          <div class="card-text htxt">{{rating}}</div>
-          <div v-if="replay.event.epg2vdr && replay.event.epg2vdr.episodepart" class="card-text htxt">Staffel {{replay.event.epg2vdr.episodeseason}} Folge {{replay.event.epg2vdr.episodepart}}/{{replay.event.epg2vdr.episodeparts}}</div>
-          <p class="desctxt" v-show="description" v-html="description"></p>
         </div>
       </div>
-    </div>
     </div>
     <div class="mt-1 replay-control">
       <a v-for="(button,index) in buttons" @click="$root.sendKey(button.key)"><icon :class="button.cls" :name="button.icon" /></a>
@@ -90,7 +90,8 @@ export default {
             buttons: null,
             current: 0,
             total: 0,
-            isPlaying: false
+            isPlaying: false,
+            isRecording: this.replay.event.timermatch == 'full'
         }
     },
     methods: {

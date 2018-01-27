@@ -3,7 +3,7 @@
  *
  *  update.h
  *
- *  (c) 2017 Jörg Wendel
+ *  (c) 2017-2018 Jörg Wendel
  *
  * This code is distributed under the terms and conditions of the
  * GNU GENERAL PUBLIC LICENSE. See the file COPYING for details.
