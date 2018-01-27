@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.24"
-#define VERSION_DATE  "26.01.2018"
+#define _VERSION      "0.2.25"
+#define VERSION_DATE  "27.01.2018"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2018-01-27: version 0.2.25 (horchi)
+   - change: Update of cutting marks during replay (patch vdr-2.3.8-marks-upd.patch is needed!)
 
 2018-01-26: version 0.2.24 (horchi)
    - change: Show recording state during replay (horchiTft)

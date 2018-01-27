@@ -219,7 +219,8 @@ int channels2Json(json_t* obj)
 // Recording To Json
 //***************************************************************************
 
-int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recording, cOsdService::ObjectShape shape)
+int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recording,
+                   json_t* activeControlMarksJson, cOsdService::ObjectShape shape)
 {
    int fps = 1;
 
@@ -276,24 +277,19 @@ int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recordi
       addToJson(obj, "event", oEvent);
    }
 
-   if (((cRecording*)recording)->HasMarks())
+   if (!activeControlMarksJson && ((cRecording*)recording)->HasMarks())
    {
       json_t* oMarks = json_array();
       cMarks marks;
 
       marks.Load(recording->FileName(), recording->FramesPerSecond(), recording->IsPesRecording());
-
-      for (const cMark* mark = marks.First(); mark; mark = marks.Next(mark))
-      {
-         json_t* oMark = json_object();
-
-         addToJson(oMark, "position", mark->Position() / fps);
-         addToJson(oMark, "comment", mark->Comment());
-
-         json_array_append_new(oMarks, oMark);
-      }
-
+      marks2Jason(&marks, oMarks, fps);
       addToJson(obj, "marks", oMarks);
+   }
+   else if (activeControlMarksJson)
+   {
+      addToJson(obj, "marks", activeControlMarksJson);
+      activeControlMarksJson = 0;
    }
 
    // scraper data
@@ -320,6 +316,25 @@ int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recordi
    else
    {
       tell(3, "DEBUG: No scraper2vdr data found for recording '%s'", recording->Name());
+   }
+
+   return success;
+}
+
+//***************************************************************************
+// Marks To Jason
+//***************************************************************************
+
+int marks2Jason(const cMarks* marks, json_t* oMarks, int fps)
+{
+   for (const cMark* mark = marks->First(); mark; mark = marks->Next(mark))
+   {
+      json_t* oMark = json_object();
+
+      addToJson(oMark, "position", mark->Position() / fps);
+      addToJson(oMark, "comment", mark->Comment());
+
+      json_array_append_new(oMarks, oMark);
    }
 
    return success;

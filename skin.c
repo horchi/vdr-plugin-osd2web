@@ -283,7 +283,7 @@ bool cSkinOsd2WebDisplayMenu::SetItemRecording(const cRecording* Recording, int 
 
    GET_TIMERS_READ(timers);
 
-   recording2Json(oRecording, timers, Recording);
+   recording2Json(oRecording, timers, Recording, 0);
 
    addToJson(oMenuItem, "index", Index);
    addToJson(oMenuItem, "current", Current);
@@ -305,7 +305,7 @@ void cSkinOsd2WebDisplayMenu::SetRecording(const cRecording *Recording)
    json_t* oRecording = json_object();
 
    GET_TIMERS_READ(timers);
-   recording2Json(oRecording, timers, Recording);
+   recording2Json(oRecording, timers, Recording, 0);
 
    cUpdate::pushMessage(oRecording, "recording");
 }

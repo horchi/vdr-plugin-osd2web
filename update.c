@@ -94,6 +94,7 @@ cUpdate::cUpdate()
    activeControlFps = 1;
    activeReplayName = "";
    activeReplayFile = "";
+   activeControlMarksJson = 0;
    pingTime = 60;                      // timeout
    nextPing = time(0);
    fdInotify = na;

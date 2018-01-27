@@ -20,32 +20,6 @@
 
 #define FULLMATCH 1000
 
-
-int getMatch(cPlugin* pEpg2Vdr, const cEvent* event, eTimerMatch* match)
-{
-   cEpgTimer_Service_V1 data;
-
-   if (pEpg2Vdr->Service(EPG2VDR_TIMER_SERVICE, &data))
-   {
-      for (auto it = data.epgTimers.begin(); it != data.epgTimers.end(); ++it)
-      {
-         cEpgTimer_Interface_V1* timer = (*it);
-
-         if (timer->EventId() == event->EventID())
-            *match = tmFull;
-
-         tell(2, "Got '%s' timer for '%s' - '%s'",
-              timer->isLocal() ? "local" : "remote",
-              timer->File(),
-              timer->hasState('R') ? "timer is recording" : "timer is pending");
-
-         delete timer;
-      }
-   }
-
-   return done;
-}
-
 //***************************************************************************
 // Matches
 //***************************************************************************
@@ -80,6 +54,36 @@ eTimerMatch Matches(const cTimer* ti, const cEvent* event)
 }
 
 //***************************************************************************
+// Get Match (by epg2vdr)
+//***************************************************************************
+
+int getMatch(cPlugin* pEpg2Vdr, const cEvent* event, eTimerMatch* match)
+{
+   cEpgTimer_Service_V1 data;
+
+   *match = tmNone;
+   tell(2, "DEBUG: check timer match for '%s'", event ? event->Title() : "<unknown>" );
+
+   if (pEpg2Vdr->Service(EPG2VDR_TIMER_SERVICE, &data))
+   {
+      for (auto it = data.epgTimers.begin(); it != data.epgTimers.end(); ++it)
+      {
+         cEpgTimer_Interface_V1* timer = (*it);
+
+         if (timer->EventId() == event->EventID())
+         {
+            tell(2, "DEBUG: Timer match for '%s' found", event ? event->Title() : "<unknown>" );
+            *match = tmFull;
+         }
+
+         delete timer;
+      }
+   }
+
+   return done;
+}
+
+//***************************************************************************
 // Get Timer Match
 //***************************************************************************
 
@@ -87,11 +91,15 @@ const cTimer* getTimerMatch(const cTimers* timers, const cEvent* event, eTimerMa
 {
    cPlugin* pEpg2Vdr = cPluginManager::GetPlugin("epg2vdr");
 
+   // with epg2vdr ...
+
    if (pEpg2Vdr)
    {
       getMatch(pEpg2Vdr, event, match);
       return 0;
    }
+
+   // without ...
 
    const cTimer* t = 0;
    eTimerMatch m = tmNone;

@@ -95,6 +95,20 @@ void cUpdate::Replaying(const cControl* Control, const char* Name,
 }
 
 //***************************************************************************
+// Mark Toggel
+//***************************************************************************
+
+void cUpdate::MarkToggle(const cMarks* marks, const cMark* mark)
+{
+   if (activeControlMarksJson)
+      json_decref(activeControlMarksJson);
+
+   activeControlMarksJson = json_array();
+   marks2Jason(marks, activeControlMarksJson, activeControlFps);
+   triggerReplayUpdate = yes;
+}
+
+//***************************************************************************
 // Timer Change
 //***************************************************************************
 
@@ -283,7 +297,7 @@ void cUpdate::updateRecordings()
    for (auto it = recList.begin(); it != recList.end() && count < 10; it++, count++)
    {
       json_t* oRecording = json_object();
-      recording2Json(oRecording, timers, *it, cOsdService::ObjectShape::osSmall);
+      recording2Json(oRecording, timers, *it, activeControlMarksJson, cOsdService::ObjectShape::osSmall);
       json_array_append_new(oRecordings, oRecording);
    }
 
@@ -321,7 +335,7 @@ void cUpdate::updateReplay(int force)
    if (recording)
    {
       activeControlFps = recording->Info() ? recording->Info()->FramesPerSecond() : 1;
-      recording2Json(oRecording, timers, recording);
+      recording2Json(oRecording, timers, recording, activeControlMarksJson);
    }
    else
    {

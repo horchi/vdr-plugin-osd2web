@@ -103,7 +103,7 @@ int cWebSock::init(int aPort, int aTimeout)
 void cWebSock::writeLog(int level, const char* line)
 {
    if (wsLogLevel & level)
-      tell(0, "WS: %s", line);
+      tell(2, "WS: %s", line);
 }
 
 int cWebSock::exit()
