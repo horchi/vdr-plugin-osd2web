@@ -61,7 +61,10 @@ int getMatch(cPlugin* pEpg2Vdr, const cEvent* event, eTimerMatch* match)
 {
    cHas_Timer_V1 data;
 
-   tell(3, "DEBUG: check timer match for '%s' (%d)", event ? event->Title() : "<unknown>", event->EventID());
+   if (!event)
+      return done;
+
+   tell(3, "DEBUG: check timer match for '%s' (%d)", event->Title(), event->EventID());
 
    *match = tmNone;
    data.eventid = event->EventID();

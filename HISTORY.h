@@ -7,7 +7,7 @@
  *
  */
 
-#define _VERSION      "0.2.26"
+#define _VERSION      "0.2.27"
 #define VERSION_DATE  "27.01.2018"
 
 #ifdef GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2018-01-27: version 0.2.27 (horchi)
+   - bugfix: Fixed possible crash on empty event
 
 2018-01-27: version 0.2.26 (horchi)
    - bugfix: Fixed lock sequence issue
