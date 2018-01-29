@@ -94,13 +94,13 @@ cUpdate::cUpdate()
    activeControlFps = 1;
    activeReplayName = "";
    activeReplayFile = "";
-   activeControlMarksJson = 0;
    pingTime = 60;                      // timeout
    nextPing = time(0);
    fdInotify = na;
    wdInotify = 0;
    lastClientActionAt = time(0);
    attachedBySvdrp = no;
+   cuttingMarks.isSet = no;
    viewMode = vmNormal;
 
    for (int i = 0; i <= mcCam; i++)

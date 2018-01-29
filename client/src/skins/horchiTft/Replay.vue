@@ -19,7 +19,10 @@
             </div>
           </div>
           <div class="eventtitlerow flexrow">
-            <div class="titletxt flexitemgrow auto-h-scroll" v-bind:class="{ 'titletxtr' : isRecording }">{{replay.event.title}}</div>
+            <svg v-if="isRecording" class="recindicator flexitem">
+              <circle cx="15" cy="15" r="15" fill="#e30c0c"/>
+            </svg>
+            <div class="titletxt flexitemgrow auto-h-scroll">{{replay.event.title}}</div>
             <div v-if="elapsed >= 0" class="durationtxt flexitem">{{remaining}}/{{duration}}</div>
           </div>
           <div class="clearfix">

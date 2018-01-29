@@ -220,7 +220,8 @@ int channels2Json(json_t* obj)
 //***************************************************************************
 
 int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recording,
-                   json_t* activeControlMarksJson, cOsdService::ObjectShape shape)
+                   cOsdService::cCuttingMarks* cuttingMarks,
+                   cOsdService::ObjectShape shape)
 {
    int fps = 1;
 
@@ -277,7 +278,27 @@ int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recordi
       addToJson(obj, "event", oEvent);
    }
 
-   if (!activeControlMarksJson && ((cRecording*)recording)->HasMarks())
+   if (cuttingMarks->isSet)
+   {
+      json_t* oMarks = json_array();
+      cMutexLock lock(&cuttingMarks->mutex);
+
+      while (!cuttingMarks->queue.empty())
+      {
+         json_t* oMark = json_object();
+
+         addToJson(oMark, "position", cuttingMarks->queue.front().position / fps);
+         addToJson(oMark, "comment", cuttingMarks->queue.front().comment.c_str());
+         json_array_append_new(oMarks, oMark);
+
+         cuttingMarks->queue.pop();
+      }
+
+      addToJson(obj, "marks", oMarks);
+      cuttingMarks->isSet = no;
+   }
+
+   else if (((cRecording*)recording)->HasMarks())
    {
       json_t* oMarks = json_array();
       cMarks marks;
@@ -285,11 +306,6 @@ int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recordi
       marks.Load(recording->FileName(), recording->FramesPerSecond(), recording->IsPesRecording());
       marks2Jason(&marks, oMarks, fps);
       addToJson(obj, "marks", oMarks);
-   }
-   else if (activeControlMarksJson)
-   {
-      addToJson(obj, "marks", activeControlMarksJson);
-      activeControlMarksJson = 0;
    }
 
    // scraper data

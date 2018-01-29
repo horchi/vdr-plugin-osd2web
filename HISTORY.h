@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.27"
-#define VERSION_DATE  "27.01.2018"
+#define _VERSION      "0.2.28"
+#define VERSION_DATE  "29.01.2018"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,10 @@
 
 /*
  * ------------------------------------
+
+2018-01-29: version 0.2.28 (horchi)
+   - change: Patch vdr-2.3.8-statusmarksmodified.diff angepasst (Danke Klaus!)
+   - change: Display of running 'recording' at replay now as a red dot instead of the red title
 
 2018-01-27: version 0.2.27 (horchi)
    - bugfix: Fixed possible crash on empty event

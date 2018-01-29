@@ -95,16 +95,25 @@ void cUpdate::Replaying(const cControl* Control, const char* Name,
 }
 
 //***************************************************************************
-// Mark Toggel
+// Marks Modified   -   working since vdr 2.3.9 !
 //***************************************************************************
 
-void cUpdate::MarkToggle(const cMarks* marks, const cMark* mark)
+void cUpdate::MarksModified(const cMarks* Marks)
 {
-   if (activeControlMarksJson)
-      json_decref(activeControlMarksJson);
+   cMutexLock lock(&cuttingMarks.mutex);
 
-   activeControlMarksJson = json_array();
-   marks2Jason(marks, activeControlMarksJson, activeControlFps);
+   while (!cuttingMarks.queue.empty())
+      cuttingMarks.queue.pop();
+
+   for (const cMark* mark = Marks->First(); mark; mark = Marks->Next(mark))
+   {
+      cCutMark cutMark;
+      cutMark.position = mark->Position();
+      cutMark.comment = mark->Comment() ? mark->Comment() : "";
+      cuttingMarks.queue.push(cutMark);
+   }
+
+   cuttingMarks.isSet = yes;
    triggerReplayUpdate = yes;
 }
 
@@ -297,7 +306,7 @@ void cUpdate::updateRecordings()
    for (auto it = recList.begin(); it != recList.end() && count < 10; it++, count++)
    {
       json_t* oRecording = json_object();
-      recording2Json(oRecording, timers, *it, activeControlMarksJson, cOsdService::ObjectShape::osSmall);
+      recording2Json(oRecording, timers, *it, &cuttingMarks, cOsdService::ObjectShape::osSmall);
       json_array_append_new(oRecordings, oRecording);
    }
 
@@ -335,7 +344,7 @@ void cUpdate::updateReplay(int force)
    if (recording)
    {
       activeControlFps = recording->Info() ? recording->Info()->FramesPerSecond() : 1;
-      recording2Json(oRecording, timers, recording, activeControlMarksJson);
+      recording2Json(oRecording, timers, recording, &cuttingMarks);
    }
    else
    {

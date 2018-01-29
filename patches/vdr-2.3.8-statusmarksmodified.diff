@@ -1,0 +1,72 @@
+--- menu.c	2018/01/26 14:34:31	4.55
++++ menu.c	2018/01/29 13:59:58
+@@ -2694,8 +2694,15 @@
+ eOSState cMenuRecordingEdit::DeleteMarks(void)
+ {
+   if (buttonDeleteMarks && Interface->Confirm(tr("Delete editing marks for this recording?"))) {
+-     if (cMarks::DeleteMarksFile(recording))
++     if (cMarks::DeleteMarksFile(recording)) {
+         SetHelpKeys();
++        if (cControl *Control = cControl::Control(true)) {
++           if (const cRecording *Recording = Control->GetRecording()) {
++              if (strcmp(recording->FileName(), Recording->FileName()) == 0)
++                 cStatus::MsgMarksModified(NULL);
++              }
++           }
++        }
+      else
+         Skins.Message(mtError, tr("Error while deleting editing marks!"));
+      }
+@@ -5811,6 +5818,7 @@
+      StateKey.Remove();
+      ShowTimed(2);
+      marksModified = true;
++     cStatus::MsgMarksModified(&marks);
+      }
+ }
+ 
+@@ -5870,6 +5878,7 @@
+         m->SetPosition(p);
+         Goto(m->Position(), true);
+         marksModified = true;
++        cStatus::MsgMarksModified(&marks);
+         }
+      else if (!MarkRequired)
+         Goto(SkipFrames(Frames), !Play);
+--- status.c	2014/01/25 10:47:39	4.0
++++ status.c	2018/01/29 13:36:53
+@@ -53,6 +53,12 @@
+       sm->Replaying(Control, Name, FileName, On);
+ }
+ 
++void cStatus::MsgMarksModified(const cMarks* Marks)
++{
++  for (cStatus *sm = statusMonitors.First(); sm; sm = statusMonitors.Next(sm))
++      sm->MarksModified(Marks);
++}
++
+ void cStatus::MsgSetVolume(int Volume, bool Absolute)
+ {
+   for (cStatus *sm = statusMonitors.First(); sm; sm = statusMonitors.Next(sm))
+--- status.h	2017/06/23 09:08:24	4.3
++++ status.h	2018/01/29 13:42:17
+@@ -59,6 +59,11 @@
+                // a name, Name can be a string that identifies the player type (like, e.g., "DVD").
+                // The full file name of the recording is given in FileName, which may be NULL in case there is no
+                // actual file involved. If On is false, Name may be NULL.
++  virtual void MarksModified(const cMarks *Marks) {}
++               // If the editing marks of the recording that is currently being played
++               // are modified in any way, this function is called with the list of
++               // Marks. If Marks is NULL, the editing marks for the currently played
++               // recording have been deleted entirely.
+   virtual void SetVolume(int Volume, bool Absolute) {}
+                // The volume has been set to the given value, either
+                // absolutely or relative to the current volume.
+@@ -103,6 +108,7 @@
+   static void MsgChannelSwitch(const cDevice *Device, int ChannelNumber, bool LiveView);
+   static void MsgRecording(const cDevice *Device, const char *Name, const char *FileName, bool On);
+   static void MsgReplaying(const cControl *Control, const char *Name, const char *FileName, bool On);
++  static void MsgMarksModified(const cMarks* Marks);
+   static void MsgSetVolume(int Volume, bool Absolute);
+   static void MsgSetAudioTrack(int Index, const char * const *Tracks);
+   static void MsgSetAudioChannel(int AudioChannel);

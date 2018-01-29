@@ -74,6 +74,19 @@ class cOsdService
       static Event toEvent(const char* name);
 
       static const char* events[];
+
+      struct cCutMark
+      {
+         int position;
+         std::string comment;
+      };
+
+      struct cCuttingMarks
+      {
+         cMutex mutex;
+         std::queue<cCutMark> queue;
+         int isSet;
+      };
 };
 
 //***************************************************************************
@@ -87,7 +100,7 @@ int event2Json(json_t* obj, const cEvent* event, const cChannel* channel = 0,
                eTimerMatch TimerMatch = (eTimerMatch)na, int Current = no,
                cOsdService::ObjectShape shape = cOsdService::osText);
 int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recording,
-                   json_t* activeControlMarksJson,
+                   cOsdService::cCuttingMarks* cuttingMarks,
                    cOsdService::ObjectShape shape = cOsdService::ObjectShape::osLarge);
 int marks2Jason(const cMarks* marks, json_t* oMarks, int fps);
 int channel2Json(json_t* obj, const cChannel* channel);
@@ -335,7 +348,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       virtual void OsdProgramme(time_t PresentTime, const char *PresentTitle, const char *PresentSubtitle, time_t FollowingTime, const char *FollowingTitle, const char *FollowingSubtitle);
       virtual void ChannelSwitch(const cDevice* Device, int ChannelNumber, bool LiveView);
       virtual void Replaying(const cControl *Control, const char *Name, const char *FileName, bool On);
-      virtual void MarkToggle(const cMarks* marks, const cMark* mark);
+      virtual void MarksModified(const cMarks* Marks);
       virtual void Recording(const cDevice *Device, const char *Name, const char *FileName, bool On);
       virtual void TimerChange(const cTimer *Timer, eTimerChange Change);
 
@@ -367,7 +380,8 @@ class cUpdate : public cStatus, cThread, public cOsdService
       int activeControlFps;
       std::string activeReplayName;
       std::string activeReplayFile;
-      json_t* activeControlMarksJson;
+
+      cCuttingMarks cuttingMarks;
 
       // trigger
 
