@@ -35,7 +35,7 @@ void initConnection()
 void exitConnection()
 {
    cDbConnection::exit();
-   
+
    if (connection)
       delete connection;
 }
@@ -44,7 +44,7 @@ int init()
 {
    eventsDb = new cDbTable(connection, "useevents");
    if (eventsDb->open() != success) return fail;
-   
+
    return success;
 }
 
@@ -60,8 +60,8 @@ int exit()
 
 int main(int argc, char** argv)
 {
-   cEpgConfig::logstdout = yes;
-   cEpgConfig::loglevel = 0;
+   cConfigBase::logstdout = yes;
+   cConfigBase::loglevel = 0;
    int namingmode = tnmAuto;
 
    if (argc < 3)
@@ -92,14 +92,14 @@ int main(int argc, char** argv)
    eventsDb->setValue("CNTSOURCE", "tvm");
    eventsDb->setValue("CHANNELID", argv[1]);
    eventsDb->setBigintValue("CNTEVENTID", atol(argv[2]));
-   
+
    if (!eventsDb->find())
    {
       tell(0, "Event %s/%ld not found", argv[1], atol(argv[2]));
       return 1;
    }
 
-   tell(2, "Event '%s/%s' found", 
+   tell(2, "Event '%s/%s' found",
         eventsDb->getStrValue("TITLE"), eventsDb->getStrValue("SHORTTEXT"));
 
    // Python stuff ..
@@ -114,7 +114,7 @@ int main(int argc, char** argv)
 
    if (py.execute(eventsDb, namingmode) == success)
       tell(0, "Info: The recording name calculated by 'recording.py' (with namingmode %d) is '%s'", namingmode, py.getResult());
-   
+
    py.exit();
    exitConnection();
 

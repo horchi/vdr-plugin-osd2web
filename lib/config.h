@@ -20,10 +20,15 @@ struct cConfigBase
 
       cConfigBase();
 
+      static void setLogLevel(const char* logLevel);   //  "<level]:width]>"
+
       // static stuff
+
 
       static int logstdout;
       static int loglevel;
+      static char* loglevelString;
+      static int logwidth;
       static int argLoglevel;
       static int logFacility;
       static const char* logName;   // filename if we aren't a plugin

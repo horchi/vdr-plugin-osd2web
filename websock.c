@@ -434,9 +434,8 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 
                strncpy(msgBuffer + sizeLwsPreFrame, msg.c_str(), msgSize);
 
-               tell(3, "DEBUG: Write (%d) < %.*s > to (%p)\n",
-                    msgSize, msgSize,
-                    msgBuffer+sizeLwsPreFrame, (void*)wsi);
+               tell(3, "DEBUG: Write (%d) <- %.*s -> to '%s' (%p)\n", msgSize, msgSize,
+                    msgBuffer+sizeLwsPreFrame, clientInfo.c_str(), (void*)wsi);
 
                res = lws_write(wsi, (unsigned char*)msgBuffer + sizeLwsPreFrame, msgSize, LWS_WRITE_TEXT);
 
@@ -471,7 +470,11 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
             tell(3, "DEBUG: Got '%s'", message);
             clients[wsi].type = (ClientType)getIntFromJson(oObject, "type", ctInteractive);
             atLogin(wsi, message, clientInfo.c_str());
-            activeClient = wsi;
+
+            // set only to 'active' if client is interested
+
+            if (clients[wsi].type == ctInteractive)
+               activeClient = wsi;
          }
          else if (event == evLogout)                       // { "event" : "logout", "object" : { } }
          {
@@ -480,7 +483,9 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
             activateAvailableClient();
             clients[wsi].cleanupMessageQueue();
          }
-         else if (activeClient && activeClient == wsi)     // take data only from active client
+         else if (event == evChannels)
+            cUpdate::messagesIn.push(message);
+         else if (activeClient && activeClient == wsi)     // key press only from active client
             cUpdate::messagesIn.push(message);
          else
             tell(1, "Ignoring data of not 'active client (%p)", (void*)wsi);
@@ -495,8 +500,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
          // if (timeout)
          //    lws_set_timeout(wsi, PENDING_TIMEOUT_AWAITING_PING, timeout);
 
-         tell(1, "Client '%s' connected (%p), ping time set to (%d)",
-              clientInfo.c_str(), (void*)wsi, timeout);
+         tell(1, "Client '%s' connected (%p), ping time set to (%d)", clientInfo.c_str(), (void*)wsi, timeout);
          clients[wsi].wsi = wsi;
          clients[wsi].type = ctInactive;
 

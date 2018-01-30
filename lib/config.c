@@ -14,7 +14,9 @@
 //***************************************************************************
 
 int cConfigBase::logstdout = no;
+char* cConfigBase::loglevelString = strdup("1:-1");
 int cConfigBase::loglevel = 1;
+int cConfigBase::logwidth = na;
 int cConfigBase::argLoglevel = na;
 int cConfigBase::logFacility = LOG_USER;
 const char* cConfigBase::logName = "unknown";
@@ -27,6 +29,25 @@ cConfigBase::cConfigBase()
 {
 }
 
+//***************************************************************************
+// Set Log Level
+//***************************************************************************
+
+void cConfigBase::setLogLevel(const char* s)
+{
+   if (isEmpty(s))
+      return ;
+
+   free(loglevelString);
+   loglevelString = strdup(s);
+
+   loglevel = atoi(loglevelString);
+
+   if (const char* w = strchr(loglevelString, ':'))
+      logwidth = atoi(w+1);
+}
+
+//***************************************************************************
 //***************************************************************************
 // Common EPG Service Configuration
 //***************************************************************************

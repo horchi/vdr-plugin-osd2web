@@ -3,7 +3,7 @@
        v-bind:class="{ 'eventfull' : isFullevent, 'eventpresent' : !isFullevent && isPresent, 'eventfollowing' : !isFullevent && !isPresent }">
     <div v-show="event.title" style="height: 100%;">
       <div class="card-body p-1" style="height: 100%;">
-        <div class="progress" v-show="progress">
+        <div class="progress" v-show="progress >= 0">
           <div class="progress-bar" role="progressbar"
                :style="{width: progress + '%'}"
                :aria-valuenow="{progress}"
@@ -70,7 +70,8 @@ export default {
                     this.now= parseInt(new Date().getTime() / 1000, 10);
                 },60000);
             }
-            return Math.max(parseInt((this.now - this.event.starttime) / this.event.duration * 100,10),0);
+            return this.event.duration && this.now >= this.event.starttime ? parseInt((this.now - this.event.starttime) / this.event.duration * 100,10) : -1;
+            // return Math.max(parseInt((this.now - this.event.starttime) / this.event.duration * 100,10),0);
         },
         elapsed: function () {
             if (this.event.title){

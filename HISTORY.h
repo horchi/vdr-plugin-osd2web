@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.28"
-#define VERSION_DATE  "29.01.2018"
+#define _VERSION      "0.2.29"
+#define VERSION_DATE  "30.01.2018"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,11 @@
 
 /*
  * ------------------------------------
+
+2018-01-30: version 0.2.29 (horchi)
+   - bugfix: Fixed state of channel logos
+   - change: Some minor improvements
+   - change: Added SVDRP command to set log level and max width of log messages at runtime
 
 2018-01-29: version 0.2.28 (horchi)
    - change: Patch vdr-2.3.8-statusmarksmodified.diff angepasst (Danke Klaus!)

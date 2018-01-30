@@ -8,7 +8,6 @@ HISTFILE  = "HISTORY.h"
 
 include Make.config
 
-
 ### The version number of this plugin (taken from the main source file):
 
 VERSION = $(shell grep 'define _VERSION ' $(HISTFILE) | awk '{ print $$3 }' | sed -e 's/[";]//g')
@@ -36,8 +35,8 @@ TMPDIR ?= /tmp
 
 ### The compiler options:
 
-export CFLAGS   += $(call PKGCFG,cflags)
-export CXXFLAGS += $(call PKGCFG,cxxflags)
+#export CFLAGS   += $(call PKGCFG,cflags)
+#export CXXFLAGS += $(call PKGCFG,cxxflags)
 
 ### The version number of VDR's plugin API:
 

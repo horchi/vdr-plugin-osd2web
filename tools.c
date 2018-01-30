@@ -64,7 +64,7 @@ int getMatch(cPlugin* pEpg2Vdr, const cEvent* event, eTimerMatch* match)
    if (!event)
       return done;
 
-   tell(3, "DEBUG: check timer match for '%s' (%d)", event->Title(), event->EventID());
+   tell(4, "DEBUG: check timer match for '%s' (%d)", event->Title(), event->EventID());
 
    *match = tmNone;
    data.eventid = event->EventID();

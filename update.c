@@ -162,7 +162,7 @@ int cUpdate::isEditable(eMenuCategory category)
 }
 
 //***************************************************************************
-// Check Auto Attach
+// Check Auto Attach (TV alive)
 //***************************************************************************
 
 int cUpdate::checkAutoAttach()
@@ -610,16 +610,17 @@ int cUpdate::performLogin(json_t* oObject)
    long client = getLongFromJson(oObject, "client");
    long lastClient = getLongFromJson(oObject, "lastclient");
 
-   // passive for 'old' client ?
+   // passive for 'old' client ...
 
    if (type == ctInteractive && lastClient)
    {
       json_t* oRole = json_object();
       addToJson(oRole, "role", "passive");
+      addToJson(oRole, "havelogos", folderExists(config.logoPath));
       cUpdate::pushMessage(oRole, "rolechange", lastClient);
    }
 
-   // active for 'new' client
+   // active for 'new' client ...
 
    {
       json_t* oRole = json_object();

@@ -151,7 +151,7 @@ bool cPluginOsd2Web::Start()
 
 void cPluginOsd2Web::Store()
 {
-   SetupStore("LogLevel", config.loglevel);
+   SetupStore("LogLevel", config.loglevelString);
 }
 
 //***************************************************************************
@@ -160,8 +160,8 @@ void cPluginOsd2Web::Store()
 
 bool cPluginOsd2Web::SetupParse(const char* name, const char* value)
 {
-   if      (!strcasecmp(name, "LogLevel"))     config.loglevel = atoi(value);
-
+   if (!strcasecmp(name, "LogLevel"))
+      config.setLogLevel(value);
    else
       return false;
 
@@ -192,6 +192,8 @@ const char** cPluginOsd2Web::SVDRPHelpPages()
       "    Stop the local browser\n",
       "DISP <display>\n"
       "    switch xorg display of local browser instance\n",
+      "LOGLV <loglevel[:widht]>\n"
+      "    set log level and optional the widht\n",
       0
    };
 
@@ -282,6 +284,18 @@ cString cPluginOsd2Web::SVDRPCommand(const char* cmd, const char* Option, int& R
          else
             result = "starting browser failed";
       }
+   }
+   else if (!strcasecmp(cmd, "LOGLV"))
+   {
+      if (isEmpty(Option))
+         return "Missing <loglevel> option";
+
+      config.setLogLevel(Option);
+
+      tell(0, "Set log level to (%d) and display width to (%d)",
+           config.loglevel, config.logwidth);
+
+      result = "Set log level";
    }
 
    return result;

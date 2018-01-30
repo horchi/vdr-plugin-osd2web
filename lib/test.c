@@ -47,13 +47,13 @@ void initConnection()
 void exitConnection()
 {
    cDbConnection::exit();
-   
+
    if (connection)
       delete connection;
 }
 
 //***************************************************************************
-// 
+//
 //***************************************************************************
 
 void chkCompress()
@@ -76,7 +76,7 @@ void chkCompress()
 }
 
 //***************************************************************************
-// 
+//
 //***************************************************************************
 
 void chkStatement1()
@@ -84,8 +84,8 @@ void chkStatement1()
    cDbTable* epgDb = new cDbTable(connection, "events");
 
    if (epgDb->open() != success)
-   { 
-      tell(0, "Could not access database '%s:%d' (%s)", 
+   {
+      tell(0, "Could not access database '%s:%d' (%s)",
            cDbConnection::getHost(), cDbConnection::getPort(), epgDb->TableName());
 
       return ;
@@ -94,14 +94,14 @@ void chkStatement1()
    tell(0, "---------------------------------------------------");
 
    // prepare statement to mark wasted DVB events
-   
+
    cDbValue* endTime = new cDbValue("starttime+duration", cDBS::ffInt, 10);
    cDbStatement* updateDelFlg = new cDbStatement(epgDb);
 
-   // update events set delflg = ?, updsp = ? 
-   //   where channelid = ? and source = ? 
-   //      and starttime+duration > ? 
-   //      and starttime < ? 
+   // update events set delflg = ?, updsp = ?
+   //   where channelid = ? and source = ?
+   //      and starttime+duration > ?
+   //      and starttime < ?
    //      and (tableid > ? or (tableid = ? and version <> ?))
 
    updateDelFlg->build("update %s set ", epgDb->TableName());
@@ -110,9 +110,9 @@ void chkStatement1()
    updateDelFlg->build(" where ");
    updateDelFlg->bind(epgDb->getField("ChannelId"), cDBS::bndIn | cDBS::bndSet);
    updateDelFlg->bind(epgDb->getField("Source"), cDBS::bndIn | cDBS::bndSet, " and ");
-   
+
    updateDelFlg->bindCmp(0, endTime, ">", " and ");
-   
+
    updateDelFlg->bindCmp(0, epgDb->getField("StartTime"), 0, "<" ,  " and ");
    updateDelFlg->bindCmp(0, epgDb->getField("TableId"),   0, ">" ,  " and (");
    updateDelFlg->bindCmp(0, epgDb->getField("TableId"),   0, "=" ,  " or (");
@@ -125,7 +125,7 @@ void chkStatement1()
 }
 
 // //***************************************************************************
-// // 
+// //
 // //***************************************************************************
 
 // void chkStatement2()
@@ -140,13 +140,13 @@ void chkStatement1()
 //       return ;
 
 //    tell(0, "---------------------------------------------------");
- 
+
 //    cDbStatement* selectAllImages = new cDbStatement(imageRefDb);
 
-//    cDbValue imageData; 
+//    cDbValue imageData;
 //    imageData.setField(imageDb->getField(cTableImages::fiImage));
 
-//    // select r.imagename, r.eventid, r.lfn, i.image from imagerefs r, images i 
+//    // select r.imagename, r.eventid, r.lfn, i.image from imagerefs r, images i
 //    //    where r.imagename = i.imagename and i.image is not null;
 
 //    selectAllImages->build("select ");
@@ -174,7 +174,7 @@ void chkStatement1()
 // }
 
 // //***************************************************************************
-// // 
+// //
 // //***************************************************************************
 
 // void chkStatement3()
@@ -192,7 +192,7 @@ void chkStatement1()
 //       return ;
 
 //    tell(0, "---------------------------------------------------");
- 
+
 //    cDbStatement* s = new cDbStatement(epgDb);
 
 //    s->build("select ");
@@ -266,7 +266,7 @@ void chkStatement1()
 // }
 
 // //***************************************************************************
-// // 
+// //
 // //***************************************************************************
 
 // void chkStatement4()
@@ -280,11 +280,11 @@ void chkStatement1()
 //    cDbTable* imageDb = new cTableImages(connection);
 //    if (imageDb->open() != success) return;
 
-//    // select e.masterid, r.imagename, r.eventid, r.lfn, i.image 
-//    //      from imagerefs r, images i, events e 
-//    //      where r.imagename = i.imagename 
+//    // select e.masterid, r.imagename, r.eventid, r.lfn, i.image
+//    //      from imagerefs r, images i, events e
+//    //      where r.imagename = i.imagename
 //    //         and e.eventid = r.eventid,
-//    //         and i.image is not null 
+//    //         and i.image is not null
 //    //         and (i.updsp > ? or r.updsp > ?);
 
 //    cDBS::FieldDef masterFld = { "masterid", cDBS::ffUInt,  0, 999, cDBS::ftData };
@@ -308,10 +308,10 @@ void chkStatement1()
 //    selectAllImages->setBindPrefix("i.");
 //    selectAllImages->bind(&imageData, cDBS::bndOut, ", ");
 //    selectAllImages->clrBindPrefix();
-//    selectAllImages->build(" from %s r, %s i, %s e where ", 
+//    selectAllImages->build(" from %s r, %s i, %s e where ",
 //                           imageRefDb->TableName(), imageDb->TableName(), eventDb->TableName());
 //    selectAllImages->build("e.%s = r.%s and i.%s = r.%s and i.%s is not null and (",
-//                           eventDb->getField(cTableEvents::fiEventId)->name, 
+//                           eventDb->getField(cTableEvents::fiEventId)->name,
 //                           imageRefDb->getField(cTableImageRefs::fiEventId)->name,
 //                           imageDb->getField(cTableImageRefs::fiImgName)->name,
 //                           imageRefDb->getField(cTableImageRefs::fiImgName)->name,
@@ -326,7 +326,7 @@ void chkStatement1()
 //    imageRefDb->clear();
 //    imageRefDb->setValue(cTableImageRefs::fiUpdSp, 1377733333L);
 //    imageUpdSp.setValue(1377733333L);
-   
+
 //    int count = 0;
 //    for (int res = selectAllImages->find(); res; res = selectAllImages->fetch())
 //    {
@@ -336,7 +336,7 @@ void chkStatement1()
 // }
 
 // //***************************************************************************
-// // 
+// //
 // //***************************************************************************
 
 // int structure()
@@ -346,7 +346,7 @@ void chkStatement1()
 
 //    if (table->open(yes) != success)
 //       return fail;
-   
+
 //    // table->validateStructure();
 
 //    delete table;
@@ -409,10 +409,10 @@ void removeTag(char* xml, const char* tag)
 {
    std::string sTag = "<" + std::string(tag) + ">";
    std::string eTag = "</" + std::string(tag) + ">";
-   
+
    const char* s;
    const char* e;
-   
+
    if ((s = strstr(xml, sTag.c_str())) && (e = strstr(xml, eTag.c_str())))
    {
       char tmp[1000+TB];
@@ -423,11 +423,11 @@ void removeTag(char* xml, const char* tag)
 
       if (e <= s)
          return;
-      
+
       sprintf(tmp, "%.*s%s", int(s-xml), xml, e);
 
       strcpy(xml, tmp);
-   }  
+   }
 }
 
 //***************************************************************************
@@ -439,7 +439,7 @@ int insertTag(char* xml, const char* parent, const char* tag, int value)
    char tmp[1000+TB];
    std::string sTag = "<" + std::string(parent) + ">";
    const char* s;
-   
+
    if ((s = strstr(xml, sTag.c_str())))
    {
       s += strlen(sTag.c_str());
@@ -456,7 +456,7 @@ int insertTag(char* xml, const char* parent, const char* tag, int value)
 }
 
 //***************************************************************************
-// 
+//
 //***************************************************************************
 
 void statementrecording()
@@ -470,7 +470,7 @@ void statementrecording()
 
    recordingListDb->clear();
 
-#ifdef USEMD5   
+#ifdef USEMD5
    md5Buf md5path;
    createMd5("rec->FileName() dummy", md5path);
    recordingListDb->setValue("MD5PATH", md5path);
@@ -480,7 +480,7 @@ void statementrecording()
 
    recordingListDb->setValue("OWNER", "me");
    recordingListDb->setValue("STARTTIME", 12121212);
-   
+
    insert = !recordingListDb->find();
    recordingListDb->clearChanged();
 
@@ -502,16 +502,16 @@ void statementrecording()
    tell(0, "#3 %d changes", recordingListDb->getChanges());
 
    // don't toggle uuid if already set!
-   
+
    if (recordingListDb->getValue("VDRUUID")->isNull())
       recordingListDb->setValue("VDRUUID", "11111");
-   
+
    if (insert || recordingListDb->getChanges())
    {
       tell(0, "storing '%s' due to %d changes ", insert ? "insert" : "update", recordingListDb->getChanges());
       recordingListDb->store();
    }
-   
+
    recordingListDb->reset();
 
    tell(0, "---------------------------------");
@@ -520,7 +520,7 @@ void statementrecording()
 }
 
 //***************************************************************************
-// 
+//
 //***************************************************************************
 
 void statementTimer()
@@ -530,7 +530,7 @@ void statementTimer()
    cDbFieldDef timerStateDef("STATE", "state", cDBS::ffAscii, 100, cDBS::ftData);
    cDbFieldDef timerActionDef("ACTION", "action", cDBS::ffAscii, 100, cDBS::ftData);
 
-   cEpgConfig::loglevel = 0;
+   cConfigBase::loglevel = 0;
 
    cDbTable* timerDb = new cDbTable(connection, "timers");
    if (timerDb->open() != success) return ;
@@ -540,16 +540,16 @@ void statementTimer()
 
    // select t.*,
    //       e.eventid, e.channelid, e.title, e.shorttext, e.shortdescription, e.category, e.genre, e.tipp
-   //    from timers t left outer join events e 
+   //    from timers t left outer join events e
    //       on (t.eventid = e.masterid and e.updflg in (...))
-   //    where 
+   //    where
    //      t.state in (?)
 
    timerState.setField(&timerStateDef);
    timerAction.setField(&timerActionDef);
 
    cDbStatement* selectAllTimer = new cDbStatement(timerDb);
-   
+
    selectAllTimer->build("select ");
    selectAllTimer->setBindPrefix("t.");
    selectAllTimer->bindAllOut();
@@ -558,12 +558,12 @@ void statementTimer()
    selectAllTimer->bind(useeventsDb, "CHANNELID", cDBS::bndOut, ", ");
    selectAllTimer->bind(useeventsDb, "TITLE", cDBS::bndOut, ", ");
    selectAllTimer->bind(useeventsDb, "SHORTTEXT", cDBS::bndOut, ", ");
-   selectAllTimer->bind(useeventsDb, "SHORTDESCRIPTION", cDBS::bndOut, ", "); 
+   selectAllTimer->bind(useeventsDb, "SHORTDESCRIPTION", cDBS::bndOut, ", ");
    selectAllTimer->bind(useeventsDb, "CATEGORY", cDBS::bndOut, ", ");
    selectAllTimer->bind(useeventsDb, "GENRE", cDBS::bndOut, ", ");
    selectAllTimer->bind(useeventsDb, "TIPP", cDBS::bndOut, ", ");
    selectAllTimer->clrBindPrefix();
-   selectAllTimer->build(" from %s t left outer join %s e", 
+   selectAllTimer->build(" from %s t left outer join %s e",
                          timerDb->TableName(), "eventsviewplain");
    selectAllTimer->build(" on (t.eventid = e.cnt_useid) and e.updflg in (%s)", cEventState::getVisible());
 
@@ -572,13 +572,13 @@ void statementTimer()
 
    selectAllTimer->bindInChar("t", timerDb->getField("STATE")->getDbName(), &timerState, " and (");
    selectAllTimer->build(" or t.%s is null)", timerDb->getField("STATE")->getDbName());
-   
+
    selectAllTimer->bindInChar("t", timerDb->getField("ACTION")->getDbName(), &timerAction, " and (");
    selectAllTimer->build(" or t.%s is null)", timerDb->getField("ACTION")->getDbName());
 
    // selectAllTimer->bindInChar(0, "STATE", &timerState);
 
-   cEpgConfig::loglevel = 2;
+   cConfigBase::loglevel = 2;
    selectAllTimer->prepare();
 
    // ---------------------------------
@@ -592,7 +592,7 @@ void statementTimer()
 
    for (int found = selectAllTimer->find(); found; found = selectAllTimer->fetch())
    {
-      tell(0, "%ld) %s/%s- %s", 
+      tell(0, "%ld) %s/%s- %s",
            timerDb->getIntValue("ID"),
            timerDb->getStrValue("STATE"),
            timerDb->getStrValue("ACTION"),
@@ -624,10 +624,10 @@ std::map<std::string, int> transponders;
 int tsp(std::string transponder)
 {
    size_t endpos = transponder.find_last_of("-");
-   
+
    if (endpos == std::string::npos)
       return 0;
-   
+
    transponder = transponder.substr(0, endpos);
    transponders[transponder]++;
 
@@ -640,42 +640,42 @@ int tsp(std::string transponder)
 
 int main(int argc, char** argv)
 {
-   cEpgConfig::logstdout = yes;
-   cEpgConfig::loglevel = 2;
+   cConfigBase::logstdout = yes;
+   cConfigBase::loglevel = 2;
 
 /*   const char* interface = getFirstInterface();
 
    tell(0, "%s: %s - %s [%s]", getFirstInterface(), getIpOf(""), getMaskOf(""), getMacOf(""));
    tell(0, "%s: %s - %s [%s]", getFirstInterface(), getIpOf(interface), getMaskOf(interface), getMacOf(interface));
-  
+
    // if (sendWol(argv[1], bcastAddressOf(getIpOf(interface), getMaskOf(interface))) != success)
    //    tell(0, "Error occured during sending the WOL magic packet for mac address '%s' via bcat '%s'",
    //         argv[1], bcastAddressOf(getIpOf(interface), getMaskOf(interface)));
 
    return 0;
-  
+
    tsp("S19.2E-1-1109-5402");
    tsp("S19.2E-1-1109-5404");
    tsp("S19.2E-1-1112-5404");
 
    std::map<std::string, int>::iterator it;
-   
+
    for (it = transponders.begin(); it != transponders.end(); it++)
       printf("'%s' (%d)\n", it->first.c_str(), it->second);
-   
+
    return 0;
-      
+
    printf("%s\n", getInterfaces());
 
-   
+
    if (argc > 1)
    {
       int timerId = getTimerIdOf(argv[1]);
       char aux[10000+TB];
       strcpy(aux, argv[1]);
-      
+
       tell(0, "TimerId = %d", timerId);
-      
+
       removeTag(aux, "timerid");
       tell(0, "aux: '%s'", aux);
       insertTag(aux, "epgd", "timerid", 677776);
@@ -686,11 +686,11 @@ int main(int argc, char** argv)
 */
    setlocale(LC_CTYPE, "");
    char* lang = setlocale(LC_CTYPE, 0);
-   
+
    if (lang)
    {
       tell(0, "Set locale to '%s'", lang);
-      
+
       if ((strcasestr(lang, "UTF-8") != 0) || (strcasestr(lang, "UTF8") != 0))
          tell(0, "detected UTF-8");
       else
@@ -709,17 +709,17 @@ int main(int argc, char** argv)
       tell(0, "Invalid dictionary configuration, aborting!");
       return 1;
    }
-   
+
    // dbDict.show();
-   
+
    initConnection();
 
    /*
    cDbTable* table = new cDbTable(connection, "_test");
 
    if (table->open(yes) != success)
-   { 
-      tell(0, "Could not access database '%s:%d' (%s)", 
+   {
+      tell(0, "Could not access database '%s:%d' (%s)",
            cDbConnection::getHost(), cDbConnection::getPort(), table->TableName());
 
       return 0;
@@ -735,7 +735,7 @@ int main(int argc, char** argv)
    table->store();
 
    delete table;
-   
+
    tell(0, "---------------------------------------------------");
    */
    // structure();

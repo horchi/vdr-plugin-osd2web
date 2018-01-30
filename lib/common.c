@@ -46,7 +46,10 @@ const char* getLogPrefix()
 
 void tell(int eloquence, const char* format, ...)
 {
-   if (cEpgConfig::loglevel < eloquence)
+   enum { sizeBuffer = 100000 };
+   static char buffer[sizeBuffer+100+TB] = "";
+
+   if (cConfigBase::loglevel < eloquence)
       return ;
 
    logMutex.Lock();
@@ -57,24 +60,32 @@ void tell(int eloquence, const char* format, ...)
    if (!init)
    {
       init = yes;
-      openlog(cEpgConfig::logName, LOG_CONS, cEpgConfig::logFacility);
+      openlog(cConfigBase::logName, LOG_CONS, cConfigBase::logFacility);
    }
 #endif
 
-   const int sizeBuffer = 100000;
-   char t[sizeBuffer+100]; *t = 0;
    va_list ap;
+   int max = sizeBuffer;
+
+   *buffer = 0;
+
+   if (cConfigBase::logwidth > 0)
+      max = std::min((int)sizeBuffer, cConfigBase::logwidth);
 
    va_start(ap, format);
 
    if (getLogPrefix())
-      snprintf(t, sizeBuffer, "%s", getLogPrefix());
+      snprintf(buffer, max, "%s", getLogPrefix());
 
-   vsnprintf(t+strlen(t), sizeBuffer-strlen(t), format, ap);
+   int bytesToWrite = max-strlen(buffer);
+   int len = vsnprintf(eos(buffer), bytesToWrite, format, ap);
 
-   strReplace(t, '\n', '$');
+   if (len < bytesToWrite)
+      sprintf(eos(buffer), "...");
 
-   if (cEpgConfig::logstdout)
+   strReplace(buffer, '\n', '$');
+
+   if (cConfigBase::logstdout)
    {
       char buf[50+TB];
       timeval tp;
@@ -87,10 +98,10 @@ void tell(int eloquence, const char* format, ...)
               tm->tm_hour, tm->tm_min, tm->tm_sec,
               tp.tv_usec / 1000);
 
-      printf("%s %s\n", buf, t);
+      printf("%s %s\n", buf, buffer);
    }
    else
-      syslog(LOG_ERR, "%s", t);
+      syslog(LOG_ERR, "%s", buffer);
 
    logMutex.Unlock();
 

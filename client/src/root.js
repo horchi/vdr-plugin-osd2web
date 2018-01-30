@@ -193,31 +193,6 @@ export var root = {
     },
     created() {
         try {
-            this.$socket = new WebSocketClient({
-                url: "ws://" + location.host,
-                protocol: "osd2vdr",
-                autoReconnectInterval: 10000,
-                onopen: () => {
-                    if ( this.isActive === null) // Dann wurde es beim Schliessen auf null gesetzt
-                        this.$socket.send({ "event": "login", "object": { "type": + (this.isOnlyView ? 1 : 0) } });
-                }, onclose: () => {
-                    this.isActive = null; // auf null setzten, dass ein neues login aufgerufen wird
-                },
-                onmessage: (msg) => {
-                    try {
-                        let data = JSON.parse(msg.data.replace());
-                        this.$emit(data.event, data.object);
-                    } catch (e) {
-                        console.log(e);
-                    }
-                }
-            });
-            if (!this.$socket)
-                return !(this.$el.innerHTML = "Your Browser will not support Websockets!");
-
-            // Nachrichten/Anfragen der Komponenten an den Server weiterleiten
-            this.$on("send", this.$socket.send);
-
             // Globale Nachrichten verarbeiten
             this.$on("rolechange", (data) => {
                 this.isActive = data.role == 'active';
@@ -246,6 +221,30 @@ export var root = {
                 this.$root.$set(skinMenuItem, "on", this.skinAttached);
             })
 
+            this.$socket = new WebSocketClient({
+                url: "ws://" + location.host,
+                protocol: "osd2vdr",
+                autoReconnectInterval: 10000,
+                onopen: () => {
+                    if ( this.isActive === null) // Dann wurde es beim Schliessen auf null gesetzt
+                        this.$socket.send({ "event": "login", "object": { "type": + (this.isOnlyView ? 1 : 0) } });
+                }, onclose: () => {
+                    this.isActive = null; // auf null setzten, dass ein neues login aufgerufen wird
+                },
+                onmessage: (msg) => {
+                    try {
+                        let data = JSON.parse(msg.data.replace());
+                        this.$emit(data.event, data.object);
+                    } catch (e) {
+                        console.log(e);
+                    }
+                }
+            });
+            if (!this.$socket)
+                return !(this.$el.innerHTML = "Your Browser will not support Websockets!");
+
+            // Nachrichten/Anfragen der Komponenten an den Server weiterleiten
+            this.$on("send", this.$socket.send);
             this.$socket.send({ "event": "login", "object": { "type": + (this.isOnlyView ? 1 : 0) } });
             this.menuItemsRight.push(skinMenuItem);
 

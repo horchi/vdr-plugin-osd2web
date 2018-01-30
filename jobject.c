@@ -139,7 +139,7 @@ int event2Json(json_t* obj, const cEvent* event, const cChannel* channel,
    {
       json_t* oScraper = json_object();
 
-      tell(3, "DEBUG: Got from scraper2vdr: banner path '%s'; poster path '%s'",
+      tell(4, "DEBUG: Got from scraper2vdr: banner path '%s'; poster path '%s'",
            mediaPath.c_str(), posterPath.c_str());
 
       if (mediaPath.length())
