@@ -253,7 +253,7 @@ void cUpdate::updateTimers()
       {
          json_t* oTimer = json_object();
          tell(3, "Got timer for '%s' - '%s'", timer->File(),
-              timer->Recording() ? "timer is regording" : "timer is pending");
+              timer->Recording() ? "timer is recording" : "timer is pending");
 
          timer2Json(oTimer, timer);
          json_array_append_new(oTimers, oTimer);
