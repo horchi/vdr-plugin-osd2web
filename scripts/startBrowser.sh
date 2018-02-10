@@ -8,7 +8,7 @@
 #
 
 MYPATH="`dirname \"$0\"`"
-MONTH=`date +%m`
+MONTH=`date +%b`
 BASE="$1"
 DISP="$2"
 BROWSER="/usr/bin/firefox"
