@@ -16,8 +16,8 @@ BROWSER="/usr/bin/firefox"
 SKIN="horchiTft"
 THEME="graycd"
 
-ARRAY=("xxx Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec")
-SNOW_MONTHS=("Nov Dec Jan Feb")
+ARRAY=("xxx" "Jan" "Feb" "Mar" "Apr" "May" "Jun" "Jul" "Aug" "Sep" "Oct" "Nov" "Dec")
+SNOW_MONTHS=("Nov" "Dec" "Jan" "Feb")
 SANTA_MONTHS=("Dec")
 
 SEND_F11="yes"
