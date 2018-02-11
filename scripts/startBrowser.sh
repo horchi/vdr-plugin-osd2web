@@ -8,7 +8,7 @@
 #
 
 MYPATH="`dirname \"$0\"`"
-MONTH=`date +%b`
+MONTH=`date +%m`
 BASE="$1"
 DISP="$2"
 BROWSER="/usr/bin/firefox"
@@ -16,6 +16,8 @@ BROWSER="/usr/bin/firefox"
 SKIN="horchiTft"
 THEME="graycd"
 
+LIST="xxx Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec"
+ARRAY=($LIST)
 SNOW_MONTHS="Nov Dec Jan Feb"
 SANTA_MONTHS="Dec"
 
@@ -36,8 +38,8 @@ PAUSE_BEFORE_KEY=4
 
 URL="$BASE/$SKIN/index.html?theme=$THEME&onlyView"
 
-if [[ "$SNOW_MONTHS" != "${LIST/$MONTH/}" ]] ; then
-    if [[ "$SANTA_MONTHS" != "${LIST/$MONTH/}" ]] ; then
+if [[ "$SNOW_MONTHS" != "${ARRAY[$MONTH]}" ]] ; then
+    if [[ "$SANTA_MONTHS" != "${ARRAY[$MONTH]}" ]] ; then
         URL="$URL&xsnow=1&santa=1"  # with snow and sanata
     else
         URL="$URL&xsnow=1"          # with snow
