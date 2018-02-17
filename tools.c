@@ -59,7 +59,7 @@ eTimerMatch Matches(const cTimer* ti, const cEvent* event)
 
 int getMatch(cPlugin* pEpg2Vdr, const cEvent* event, eTimerMatch* match)
 {
-   cHas_Timer_V1 data;
+   cTimer_Detail_V1 data;
 
    if (!event)
       return done;
@@ -69,7 +69,7 @@ int getMatch(cPlugin* pEpg2Vdr, const cEvent* event, eTimerMatch* match)
    *match = tmNone;
    data.eventid = event->EventID();
 
-   if (pEpg2Vdr->Service(EPG2VDR_HAS_TIMER, &data))
+   if (pEpg2Vdr->Service(EPG2VDR_TIMER_DETAIL_SERVICE, &data))
    {
       if (data.hastimer)
       {

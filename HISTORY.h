@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.29"
-#define VERSION_DATE  "30.01.2018"
+#define _VERSION      "0.2.30"
+#define VERSION_DATE  "17.02.2018"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2018-02-17: version 0.2.30 (horchi)
+   - change: porting to epg2vdr service interface change
 
 2018-01-30: version 0.2.29 (horchi)
    - bugfix: Fixed state of channel logos
