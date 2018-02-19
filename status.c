@@ -32,6 +32,8 @@ void cUpdate::ChannelSwitch(const cDevice* device, int channelNumber, bool liveV
       tell(3, "ChannelSwitch: channelNumber: %d", channelNumber);
       currentChannelNr = channelNumber;
       nextPresentUpdateAt = time(0);
+      rdsTextList.clear();
+      tell(3, "Cleared RDS text list");
    }
 }
 
@@ -152,13 +154,15 @@ void cUpdate::updatePresentFollowing()
 
    if (channel)
    {
-      tell(3, "update present/following for channel '%s'", channel->Name());
+      int isRadio = !channel->Vpid() && channel->Apid(0);
+
+      tell(3, "update present/following for '%s' channel '%s'", isRadio ? "RADIO" : "TV", channel->Name());
 
       json_t* obj = json_object();
       json_t* oStreamInfo = json_object();
       json_t* oChannel = json_object();
       json_t* oPresent = json_object();
-      json_t* oFollowing = json_object();
+      json_t* oFollowing = 0;
 
       channel2Json(oChannel, channel);
       stream2Json(oStreamInfo, channel);
@@ -174,6 +178,7 @@ void cUpdate::updatePresentFollowing()
          const cEvent* present = schedule->GetPresentEvent();
          const cEvent* following = schedule->GetFollowingEvent();
 
+         oFollowing = json_object();
          haveActualEpg = present != 0;
          getTimerMatch(timers, present, &timerMatch);
          event2Json(oPresent, present, 0, timerMatch, no, cOsdService::osLarge);
@@ -184,14 +189,21 @@ void cUpdate::updatePresentFollowing()
 
          nextPresentUpdateAt = following ? following->StartTime() : time(0) + 10;
       }
+      else if (isRadio)
+      {
+         radio2Json(oPresent, &rdsTextList);
+         nextPresentUpdateAt = time(0) + 10;  // for the radio plugin we need to poll
+      }
       else
       {
-         nextPresentUpdateAt = time(0) + 60;
          tell(0, "Info: Can't get schedules");
+         nextPresentUpdateAt = time(0) + 60;
       }
 
       json_object_set_new(obj, "present", oPresent);
-      json_object_set_new(obj, "following", oFollowing);
+
+      if (oFollowing)
+         json_object_set_new(obj, "following", oFollowing);
 
       cUpdate::pushMessage(obj, "actual");
    }

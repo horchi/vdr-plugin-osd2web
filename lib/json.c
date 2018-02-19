@@ -172,13 +172,30 @@ long getLongFromJson(json_t* obj, const char* name, long def)
    return json_integer_value(o);
 }
 
+int jStringValid(const char* s)
+{
+   json_t* obj = json_string(s);
+
+   if (!obj)
+      return no;
+
+   json_decref(obj);
+
+   return yes;
+}
+
 //***************************************************************************
 // Add Element
 //***************************************************************************
 
 int addToJson(json_t* obj, const char* name, const char* value, const char* def)
 {
-   return json_object_set_new(obj, name, json_string(value ? value : def));
+   json_t* j = json_string(value ? value : def);
+
+   if (!j)
+      j = json_string("");
+
+   return json_object_set_new(obj, name, j);
 }
 
 int addToJson(json_t* obj, const char* name, long value)

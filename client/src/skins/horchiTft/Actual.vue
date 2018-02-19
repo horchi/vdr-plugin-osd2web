@@ -13,9 +13,14 @@
           <img class="chlogo" :src="'/data/channellogo?name=' + logoname + '&id=' + channel.channelid" />
         </div>
       </div>
-      <o2w-event :event="present" :isPresent="true"></o2w-event>
-      <div class="eventsep"/>
-      <o2w-event :event="following" :isPresent="false"></o2w-event>
+      <div v-if="following">
+        <o2w-event :event="present" :isPresent="true"></o2w-event>
+        <div class="eventsep"/>
+        <o2w-event :event="following" :isPresent="false"></o2w-event>
+      </div>
+      <div v-else="">
+        <o2w-event :event="present" :channel="channel" :isPresent="true" :isRadio="true"></o2w-event>
+      </div>
     </div>
   </div>
 </template>

@@ -186,9 +186,10 @@ int cUpdate::checkAutoAttach()
    }
 
    if (tvAlive != lastTvState)
+   {
       tell(1, "TV State change detected, TV is now '%s'", tvAlive ? "ON" : "OFF");
-
-   setSkinAttachState(tvAlive ? no : yes, yes);
+      setSkinAttachState(tvAlive ? no : yes, yes);
+   }
 
    // check every 2 seconds
 
@@ -491,6 +492,8 @@ int cUpdate::stopBrowser()
 
 void cUpdate::Action()
 {
+   int state;
+
    tell(0, "osd2web plugin thread started (pid=%d)", getpid());
 
    initialRecordingsUpdateAt = time(0) + 30;
@@ -502,12 +505,24 @@ void cUpdate::Action()
 
    // init web socket
 
-   if (webSock->init(config.webPort, pingTime) == success)
-      active = yes;
+   while ((state = webSock->init(config.webPort, pingTime)) != success)
+   {
+      tell(0, "Retrying in 2 seconds");
+      sleep(2);
+   }
+
+   if (state != success)
+   {
+      tell(0, "osd2web plugin thread aborted (pid=%d)!", getpid());
+      return ;
+   }
+
+   active = yes;
 
    // start browser
 
-   startBrowser();
+   if (active)
+      startBrowser();
 
    // main loop
 

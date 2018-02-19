@@ -99,6 +99,7 @@ const cTimer* getTimerMatch(const cTimers* timers, const cEvent* event, eTimerMa
 int event2Json(json_t* obj, const cEvent* event, const cChannel* channel = 0,
                eTimerMatch TimerMatch = (eTimerMatch)na, int Current = no,
                cOsdService::ObjectShape shape = cOsdService::osText);
+int radio2Json(json_t* obj, std::list<std::string>* rdsTextList);
 int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recording,
                    cOsdService::cCuttingMarks* cuttingMarks,
                    cOsdService::ObjectShape shape = cOsdService::ObjectShape::osLarge);
@@ -405,6 +406,10 @@ class cUpdate : public cStatus, cThread, public cOsdService
       int wdInotify;
 
       std::list<std::map<std::string,FileVariable>> serviceVariableFiles;
+
+      // radio RDS
+
+      std::list<std::string> rdsTextList;
 
       // dia show stuff
 

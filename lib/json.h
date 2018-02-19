@@ -34,6 +34,8 @@ int addFieldToJson(json_t* obj, cDbValue* value, int ignoreEmpty = yes, const ch
 int getFieldFromJson(json_t* obj, cDbRow* row, const char* fname, const char* extName = 0);
 #endif
 
+int jStringValid(const char* s);
+
 const char* getStringFromJson(json_t* obj, const char* name, const char* def = 0);
 int getIntFromJson(json_t* obj, const char* name, int def = na);
 long getLongFromJson(json_t* obj, const char* name, long def = na);

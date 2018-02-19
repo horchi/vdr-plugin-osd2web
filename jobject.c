@@ -20,6 +20,7 @@
 
 #include "update.h"
 #include "scraper2vdr.h"
+#include "radio.h"
 
 //***************************************************************************
 // Event To Json
@@ -151,6 +152,94 @@ int event2Json(json_t* obj, const cEvent* event, const cChannel* channel,
       if (mediaPath.length() || posterPath.length())
          addToJson(obj, "scraper2vdr", oScraper);
    }
+
+   return done;
+}
+
+//***************************************************************************
+// Radio To Json
+//***************************************************************************
+
+int radio2Json(json_t* obj, std::list<std::string>* rdsTextList)
+{
+   static std::string lastRdsText = "";
+
+   cPlugin* radio = cPluginManager::GetPlugin("radio");
+
+   if (!radio)
+      return fail;
+
+   RadioTextService_v1_1 data;
+
+   if (!radio->Service(RADIO_TEXT_SERVICE, &data))
+      return fail;
+
+   json_t* oEpg2Vdr = json_object();
+   std::string description;
+   time_t lStart = time(0);
+
+   if (!data.rds_info)
+      return fail;
+
+   allTrim(data.rds_text);
+   allTrim(data.rds_pty_info);
+
+   // workaround, ignore text from radio plugin with invalid charset!
+
+   if (!jStringValid(data.rds_text.c_str()))
+      data.rds_text = lastRdsText;              // invalid, use last
+
+   if (data.rds_text.length() && (!rdsTextList->size() || lastRdsText != data.rds_text))
+   {
+      lastRdsText = data.rds_text;
+      rdsTextList->push_back(lastRdsText);
+   }
+
+   if (data.title_start > 0)
+      lStart = data.title_start;
+
+   addToJson(obj, "starttime", lStart);
+   // addToJson(obj, "endtime", midnightOf(lStart + tmeSecondsPerDay));
+   // addToJson(obj, "duration", midnightOf(lStart + tmeSecondsPerDay) - lStart);
+
+   // delete old lines from RDS text list (keep only last 20)
+
+   for (auto it = rdsTextList->begin(); rdsTextList->size() > 20 && it != rdsTextList->end();)
+      it = rdsTextList->erase(it);
+
+   // create description of RDS text lines
+
+   for (auto it = rdsTextList->rbegin(); it != rdsTextList->rend(); it++)
+   {
+      std::string s = *it;
+      description += s + "\n";
+   }
+
+   addToJson(obj, "description", description.c_str());
+
+   if (data.rds_info > 1)
+   {
+      allTrim(data.rds_title);
+      allTrim(data.rds_artist);
+
+      addToJson(obj, "title", data.rds_title != "---" ? data.rds_title.c_str() : data.rds_text.c_str());
+
+      if (data.rds_artist.length() && data.rds_artist != "---")
+      {
+         addToJson(obj, "shorttext", data.rds_artist.c_str());
+         addToJson(oEpg2Vdr, "shorttext", data.rds_artist.c_str());
+      }
+   }
+   else
+   {
+      addToJson(obj, "title", data.rds_text.c_str());
+   }
+
+   if (data.rds_pty_info.length())
+      addToJson(oEpg2Vdr, "genre", data.rds_pty_info.c_str());
+
+   addToJson(oEpg2Vdr, "category", "Radio");
+   addToJson(obj, "epg2vdr", oEpg2Vdr);
 
    return done;
 }

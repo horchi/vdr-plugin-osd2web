@@ -278,9 +278,13 @@ char* strReplace(char* buffer, char from, char to);
 int rangeFrom(const char* s);
 int rangeTo(const char* s);
 
-char* rTrim(char* buf);
 char* lTrim(char* buf);
+char* rTrim(char* buf);
 char* allTrim(char* buf);
+
+std::string& lTrim(std::string& str);
+std::string& rTrim(std::string& str);
+std::string& allTrim(std::string& str);
 
 int isMember(const char** list, const char* item);
 char* sstrcpy(char* dest, const char* src, int max);

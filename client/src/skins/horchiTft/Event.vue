@@ -1,6 +1,6 @@
 <template>
   <div class="event card mt-1"
-       v-bind:class="{ 'eventfull' : isFullevent, 'eventpresent' : !isFullevent && isPresent, 'eventfollowing' : !isFullevent && !isPresent }">
+       v-bind:class="{ 'eventradio' : isRadio, 'eventfull' : !isRadio && isFullevent, 'eventpresent' : !isRadio && !isFullevent && isPresent, 'eventfollowing' : !isRadio && !isFullevent && !isPresent }">
     <div v-show="event.title" style="height: 100%;">
       <div class="card-body p-1" style="height: 100%;">
         <div class="progress" v-show="progress >= 0">
@@ -14,11 +14,12 @@
         <div class="eventtitlerow flexrow">
           <div class="titletime flexitem">{{$root.formatTime(event.starttime)}}</div>
           <div class="titletxt flexitemgrow auto-h-scroll">{{event.title}}</div>
-          <div v-if="elapsed > 0" class="durationtxt flexitem">{{remaining}}/{{duration}}</div>
-          <div v-if="elapsed <= 0" class="durationtxt flexitem">{{duration}}</div>
+          <div v-if="!isRadio && elapsed > 0" class="durationtxt flexitem">+{{remaining}}/{{duration}}</div>
+          <div v-else-if="!isRadio" class="durationtxt flexitem">{{duration}}min</div>
+          <div v-else="isRadio && elapsedS > 0" class="durationtxt flexitem">{{elapsedS}}</div>
         </div>
         <div class="clearfix">
-          <div v-if="event.epg2vdr && imagecnt > 0" :id="'evImages' + event.eventid" class="img-fluid float-right event-image-frame carousel slide" data-ride="carousel" data-interval="5000">
+          <div v-if="!isRadio && event.epg2vdr && imagecnt > 0" :id="'evImages' + event.eventid" class="img-fluid float-right event-image-frame carousel slide" data-ride="carousel" data-interval="5000">
             <div class="carousel-inner img-thumbnail" role="listbox">
               <div v-for="n in imagecnt" class="carousel-item" :class="{'active':n==0}">
                 <img class="d-block epg-image" :src="'/data/eventimg?id=' + event.eventid + '&no=' + (n-1)" alt="">
@@ -27,6 +28,7 @@
           </div>
           <div v-if="event.epg2vdr">
             <div v-if="event.epg2vdr.episodepartname" class="card-text subtitletxt">{{event.epg2vdr.episodepartname}}</div>
+            <div v-else-if="isRadio && event.epg2vdr.shorttext" class="card-text subtitletxt">Artist: {{event.epg2vdr.shorttext}}</div>
             <div v-else="" class="card-text subtitletxt">{{event.epg2vdr.shorttext}}</div>
           </div>
           <div v-else="">
@@ -48,7 +50,9 @@ export default {
     name: 'o2wEvent',
     props: {
         event: Object,
-        'isPresent': Boolean
+        channel: Object,
+        'isPresent': Boolean,
+        'isRadio': Boolean
     },
     data(){
         return {
@@ -57,6 +61,9 @@ export default {
         }
     },
     computed: {
+        logoname: function () {
+            return this.$root.hasChannelLogos && this.channel.channelname ? encodeURIComponent(this.channel.channelname) : '';
+        },
         description: function () {
             return this.event.epg2vdr && this.event.epg2vdr.longdescription ?
                 this.event.epg2vdr.longdescription.replace(/\n/g, '<br />') :
@@ -80,6 +87,14 @@ export default {
                 },60000);
             }
             return Math.max(parseInt((this.now - this.event.starttime)/60,10),0);
+        },
+        elapsedS: function () {
+            if (this.event.title){
+                window.setTimeout(()=>{
+                    this.now= parseInt(new Date().getTime() / 1000, 10);
+                },1000);
+            }
+            return this.$root.formatDuration(Math.max(parseInt((this.now - this.event.starttime),10),0));
         },
         remaining: function () {
             if (this.event.title){

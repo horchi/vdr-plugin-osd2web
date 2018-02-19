@@ -23,7 +23,10 @@
 #include <unistd.h>
 #include <errno.h>
 #include <regex.h>
+
 #include <limits.h>
+#include <algorithm>
+#include <locale>
 
 #ifdef USELIBARCHIVE
 #  include <archive.h>
@@ -446,6 +449,25 @@ char* rTrim(char* buf)
 char* allTrim(char* buf)
 {
    return lTrim(rTrim(buf));
+}
+
+std::string& allTrim(std::string& str)
+{
+   return lTrim(rTrim(str));
+}
+
+std::string& lTrim(std::string& str)
+{
+   auto it2 = std::find_if(str.begin(), str.end(), [](char ch){ return !std::isspace<char>(ch, std::locale::classic());} );
+   str.erase(str.begin(), it2);
+   return str;
+}
+
+std::string& rTrim(std::string& str)
+{
+   auto it1 = std::find_if(str.rbegin(), str.rend(), [](char ch) { return !std::isspace<char>(ch , std::locale::classic()); });
+   str.erase(it1.base(), str.end());
+   return str;
 }
 
 std::string strReplace(const std::string& what, const std::string& with, const std::string& subject)
