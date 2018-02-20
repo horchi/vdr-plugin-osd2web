@@ -138,6 +138,8 @@ void cUpdate::TimerChange(const cTimer* Timer, eTimerChange Change)
 
 void cUpdate::updatePresentFollowing()
 {
+   triggerRadioTextUpdate = no;
+
    if (!currentChannelNr)
    {
       nextPresentUpdateAt = time(0) + 60;
@@ -152,61 +154,71 @@ void cUpdate::updatePresentFollowing()
 
    const cChannel* channel = channels->GetByNumber(currentChannelNr);
 
-   if (channel)
+   if (!channel)
+      return ;
+
+   int isRadio = !channel->Vpid() && channel->Apid(0);
+
+   tell(3, "update present/following for '%s' channel '%s'", isRadio ? "RADIO" : "TV", channel->Name());
+
+   json_t* obj = json_object();
+   json_t* oStreamInfo = json_object();
+   json_t* oChannel = json_object();
+   json_t* oPresent = json_object();
+   json_t* oFollowing = 0;
+   int haveSchedule = no;
+
+   channel2Json(oChannel, channel);
+   stream2Json(oStreamInfo, channel);
+
+   json_object_set_new(obj, "channel", oChannel);
+   json_object_set_new(obj, "streaminfo", oStreamInfo);
+
+   const cSchedule* schedule = schedules ? schedules->GetSchedule(channel->GetChannelID()) : 0;
+
+   if (schedule)
    {
-      int isRadio = !channel->Vpid() && channel->Apid(0);
+      eTimerMatch timerMatch;
+      const cEvent* present = schedule->GetPresentEvent();
+      const cEvent* following = schedule->GetFollowingEvent();
 
-      tell(3, "update present/following for '%s' channel '%s'", isRadio ? "RADIO" : "TV", channel->Name());
+      oFollowing = json_object();
+      haveActualEpg = present != 0;
+      getTimerMatch(timers, present, &timerMatch);
+      event2Json(oPresent, present, 0, timerMatch, no, cOsdService::osLarge);
+      getTimerMatch(timers, following, &timerMatch);
+      event2Json(oFollowing, following, 0, timerMatch, no, cOsdService::osLarge);
 
-      json_t* obj = json_object();
-      json_t* oStreamInfo = json_object();
-      json_t* oChannel = json_object();
-      json_t* oPresent = json_object();
-      json_t* oFollowing = 0;
+      // we need a trigger on start of following event
 
-      channel2Json(oChannel, channel);
-      stream2Json(oStreamInfo, channel);
+      nextPresentUpdateAt = following ? following->StartTime() : time(0) + 10;
 
-      json_object_set_new(obj, "channel", oChannel);
-      json_object_set_new(obj, "streaminfo", oStreamInfo);
-
-      const cSchedule* schedule = schedules ? schedules->GetSchedule(channel->GetChannelID()) : 0;
-
-      if (schedule)
-      {
-         eTimerMatch timerMatch;
-         const cEvent* present = schedule->GetPresentEvent();
-         const cEvent* following = schedule->GetFollowingEvent();
-
-         oFollowing = json_object();
-         haveActualEpg = present != 0;
-         getTimerMatch(timers, present, &timerMatch);
-         event2Json(oPresent, present, 0, timerMatch, no, cOsdService::osLarge);
-         getTimerMatch(timers, following, &timerMatch);
-         event2Json(oFollowing, following, 0, timerMatch, no, cOsdService::osLarge);
-
-         // we need a trigger on start of following event
-
-         nextPresentUpdateAt = following ? following->StartTime() : time(0) + 10;
-      }
-      else if (isRadio)
-      {
-         radio2Json(oPresent, &rdsTextList);
-         nextPresentUpdateAt = time(0) + 10;  // for the radio plugin we need to poll
-      }
-      else
-      {
-         tell(0, "Info: Can't get schedules");
-         nextPresentUpdateAt = time(0) + 60;
-      }
-
-      json_object_set_new(obj, "present", oPresent);
-
-      if (oFollowing)
-         json_object_set_new(obj, "following", oFollowing);
-
-      cUpdate::pushMessage(obj, "actual");
+      haveSchedule = yes;
    }
+   else
+   {
+      tell(0, "Info: Can't get schedules");
+      nextPresentUpdateAt = time(0) + 60;
+   }
+
+   if (isRadio)
+   {
+      json_t* oRadio = json_object();
+
+      if (radio2Json(oRadio, &rdsTextList, haveSchedule ? 0 : oPresent) == success)
+         json_object_set_new(obj, "radio", oRadio);
+      else
+         json_decref(oRadio);
+
+      nextPresentUpdateAt = time(0) + 10;  // # remove this since radio plugin inform about update ...
+   }
+
+   json_object_set_new(obj, "present", oPresent);
+
+   if (oFollowing)
+      json_object_set_new(obj, "following", oFollowing);
+
+   cUpdate::pushMessage(obj, "actual");
 }
 
 //***************************************************************************

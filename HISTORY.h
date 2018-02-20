@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.31"
-#define VERSION_DATE  "19.02.2018"
+#define _VERSION      "0.2.32"
+#define VERSION_DATE  "20.02.2018"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2018-02-20: version 0.2.32 (horchi)
+   - change: improved rds view
 
 2018-02-19: version 0.2.31 (horchi)
    - added: Support of RDS data provided by radio plugin

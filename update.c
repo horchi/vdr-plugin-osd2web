@@ -79,6 +79,7 @@ cUpdate::cUpdate()
 {
    browserPid = 0;
    triggerTimerUpdate = no;
+   triggerRadioTextUpdate = no;
    triggerRecordingsUpdate = no;
    initialRecordingsUpdateAt = 0;
    triggerReplayUpdate = no;
@@ -289,7 +290,7 @@ void cUpdate::atMeanwhile()
       if (checkFileService() > 0)
          updateCustomData();
 
-      if (nextPresentUpdateAt <= time(0))
+      if (nextPresentUpdateAt <= time(0) || triggerRadioTextUpdate)
          updatePresentFollowing();
 
       if (triggerTimerUpdate)
@@ -603,7 +604,8 @@ void cUpdate::forceRefresh()
    updateDiaShow(yes);
    updateReplay(yes);
 
-   updatePresentFollowing();  // trigger update of present/following
+   nextPresentUpdateAt = time(0);
+   updatePresentFollowing();       // trigger update of present/following
 
    updateCustomData();
    updateTimers();

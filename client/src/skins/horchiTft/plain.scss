@@ -115,19 +115,27 @@ body {
 }
 
 .eventpresent  {
-    height: 45vh;
+    height: 46vh;
 }
 
 .eventfollowing  {
     height: 35.7vh;
 }
 
+.eventfollowingsmall  {
+    height: 11vh;
+}
+
 .eventfull  {
-    height: 88vh;
+    height: 83vh;
 }
 
 .eventradio  {
-    height: 88vh;
+    height: 71vh;
+}
+
+.eventradiofull  {
+    height: 83vh;
 }
 
 .eventsep  {
@@ -222,6 +230,10 @@ body {
     margin-right: 12px;
 }
 
+.radiotime  {
+    margin-right: 12px;
+}
+
 .titletxt  {
     margin-right: 12px;
 }
@@ -246,6 +258,19 @@ body {
 
 .desctxt  {
     font-size: 3.5vh;
+}
+
+.rdstxt  {
+    font-size: 3.8vh;
+    margin-top: 7px;
+    margin-left: 5px;
+    margin-right: 5px;
+    padding-left: 5px;
+    max-height: 291px;
+    overflow: hidden;
+    border-style: dotted;
+    border-color: white;
+    color: #00cefa;
 }
 
 .progress  {

@@ -160,7 +160,7 @@ int event2Json(json_t* obj, const cEvent* event, const cChannel* channel,
 // Radio To Json
 //***************************************************************************
 
-int radio2Json(json_t* obj, std::list<std::string>* rdsTextList)
+int radio2Json(json_t* obj, std::list<std::string>* rdsTextList, json_t* oEvent)
 {
    static std::string lastRdsText = "";
 
@@ -171,10 +171,9 @@ int radio2Json(json_t* obj, std::list<std::string>* rdsTextList)
 
    RadioTextService_v1_1 data;
 
-   if (!radio->Service(RADIO_TEXT_SERVICE, &data))
+   if (!radio->Service(RADIO_TEXT_SERVICE1, &data))
       return fail;
 
-   json_t* oEpg2Vdr = json_object();
    std::string description;
    time_t lStart = time(0);
 
@@ -187,7 +186,9 @@ int radio2Json(json_t* obj, std::list<std::string>* rdsTextList)
    // workaround, ignore text from radio plugin with invalid charset!
 
    if (!jStringValid(data.rds_text.c_str()))
-      data.rds_text = lastRdsText;              // invalid, use last
+      data.rds_text = lastRdsText;              // invalid (wrong charset?), use last
+
+   // append to RDS text list
 
    if (data.rds_text.length() && (!rdsTextList->size() || lastRdsText != data.rds_text))
    {
@@ -199,6 +200,15 @@ int radio2Json(json_t* obj, std::list<std::string>* rdsTextList)
       lStart = data.title_start;
 
    addToJson(obj, "starttime", lStart);
+
+   // did we have to fill the event also?
+
+   if (oEvent)
+   {
+      addToJson(oEvent, "title", data.rds_text.c_str());
+      addToJson(oEvent, "starttime", lStart);
+   }
+
    // addToJson(obj, "endtime", midnightOf(lStart + tmeSecondsPerDay));
    // addToJson(obj, "duration", midnightOf(lStart + tmeSecondsPerDay) - lStart);
 
@@ -215,33 +225,26 @@ int radio2Json(json_t* obj, std::list<std::string>* rdsTextList)
       description += s + "\n";
    }
 
-   addToJson(obj, "description", description.c_str());
+   addToJson(obj, "rdstext", description.c_str());
 
    if (data.rds_info > 1)
    {
       allTrim(data.rds_title);
       allTrim(data.rds_artist);
 
-      addToJson(obj, "title", data.rds_title != "---" ? data.rds_title.c_str() : data.rds_text.c_str());
+      if (data.rds_title.length())
+         addToJson(obj, "title", data.rds_title.c_str());
 
       if (data.rds_artist.length() && data.rds_artist != "---")
-      {
-         addToJson(obj, "shorttext", data.rds_artist.c_str());
-         addToJson(oEpg2Vdr, "shorttext", data.rds_artist.c_str());
-      }
-   }
-   else
-   {
-      addToJson(obj, "title", data.rds_text.c_str());
+         addToJson(obj, "artist", data.rds_artist.c_str());
    }
 
    if (data.rds_pty_info.length())
-      addToJson(oEpg2Vdr, "genre", data.rds_pty_info.c_str());
+      addToJson(obj, "genre", data.rds_pty_info.c_str());
 
-   addToJson(oEpg2Vdr, "category", "Radio");
-   addToJson(obj, "epg2vdr", oEpg2Vdr);
+   addToJson(obj, "category", "Radio");
 
-   return done;
+   return success;
 }
 
 //***************************************************************************

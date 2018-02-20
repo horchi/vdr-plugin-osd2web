@@ -33,6 +33,8 @@ struct RadioTextService_v1_1 {
    time_t title_start;
 };
 
-#define RADIO_TEXT_SERVICE   "RadioTextService-v1.1"
+#define RADIO_TEXT_SERVICE0   "RadioTextService-v1.0"
+#define RADIO_TEXT_SERVICE1   "RadioTextService-v1.1"
+#define RADIO_TEXT_UPDATE     "RadioTextUpdate-v1.0"
 
 #endif //  _RADIO_SERVICE_H_

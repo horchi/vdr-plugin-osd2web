@@ -13,13 +13,25 @@
           <img class="chlogo" :src="'/data/channellogo?name=' + logoname + '&id=' + channel.channelid" />
         </div>
       </div>
-      <div v-if="following">
-        <o2w-event :event="present" :isPresent="true"></o2w-event>
-        <div class="eventsep"/>
-        <o2w-event :event="following" :isPresent="false"></o2w-event>
+      <div v-if="!radio">
+        <div v-if="following">
+          <o2w-event :event="present" :isPresent="true" :hasEpg="true"></o2w-event>
+          <div class="eventsep"/>
+          <o2w-event :event="following" :isPresent="false" :hasRadio="false" :hasEpg="true"></o2w-event>
+        </div>
+        <div v-else="">
+          <o2w-event :event="present" :isPresent="true" :hasEpg="false"></o2w-event>
+        </div>
       </div>
       <div v-else="">
-        <o2w-event :event="present" :channel="channel" :isPresent="true" :isRadio="true"></o2w-event>
+        <div v-if="following">
+          <o2w-event :event="present" :radio="radio" :channel="channel" :isPresent="true" :isRadio="true" :hasEpg="true"></o2w-event>
+          <div class="eventsep"/>
+          <o2w-event :event="following" :isPresent="false" :hasRadio="true" :hasEpg="true"></o2w-event>
+        </div>
+        <div v-else="">
+          <o2w-event :event="present" :radio="radio" :channel="channel" :isPresent="true" :isRadio="true" :hasEpg="false"></o2w-event>
+        </div>
       </div>
     </div>
   </div>
@@ -34,6 +46,7 @@ export default {
             channel: {},
             present: {},
             following: {},
+            radio: {},
             replay: {}
         }
     },
@@ -42,6 +55,7 @@ export default {
             this.channel = data.channel;
             this.present = data.present;
             this.following = data.following;
+            this.radio = data.radio;
         });
         this.$root.$on("replay", (data) => {
             this.replay_active = data.active;

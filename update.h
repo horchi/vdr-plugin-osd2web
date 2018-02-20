@@ -99,7 +99,7 @@ const cTimer* getTimerMatch(const cTimers* timers, const cEvent* event, eTimerMa
 int event2Json(json_t* obj, const cEvent* event, const cChannel* channel = 0,
                eTimerMatch TimerMatch = (eTimerMatch)na, int Current = no,
                cOsdService::ObjectShape shape = cOsdService::osText);
-int radio2Json(json_t* obj, std::list<std::string>* rdsTextList);
+int radio2Json(json_t* obj, std::list<std::string>* rdsTextList, json_t* oEvent);
 int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recording,
                    cOsdService::cCuttingMarks* cuttingMarks,
                    cOsdService::ObjectShape shape = cOsdService::ObjectShape::osLarge);
@@ -313,6 +313,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       // public data
 
       int triggerTimerUpdate;
+      int triggerRadioTextUpdate;
       time_t initialRecordingsUpdateAt;
       int triggerRecordingsUpdate;
       int triggerReplayUpdate;

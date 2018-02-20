@@ -18,6 +18,7 @@
 #include "osd2web.h"
 #include "service.h"
 #include "config.h"
+#include "radio.h"
 
 const char* logPrefix = LOG_PREFIX;
 
@@ -111,12 +112,13 @@ bool cPluginOsd2Web::Initialize()
 
 bool cPluginOsd2Web::Service(const char* id, void* data)
 {
-   if (!data)
-      return false;
-
    if (strcmp(id, OSD2WEB_PORT_SERVICE) == 0)
    {
       Osd2Web_Port_v1_0* req = (Osd2Web_Port_v1_0*)data;
+
+      if (!req)
+         return false;
+
       req->webPort = config.webPort;
       return true;
    }
@@ -125,6 +127,12 @@ bool cPluginOsd2Web::Service(const char* id, void* data)
    {
       if (update)
          update->triggerTimerUpdate = yes;
+   }
+
+   else if (strcmp(id, RADIO_TEXT_UPDATE) == 0)
+   {
+      if (update)
+         update->triggerRadioTextUpdate = yes;
    }
 
    return false;
