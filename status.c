@@ -209,8 +209,6 @@ void cUpdate::updatePresentFollowing()
          json_object_set_new(obj, "radio", oRadio);
       else
          json_decref(oRadio);
-
-      nextPresentUpdateAt = time(0) + 10;  // # remove this since radio plugin inform about update ...
    }
 
    json_object_set_new(obj, "present", oPresent);

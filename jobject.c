@@ -209,10 +209,7 @@ int radio2Json(json_t* obj, std::list<std::string>* rdsTextList, json_t* oEvent)
       addToJson(oEvent, "starttime", lStart);
    }
 
-   // addToJson(obj, "endtime", midnightOf(lStart + tmeSecondsPerDay));
-   // addToJson(obj, "duration", midnightOf(lStart + tmeSecondsPerDay) - lStart);
-
-   // delete old lines from RDS text list (keep only last 20)
+  // delete old lines from RDS text list (keep only last 20)
 
    for (auto it = rdsTextList->begin(); rdsTextList->size() > 20 && it != rdsTextList->end();)
       it = rdsTextList->erase(it);
