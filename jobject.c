@@ -225,8 +225,6 @@ int radio2Json(json_t* obj, std::list<std::string>* rdsTextList, json_t* oEvent)
       description += s + "\n";
    }
 
-   addToJson(obj, "rdstext", description.c_str());
-
    if (data.rds_info > 1)
    {
       allTrim(data.rds_title);
@@ -239,10 +237,14 @@ int radio2Json(json_t* obj, std::list<std::string>* rdsTextList, json_t* oEvent)
          addToJson(obj, "artist", data.rds_artist.c_str());
    }
 
+   addToJson(obj, "rdstext", description.c_str());
+   addToJson(obj, "category", "Radio");
+
    if (data.rds_pty_info.length())
       addToJson(obj, "genre", data.rds_pty_info.c_str());
 
-   addToJson(obj, "category", "Radio");
+   if (data.bitrate.length())
+      addToJson(obj, "bitrate", data.bitrate.c_str());
 
    return success;
 }

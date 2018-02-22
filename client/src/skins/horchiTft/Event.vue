@@ -38,7 +38,7 @@
               <div class="card-text subtitletxt flexitem">{{elapsedRadio}}</div>
             </div>
             <div v-if="radio.artist" class="card-text subtitletxt">Artist: {{radio.artist}}</div>
-            <div v-if="radio.genre" class="card-text subtitletxt"> {{radio.category}} / {{radio.genre}}</div>
+            <div v-if="radio.genre" class="card-text subtitletxt"> {{radio.category}} / {{radio.genre}} / {{radio.bitrate}}</div>
             <div v-show="rdstext"><p class="rdstxt" v-html="rdstext"></p></div>
           </div>
           <div v-if="event.epg2vdr">

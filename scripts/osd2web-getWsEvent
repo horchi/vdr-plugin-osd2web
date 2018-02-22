@@ -13,4 +13,4 @@ if [ "$#" -ge 2 ]; then
    EXPR="$2"
 fi
 
-grep "osd2web:" /var/log/syslog | grep "event.: \"$EVENT\"" | grep "$EXPR" | tail -1 | sed s/".* < {"/"{"/ | sed s/"} > to .*"/"}"/ | json_pp
+grep "osd2web:" /var/log/syslog | grep "event.: \"$EVENT\"" | grep "$EXPR" | tail -1 | sed s/".* <. {"/"{"/ | sed s/"} .> to .*"/"}"/ | json_pp
