@@ -543,6 +543,8 @@ void cUpdate::Action()
       performPing();
    }
 
+   stopBrowser();
+
    active = no;
    tell(0, "osd2web plugin thread ended (pid=%d)", getpid());
 }

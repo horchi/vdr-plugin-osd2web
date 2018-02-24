@@ -148,7 +148,7 @@ int cSystemNotification::notify(int event, const char* format, ...)
 }
 
 //***************************************************************************
-//
+// Get Watchdog State
 //***************************************************************************
 
 int cSystemNotification::getWatchdogState(int minInterval)
