@@ -124,7 +124,7 @@ int cUpdate::scanDiaDir(const char* path, int level)
 
    // iterate ..
 
-   tell(3, "Info: Scanning %sdirectory '%s' for dia-show images", level ? "sub-" : "", path);
+   tell(!level ? 1 : 3, "Info: Scanning %sdirectory '%s' for dia-show images", level ? "sub-" : "", path);
 
 #ifndef HAVE_READDIR_R
    dirent* pEntry;
