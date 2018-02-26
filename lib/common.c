@@ -83,7 +83,7 @@ void tell(int eloquence, const char* format, ...)
    int bytesToWrite = max-strlen(buffer);
    int len = vsnprintf(eos(buffer), bytesToWrite, format, ap);
 
-   if (len < bytesToWrite)
+   if (len > bytesToWrite)
       sprintf(eos(buffer), "...");
 
    strReplace(buffer, '\n', '$');
