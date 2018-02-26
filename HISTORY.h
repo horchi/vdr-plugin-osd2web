@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.33"
-#define VERSION_DATE  "22.02.2018"
+#define _VERSION      "0.2.34"
+#define VERSION_DATE  "26.02.2018"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2018-02-26: version 0.2.34 (horchi)
+   - change: fixed image scale of dia show
 
 2018-02-22: version 0.2.33 (horchi)
    - added: bitrade to RDS info (Thx to Uli Eckhardt for all the radio plugin extensions)

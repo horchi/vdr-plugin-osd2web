@@ -22,15 +22,18 @@ body {
    height: 100%;
 }
 
-.diaarea{
-    width:100vh;
-    >img {
+.diaarea {
+    width: 100vh;
+    > img {
         position: absolute;
-        top:0;
-        left:0;
+        object-fit: contain;
         width: 100%;
-        height: auto;
     }
+}
+
+.diaimg
+{
+   height: 100%
 }
 
 @keyframes fadeIn {

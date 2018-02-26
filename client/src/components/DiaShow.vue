@@ -1,7 +1,7 @@
 <template>
   <div class="diashow">
-    <img id="diaShow_img1" />
-    <img id="diaShow_img2" style="display:none" />
+    <img id="diaShow_img1" class="diaimg" />
+    <img id="diaShow_img2" class="diaimg" style="display:none" />
   </div>
 </div>
 </template>
@@ -39,7 +39,7 @@ var dia={
           ev.data.$imgCur[0].style.cssText= "animation: 3s slideLeftOut";
       }
     }
-} 
+}
 
 export default {
     name: 'o2wDiaShow',
