@@ -27,6 +27,8 @@ std::queue<std::string> cUpdate::messagesIn;
 std::map<int,cUpdate::CategoryConfig> cUpdate::menuMaxLines;
 int cUpdate::menuCloseTrigger = no;
 
+int cUpdate::updateDiaList = yes;
+
 eMenuCategory cUpdate::menuCategory = mcUnknown;
 std::string cUpdate::menuTitle = "";
 
@@ -245,7 +247,7 @@ int cUpdate::setSkinAttachState(int attach, int bySvdrp)
 }
 
 //***************************************************************************
-// Toggel View
+// Toggle View
 //***************************************************************************
 
 int cUpdate::toggleView(int next)
@@ -254,6 +256,23 @@ int cUpdate::toggleView(int next)
    triggerForce = yes;
 
    tell(0, "View mode toggled to (%d)", viewMode);
+
+   return done;
+}
+
+//***************************************************************************
+// Set View
+//***************************************************************************
+
+int cUpdate::setView(ViewMode view)
+{
+   if (viewMode != view)
+   {
+      viewMode = view;
+      triggerForce = yes;
+
+      tell(0, "View mode set to (%d)", viewMode);
+   }
 
    return done;
 }
@@ -278,6 +297,12 @@ void cUpdate::Stop()
 void cUpdate::atMeanwhile()
 {
    // dispatch pending triggers
+
+   if (updateDiaList)
+   {
+      initDia(!isEmpty(config.diaPathCurrent) ? config.diaPathCurrent : config.diaPath);
+      updateDiaList = no;
+   }
 
    if (triggerForce)
    {
@@ -502,7 +527,6 @@ void cUpdate::Action()
    // init File Service
 
    initFileService();
-   initDia(config.diaPath);
 
    // init web socket
 

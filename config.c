@@ -30,6 +30,7 @@ cOsd2WebConfig::cOsd2WebConfig()
    confPath = 0;
    logoPath = 0;
    diaPath = 0;
+   diaPathCurrent = 0;
    scraper2VdrPath = 0;
    diaCycleTime = 20;           // seconds
    logoSuffix = strdup("png");
@@ -37,6 +38,8 @@ cOsd2WebConfig::cOsd2WebConfig()
    startBrowser = no;
    browserDisplay = strdup("");
    tvIp = 0;
+   mainmenuVisible = yes;
+   diaExtensions = strdup("jpeg:jpg");
 }
 
 cOsd2WebConfig::~cOsd2WebConfig()
@@ -47,9 +50,11 @@ cOsd2WebConfig::~cOsd2WebConfig()
    free(logoSuffix);
    free(logoPath);
    free(diaPath);
+   free(diaPathCurrent);
    free(scraper2VdrPath);
    free(browserDisplay);
    free(tvIp);
+   free(diaExtensions);
 }
 
 void cOsd2WebConfig::setBrowser(const char* p, int autoStart)

@@ -160,6 +160,7 @@ bool cPluginOsd2Web::Start()
 void cPluginOsd2Web::Store()
 {
    SetupStore("LogLevel", config.loglevelString);
+   SetupStore("DiaPathCurrent", config.diaPathCurrent);
 }
 
 //***************************************************************************
@@ -170,6 +171,8 @@ bool cPluginOsd2Web::SetupParse(const char* name, const char* value)
 {
    if (!strcasecmp(name, "LogLevel"))
       config.setLogLevel(value);
+   else if (!strcasecmp(name, "DiaPathCurrent"))
+      config.setDiaPathCurrent(value);
    else
       return false;
 

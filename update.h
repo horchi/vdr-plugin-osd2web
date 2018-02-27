@@ -304,6 +304,8 @@ class cUpdate : public cStatus, cThread, public cOsdService
       int checkAutoAttach();
 
       int toggleView(int next);
+      int setView(ViewMode view);
+      ViewMode getView()  { return viewMode; }
 
       // thread stuff
 
@@ -332,6 +334,8 @@ class cUpdate : public cStatus, cThread, public cOsdService
       static int menuCloseTrigger;
       static eMenuCategory menuCategory;
       static std::string menuTitle;
+
+      static int updateDiaList;
 
       // static interface fpr browser start/stop
 
@@ -427,7 +431,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       };
 
       int getNextDia(std::vector<ImageFile>::iterator& it, ImageFile*& file);
-      int scanDiaDir(const char* path, int level = 0);
+      int scanDiaDir(const char* path); // , int level = 0);
 
       std::vector<ImageFile> diaImages;
       std::vector<ImageFile>::iterator itCurrentDiaImage;

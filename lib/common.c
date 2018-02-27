@@ -1073,6 +1073,92 @@ int chkDir(const char* path)
    return success;
 }
 
+//***************************************************************************
+// Get File List of Path
+//***************************************************************************
+
+bool compareFileInfo(const FileInfo& firstFi, const FileInfo& secondFi)
+{
+  unsigned int i = 0;
+
+  while ((i < firstFi.name.length()) && (i < secondFi.name.length()))
+  {
+    if (tolower(firstFi.name[i]) < tolower(secondFi.name[i]))
+        return true;
+    else if (tolower(firstFi.name[i]) > tolower(secondFi.name[i]))
+        return false;
+
+    i++;
+  }
+  return firstFi.name.length() < firstFi.name.length();
+}
+
+int getFileList(const char* path, int type, const char* extensions, int recursion, FileList* dirs, int& count)
+{
+   DIR* dir;
+
+   if (!(dir = opendir(path)))
+   {
+      tell(1, "Can't open directory '%s', '%s'", path, strerror(errno));
+      return fail;
+   }
+
+#ifndef HAVE_READDIR_R
+   dirent* pEntry;
+
+   while ((pEntry = readdir(dir)))
+#else
+   dirent entry;
+   dirent* pEntry = &entry;
+   dirent* res;
+
+   // deprecated but the only reentrant with old libc!
+
+   while (readdir_r(dir, pEntry, &res) == 0 && res)
+#endif
+   {
+      // if 'recursion' is set scan subfolders also
+
+      if (recursion && pEntry->d_type == DT_DIR && pEntry->d_name[0] != '.')
+      {
+         char* buf;
+         asprintf(&buf, "%s/%s", path, pEntry->d_name);
+         getFileList(buf, type, extensions, recursion, dirs, count);
+         free(buf);
+      }
+
+      // filter type and ignore '.', '..' an hidden files
+
+      if (pEntry->d_type != type || pEntry->d_name[0] == '.')
+         continue;
+
+      // filter file extensions
+
+      if (extensions)
+      {
+         const char* ext;
+
+         if ((ext = strrchr(pEntry->d_name, '.')))
+            ext++;
+
+         if (isEmpty(ext) || !strcasestr(extensions, ext))
+         {
+            tell(4, "Skipping file '%s' with extension '%s'", pEntry->d_name, ext);
+            continue;
+         }
+      }
+
+      count++;
+
+      if (dirs)
+         dirs->push_back({ path, pEntry->d_name, pEntry->d_type });
+   }
+
+   closedir(dir);
+
+   return success;
+}
+
 #ifdef USELIBXML
 
 //***************************************************************************

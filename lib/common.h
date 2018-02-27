@@ -15,6 +15,7 @@
 #include <zlib.h>
 #include <errno.h>
 #include <string>
+#include <list>
 #include <map>
 
 #ifdef USESYSD
@@ -321,6 +322,17 @@ const char* notNull(const char* str, const char* def = "<null>");
 int isZero(const char* str);
 int removeFile(const char* filename);
 int chkDir(const char* path);
+
+struct FileInfo
+{
+   std::string path;
+   std::string name;
+   uint type;
+};
+
+typedef std::list<FileInfo> FileList;
+bool compareFileInfo(const FileInfo& firstFi, const FileInfo& secondFi);
+int getFileList(const char* path, int type, const char* extensions, int recursion, FileList* dirs, int& count);
 
 #ifdef USELIBXML
   xsltStylesheetPtr loadXSLT(const char* name, const char* path, int utf8);

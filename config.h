@@ -10,6 +10,9 @@
  *
  **/
 
+#ifndef __O2W_CONFIG_H
+#define __O2W_CONFIG_H
+
 #include "lib/config.h"
 
 //***************************************************************************
@@ -27,6 +30,7 @@ struct cOsd2WebConfig : public cConfigBase
       void setLogoPath(const char* p)       { free(logoPath); logoPath = strdup(p); }
       void setEpgImagePath(const char* s)   { free(epgImagePath); epgImagePath = strdup(s); }
       void setDiaPath(const char* p)        { free(diaPath); diaPath = strdup(p); }
+      void setDiaPathCurrent(const char* p)  { free(diaPathCurrent); diaPathCurrent = strdup(p); }
       void setScaper2VdrPath(const char* p) { free(scraper2VdrPath); scraper2VdrPath = strdup(p); }
       void setTvIp(const char* p)           { free(tvIp); tvIp = strdup(p); }
       void setBrowser(const char* p, int autoStart = na);
@@ -38,6 +42,7 @@ struct cOsd2WebConfig : public cConfigBase
       char* logoSuffix;
       char* logoPath;
       char* diaPath;
+      char* diaPathCurrent;
       char* scraper2VdrPath;
       int logoNotLower;
       int logoById;
@@ -46,6 +51,10 @@ struct cOsd2WebConfig : public cConfigBase
       int startBrowser;
       char* browserDisplay;
       char* tvIp;
+      bool mainmenuVisible;
+      char* diaExtensions;
 };
 
 extern cOsd2WebConfig config;
+
+#endif // __O2W_CONFIG_H

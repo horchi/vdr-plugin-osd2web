@@ -23,6 +23,7 @@
 #include "lib/config.h"
 
 #include "update.h"
+#include "config.h"
 #include "HISTORY.h"
 
 class cPluginOsd2Web;
@@ -32,6 +33,32 @@ class cPluginOsd2Web;
 //***************************************************************************
 
 static const char* DESCRIPTION = trNOOP("osd2web plugin");
+static const char* MAINMENUENTRY = tr("osd2web");
+
+//***************************************************************************
+// Plugin Main Menu
+//***************************************************************************
+
+class cOsd2webMenu : public cOsdMenu
+{
+   public:
+
+      enum EpgMenuState
+      {
+         emsDiaPath = os_User,
+         emsDiaStop,
+         emsDiaTime
+      };
+
+      cOsd2webMenu(const char* title, cPluginOsd2Web* aPlugin);
+      virtual ~cOsd2webMenu() {};
+
+      virtual eOSState ProcessKey(eKeys key);
+
+   protected:
+
+      cPluginOsd2Web* plugin;
+};
 
 //***************************************************************************
 // Class cPluginOsd2Web
@@ -57,16 +84,18 @@ class cPluginOsd2Web : public cPlugin
       void Store();
       void Housekeeping() {}
 
-      const char* MainMenuEntry()    { return 0; }
-      cOsdObject* MainMenuAction()   { return 0; }
+      const char* MainMenuEntry()
+         { return config.mainmenuVisible ? MAINMENUENTRY : 0; }
+      cOsdObject* MainMenuAction()   { return new cOsd2webMenu(MAINMENUENTRY, this); }
       cMenuSetupPage* SetupMenu()    { return 0; }
 
       bool SetupParse(const char* Name, const char* Value);
 
+      cUpdate* update;
+
    private:
 
       cOsd2WebSkin* skin;
-      cUpdate* update;
 };
 
 //***************************************************************************

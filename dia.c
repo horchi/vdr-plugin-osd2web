@@ -16,6 +16,7 @@
 
 #include <libexif/exif-data.h>
 
+#include "config.h"
 #include "update.h"
 
 //***************************************************************************
@@ -97,7 +98,6 @@ int cUpdate::initDia(const char* path)
    diaImages.clear();
    scanDiaDir(path);
 
-   tell(1, "Info: Added (%ld) images of path '%s'", diaImages.size(), path);
    itCurrentDiaImage = diaImages.end();
 
    return success;
@@ -107,13 +107,39 @@ int cUpdate::initDia(const char* path)
 // Scan Directory
 //***************************************************************************
 
-int cUpdate::scanDiaDir(const char* path, int level)
+int cUpdate::scanDiaDir(const char* path) // , int level)
 {
-   const char* extensions = "jpeg:jpg";
-   const char* ext;
-   DIR* dir;
+   // const char* ext;
+   // DIR* dir;
    int count = 0;
+   FileList imageFileList;
 
+   tell(1, "Info: Scanning directory '%s' for dia-show images", path);
+
+   if (getFileList(path, DT_REG, config.diaExtensions, yes, &imageFileList, count) != success)
+      return done;
+
+   for (auto it = imageFileList.begin(); it != imageFileList.end(); it++)
+   {
+      ImageFile f;
+      FileInfo* fileInfo = &(*it);
+
+      // fill image infos
+
+      f.path = fileInfo->path + "/" + fileInfo->name;
+      f.initialized = no;
+      f.orientation = 1;                   // 1 => 'normal' as default
+      f.landscape = yes;
+      f.width = 0;
+      f.height = 0;
+
+      diaImages.push_back(f);
+      tell(4, "Info: Added '%s'", f.path.c_str());
+   }
+
+   tell(1, "Info: Added (%ld) images of path '%s'", diaImages.size(), path);
+
+   /*
    // open directory
 
    if (!(dir = opendir(path)))
@@ -121,10 +147,6 @@ int cUpdate::scanDiaDir(const char* path, int level)
       tell(1, "Can't open directory '%s', '%s'", path, strerror(errno));
       return done;
    }
-
-   // iterate ..
-
-   tell(!level ? 1 : 3, "Info: Scanning %sdirectory '%s' for dia-show images", level ? "sub-" : "", path);
 
 #ifndef HAVE_READDIR_R
    dirent* pEntry;
@@ -159,15 +181,9 @@ int cUpdate::scanDiaDir(const char* path, int level)
       if ((ext = strrchr(pEntry->d_name, '.')))
          ext++;
 
-      if (isEmpty(ext))
+      if (isEmpty(ext) || !strcasestr(config.diaExtensions, ext))
       {
-         tell(4, "skipping file '%s' without extension", pEntry->d_name);
-         continue;
-      }
-
-      if (!strcasestr(extensions, ext))
-      {
-         tell(4, "skipping file '%s' with extension '%s'", pEntry->d_name, ext);
+         tell(4, "Skipping file '%s' with extension '%s'", pEntry->d_name, ext);
          continue;
       }
 
@@ -190,6 +206,7 @@ int cUpdate::scanDiaDir(const char* path, int level)
       tell(3, "Info: Added (%d) images of %sdirectory '%s' for dia-show", count, level ? "sub-" : "", path);
 
    closedir(dir);
+   */
 
    return success;
 }
