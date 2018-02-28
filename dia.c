@@ -139,6 +139,8 @@ int cUpdate::scanDiaDir(const char* path) // , int level)
 
    tell(1, "Info: Added (%ld) images of path '%s'", diaImages.size(), path);
 
+   return success;
+
    /*
    // open directory
 
@@ -147,6 +149,8 @@ int cUpdate::scanDiaDir(const char* path) // , int level)
       tell(1, "Can't open directory '%s', '%s'", path, strerror(errno));
       return done;
    }
+
+   // iterate ..
 
 #ifndef HAVE_READDIR_R
    dirent* pEntry;
@@ -207,8 +211,6 @@ int cUpdate::scanDiaDir(const char* path) // , int level)
 
    closedir(dir);
    */
-
-   return success;
 }
 
 //***************************************************************************
