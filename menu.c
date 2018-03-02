@@ -24,20 +24,26 @@ class cMenuPathItem : public cOsdItem
 {
    public:
 
-      cMenuPathItem(const char* aBase, const char* aPath, int count);
+      cMenuPathItem(const char* aBase, const char* aPath, int aCount, int aSubCount);
       ~cMenuPathItem();
 
-      const char* getPath()  { return path; }
+      int getSubFolderCount() { return subFolderCount; }
+      int getImageCount()     { return imgCount; }
+      const char* getPath()   { return path; }
 
    private:
 
+      int subFolderCount;  // how menu sub folder ar directly in this folder
+      int imgCount;        // how many images (recursiv) ar in this folder
       char* path;
 };
 
-cMenuPathItem::cMenuPathItem(const char* aBase, const char* aPath, int count)
+cMenuPathItem::cMenuPathItem(const char* aBase, const char* aPath, int aCount, int aSubCount)
 {
+   imgCount = aCount;
+   subFolderCount = aSubCount;
    asprintf(&path, "%s/%s", aBase, aPath);
-   SetText(cString::sprintf("%s (%d)", aPath, count));
+   SetText(cString::sprintf("> %s (%d)", aPath, imgCount));
 }
 
 cMenuPathItem::~cMenuPathItem()
@@ -67,7 +73,7 @@ class cMenuPathSelect : public cOsdMenu
 };
 
 cMenuPathSelect::cMenuPathSelect(const char* aPath, cPluginOsd2Web* aPlugin)
-   : cOsdMenu("", 2)
+   : cOsdMenu("", 100)
 {
    plugin = aPlugin;
    SetMenuCategory(mcMain);
@@ -99,15 +105,16 @@ eOSState cMenuPathSelect::ProcessKey(eKeys key)
       {
          case kOk:
          {
-            if (item && !isEmpty(item->getPath()))
+            if (item && item->getSubFolderCount() && !isEmpty(item->getPath()))
                return AddSubMenu(new cMenuPathSelect(item->getPath(), plugin));
 
+            Skins.Message(mtInfo, tr("No more sub folders below, use key [red] to start dia show from here"));
             return osContinue;
          }
 
          case kRed:
          {
-            if (item && !isEmpty(item->getPath()))
+            if (item && item->getImageCount() && !isEmpty(item->getPath()))
             {
                config.setDiaPathCurrent(item->getPath());
                cUpdate::updateDiaList = yes;
@@ -115,6 +122,8 @@ eOSState cMenuPathSelect::ProcessKey(eKeys key)
                plugin->update->setView(cUpdate::vmDia);
                return osEnd;
             }
+
+            Skins.Message(mtInfo, tr("No images below"));
 
             return osContinue;
          }
@@ -149,9 +158,11 @@ int cMenuPathSelect::refresh()
    for (auto it = directories.begin(); it != directories.end(); it++)
    {
       FileInfo* fileInfo = &(*it);
+      int subFolderCount = 0;
       count = 0;
       getFileList(cString::sprintf("%s/%s",path, fileInfo->name.c_str()), DT_REG, config.diaExtensions, yes, 0, count);
-      Add(new cMenuPathItem(path, fileInfo->name.c_str(), count));
+      getFileList(cString::sprintf("%s/%s",path, fileInfo->name.c_str()), DT_DIR, 0, no, 0, subFolderCount);
+      Add(new cMenuPathItem(path, fileInfo->name.c_str(), count, subFolderCount));
    }
 
    cSkinDisplay::Current()->SetMessage(mtInfo, 0);

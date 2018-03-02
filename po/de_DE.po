@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.3.2\n"
 "Report-Msgid-Bugs-To: <vdr@jwendel.de>\n"
-"POT-Creation-Date: 2018-02-28 13:40+0100\n"
+"POT-Creation-Date: 2018-03-02 10:17+0100\n"
 "PO-Revision-Date: 2017-02-14 21:40+0200\n"
 "Last-Translator: <vdr@jwendel.de>\n"
 "Language-Team: <vdr@linuxtv.org>\n"
@@ -22,6 +22,12 @@ msgid "Select Folder: '%s'"
 msgstr ""
 
 msgid "Select Folder:"
+msgstr ""
+
+msgid "No more sub folders below, use key [red] to start dia show from here"
+msgstr ""
+
+msgid "No images below"
 msgstr ""
 
 msgid "Collecting Data ..."
