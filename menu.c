@@ -43,7 +43,7 @@ cMenuPathItem::cMenuPathItem(const char* aBase, const char* aPath, int aCount, i
    imgCount = aCount;
    subFolderCount = aSubCount;
    asprintf(&path, "%s/%s", aBase, aPath);
-   SetText(cString::sprintf("> %s (%d)", aPath, imgCount));
+   SetText(cString::sprintf("%s (%d)", aPath, imgCount));
 }
 
 cMenuPathItem::~cMenuPathItem()
