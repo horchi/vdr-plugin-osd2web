@@ -186,7 +186,7 @@ class cMenuDiaSetup : public cMenuSetupPage
 
    protected:
 
-      virtual eOSState ProcessKey(eKeys Key);
+      // virtual eOSState ProcessKey(eKeys Key);
       virtual void Store();
 
    private:
@@ -195,6 +195,7 @@ class cMenuDiaSetup : public cMenuSetupPage
 };
 
 cMenuDiaSetup::cMenuDiaSetup()
+   : cMenuSetupPage()
 {
    data = config;
 
