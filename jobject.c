@@ -603,3 +603,33 @@ int imagePaths2Json(json_t* obj, const char* path, const char* suffixFilter)
 
    return done;
 }
+
+//***************************************************************************
+// Squeezebox Track to Json
+//***************************************************************************
+
+int squeezeboxTrack2Json(json_t* obj, TrackInfo* trackInfo)
+{
+   addToJson(obj, "index", trackInfo->index);
+   addToJson(obj, "title", trackInfo->title);
+   addToJson(obj, "artist", trackInfo->artist);
+   addToJson(obj, "duration", trackInfo->duration);
+   addToJson(obj, "lyrics", trackInfo->lyrics);
+
+   // remote track?
+
+   if (trackInfo->remote)
+   {
+      addToJson(obj, "remote", trackInfo->remote);
+      addToJson(obj, "remoteTitle", trackInfo->remoteTitle);
+      addToJson(obj, "bitrate", trackInfo->bitrate);
+   }
+   else
+   {
+      addToJson(obj, "genre", trackInfo->genre);
+      addToJson(obj, "year", trackInfo->year);
+      addToJson(obj, "album", trackInfo->album);
+   }
+
+   return done;
+}

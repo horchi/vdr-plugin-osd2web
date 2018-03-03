@@ -93,10 +93,25 @@ int jpegDimensions(const char* path, unsigned int& pWidth, unsigned int& pHeight
 // Dia Stuff
 //***************************************************************************
 
+#include <algorithm>
+#include <random>
+
 int cUpdate::initDia(const char* path)
 {
    diaImages.clear();
    scanDiaDir(path);
+
+   // sorted or random?
+
+   if (config.random)
+   {
+      auto rng = std::default_random_engine { };
+      std::shuffle(std::begin(diaImages), std::end(diaImages), rng);
+   }
+   else
+   {
+      std::sort(diaImages.begin(), diaImages.end());
+   }
 
    itCurrentDiaImage = diaImages.end();
 
@@ -109,8 +124,6 @@ int cUpdate::initDia(const char* path)
 
 int cUpdate::scanDiaDir(const char* path) // , int level)
 {
-   // const char* ext;
-   // DIR* dir;
    int count = 0;
    FileList imageFileList;
 
@@ -127,6 +140,7 @@ int cUpdate::scanDiaDir(const char* path) // , int level)
       // fill image infos
 
       f.path = fileInfo->path + "/" + fileInfo->name;
+      f.name = fileInfo->name;
       f.initialized = no;
       f.orientation = 1;                   // 1 => 'normal' as default
       f.landscape = yes;
@@ -140,77 +154,6 @@ int cUpdate::scanDiaDir(const char* path) // , int level)
    tell(1, "Info: Added (%ld) images of path '%s'", diaImages.size(), path);
 
    return success;
-
-   /*
-   // open directory
-
-   if (!(dir = opendir(path)))
-   {
-      tell(1, "Can't open directory '%s', '%s'", path, strerror(errno));
-      return done;
-   }
-
-   // iterate ..
-
-#ifndef HAVE_READDIR_R
-   dirent* pEntry;
-
-   while ((pEntry = readdir(dir)))
-#else
-   dirent entry;
-   dirent* pEntry = &entry;
-   dirent* res;
-
-   // deprecated but the only reentrant with old libc!
-
-   while (readdir_r(dir, pEntry, &res) == 0 && res)
-#endif
-   {
-      ImageFile f;
-
-      if (pEntry->d_type == DT_DIR)
-      {
-         char* subPath;
-
-         if (strcmp(pEntry->d_name, ".") == 0 || strcmp(pEntry->d_name, "..") == 0)
-            continue;
-
-         asprintf(&subPath, "%s/%s", path, pEntry->d_name);
-         scanDiaDir(subPath, level+1);
-         free(subPath);
-      }
-
-      // check extension
-
-      if ((ext = strrchr(pEntry->d_name, '.')))
-         ext++;
-
-      if (isEmpty(ext) || !strcasestr(config.diaExtensions, ext))
-      {
-         tell(4, "Skipping file '%s' with extension '%s'", pEntry->d_name, ext);
-         continue;
-      }
-
-      // fill image infos
-
-      f.path = path + std::string("/") + pEntry->d_name;
-      f.initialized = no;
-      f.orientation = 1;                   // 1 => 'normal'
-      f.landscape = yes;
-      f.width = 0;
-      f.height = 0;
-
-      diaImages.push_back(f);
-      count++;
-
-      tell(4, "Info: Added '%s'", f.path.c_str());
-   }
-
-   if (count)
-      tell(3, "Info: Added (%d) images of %sdirectory '%s' for dia-show", count, level ? "sub-" : "", path);
-
-   closedir(dir);
-   */
 }
 
 //***************************************************************************

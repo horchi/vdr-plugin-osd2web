@@ -40,6 +40,7 @@ cOsd2WebConfig::cOsd2WebConfig()
    tvIp = 0;
    mainmenuVisible = yes;
    diaExtensions = strdup("jpeg:jpg");
+   random = yes;
 }
 
 cOsd2WebConfig::~cOsd2WebConfig()

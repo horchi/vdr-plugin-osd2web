@@ -53,6 +53,7 @@ struct cOsd2WebConfig : public cConfigBase
       char* tvIp;
       bool mainmenuVisible;
       char* diaExtensions;
+      int random;
 };
 
 extern cOsd2WebConfig config;

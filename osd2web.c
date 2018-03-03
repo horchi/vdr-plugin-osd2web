@@ -16,6 +16,7 @@
 #include "lib/common.h"
 
 #include "osd2web.h"
+
 #include "service.h"
 #include "config.h"
 #include "radio.h"
@@ -127,12 +128,30 @@ bool cPluginOsd2Web::Service(const char* id, void* data)
    {
       if (update)
          update->triggerTimerUpdate = yes;
+
+      return true;
    }
 
    else if (strcmp(id, RADIO_TEXT_UPDATE) == 0)
    {
       if (update)
          update->triggerRadioTextUpdate = yes;
+
+      return true;
+   }
+
+   else if (strcmp(id, SQUEEZEBOX_CURRENT_TRACK) == 0)
+   {
+      json_t* oSqueezebox = json_object();
+      TrackInfo* trackInfo = (TrackInfo*)data;
+
+      if (trackInfo)
+      {
+         squeezeboxTrack2Json(oSqueezebox, trackInfo);
+         cUpdate::pushMessage(oSqueezebox, "squeeze-track");
+      }
+
+      return true;
    }
 
    return false;

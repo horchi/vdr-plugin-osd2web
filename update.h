@@ -31,6 +31,7 @@
 #include "lib/vdrlocks.h"
 
 #include "epg2vdr.h"
+#include "squeezebox.h"
 
 #define SKIN_NAME "osd2web"
 
@@ -109,8 +110,8 @@ int timer2Json(json_t* obj, const cTimer* timer);
 int stream2Json(json_t* obj, const cChannel* channel);
 int channels2Json(json_t* obj);
 int getRecordingDetails2Json(json_t* obj, int recId);
-
 int imagePaths2Json(json_t* obj, const char* path, const char* suffixFilter = "jpg jpeg");
+int squeezeboxTrack2Json(json_t* obj, TrackInfo* trackInfo);
 
 //***************************************************************************
 // Class cWebSock
@@ -424,14 +425,17 @@ class cUpdate : public cStatus, cThread, public cOsdService
       {
          int initialized;
          std::string path;
+         std::string name;
          unsigned int width;
          unsigned int height;
          unsigned int orientation;
          unsigned int landscape;
+
+         bool operator < (const ImageFile& img) const { return name < img.name; }
       };
 
       int getNextDia(std::vector<ImageFile>::iterator& it, ImageFile*& file);
-      int scanDiaDir(const char* path); // , int level = 0);
+      int scanDiaDir(const char* path);
 
       std::vector<ImageFile> diaImages;
       std::vector<ImageFile>::iterator itCurrentDiaImage;
