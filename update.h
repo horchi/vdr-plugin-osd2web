@@ -439,7 +439,6 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
       std::vector<ImageFile> diaImages;
       std::vector<ImageFile>::iterator itCurrentDiaImage;
-
 };
 
 //***************************************************************************

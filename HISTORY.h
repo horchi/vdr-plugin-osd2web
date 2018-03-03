@@ -8,8 +8,8 @@
  */
 
 
-#define _VERSION      "0.2.35"
-#define VERSION_DATE  "28.02.2018"
+#define _VERSION      "0.2.36"
+#define VERSION_DATE  "03.03.2018"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -19,6 +19,9 @@
 
 /*
  * ------------------------------------
+
+2018-03-03: version 0.2.36 (horchi)
+   - added: Dia settings menu
 
 2018-02-28: version 0.2.35 (horchi)
    - added: OSD menu to select start folder of dia show
