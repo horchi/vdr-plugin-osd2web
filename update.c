@@ -126,7 +126,6 @@ cUpdate::cUpdate()
 
 cUpdate::~cUpdate()
 {
-   Stop();
    delete webSock;
 }
 

@@ -181,8 +181,8 @@ class cMenuDiaSetup : public cMenuSetupPage
 {
    public:
 
-      cMenuDiaSetup();
-      virtual ~cMenuDiaSetup() {};
+      cMenuDiaSetup(cPluginOsd2Web* aPlugin);
+      virtual ~cMenuDiaSetup() { Store(); };
 
    protected:
 
@@ -191,16 +191,18 @@ class cMenuDiaSetup : public cMenuSetupPage
 
    private:
 
+      cPluginOsd2Web* plugin;
       cOsd2WebConfig data;
 };
 
-cMenuDiaSetup::cMenuDiaSetup()
+cMenuDiaSetup::cMenuDiaSetup(cPluginOsd2Web* aPlugin)
    : cMenuSetupPage()
 {
+   plugin = aPlugin;
    data = config;
 
    Add(new cMenuEditIntItem(tr("Interval"), &data.diaCycleTime, 1, 999));
-   Add(new cMenuEditBoolItem(tr("Radom"), &data.diaRandom));
+   Add(new cMenuEditBoolItem(tr("Random"), &data.diaRandom));
 
    Display();
 }
@@ -208,7 +210,7 @@ cMenuDiaSetup::cMenuDiaSetup()
 void cMenuDiaSetup::Store()
 {
    config = data;
-   SetupStore("DiaCycle", config.diaCycleTime);
+   plugin->Store();
 }
 
 //***************************************************************************
@@ -255,7 +257,7 @@ eOSState cOsd2webMenu::ProcessKey(eKeys key)
          return osEnd;
 
       case emsDiaSetup:
-         return AddSubMenu(new cMenuDiaSetup());
+         return AddSubMenu(new cMenuDiaSetup(plugin));
 
       default:
          break;

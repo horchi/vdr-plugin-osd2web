@@ -172,6 +172,11 @@ bool cPluginOsd2Web::Start()
    return true;
 }
 
+void cPluginOsd2Web::Stop()
+{
+   update->Stop();
+}
+
 //***************************************************************************
 // Store
 //***************************************************************************
@@ -180,6 +185,8 @@ void cPluginOsd2Web::Store()
 {
    SetupStore("LogLevel", config.loglevelString);
    SetupStore("DiaPathCurrent", config.diaPathCurrent);
+   SetupStore("DiaCycle", config.diaCycleTime);
+   SetupStore("DiaRandom", config.diaRandom);
 }
 
 //***************************************************************************
@@ -192,6 +199,10 @@ bool cPluginOsd2Web::SetupParse(const char* name, const char* value)
       config.setLogLevel(value);
    else if (!strcasecmp(name, "DiaPathCurrent"))
       config.setDiaPathCurrent(value);
+   else if (!strcasecmp(name, "DiaCycle"))
+      config.diaCycleTime = atoi(value);
+   else if (!strcasecmp(name, "DiaRandom"))
+      config.diaRandom = atoi(value);
    else
       return false;
 

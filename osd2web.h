@@ -81,6 +81,7 @@ class cPluginOsd2Web : public cPlugin
 
       bool Initialize();
       bool Start();
+      void Stop();
       void Store();
       void Housekeeping() {}
 

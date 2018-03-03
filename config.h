@@ -27,6 +27,10 @@ struct cOsd2WebConfig : public cConfigBase
       cOsd2WebConfig(const cOsd2WebConfig& other);
       ~cOsd2WebConfig();
 
+      cOsd2WebConfig& operator = (const cOsd2WebConfig& other) { copy(other); return *this; }
+
+      void copy(const cOsd2WebConfig& other);
+
       void setLogoSuffix(const char* s)     { free(logoSuffix); logoSuffix = sstrdup(s); }
       void setLogoPath(const char* p)       { free(logoPath); logoPath = sstrdup(p); }
       void setEpgImagePath(const char* s)   { free(epgImagePath); epgImagePath = sstrdup(s); }

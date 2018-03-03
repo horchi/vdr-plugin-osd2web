@@ -44,26 +44,33 @@ cOsd2WebConfig::cOsd2WebConfig()
 }
 
 cOsd2WebConfig::cOsd2WebConfig(const cOsd2WebConfig& other)
+   : cConfigBase(other)
+{
+   copy(other);
+}
+
+void cOsd2WebConfig::copy(const cOsd2WebConfig& other)
 {
    webPort = other.webPort;
    clientOsdTimeout = other.clientOsdTimeout;
    logoNotLower = other.logoNotLower;
    logoById = other.logoById;
 
-   setHttpPath(other.httpPath);
-   setConfPath(other.confPath);
-   setLogoPath(other.logoPath);
-   setLogoSuffix(other.logoSuffix);
-   setScaper2VdrPath(other.scraper2VdrPath);
-   setEpgImagePath(other.epgImagePath);
-   setBrowser(other.browserDisplay, other.startBrowser);
-   setTvIp(other.tvIp);
+   httpPath = sstrdup(other.httpPath);
+   confPath = sstrdup(other.confPath);
+   logoPath = sstrdup(other.logoPath);
+   logoSuffix = sstrdup(other.logoSuffix);
+   scraper2VdrPath = sstrdup(other.scraper2VdrPath);
+   epgImagePath = sstrdup(other.epgImagePath);
+   browserDisplay = sstrdup(other.browserDisplay);
+   startBrowser = other.startBrowser;
+   tvIp = sstrdup(other.tvIp);
    mainmenuVisible = other.mainmenuVisible;
 
-   setDiaPath(other.diaPath);
-   setDiaPathCurrent(other.diaPathCurrent);
-   diaCycleTime = 20;           // seconds
-   setDiaExtensions(other.diaExtensions);
+   diaPath = sstrdup(other.diaPath);
+   diaPathCurrent = sstrdup(other.diaPathCurrent);
+   diaCycleTime = other.diaCycleTime;
+   diaExtensions = sstrdup(other.diaExtensions);
    diaRandom = other.diaRandom;
 }
 
@@ -85,7 +92,7 @@ cOsd2WebConfig::~cOsd2WebConfig()
 void cOsd2WebConfig::setBrowser(const char* p, int autoStart)
 {
    free(browserDisplay);
-   browserDisplay = strdup(p);
+   browserDisplay = sstrdup(p);
 
    if (autoStart != na)
       startBrowser = autoStart;

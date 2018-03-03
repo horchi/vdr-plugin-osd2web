@@ -23,6 +23,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <regex.h>
+#include <dirent.h>
 
 #include <limits.h>
 #include <algorithm>

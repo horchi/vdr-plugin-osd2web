@@ -14,6 +14,8 @@
 #include <string.h>
 #include <zlib.h>
 #include <errno.h>
+#include <dirent.h>
+
 #include <string>
 #include <list>
 #include <map>
