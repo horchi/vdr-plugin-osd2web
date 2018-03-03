@@ -200,6 +200,7 @@ cMenuDiaSetup::cMenuDiaSetup(cPluginOsd2Web* aPlugin)
 {
    plugin = aPlugin;
    data = config;
+   SetMenuCategory(mcPluginSetup);
 
    Add(new cMenuEditIntItem(tr("Interval"), &data.diaCycleTime, 1, 999));
    Add(new cMenuEditBoolItem(tr("Random"), &data.diaRandom));
@@ -231,7 +232,7 @@ cOsd2webMenu::cOsd2webMenu(const char* title, cPluginOsd2Web* aPlugin)
    if (plugin->update->getView() == cUpdate::vmDia)
       Add(new cOsdItem(hk(tr("Stop Dia Show")), (eOSState)emsDiaStop));
 
-   Add(new cOsdItem(hk(tr("Dia Setup")), (eOSState)emsDiaSetup));
+   Add(new cOsdItem(hk(tr("Dia Settings")), (eOSState)emsDiaSetup));
 
    SetHelp(0, 0, 0, 0);
 
