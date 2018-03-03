@@ -289,6 +289,7 @@ std::string& allTrim(std::string& str);
 
 int isMember(const char** list, const char* item);
 char* sstrcpy(char* dest, const char* src, int max);
+char* sstrdup(const char* str);
 std::string num2Str(int num);
 int isDST(time_t t = 0);
 time_t timeOf(time_t t);

@@ -174,6 +174,44 @@ int cMenuPathSelect::refresh()
 }
 
 //***************************************************************************
+// Menu Dia Setup
+//***************************************************************************
+
+class cMenuDiaSetup : public cMenuSetupPage
+{
+   public:
+
+      cMenuDiaSetup();
+      virtual ~cMenuDiaSetup() {};
+
+   protected:
+
+      virtual eOSState ProcessKey(eKeys Key);
+      virtual void Store();
+      virtual void Setup();
+
+   private:
+
+      cOsd2WebConfig data;
+};
+
+cMenuDiaSetup::cMenuDiaSetup()
+{
+   data = config;
+
+   Add(new cMenuEditIntItem(tr("Interval"), &data.diaCycleTime, 1, 999));
+   Add(new cMenuEditBoolItem(tr("Radom"), &data.diaRandom));
+
+   Display();
+}
+
+void cMenuDiaSetup::Store()
+{
+   config = data;
+   SetupStore("DiaCycle", config.diaCycleTime);
+}
+
+//***************************************************************************
 //***************************************************************************
 // Plugin Main Menu
 //***************************************************************************
@@ -191,8 +229,7 @@ cOsd2webMenu::cOsd2webMenu(const char* title, cPluginOsd2Web* aPlugin)
    if (plugin->update->getView() == cUpdate::vmDia)
       Add(new cOsdItem(hk(tr("Stop Dia Show")), (eOSState)emsDiaStop));
 
-   Add(new cMenuEditIntItem(tr("Dia Time"), &config.diaCycleTime, 1, 999));
-   // cOsdMenu::Add(new cOsdItem(hk(tr("Dia Time")), (eOSState)emsDiaTime));
+   Add(new cOsdItem(hk(tr("Dia Setup")), (eOSState)emsDiaSetup));
 
    SetHelp(0, 0, 0, 0);
 
@@ -217,8 +254,8 @@ eOSState cOsd2webMenu::ProcessKey(eKeys key)
             plugin->update->setView(cUpdate::vmNormal);
          return osEnd;
 
-      case emsDiaTime:
-         return osContinue;
+      case emsDiaSetup:
+         return AddSubMenu(new cMenuDiaSetup());
 
       default:
          break;

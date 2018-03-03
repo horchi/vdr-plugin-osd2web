@@ -47,7 +47,7 @@ class cOsd2webMenu : public cOsdMenu
       {
          emsDiaPath = os_User,
          emsDiaStop,
-         emsDiaTime
+         emsDiaSetup
       };
 
       cOsd2webMenu(const char* title, cPluginOsd2Web* aPlugin);

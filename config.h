@@ -24,34 +24,40 @@ struct cOsd2WebConfig : public cConfigBase
    public:
 
       cOsd2WebConfig();
+      cOsd2WebConfig(const cOsd2WebConfig& other);
       ~cOsd2WebConfig();
 
-      void setLogoSuffix(const char* s)     { free(logoSuffix); logoSuffix = strdup(s); }
-      void setLogoPath(const char* p)       { free(logoPath); logoPath = strdup(p); }
-      void setEpgImagePath(const char* s)   { free(epgImagePath); epgImagePath = strdup(s); }
-      void setDiaPath(const char* p)        { free(diaPath); diaPath = strdup(p); }
-      void setDiaPathCurrent(const char* p)  { free(diaPathCurrent); diaPathCurrent = strdup(p); }
-      void setScaper2VdrPath(const char* p) { free(scraper2VdrPath); scraper2VdrPath = strdup(p); }
-      void setTvIp(const char* p)           { free(tvIp); tvIp = strdup(p); }
+      void setLogoSuffix(const char* s)     { free(logoSuffix); logoSuffix = sstrdup(s); }
+      void setLogoPath(const char* p)       { free(logoPath); logoPath = sstrdup(p); }
+      void setEpgImagePath(const char* s)   { free(epgImagePath); epgImagePath = sstrdup(s); }
+      void setDiaPath(const char* p)        { free(diaPath); diaPath = sstrdup(p); }
+      void setDiaPathCurrent(const char* p) { free(diaPathCurrent); diaPathCurrent = sstrdup(p); }
+      void setDiaExtensions(const char* s)  { free(diaExtensions); diaExtensions = sstrdup(s); }
+      void setScaper2VdrPath(const char* p) { free(scraper2VdrPath); scraper2VdrPath = sstrdup(p); }
+      void setTvIp(const char* p)           { free(tvIp); tvIp = sstrdup(p); }
+      void setHttpPath(const char* p)       { free(httpPath); httpPath = sstrdup(p); }
+      void setConfPath(const char* p)       { free(confPath); confPath = sstrdup(p); }
+
       void setBrowser(const char* p, int autoStart = na);
 
       int webPort;
-      char* httpPath;
-      char* epgImagePath;
-      char* confPath;
-      char* logoSuffix;
-      char* logoPath;
-      char* diaPath;
-      char* diaPathCurrent;
-      char* scraper2VdrPath;
+      int clientOsdTimeout;
       int logoNotLower;
       int logoById;
-      int clientOsdTimeout;
+
+      char* httpPath;
+      char* confPath;
+      char* logoPath;
+      char* logoSuffix;
+      char* scraper2VdrPath;
+      char* epgImagePath;
       int startBrowser;
       char* browserDisplay;
       char* tvIp;
       bool mainmenuVisible;
 
+      char* diaPath;
+      char* diaPathCurrent;
       int diaCycleTime;            // in seconds
       char* diaExtensions;
       int diaRandom;

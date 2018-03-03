@@ -894,7 +894,7 @@ int isMember(const char** list, const char* item)
 }
 
 //***************************************************************************
-//
+// Save String Copy
 //***************************************************************************
 
 char* sstrcpy(char* dest, const char* src, int max)
@@ -906,6 +906,18 @@ char* sstrcpy(char* dest, const char* src, int max)
    dest[max-1] = 0;
 
    return dest;
+}
+
+//***************************************************************************
+// Save String Duplicate
+//***************************************************************************
+
+char* sstrdup(const char* str)
+{
+   if (!str)
+      return 0;
+
+   return strdup(str);
 }
 
 int isLink(const char* path)

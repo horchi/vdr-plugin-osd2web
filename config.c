@@ -22,26 +22,49 @@ cOsd2WebConfig::cOsd2WebConfig()
 {
    webPort = 4444;
    clientOsdTimeout = 120;
-   epgImagePath = 0;
    logoNotLower = no;
    logoById = no;
 
    httpPath = 0;
    confPath = 0;
    logoPath = 0;
-   diaPath = 0;
-   diaPathCurrent = 0;
-   scraper2VdrPath = 0;
    logoSuffix = strdup("png");
+   scraper2VdrPath = 0;
    epgImagePath = strdup("/var/cache/vdr/epgimages");
    startBrowser = no;
    browserDisplay = strdup("");
    tvIp = 0;
    mainmenuVisible = yes;
 
+   diaPath = 0;
+   diaPathCurrent = 0;
    diaCycleTime = 20;           // seconds
    diaExtensions = strdup("jpeg:jpg");
    diaRandom = yes;
+}
+
+cOsd2WebConfig::cOsd2WebConfig(const cOsd2WebConfig& other)
+{
+   webPort = other.webPort;
+   clientOsdTimeout = other.clientOsdTimeout;
+   logoNotLower = other.logoNotLower;
+   logoById = other.logoById;
+
+   setHttpPath(other.httpPath);
+   setConfPath(other.confPath);
+   setLogoPath(other.logoPath);
+   setLogoSuffix(other.logoSuffix);
+   setScaper2VdrPath(other.scraper2VdrPath);
+   setEpgImagePath(other.epgImagePath);
+   setBrowser(other.browserDisplay, other.startBrowser);
+   setTvIp(other.tvIp);
+   mainmenuVisible = other.mainmenuVisible;
+
+   setDiaPath(other.diaPath);
+   setDiaPathCurrent(other.diaPathCurrent);
+   diaCycleTime = 20;           // seconds
+   setDiaExtensions(other.diaExtensions);
+   diaRandom = other.diaRandom;
 }
 
 cOsd2WebConfig::~cOsd2WebConfig()
