@@ -32,15 +32,16 @@ cOsd2WebConfig::cOsd2WebConfig()
    diaPath = 0;
    diaPathCurrent = 0;
    scraper2VdrPath = 0;
-   diaCycleTime = 20;           // seconds
    logoSuffix = strdup("png");
    epgImagePath = strdup("/var/cache/vdr/epgimages");
    startBrowser = no;
    browserDisplay = strdup("");
    tvIp = 0;
    mainmenuVisible = yes;
+
+   diaCycleTime = 20;           // seconds
    diaExtensions = strdup("jpeg:jpg");
-   random = yes;
+   diaRandom = yes;
 }
 
 cOsd2WebConfig::~cOsd2WebConfig()

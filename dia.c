@@ -103,7 +103,7 @@ int cUpdate::initDia(const char* path)
 
    // sorted or random?
 
-   if (config.random)
+   if (config.diaRandom)
    {
       auto rng = std::default_random_engine { };
       std::shuffle(std::begin(diaImages), std::end(diaImages), rng);

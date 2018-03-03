@@ -47,13 +47,14 @@ struct cOsd2WebConfig : public cConfigBase
       int logoNotLower;
       int logoById;
       int clientOsdTimeout;
-      int diaCycleTime;            // in seconds
       int startBrowser;
       char* browserDisplay;
       char* tvIp;
       bool mainmenuVisible;
+
+      int diaCycleTime;            // in seconds
       char* diaExtensions;
-      int random;
+      int diaRandom;
 };
 
 extern cOsd2WebConfig config;

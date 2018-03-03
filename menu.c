@@ -186,12 +186,13 @@ cOsd2webMenu::cOsd2webMenu(const char* title, cPluginOsd2Web* aPlugin)
    SetHasHotkeys(yes);
    Clear();
 
-   cOsdMenu::Add(new cOsdItem(hk(tr("Select Dia Path")), (eOSState)emsDiaPath));
+   Add(new cOsdItem(hk(tr("Select Dia Path")), (eOSState)emsDiaPath));
 
    if (plugin->update->getView() == cUpdate::vmDia)
-      cOsdMenu::Add(new cOsdItem(hk(tr("Stop Dia Show")), (eOSState)emsDiaStop));
+      Add(new cOsdItem(hk(tr("Stop Dia Show")), (eOSState)emsDiaStop));
 
-   cOsdMenu::Add(new cOsdItem(hk(tr("Dia Time")), (eOSState)emsDiaTime));
+   Add(new cMenuEditIntItem(tr("Dia Time"), &config.diaCycleTime, 1, 999));
+   // cOsdMenu::Add(new cOsdItem(hk(tr("Dia Time")), (eOSState)emsDiaTime));
 
    SetHelp(0, 0, 0, 0);
 
