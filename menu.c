@@ -188,7 +188,6 @@ class cMenuDiaSetup : public cMenuSetupPage
 
       virtual eOSState ProcessKey(eKeys Key);
       virtual void Store();
-      virtual void Setup();
 
    private:
 
