@@ -23,7 +23,7 @@ body {
 }
 
 .diaarea {
-    width: 100vh;
+    width:100vh;
     > img {
         position: absolute;
         object-fit: contain;
@@ -31,26 +31,21 @@ body {
     }
 }
 
-.diaimg
-{
+.diaimg {
    height: 100%
 }
 
 @keyframes fadeIn {
     0% {opacity: 0;}
-    100% {opacity: 1;}
  }
  @keyframes fadeOut {
     0% {opacity: 1;}
-    100% {opacity: 0;}
  }
  @keyframes slideLeftIn {
-    0% {left:100%}
-    100% {left:0;}
+     from {left:100%}
  }
  @keyframes slideLeftOut {
-    0% {left:0}
-    100% {left:100%;}
+    from {left:0}
  }
 
 .eventarea {

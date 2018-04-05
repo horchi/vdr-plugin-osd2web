@@ -9,34 +9,38 @@
 <script>
 
 var dia={
-    $imgNext: null,
-    $imgCur: null,
-    useFirstImage: true,
+    imgCur: null,
+    imgNext: null,
+    init: function(){
+        this.imgCur= $('#diaShow_img1').on("load", this.__imageloaded)[0];
+        this.imgNext= $('#diaShow_img2').on("load", this.__imageloaded)[0];
+        this.imgCur.dia= this.imgNext.dia= this;
+    },
     setImage: function(diashow){
-      if (this.useFirstImage){
-        this.useFirstImage= false;
-        this.$imgCur= $('#diaShow_img2');
-        this.$imgNext= $('#diaShow_img1');
-      } else{
-        this.useFirstImage= true;
-        this.$imgCur= $('#diaShow_img1');
-        this.$imgNext= $('#diaShow_img2');
-      }
-      this.$imgNext.prop("src",diashow.filename).one("load",this, this.effects[diashow.effect] || this.effects['fade']);
+      this.imgNext.diaData= diashow;
+      this.imgNext.src= diashow.filename;
+    },
+    __imageloaded: function(){
+        if ( this.dia.imgNext == this){
+          var f= this.dia.effects[this.diaData.effect] || this.dia.effects['fade'];
+          f && f.apply(this.dia);
+          this.dia.imgNext= this.dia.imgCur;
+          this.dia.imgCur= this;
+        }
     },
     effects: {
       "hard": function(ev){
-          ev.data.$imgNext.show();
-          ev.data.$imgCur.hide();
+          $(this.imgNext).show();
+          $(this.imgCur).hide();
       },
       // animations sind in common.scss definiert
       "fade": function(ev){
-          ev.data.$imgNext[0].style.cssText= "animation: 3s fadeIn";
-          ev.data.$imgCur[0].style.cssText= "animation: 3s fadeOut";
+          this.imgNext.style.cssText= "opacity:1; animation: 3s fadeIn";
+          this.imgCur.style.cssText= "opacity:0; animation: 3s fadeOut";
       },
       "slideLeft": function(ev){
-          ev.data.$imgNext[0].style.cssText= "animation: 3s slideLeftIn";
-          ev.data.$imgCur[0].style.cssText= "animation: 3s slideLeftOut";
+          this.imgNext.style.cssText= "left:0; animation: 3s slideLeftIn";
+          this.imgCur.style.cssText= "left:100%; animation: 3s slideLeftOut";
       }
     }
 }
@@ -53,12 +57,13 @@ export default {
       var allEffects= [];
       for ( var eff in dia.effects)
         allEffects.push(eff);
-        this.$root.$emit("send", {
-            "event": "diaEffects",
-            object: allEffects
-        });
+      this.$root.$emit("send", {
+          "event": "diaEffects",
+          object: allEffects
+      });
     },
     mounted(){
+      dia.init();
       dia.setImage(this.diashow);
     },
     watch: {
