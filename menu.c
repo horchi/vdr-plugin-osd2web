@@ -233,6 +233,7 @@ cOsd2webMenu::cOsd2webMenu(const char* title, cPluginOsd2Web* aPlugin)
       Add(new cOsdItem(hk(tr("Stop Dia Show")), (eOSState)emsDiaStop));
 
    Add(new cOsdItem(hk(tr("Dia Settings")), (eOSState)emsDiaSetup));
+   Add(new cOsdItem(hk(tr("Restart Local Browser")), (eOSState)emsRestartBrowser));
 
    SetHelp(0, 0, 0, 0);
 
@@ -249,6 +250,17 @@ eOSState cOsd2webMenu::ProcessKey(eKeys key)
 
    switch (state)
    {
+      case emsRestartBrowser:
+         if (cUpdate::stopBrowser() == success)
+         {
+            if (cUpdate::startBrowser(yes) == success)
+               Skins.Message(mtInfo, tr("Browser (re)started"));
+            else
+               Skins.Message(mtInfo, tr("Browser (re)start failed"));
+         }
+
+         return osEnd;
+
       case emsDiaPath:
          return AddSubMenu(new cMenuPathSelect(config.diaPath, plugin));
 

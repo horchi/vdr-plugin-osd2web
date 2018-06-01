@@ -8,8 +8,8 @@
  */
 
 
-#define _VERSION      "0.2.37"
-#define VERSION_DATE  "03.04.2018"
+#define _VERSION      "0.2.38"
+#define VERSION_DATE  "01.06.2018"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -19,6 +19,9 @@
 
 /*
  * ------------------------------------
+
+2018-06-01: version 0.2.38 (horchi)
+   - added: Browser restart via menu
 
 2018-04-03: version 0.2.37 (rechner)
    - bugfix: dia animations
