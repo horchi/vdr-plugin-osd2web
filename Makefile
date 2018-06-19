@@ -54,7 +54,7 @@ LIBS += -lrt -lcrypto
 LIBS += $(shell pkg-config --libs uuid)
 LIBS += $(shell pkg-config --libs tinyxml2)
 LIBS += $(shell pkg-config --libs libwebsockets)
-LIBS += $(shell python-config --libs) $(shell pkg-config --cflags --libs jansson)
+LIBS += $(shell pkg-config --cflags --libs jansson)
 LIBS += $(shell pkg-config libexif --libs)
 
 ### The name of the distribution archive:
