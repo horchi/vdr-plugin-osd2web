@@ -8,8 +8,8 @@
  */
 
 
-#define _VERSION      "0.2.38"
-#define VERSION_DATE  "01.06.2018"
+#define _VERSION      "0.2.39"
+#define VERSION_DATE  "26.08.2018"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -19,6 +19,9 @@
 
 /*
  * ------------------------------------
+
+2018-08-26: version 0.2.39 (horchi)
+   - added: Folder 'dia' now optional
 
 2018-06-01: version 0.2.38 (horchi)
    - added: Browser restart via menu

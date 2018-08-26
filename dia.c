@@ -127,6 +127,9 @@ int cUpdate::scanDiaDir(const char* path) // , int level)
    int count = 0;
    FileList imageFileList;
 
+   if (!folderExists(path))
+      return done;
+
    tell(1, "Info: Scanning directory '%s' for dia-show images", path);
 
    if (getFileList(path, DT_REG, config.diaExtensions, yes, &imageFileList, count) != success)
