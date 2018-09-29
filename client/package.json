@@ -9,9 +9,9 @@
     "build": "rimraf dist && webpack -p --progress --hide-modules"
   },
   "dependencies": {
-    "bootstrap": "^4.0.0-beta.2",
+    "bootstrap": "4.0.0-beta.2",
     "intl": "^1.2.5",
-    "jquery-slim": "^3.0.0",
+    "jquery": "^3.0.0",
     "popper.js": "^1.12.9",
     "vue": "^2.5.9",
     "vue-awesome": "^2.3.4"
