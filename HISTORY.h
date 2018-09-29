@@ -8,8 +8,8 @@
  */
 
 
-#define _VERSION      "0.2.39"
-#define VERSION_DATE  "26.08.2018"
+#define _VERSION      "0.2.40"
+#define VERSION_DATE  "29.09.2018"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -19,6 +19,9 @@
 
 /*
  * ------------------------------------
+
+2018-09-29: version 0.2.40 (horchi)
+   - change: Adjusted log level for debug message
 
 2018-08-26: version 0.2.39 (horchi)
    - added: Folder 'dia' now optional

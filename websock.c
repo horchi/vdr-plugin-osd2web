@@ -185,7 +185,7 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
       {
          getClientInfo(wsi, &clientInfo);
 
-         tell(0, "DEBUG: Got unecpected LWS_CALLBACK_CLOSED for client '%s' (%p)",
+         tell(2, "DEBUG: Got unecpected LWS_CALLBACK_CLOSED for client '%s' (%p)",
               clientInfo.c_str(), (void*)wsi);
          break;
       }
