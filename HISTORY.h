@@ -3,13 +3,12 @@
  * osd2web Plugin - Revision History
  * ----------------------------------------------
  *
- *  (c) 2017 Dirk Hermes, Jörg Wendel
+ *  (c) 2017-2018 Dirk Hermes, Jörg Wendel
  *
  */
 
-
-#define _VERSION      "0.2.41"
-#define VERSION_DATE  "29.09.2018"
+#define _VERSION      "0.2.42"
+#define VERSION_DATE  "01.10.2018"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -19,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2018-10-01: version 0.2.42 (horchi)
+   - change: Adjusted npm dependencies
 
 2018-09-29: version 0.2.41 (horchi)
    - change: Fixed progressbar height for kiosk browser

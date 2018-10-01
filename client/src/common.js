@@ -29,7 +29,7 @@ export var maxLinesCalc= {
 
 VueInst.component('icon', Icon);
 
-global.jQuery = global.$= require('jquery-slim');
+global.jQuery = global.$= require('jquery');
 global.Popper = require('popper.js');
 
 
