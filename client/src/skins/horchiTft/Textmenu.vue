@@ -1,7 +1,9 @@
 <template>
   <table v-if="colCount > 0" class="table table-hover textmenu" :class="{'text-nowrap':$root.isOnlyView}">
     <tbody>
-      <tr v-for="(row, rowIndex) in rows" :key="rowIndex"
+      <tr v-for="(row, rowIndex) in rows"
+          :key="rowIndex"
+          :id="'menuitem' + rowIndex"
           :class="{'table-active': rowIndex == textmenucurrent, 'textmenu-current': rowIndex == textmenucurrent}"
           @click="row.selectable && doAction(rowIndex)">
         <td v-for="(col, index) in row.cols" :key="index"

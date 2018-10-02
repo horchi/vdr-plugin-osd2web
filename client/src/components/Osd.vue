@@ -7,7 +7,7 @@
           {{ title }}
         </h3>
       </div>
-      <div class="eventarea col-12 col-md-9">
+      <div id="eventarea" class="eventarea col-12 col-md-9">
         <o2w-textmenu></o2w-textmenu>
         <o2w-event :event="event"></o2w-event>
         <o2w-textarea></o2w-textarea>
@@ -105,8 +105,9 @@ export default {
     },
     methods: {
         sendMaxLines(ev, linesMax) { //  header - buttons
-            let max = linesMax || common.maxLinesCalc.getMax();
-            if (max != maxLines) {
+//            let max = linesMax || common.maxLinesCalc.getMax();
+            let max = common.maxLinesCalc.getMax() || 12;
+//            if (max != maxLines) {
                 maxLines = max;
                 let data = [];
                 for (let i = 0; i < eMenuCategory.length; i++) data.push({
@@ -120,7 +121,7 @@ export default {
                         "categories": data
                     }
                 });
-            }
+//            }
         }/*,
         checkButtonHeight() {
             let buttons = document.getElementById('buttons');
