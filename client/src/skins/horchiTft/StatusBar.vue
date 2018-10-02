@@ -1,14 +1,14 @@
 <template>
-  <div class="statusbar flexrow">
-    <div class="my-auto osdbuttons flexitemgrow" id="buttons">
+  <div class="statusbar flexrow align-items-center">
+    <div class="osdbuttons flexitemgrow" id="buttons">
       <button v-for="(button,index) in buttons"
               @click="$root.sendKey(button.color)"
               :class="'but-' + button.color"
               class="btn ml-2 btn-primary"
               type="button">{{button.label}}</button>
     </div>
-    <div class="my-auto sdatetxt flexitem">{{$root.formatDateLong(parseInt(new Date().getTime() / 1000, 10))}}</div>
-    <div class="my-auto stimetxt flexitem">{{actualtime}}</div>
+    <div class="sdatetxt flexitem">{{$root.formatDateLong(parseInt(new Date().getTime() / 1000, 10))}}</div>
+    <div class="stimetxt flexitem">{{actualtime}}</div>
   </div>
 </template>
 
