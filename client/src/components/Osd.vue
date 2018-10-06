@@ -1,6 +1,6 @@
 <template>
   <div v-show="$root.curView == 'osd'" id="osdCon">
-    <div class="row dataarea">
+    <div class="_row dataarea">
       <div class="container menutitle" @click="$root.sendKey('Back')">
         <h3 class="">
           <icon v-if="!$root.isOnlyView" name="osd-back"></icon>
