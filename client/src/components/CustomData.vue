@@ -4,7 +4,7 @@
       <div class="customtitle">{{key}}</div>
       <div v-for="(variable, n) in item" class="customrow">
         <div :style="{color: variable.color}" class="customname">{{variable.name}}</div>
-        <div class="customvalue">{{variable.value}}</div>
+        <div :style="{color: variable.vcolor}" class="customvalue">{{variable.value}}</div>
       </div>
     </div>
   </div>

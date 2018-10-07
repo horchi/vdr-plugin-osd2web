@@ -282,6 +282,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
          std::string name;
          std::string value;
          std::string color;
+         std::string vcolor;
       };
 
       // object

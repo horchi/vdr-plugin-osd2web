@@ -192,7 +192,8 @@ int cUpdate::parseVariableFile(const char* path, const char* service)
    char line[500+TB]; *line = 0;
    char* p;
    char* value;
-   char* color;
+   char* color;    // title color
+   char* vcolor;   // value color
    FileVariable var;
 
    if (!(fp = fopen(path, "r")))
@@ -231,12 +232,20 @@ int cUpdate::parseVariableFile(const char* path, const char* service)
 
       // search optinal color
 
-      if ((color = strstr(value, "color ")))
+      if ((color = strstr(value, " color ")))
       {
          *color = 0;
-         color += strlen("color ");
+         color += strlen(" color ");
          allTrim(color);
-         tell(3, "Info: Found color '%s' for '%s' in '%s'", color, line, path);
+         tell(3, "Info: Found title color '%s' for '%s' in '%s'", color, line, path);
+      }
+
+      if ((vcolor = strstr(value, " vcolor ")))
+      {
+         *vcolor = 0;
+         vcolor += strlen(" vcolor ");
+         allTrim(vcolor);
+         tell(3, "Info: Found value color '%s' for '%s' in '%s'", vcolor, line, path);
       }
 
       allTrim(line);
@@ -250,6 +259,7 @@ int cUpdate::parseVariableFile(const char* path, const char* service)
       var.value = xchg ? "" : value;
       var.file = service;
       var.color = notNull(color, "");
+      var.vcolor = notNull(vcolor, "");
 
       var.file = var.file.substr(0, var.file.find_last_of("."));
 

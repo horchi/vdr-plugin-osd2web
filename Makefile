@@ -16,7 +16,7 @@ LASTHIST    = $(shell grep '^20[0-3][0-9]' $(HISTFILE) | head -1)
 LASTCOMMENT = $(subst |,\n,$(shell sed -n '/$(LASTHIST)/,/^ *$$/p' $(HISTFILE) | tr '\n' '|'))
 LASTTAG     = $(shell git describe --tags --abbrev=0)
 BRANCH      = $(shell git rev-parse --abbrev-ref HEAD)
-GIT_REV = $(shell git describe --always 2>/dev/null)
+GIT_REV     = $(shell git describe --always 2>/dev/null)
 
 ### The directory environment:
 
