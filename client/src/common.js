@@ -17,16 +17,20 @@ export var Icon = require('vue-awesome/components/Icon');
 // Diese Methode wird aufgerufen, um die maximale Anzahl Zeilen für das OSD zu ermitteln.
 // Die Werte sollten irgendwie dynamisch ermittelt werden, da sie vom style abhängig sind
 export var maxLinesCalc= {
-//    buttongroupHeight: 29,      // Höhe der Buttonleiste am unteren Rand
-//    headlineHeight: 38,         // Höhe der Headline des OSD
-//    lineHeight: 49,             // Höhe einer Zeile
-    getMax: function() {
-        return parseInt($('#eventarea').height() / $('#menuitem0').height(), 10)
-    }
+    buttongroupHeight: 29,      // Höhe der Buttonleiste am unteren Rand
+    headlineHeight: 38,         // Höhe der Headline des OSD
+    lineHeight: 49,             // Höhe einer Zeile
+    buttongroupSel: '#buttons', // Selector für die Buttonleiste, um dynamisch die Höhe zu ermitteln
+    headlineSel: '#osdTitle',   // Selector für die Headline, um dynamisch die Höhe zu ermitteln
+    lineSel: '.textmenu tr:first', // Selector für eine Menuzeile
+
     // Berechnung der maximal Anzahl Zeilen
-//    getMax: function(){
-//        return parseInt((window.innerHeight - document.body.firstElementChild.offsetTop - this.headlineHeight - this.buttongroupHeight) / this.lineHeight, 10)
-//    }
+    getMax: function(){
+        this.buttongroupHeight= parseInt($(this.buttongroupSel).height() || 0,10);
+        this.headlineHeight= parseInt($(this.headlineSel).height() || 0,10);
+        this.lineHeight= parseInt($(this.lineSel).height() || 50,10);
+        return parseInt((window.innerHeight - document.body.firstElementChild.offsetTop - this.headlineHeight - this.buttongroupHeight) / this.lineHeight, 10)
+    }
 }
 
 VueInst.component('icon', Icon);

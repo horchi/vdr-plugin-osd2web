@@ -1,7 +1,7 @@
 <template>
   <div v-show="$root.curView == 'osd'" id="osdCon">
     <div class="_row dataarea">
-      <div class="container menutitle" @click="$root.sendKey('Back')">
+      <div class="container menutitle" id="osdTitle" @click="$root.sendKey('Back')">
         <h3 class="">
           <icon v-if="!$root.isOnlyView" name="osd-back"></icon>
           {{ title }}
@@ -90,24 +90,25 @@ export default {
             window.addEventListener('resize', checkResize);
         }
 
+ 
         //window.addEventListener('resize', this.checkButtonHeight);
     },
     updated() {
         if (this.title){
              this.$root.$emit("curView", "osd");
-             if (this.$root.isOnlyView)
-                window.addEventListener('resize', this.sendMaxLines);
+             if (this.$root.isOnlyView){
+                window.setTimeout(this.sendMaxLines, 500); // bisschen zeitverzögert, damit auch die Buttons und Zeilen geschrieben sind
+             }
         } else {
              this.$root.$emit("curView", null);
-             window.removeEventListener('resize', this.sendMaxLines);
         }
         //this.checkButtonHeight();
     },
     methods: {
         sendMaxLines(ev, linesMax) { //  header - buttons
-//            let max = linesMax || common.maxLinesCalc.getMax();
-            let max = common.maxLinesCalc.getMax() || 12;
-//            if (max != maxLines) {
+            let max = linesMax || common.maxLinesCalc.getMax() || 12;
+            if (max != maxLines) {
+//            console.log(common.maxLinesCalc)
                 maxLines = max;
                 let data = [];
                 for (let i = 0; i < eMenuCategory.length; i++) data.push({
@@ -121,7 +122,7 @@ export default {
                         "categories": data
                     }
                 });
-//            }
+           }
         }/*,
         checkButtonHeight() {
             let buttons = document.getElementById('buttons');
