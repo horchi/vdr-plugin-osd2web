@@ -1,13 +1,13 @@
 <template>
   <div v-show="$root.curView == 'osd'" id="osdCon">
-    <div class="_row dataarea">
-      <div class="container menutitle" id="osdTitle" @click="$root.sendKey('Back')">
-        <h3 class="">
-          <icon v-if="!$root.isOnlyView" name="osd-back"></icon>
-          {{ title }}
-        </h3>
-      </div>
+    <div class="row dataarea">
       <div id="eventarea" class="eventarea col-12 col-md-9">
+        <div class="menutitle" id="osdTitle" @click="$root.sendKey('Back')">
+            <h3 class="">
+            <icon v-if="!$root.isOnlyView" name="osd-back"></icon>
+            {{ title }}
+            </h3>
+        </div>
         <o2w-textmenu></o2w-textmenu>
         <o2w-event :event="event"></o2w-event>
         <o2w-textarea></o2w-textarea>
@@ -69,10 +69,10 @@ export default {
             this.event = data;
         });
         this.$root.$on("rolechange", (data) => {
-            this.sendMaxLines(null, this.$root.isOnlyView ? null : 50);
+            this.sendMaxLines();
         });
 
-        if (this.$root.isOnlyView){
+        if (!common.maxLinesCalc.canScroll){
             let lastResize= 0;
             let checkInt= false;
             let _this= this;
@@ -81,7 +81,7 @@ export default {
                     checkInt= window.setInterval(checkResize,500);
                 } else{
                     if ( (new Date().getTime() - lastResize) > 500 ){
-                        _this.sendMaxLines(null);
+                        _this.sendMaxLines();
                         checkInt= !!window.clearInterval(checkInt);
                     }
                 }
@@ -90,7 +90,6 @@ export default {
             window.addEventListener('resize', checkResize);
         }
 
- 
         //window.addEventListener('resize', this.checkButtonHeight);
     },
     updated() {
@@ -105,8 +104,8 @@ export default {
         //this.checkButtonHeight();
     },
     methods: {
-        sendMaxLines(ev, linesMax) { //  header - buttons
-            let max = linesMax || common.maxLinesCalc.getMax() || 12;
+        sendMaxLines() { 
+            let max = common.maxLinesCalc.getMax() || 12;
             if (max != maxLines) {
 //            console.log(common.maxLinesCalc)
                 maxLines = max;

@@ -1,5 +1,5 @@
 <template>
-  <div class="event card mt-1"
+  <div v-show="event.title" class="event card mt-1"
        v-bind:class="{ 'eventradiofull'      : isRadio && !hasEpg,
                        'eventradio'          : isRadio && hasEpg,
                        'eventfull'           : !isRadio && isFullevent,
@@ -7,7 +7,7 @@
                        'eventfollowing'      : !hasRadio && !isRadio && !isFullevent && !isPresent,
                        'eventfollowingsmall' : hasRadio && !isRadio && !isFullevent && !isPresent
                      }">
-    <div v-show="event.title" style="height: 100%;">
+    <div style="height: 100%;">
       <div class="card-body p-1" style="height: 100%;">
         <div class="progress" v-show="progress >= 0">
           <div class="progress-bar" role="progressbar"

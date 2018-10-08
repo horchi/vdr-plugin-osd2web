@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.44"
-#define VERSION_DATE  "07.10.2018"
+#define _VERSION      "0.2.45"
+#define VERSION_DATE  "08.10.2018"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,10 @@
 
 /*
  * ------------------------------------
+
+2018-10-08: version 0.2.45 (rechner)
+   - change: switch on/off for maxline
+   - fix layout for OSD
 
 2018-10-07: version 0.2.44 (rechner)
    - change: calculate the maxLines dynamicly
