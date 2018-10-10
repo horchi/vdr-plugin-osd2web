@@ -5,7 +5,7 @@
     </div>
     <div v-else="">
       <div class="row dataarea">
-        <o2w-actual class="eventarea col-12 col-md-9" />
+        <o2w-actual :actual="actual" class="eventarea col-12 col-md-9" />
         <div class="rightarea pr-2 col-12 col-md-3">
           <o2w-timer class="timerarea" />
           <o2w-customdata class="customarea" />
@@ -24,13 +24,17 @@ export default {
     data() {
         return {
             diashow_active: null,
-            diashow: {}
+            diashow: {},
+            actual: {}
         }
     },
     created() {
         this.$root.$on("diashow", (data) => {
             this.diashow_active = data.active;
             this.diashow = data;
+        });
+        this.$root.$on("actual", (data) => {
+            this.actual = data;
         });
     },
     computed: {

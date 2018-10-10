@@ -662,11 +662,10 @@ int cUpdate::performLogin(json_t* oObject)
       cUpdate::pushMessage(oRole, "rolechange", lastClient);
    }
 
-   // active for 'new' client ...
+   // and for 'new' client ...
 
    {
       json_t* oRole = json_object();
-
       addToJson(oRole, "role", type == ctInteractive ? "active" : "passive");
       addToJson(oRole, "havelogos", folderExists(config.logoPath));
       cUpdate::pushMessage(oRole, "rolechange", client);

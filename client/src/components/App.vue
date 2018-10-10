@@ -1,20 +1,18 @@
 <template>
-<div id="app-view" class="viewport">
+  <div id="app-view" class="viewport">
     <o2w-navigation v-if="!$root.isOnlyView" :items="$root.menuItems" :itemsRight="$root.menuItemsRight"></o2w-navigation>
     <o2w-statusmessage></o2w-statusmessage>
     <div class="d-flex flex-row">
-       <o2w-remote v-if="!$root.isOnlyView"></o2w-remote>
-       <div id="o2wContainer" class="container-fluid">
-          <o2w-osd name="osd"></o2w-osd>
-          <div id="o2wContent" v-show="$root.curView !='osd'">
-             <o2w-overview></o2w-overview>
-          </div>
-       </div>
+      <o2w-remote v-if="!$root.isOnlyView" />
+      <div id="o2wContainer" class="container-fluid">
+        <o2w-osd id="osdCon" name="osd" v-show="$root.curView == 'osd'" />
+        <o2w-overview id="o2wContent"   v-show="$root.curView != 'osd'" />
+      </div>
     </div>
-</div>
+  </div>
 </template>
-<script>
 
+<script>
 export default {
     name: 'o2w-app'
 }

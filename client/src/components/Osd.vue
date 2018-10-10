@@ -1,27 +1,23 @@
 <template>
-  <div v-show="$root.curView == 'osd'" id="osdCon">
-    <div class="row dataarea">
-      <div id="eventarea" class="eventarea col-12 col-md-9">
-        <div class="menutitle" id="osdTitle" @click="$root.sendKey('Back')">
-            <h3 class="">
-            <icon v-if="!$root.isOnlyView" name="osd-back"></icon>
-            {{ title }}
-            </h3>
-        </div>
-        <o2w-textmenu></o2w-textmenu>
-        <o2w-event :event="event"></o2w-event>
-        <o2w-textarea></o2w-textarea>
-        <o2w-osdbuttons />
+  <div class="row dataarea">
+    <div id="eventarea" class="eventarea col-12 col-md-9">
+      <div class="menutitle" id="osdTitle" @click="$root.sendKey('Back')">
+        <h3 class="">
+          <icon v-if="!$root.isOnlyView" name="osd-back"></icon>
+          {{ title }}
+        </h3>
       </div>
-      <div class="rightarea pr-2 col-12 col-md-3">
-        <div class="timerarea">
-          <o2w-timer />
-        </div>
-        <o2w-customdata class="customarea" />
-        <o2w-recording class="recordingarea" />
-      </div>
-      <o2w-statusbar />
+      <o2w-textmenu />
+      <o2w-event :event="event" />
+      <o2w-textarea />
+      <o2w-osdbuttons />
     </div>
+    <div class="rightarea pr-2 col-12 col-md-3">
+      <o2w-timer class="timerarea" />
+      <o2w-customdata class="customarea" />
+      <o2w-recording class="recordingarea" />
+    </div>
+    <o2w-statusbar />
   </div>
 </template>
 
@@ -37,7 +33,7 @@ function getClearData(){
       title: '',
       category: -1,
       event: {},
-      maxLines: maxLines                                       // maximale Anzahl Zeilen, die der Client darstellen kann
+      maxLines: maxLines   // maximale Anzahl Zeilen, die der Client darstellen kann
   }
 }
 export default {
@@ -104,7 +100,7 @@ export default {
         //this.checkButtonHeight();
     },
     methods: {
-        sendMaxLines() { 
+        sendMaxLines() {
             let max = common.maxLinesCalc.getMax() || 12;
             if (max != maxLines) {
 //            console.log(common.maxLinesCalc)

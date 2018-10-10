@@ -27,6 +27,7 @@ Vue.component('o2w-osdbuttons', require('OsdButtons'))
 export var root = {
     data: {
         isOnlyView: /[?&]onlyView/.test(location.search),   // reine Anzeige ohne direkte Interaktion über den Client
+        tftPrio: location.search.match(/[?&]tftPrio=([0-9]+(;[0-9]+)?)/i),
         isActive: false,                                    // ist der Client am VDR als aktive angemeldet
         skinAttached: false,
         hasChannelLogos: false,
@@ -226,8 +227,9 @@ export var root = {
                 protocol: "osd2vdr",
                 autoReconnectInterval: 10000,
                 onopen: () => {
-                    if ( this.isActive === null) // Dann wurde es beim Schliessen auf null gesetzt
-                        this.$socket.send({ "event": "login", "object": { "type": + (this.isOnlyView ? 1 : 0) } });
+                    if (this.isActive === null) // Dann wurde es beim Schliessen auf null gesetzt
+                        this.$socket.send({ "event": "login", "object": { "type": + (this.isOnlyView ? 1 : 0),
+                                                                          "tftprio": + (this.tftPrio ? this.tftPrio[1] : 100) } });
                 }, onclose: () => {
                     this.isActive = null; // auf null setzten, dass ein neues login aufgerufen wird
                 },
@@ -245,7 +247,8 @@ export var root = {
 
             // Nachrichten/Anfragen der Komponenten an den Server weiterleiten
             this.$on("send", this.$socket.send);
-            this.$socket.send({ "event": "login", "object": { "type": + (this.isOnlyView ? 1 : 0) } });
+            this.$socket.send({ "event": "login", "object": { "type": + (this.isOnlyView ? 1 : 0),
+                                                              "tftprio": + (this.tftPrio ? this.tftPrio[1] : 100) } });
             this.menuItemsRight.push(skinMenuItem);
 
             if (!this.isOnlyView) {

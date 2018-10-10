@@ -146,6 +146,7 @@ class cWebSock : public cOsdService
       struct Client
       {
          ClientType type;
+         int tftprio;
          std::queue<std::string> messagesOut;
          cMutex messagesOutMutex;
          void* wsi;
@@ -188,6 +189,7 @@ class cWebSock : public cOsdService
       // static interface
 
       static void activateAvailableClient();
+      static int isHighestViewClient(lws* wsi);
       static void atLogin(lws* wsi, const char* message, const char* clientInfo);
       static void atLogout(lws* wsi, const char* message, const char* clientInfo);
       static int getClientCount();

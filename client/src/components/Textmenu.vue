@@ -1,21 +1,21 @@
 <template>
-    <table v-if="colCount > 0" class="table table-hover textmenu" :class="{'text-nowrap':$root.isOnlyView}">
-        <tbody>
-          <tr v-for="(row, rowIndex) in rows"
-              :id="'menuitem' + rowIndex"
-              :key="rowIndex"
-              :class="{'table-active': rowIndex == textmenucurrent, 'textmenu-current': rowIndex == textmenucurrent}"
-              @click="row.selectable && doAction(rowIndex)">
-                <td v-for="(col, index) in row.cols" :key="index" :class="{'bg-warning': rowIndex == textmenucurrent && index== 1 && canEdit == 1}">{{col}}</td>
-                <td v-if="row.selectable && canEdit==1" class="btn-group btn-group-sm">
-                    <a class="btn btn-secondary" @click.stop="doAction(rowIndex,'Left')" ><icon name="caret-left" /></a>
-                    <a v-show="row.textEdit" class="btn btn-secondary" @click.stop="$root.sendKey('Up')"><icon name="caret-up" /></a>
-                    <a v-show="row.textEdit" class="btn btn-secondary" @click.stop="$root.sendKey('Down')"><icon name="caret-down" /></a>
-                    <a class="btn btn-secondary" @click.stop="doAction(rowIndex,'Right')"><icon name="caret-right" /></a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+  <table v-if="colCount > 0" class="table table-hover textmenu" :class="{'text-nowrap':$root.isOnlyView}">
+    <tbody>
+      <tr v-for="(row, rowIndex) in rows"
+          :id="'menuitem' + rowIndex"
+          :key="rowIndex"
+          :class="{'table-active': rowIndex == textmenucurrent, 'textmenu-current': rowIndex == textmenucurrent}"
+          @click="row.selectable && doAction(rowIndex)">
+        <td v-for="(col, index) in row.cols" :key="index" :class="{'bg-warning': rowIndex == textmenucurrent && index== 1 && canEdit == 1}">{{col}}</td>
+        <td v-if="row.selectable && canEdit==1" class="btn-group btn-group-sm">
+          <a class="btn btn-secondary" @click.stop="doAction(rowIndex,'Left')" ><icon name="caret-left" /></a>
+          <a v-show="row.textEdit" class="btn btn-secondary" @click.stop="$root.sendKey('Up')"><icon name="caret-up" /></a>
+          <a v-show="row.textEdit" class="btn btn-secondary" @click.stop="$root.sendKey('Down')"><icon name="caret-down" /></a>
+          <a class="btn btn-secondary" @click.stop="doAction(rowIndex,'Right')"><icon name="caret-right" /></a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </template>
 
 <script>
@@ -40,7 +40,6 @@ export default {
         return getClearData();
     },
     created() {
-
         this.$root.$on("clearmenu", (data) => {
            let clearData= getClearData();
            for (let key in clearData)
