@@ -2,10 +2,8 @@
   <div class="row dataarea">
     <div id="eventarea" class="eventarea col-12 col-md-9">
       <div class="menutitle" id="osdTitle" @click="$root.sendKey('Back')">
-        <h3 class="">
           <icon v-if="!$root.isOnlyView" name="osd-back"></icon>
           {{ title }}
-        </h3>
       </div>
       <o2w-textmenu />
       <o2w-event :event="event" />
@@ -101,7 +99,7 @@ export default {
     },
     methods: {
         sendMaxLines() {
-            let max = common.maxLinesCalc.getMax() || 12;
+            let max = common.maxLinesCalc.getMax();
             if (max != maxLines) {
 //            console.log(common.maxLinesCalc)
                 maxLines = max;

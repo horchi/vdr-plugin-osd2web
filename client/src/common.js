@@ -32,7 +32,8 @@ export var maxLinesCalc= {
         this.buttongroupHeight= parseInt($(this.buttongroupSel).height() || 0,10);
         this.headlineHeight= parseInt($(this.headlineSel).height() || 0,10);
         this.lineHeight= parseInt($(this.lineSel).height() || 50,10);
-        return parseInt((window.innerHeight - document.body.firstElementChild.offsetTop - this.headlineHeight - this.buttongroupHeight) / this.lineHeight, 10)
+        return parseInt((window.innerHeight - document.body.firstElementChild.offsetTop
+                         - this.headlineHeight - this.buttongroupHeight) / this.lineHeight, 10)
     }
 }
 

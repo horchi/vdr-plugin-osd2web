@@ -95,10 +95,10 @@ body {
 }
 
 .menutitle {
-   //height: 4vh;
-   overflow: hidden;
-   margin-top: 1vh;
-   text-align: center;
+    font-size: 6vh;
+    overflow: hidden;
+    margin-top: 1vh;
+    text-align: center;
 }
 
 .event  {
@@ -379,11 +379,11 @@ body {
 // menu
 
 .textmenu  {
-    font-size: 2.7vh;
+    font-size: 4vh;
     border-radius: .25rem;
 }
 
 .textmenu-current  {
     border-radius: .25rem;
-    font-size: 3.0vh;
+    font-size: 4vh;
 }
