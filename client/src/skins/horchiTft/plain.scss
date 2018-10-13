@@ -45,7 +45,7 @@ body {
 // container
 
 .dataarea {
-    height: 94vh;
+    height: 92vh;
     overflow: hidden;
 }
 
@@ -55,7 +55,7 @@ body {
 }
 
 .statusbar {
-    height: 6vh;
+    height: 8vh;
     position: fixed;
     bottom: 2px;
     z-index: 99;
@@ -65,18 +65,20 @@ body {
 }
 
 .btn  {
-   height: 40px
+    height: 8vh;
+    font-size: 4vh;
 }
 
 .osdbuttons  {
     margin-left: 50px;
 }
+
 .eventarea {
     padding: 0px 5px 0px 5px;
 }
 
 .rightarea {
-    height: 93vh;
+    height: 92vh;
     overflow: hidden;
     padding: 0px;
 }
@@ -379,11 +381,18 @@ body {
 // menu
 
 .textmenu  {
-    font-size: 4vh;
+    font-size: 4.5vh;
     border-radius: .25rem;
 }
 
+.menurow {
+    height: 8vh !important;
+}
+
 .textmenu-current  {
-    border-radius: .25rem;
-    font-size: 4vh;
+}
+
+.table th, .table td {
+    padding: 0px;
+    vertical-align: middle;
 }

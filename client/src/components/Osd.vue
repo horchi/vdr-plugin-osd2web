@@ -24,14 +24,14 @@
 var common=require("common");
 common.Icon.register({"osd-back":{"width":1280,"height":1792,"paths":[{"d":"M1171 301l-531 531 531 531q19 19 19 45t-19 45l-166 166q-19 19-45 19t-45-19l-742-742q-19-19-19-45t19-45l742-742q19-19 45-19t45 19l166 166q19 19 19 45t-19 45z"}]}})
 
-var maxLines= 0;
+// var maxLines= 0;
 
 function getClearData() {
   return {
       title: '',
       category: -1,
-      event: {},
-      maxLines: maxLines   // maximale Anzahl Zeilen, die der Client darstellen kann
+      event: {}
+      // maxLines: maxLines   // maximale Anzahl Zeilen, die der Client darstellen kann
   }
 }
 export default {
@@ -58,7 +58,6 @@ export default {
             this.category = data.category;
             this.title = data.title;
             this.$root.$set(menuItem, "on", true);
-            // this.sendMaxLines();
         });
         this.$root.$on("event", (data) => {
             this.event = data;
@@ -71,11 +70,11 @@ export default {
             let lastResize= 0;
             let checkInt= false;
             let _this= this;
-            function checkResize(ev){
-                if (!checkInt){
+            function checkResize(ev) {
+                if (!checkInt) {
                     checkInt= window.setInterval(checkResize,500);
                 } else {
-                    if ((new Date().getTime() - lastResize) > 500 ){
+                    if ((new Date().getTime() - lastResize) > 500 ) {
                         _this.sendMaxLines();
                         checkInt= !!window.clearInterval(checkInt);
                     }
@@ -100,21 +99,21 @@ export default {
     },
     methods: {
         sendMaxLines() {
-            let max = common.maxLinesCalc.getMax();
+            //let max = common.maxLinesCalc.getMax();
             // if (max != maxLines) {
             //            console.log(common.maxLinesCalc)
-            maxLines = max;
+            //maxLines = max;
             let data = [];
-            //data.push({
-            //    "category": this.category,
-            //    "maxlines": max,
-            //    "shape": eMenuCategory[this.category].shape
-            //});
-            for (let i = 0; i < eMenuCategory.length; i++) data.push({
-                "category": i,
-                "maxlines": max,
-                "shape": eMenuCategory[i].shape
+            data.push({
+                "category": this.category,
+                "maxlines": common.maxLinesCalc.canScroll ? 100 : eMenuCategory[this.category].maxlines,
+                "shape": eMenuCategory[this.category].shape
             });
+            //for (let i = 0; i < eMenuCategory.length; i++) data.push({
+            //    "category": i,
+            //    "maxlines": common.maxLinesCalc.canScroll ? 100 : eMenuCategory[i].maxlines,  // max
+            //    "shape": eMenuCategory[i].shape
+            //});
             this.$root.$emit("send", {
                 "event": "maxlines",
                 object: {
@@ -134,125 +133,125 @@ export default {
 const eMenuCategory = [
     {
         "category": 'mcUnknown',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcMain',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcSchedule',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcScheduleNow',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcScheduleNext',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcChannel',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcChannelEdit',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcTimer',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1 //4 für ausführliche Informationen
     }, {
         "category": 'mcTimerEdit',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcRecording',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcRecordingInfo',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcRecordingEdit',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcPlugin',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcPluginSetup',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcSetup',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcSetupOsd',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcSetupEpg',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcSetupDvb',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcSetupLnb',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcSetupCam',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcSetupRecord',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcSetupReplay',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcSetupMisc',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcSetupPlugins',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcCommand',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcEvent',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1 //4 für ausführliche Informationen
     }, {
         "category": 'mcText',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcFolder',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }, {
         "category": 'mcCam',
-        "maxlines": 100,
+        "maxlines": 10,
         "shape": 1
     }
 ];
 eMenuCategory['-1'] = {
     "category": 'mcUndefined',
-    "maxlines": 100,
+    "maxlines": 10,
     "shape": 1
 };
 

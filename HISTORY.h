@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.47"
-#define VERSION_DATE  "12.10.2018"
+#define _VERSION      "0.2.48"
+#define VERSION_DATE  "13.10.2018"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2018-10-13: version 0.2.48 (horchi)
+   - change: Improved menu display for skin horchiTft
 
 2018-10-12: version 0.2.47 (horchi)
    - bugfix: Fixed menu line count handling

@@ -25,8 +25,8 @@ Dieses Paket bringt in der Regel bereist npm mit. 'nodejs' wird mintestens in Ve
 Wenn es bei Ubuntu klemmt weil ggf das mitgelieferte nodejs zu alt ist:
   - entweder hier: https://www.ubuntuupdates.org/ppa/nodejs_8.x
   - oder hier https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-16-04
-    wie unter "How To Install Using a PPA" beschiebenen
-das passende PPA für das vorliegende System bzw. Distributuion installieren.
+    wie unter "How To Install Using a PPA" beschieben
+    das passende PPA für das vorliegende System bzw. Distributuion installieren.
 
 Nun kann das Build-Environment für den Client installiert werden:
 #> make buildenv
