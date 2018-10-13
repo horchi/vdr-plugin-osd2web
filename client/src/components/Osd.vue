@@ -57,7 +57,8 @@ export default {
         this.$root.$on("menu", (data) => {
             this.category = data.category;
             this.title = data.title;
-            this.$root.$set(menuItem, "on",true);
+            this.$root.$set(menuItem, "on", true);
+            this.sendMaxLines();
         });
         this.$root.$on("event", (data) => {
             this.event = data;
@@ -66,32 +67,32 @@ export default {
             this.sendMaxLines();
         });
 
-        if (!common.maxLinesCalc.canScroll){
-            let lastResize= 0;
-            let checkInt= false;
-            let _this= this;
-            function checkResize(ev){
-                if (!checkInt){
-                    checkInt= window.setInterval(checkResize,500);
-                } else{
-                    if ( (new Date().getTime() - lastResize) > 500 ){
-                        _this.sendMaxLines();
-                        checkInt= !!window.clearInterval(checkInt);
-                    }
-                }
-                lastResize= new Date().getTime();
-            }
-            window.addEventListener('resize', checkResize);
-        }
+//        if (!common.maxLinesCalc.canScroll) {
+//            let lastResize= 0;
+//            let checkInt= false;
+//            let _this= this;
+//            function checkResize(ev){
+//                if (!checkInt){
+//                    checkInt= window.setInterval(checkResize,500);
+//                } else {
+//                    if ((new Date().getTime() - lastResize) > 500 ){
+//                        _this.sendMaxLines();
+//                        checkInt= !!window.clearInterval(checkInt);
+//                    }
+//                }
+//                lastResize= new Date().getTime();
+//            }
+//            window.addEventListener('resize', checkResize);
+//        }
 
         //window.addEventListener('resize', this.checkButtonHeight);
     },
     updated() {
         if (this.title){
              this.$root.$emit("curView", "osd");
-             if (this.$root.isOnlyView){
-                window.setTimeout(this.sendMaxLines, 500); // bisschen zeitverzögert, damit auch die Buttons und Zeilen geschrieben sind
-             }
+//             if (!common.maxLinesCalc.canScroll) {
+//                window.setTimeout(this.sendMaxLines, 500); // bisschen zeitverzögert, damit auch die Buttons und Zeilen geschrieben sind
+//             }
         } else {
              this.$root.$emit("curView", null);
         }
@@ -100,7 +101,7 @@ export default {
     methods: {
         sendMaxLines() {
             let max = common.maxLinesCalc.getMax();
-            if (max != maxLines) {
+              // if (max != maxLines) {
 //            console.log(common.maxLinesCalc)
                 maxLines = max;
                 let data = [];
@@ -115,7 +116,7 @@ export default {
                         "categories": data
                     }
                 });
-           }
+         //  }
         }/*,
         checkButtonHeight() {
             let buttons = document.getElementById('buttons');

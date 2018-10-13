@@ -469,7 +469,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
          {
             tell(3, "DEBUG: Got '%s'", message);
             clients[wsi].type = (ClientType)getIntFromJson(oObject, "type", ctInteractive);
-            clients[wsi].tftprio = (ClientType)getIntFromJson(oObject, "tftprio", na);
+            clients[wsi].tftprio = (ClientType)getIntFromJson(oObject, "tftprio", 100);
             atLogin(wsi, message, clientInfo.c_str());
 
             // set only to 'active' if client is interested
@@ -486,12 +486,17 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
          }
          else if (event == evChannels)
             cUpdate::messagesIn.push(message);
-         else if (activeClient && activeClient == wsi)      // accept data only from active client
+         else if (activeClient && activeClient == wsi)       // accept data only from active client
             cUpdate::messagesIn.push(message);
-         else if (activeClient && isHighestViewClient(wsi)) // or no active is available and it is the view clinet with best prio
+         else if (!activeClient && isHighestViewClient(wsi)) // or no active is available and it is the view clinet with best prio
+         {
+            tell(2, "Debug: Taking data of view client, prio (%d) [%s]", clients[wsi].tftprio, message);
             cUpdate::messagesIn.push(message);
+         }
          else
-            tell(1, "Ignoring data of not 'active client (%p)", (void*)wsi);
+            tell(2, "Debug: Ignoring data of not 'active' client (%p) prio (%d) %s [%s]",
+                 (void*)wsi, clients[wsi].tftprio,
+                 activeClient ? "at least one active clinet is connected" : "", message);
 
          json_decref(oData);
 
@@ -506,7 +511,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
          tell(1, "Client '%s' connected (%p), ping time set to (%d)", clientInfo.c_str(), (void*)wsi, timeout);
          clients[wsi].wsi = wsi;
          clients[wsi].type = ctInactive;
-         clients[wsi].tftprio = na;
+         clients[wsi].tftprio = 100;
 
          break;
       }
@@ -577,13 +582,15 @@ void cWebSock::activateAvailableClient()
 int cWebSock::isHighestViewClient(lws* wsi)
 {
    cMutexLock lock(&clientsMutex);
-   int prio = na;
+   int prio = 999;
 
    for (auto it = clients.begin(); it != clients.end(); ++it)
    {
       if (it->second.type == ctView && it->second.tftprio < prio)
          prio = it->second.tftprio;
    }
+
+   tell(1, "lowest prio is (%d)", prio);
 
    if (clients[wsi].tftprio <= prio)
       return yes;
@@ -625,7 +632,10 @@ void cWebSock::atLogout(lws* wsi, const char* message, const char* clientInfo)
 
    clients.erase(wsi);
 
-   if (!activeClient || activeClient == wsi)
+   if (activeClient == wsi)
+      activeClient = 0;
+
+   if (!activeClient)
       activateAvailableClient();
 }
 
