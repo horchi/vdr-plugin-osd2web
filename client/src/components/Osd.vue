@@ -26,7 +26,7 @@ common.Icon.register({"osd-back":{"width":1280,"height":1792,"paths":[{"d":"M117
 
 var maxLines= 0;
 
-function getClearData(){
+function getClearData() {
   return {
       title: '',
       category: -1,
@@ -58,7 +58,7 @@ export default {
             this.category = data.category;
             this.title = data.title;
             this.$root.$set(menuItem, "on", true);
-            this.sendMaxLines();
+            // this.sendMaxLines();
         });
         this.$root.$on("event", (data) => {
             this.event = data;
@@ -67,56 +67,61 @@ export default {
             this.sendMaxLines();
         });
 
-//        if (!common.maxLinesCalc.canScroll) {
-//            let lastResize= 0;
-//            let checkInt= false;
-//            let _this= this;
-//            function checkResize(ev){
-//                if (!checkInt){
-//                    checkInt= window.setInterval(checkResize,500);
-//                } else {
-//                    if ((new Date().getTime() - lastResize) > 500 ){
-//                        _this.sendMaxLines();
-//                        checkInt= !!window.clearInterval(checkInt);
-//                    }
-//                }
-//                lastResize= new Date().getTime();
-//            }
-//            window.addEventListener('resize', checkResize);
-//        }
+        if (!common.maxLinesCalc.canScroll) {
+            let lastResize= 0;
+            let checkInt= false;
+            let _this= this;
+            function checkResize(ev){
+                if (!checkInt){
+                    checkInt= window.setInterval(checkResize,500);
+                } else {
+                    if ((new Date().getTime() - lastResize) > 500 ){
+                        _this.sendMaxLines();
+                        checkInt= !!window.clearInterval(checkInt);
+                    }
+                }
+                lastResize= new Date().getTime();
+            }
+            window.addEventListener('resize', checkResize);
+        }
 
         //window.addEventListener('resize', this.checkButtonHeight);
     },
     updated() {
-        if (this.title){
-             this.$root.$emit("curView", "osd");
-//             if (!common.maxLinesCalc.canScroll) {
-//                window.setTimeout(this.sendMaxLines, 500); // bisschen zeitverzögert, damit auch die Buttons und Zeilen geschrieben sind
-//             }
+        if (this.title) {
+            this.$root.$emit("curView", "osd");
+            if (!common.maxLinesCalc.canScroll) {
+                window.setTimeout(this.sendMaxLines, 500); // bisschen zeitverzögert, damit auch die Buttons und Zeilen geschrieben sind
+            }
         } else {
-             this.$root.$emit("curView", null);
+            this.$root.$emit("curView", null);
         }
         //this.checkButtonHeight();
     },
     methods: {
         sendMaxLines() {
             let max = common.maxLinesCalc.getMax();
-              // if (max != maxLines) {
-//            console.log(common.maxLinesCalc)
-                maxLines = max;
-                let data = [];
-                for (let i = 0; i < eMenuCategory.length; i++) data.push({
-                    "category": i,
-                    "maxlines": max,
-                    "shape": eMenuCategory[i].shape
-                });
-                this.$root.$emit("send", {
-                    "event": "maxlines",
-                    object: {
-                        "categories": data
-                    }
-                });
-         //  }
+            // if (max != maxLines) {
+            //            console.log(common.maxLinesCalc)
+            maxLines = max;
+            let data = [];
+            //data.push({
+            //    "category": this.category,
+            //    "maxlines": max,
+            //    "shape": eMenuCategory[this.category].shape
+            //});
+            for (let i = 0; i < eMenuCategory.length; i++) data.push({
+                "category": i,
+                "maxlines": max,
+                "shape": eMenuCategory[i].shape
+            });
+            this.$root.$emit("send", {
+                "event": "maxlines",
+                object: {
+                    "categories": data
+                }
+            });
+            //  }
         }/*,
         checkButtonHeight() {
             let buttons = document.getElementById('buttons');

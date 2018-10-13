@@ -764,10 +764,13 @@ int cUpdate::performMaxLineRequest(json_t* oRequest)
       json_t* obj = json_array_get(objMaxLines, i);
       int category = getIntFromJson(obj, "category");
 
-      if (category <= mcCam)
+      if (category >= 0 && category <= mcCam)
       {
-         menuMaxLines[i].maxLines = getIntFromJson(obj, "maxlines");
-         menuMaxLines[i].shape = (ObjectShape)getIntFromJson(obj, "shape");
+         menuMaxLines[category].maxLines = getIntFromJson(obj, "maxlines");
+         menuMaxLines[category].shape = (ObjectShape)getIntFromJson(obj, "shape");
+
+         /* tell(2, "maxlines for category (%d) now (%d)", */
+         /*      category, menuMaxLines[category].maxLines); */
       }
    }
 

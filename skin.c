@@ -148,7 +148,8 @@ int cSkinOsd2WebDisplayMenu::MaxItems()
 
    if (MenuCategory() >= mcUnknown && MenuCategory() <= mcCam)
    {
-      tell(2, "Set VDRs MaxItems to %d", cUpdate::menuMaxLines[MenuCategory()].maxLines);
+      tell(2, "Set VDRs MaxItems to %d (category %d)",
+           cUpdate::menuMaxLines[MenuCategory()].maxLines, MenuCategory());
       return cUpdate::menuMaxLines[MenuCategory()].maxLines;
    }
 
