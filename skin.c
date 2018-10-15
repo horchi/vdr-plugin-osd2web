@@ -225,7 +225,8 @@ bool cSkinOsd2WebDisplayMenu::SetItemEvent(const cEvent *Event, int Index, bool 
                                            bool Selectable, const cChannel *Channel,
                                            bool WithDate, eTimerMatch TimerMatch, bool TimerActive)
 {
-   tell(4, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetItemEvent()");
+   tell(4, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetItemEvent() - requestet shape (%d)",
+        cUpdate::menuMaxLines[MenuCategory()].shape);
 
    if (cUpdate::menuMaxLines[MenuCategory()].shape & cOsdService::osText)
       return false;

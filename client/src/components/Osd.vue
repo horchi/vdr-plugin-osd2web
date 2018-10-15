@@ -5,15 +5,21 @@
           <icon v-if="!$root.isOnlyView" name="osd-back"></icon>
           {{ title }}
       </div>
-      <o2w-textmenu />
-      <o2w-event :event="event" />
+      <o2w-eventmenu v-show="object_menu == true" />
+      <o2w-textmenu v-show="object_menu != true" />
+      <o2w-event v-show="have_event" :event="event" />
       <o2w-textarea />
       <o2w-osdbuttons />
     </div>
     <div class="rightarea pr-2 col-12 col-md-3">
-      <o2w-timer class="timerarea" />
-      <o2w-customdata class="customarea" />
-      <o2w-recording class="recordingarea" />
+      <div v-if="object_menu">
+        <o2w-rightevent :event="eventitem" />
+      </div>
+      <div v-else="">
+        <o2w-timer class="timerarea" />
+        <o2w-customdata class="customarea" />
+        <o2w-recording class="recordingarea" />
+      </div>
     </div>
     <o2w-statusbar />
   </div>
@@ -30,7 +36,10 @@ function getClearData() {
   return {
       title: '',
       category: -1,
-      event: {}
+      event: {},
+      eventitem: {},
+      have_event: false,
+      object_menu: null
       // maxLines: maxLines   // maximale Anzahl Zeilen, die der Client darstellen kann
   }
 }
@@ -42,7 +51,7 @@ export default {
     created() {
         let menuItem= {
             label: '_O_SD',
-            isHidden: function(navComp){
+            isHidden: function(navComp) {
                 return !navComp.$root.isActive
             },
             key: 'menu'
@@ -52,7 +61,7 @@ export default {
             let clearData= getClearData();
             for (let key in clearData)
                 this[key]= clearData[key];
-            this.$root.$set(menuItem, "on",false);
+            this.$root.$set(menuItem, "on", false);
         });
         this.$root.$on("menu", (data) => {
             this.category = data.category;
@@ -60,7 +69,13 @@ export default {
             this.$root.$set(menuItem, "on", true);
         });
         this.$root.$on("event", (data) => {
+            this.have_event = true;
             this.event = data;
+        });
+        this.$root.$on("eventitem", (data) => {
+            this.object_menu = true;
+            if (data.current)
+                this.eventitem = data.event;
         });
         this.$root.$on("rolechange", (data) => {
             this.sendMaxLines();
@@ -107,7 +122,7 @@ export default {
             data.push({
                 "category": this.category,
                 "maxlines": common.maxLinesCalc.canScroll ? 100 : eMenuCategory[this.category].maxlines,
-                "shape": eMenuCategory[this.category].shape
+                "shape": common.maxLinesCalc.canScroll ? 1 : eMenuCategory[this.category].shape
             });
             //for (let i = 0; i < eMenuCategory.length; i++) data.push({
             //    "category": i,
@@ -146,7 +161,7 @@ const eMenuCategory = [
     }, {
         "category": 'mcScheduleNow',
         "maxlines": 10,
-        "shape": 1
+        "shape": 2
     }, {
         "category": 'mcScheduleNext',
         "maxlines": 10,

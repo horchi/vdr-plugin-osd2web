@@ -97,7 +97,7 @@ export default {
       }
     },
     computed: {
-       description:  function () {
+       description: function () {
           return this.event.description ? this.event.description.replace(/\n/g, '<br />') : '';
        },
        progress: function () {

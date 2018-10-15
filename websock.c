@@ -488,7 +488,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
             cUpdate::messagesIn.push(message);
          else if (activeClient && activeClient == wsi)       // accept data only from active client
             cUpdate::messagesIn.push(message);
-         else if (!activeClient && isHighestViewClient(wsi)) // or no active is available and it is the view clinet with best prio
+         else if (!activeClient && isHighestViewClient(wsi)) // or no active is available and it is the view client with best prio
          {
             tell(2, "Debug: Taking data of view client, prio (%d) [%s]", clients[wsi].tftprio, message);
             cUpdate::messagesIn.push(message);
@@ -496,7 +496,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
          else
             tell(2, "Debug: Ignoring data of not 'active' client (%p) prio (%d) %s [%s]",
                  (void*)wsi, clients[wsi].tftprio,
-                 activeClient ? "at least one active clinet is connected" : "", message);
+                 activeClient ? "at least one active client is connected" : "", message);
 
          json_decref(oData);
 
