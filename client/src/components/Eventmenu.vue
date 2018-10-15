@@ -5,11 +5,16 @@
           :key="rowIndex"
           :class="{'table-active': rowIndex == textmenucurrent, 'textmenu-current': rowIndex == textmenucurrent}"
           @click="row.selectable && doAction(rowIndex)">
-        <td :key="index" class="menurow">
-          {{ $root.formatTime(row.event.starttime) }}
-        </td>
-        <td> {{ row.channelname }} </td>
-        <td> {{ row.event.title }} </td>
+        <template v-if="row.event.eventid > 0">
+          <td :key="index" class="menurow">
+            <img style="max-height: 40%" :src="'/data/channellogo?name=' + logoname(rowIndex) + '&id=' + row.event.channel.channelid" />
+          </td>
+          <td class="menurow"> {{ $root.formatTime(row.event.starttime) }} </td>
+          <td class="menurow"> {{ row.event.title }} </td>
+        </template>
+        <template v-else="">
+          <td colspan="100%" class="textmenu-sep"> {{ row.event.shorttext }} </td>
+        </template>
       </tr>
     </tbody>
   </table>
@@ -47,12 +52,11 @@ export default {
                 this.textmenucurrent = data.index;
         });
     },
-    computed: {
-        logoname: function () {
-            return this.$root.hasChannelLogos && this.channel.channelname ? encodeURIComponent(this.channel.channelname) : '';
-        },
-    },
     methods: {
+        logoname(rowIndex, key) {
+            let row = this.rows[rowIndex];
+            return this.$root.hasChannelLogos && row.event.channel.channelname ? encodeURIComponent(row.event.channel.channelname) : '';
+        },
         doAction(rowIndex, key) {
             let delta = rowIndex - this.textmenucurrent;
             if (delta != 0) {

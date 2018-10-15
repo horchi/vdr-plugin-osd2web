@@ -387,9 +387,14 @@ body {
 
 .menurow {
     height: 8vh !important;
+    padding-right: 12px !important;
 }
 
 .textmenu-current  {
+}
+
+.textmenu-sep {
+    text-align: center;
 }
 
 .table th, .table td {
