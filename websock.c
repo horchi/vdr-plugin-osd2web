@@ -326,6 +326,8 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
       case LWS_CALLBACK_GET_THREAD_ID:
       case LWS_CALLBACK_HTTP_BIND_PROTOCOL:
       case LWS_CALLBACK_HTTP_DROP_PROTOCOL:
+      case LWS_CALLBACK_HTTP_CONFIRM_UPGRADE:
+      case LWS_CALLBACK_EVENT_WAIT_CANCELLED:
          break;
 
       default:
@@ -452,15 +454,18 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
          json_t *oData, *oObject;
          json_error_t error;
          Event event;
-         const char* message = (const char*)in;
 
-         tell(3, "DEBUG: 'LWS_CALLBACK_RECEIVE' [%s]", message);
+         // const char* message = (const char*)in;
 
-         if (!(oData = json_loads(message, 0, &error)))
+         tell(3, "DEBUG: 'LWS_CALLBACK_RECEIVE' [%.*s]", (int)len, (const char*)in);
+
+         if (!(oData = json_loads((const char*)in, len, &error)))
          {
-            tell(0, "Error: Ignoring unexpeted client request [%s]", message);
+            tell(0, "Error: Ignoring unexpeted client request [%.*s]", (int)len, (const char*)in);
             break;
          }
+
+         char* message = strndup((const char*)in, len);
 
          event = cOsdService::toEvent(getStringFromJson(oData, "event", "<null>"));
          oObject = json_object_get(oData, "object");
@@ -499,6 +504,8 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
                  activeClient ? "at least one active clinet is connected" : "", message);
 
          json_decref(oData);
+
+         free(message);
 
          break;
       }
@@ -541,6 +548,8 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
       case LWS_CALLBACK_ADD_HEADERS:
       case LWS_CALLBACK_PROTOCOL_INIT:
       case LWS_CALLBACK_FILTER_PROTOCOL_CONNECTION:
+      case LWS_CALLBACK_EVENT_WAIT_CANCELLED:
+      case LWS_CALLBACK_HTTP_BIND_PROTOCOL:
          break;
 
       default:

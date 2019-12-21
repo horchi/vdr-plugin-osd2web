@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.48"
-#define VERSION_DATE  "13.10.2018"
+#define _VERSION      "0.2.49"
+#define VERSION_DATE  "21.1.2019"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2019-12-21: version 0.2.49 (horchi)
+   - change: libwebsockets 3.2 porting
 
 2018-10-13: version 0.2.48 (horchi)
    - change: Improved menu display for skin horchiTft
