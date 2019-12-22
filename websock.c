@@ -326,8 +326,10 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
       case LWS_CALLBACK_GET_THREAD_ID:
       case LWS_CALLBACK_HTTP_BIND_PROTOCOL:
       case LWS_CALLBACK_HTTP_DROP_PROTOCOL:
+#if LWS_LIBRARY_VERSION_MAJOR >= 3
       case LWS_CALLBACK_HTTP_CONFIRM_UPGRADE:
       case LWS_CALLBACK_EVENT_WAIT_CANCELLED:
+#endif
          break;
 
       default:
@@ -548,8 +550,10 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
       case LWS_CALLBACK_ADD_HEADERS:
       case LWS_CALLBACK_PROTOCOL_INIT:
       case LWS_CALLBACK_FILTER_PROTOCOL_CONNECTION:
+#if LWS_LIBRARY_VERSION_MAJOR >= 3
       case LWS_CALLBACK_EVENT_WAIT_CANCELLED:
       case LWS_CALLBACK_HTTP_BIND_PROTOCOL:
+#endif
          break;
 
       default:
