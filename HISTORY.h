@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.50"
-#define VERSION_DATE  "22.1.2019"
+#define _VERSION      "0.2.51"
+#define VERSION_DATE  "05.05.2020"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2020-05-05: version 0.2.51 (horchi)
+   - bugfix: fixed menmory problem with json (patch by Alexander Grothe)
 
 2019-12-22: version 0.2.50 (horchi)
    - change: backward compatibility to 2.*

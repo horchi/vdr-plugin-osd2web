@@ -461,9 +461,11 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 
          tell(3, "DEBUG: 'LWS_CALLBACK_RECEIVE' [%.*s]", (int)len, (const char*)in);
 
-         if (!(oData = json_loads((const char*)in, len, &error)))
+         if (!(oData = json_loadb((const char*)in, len, 0, &error)))
          {
             tell(0, "Error: Ignoring unexpeted client request [%.*s]", (int)len, (const char*)in);
+            tell(0, "Error decoding json: %s (%s, line %d column %d, position %d)",
+                 error.text, error.source, error.line, error.column, error.position);
             break;
          }
 
