@@ -88,7 +88,7 @@ hlib:
 ### Implicit rules:
 
 %.o: %.c
-	$(doCompile) $(INCLUDES) -o $@ $<
+	$(doCompile) -o $@ $<
 #	$(CXX) $(CXXFLAGS) -c $(DEFINES) $(INCLUDES) -o $@ $<
 
 ### Dependencies:
