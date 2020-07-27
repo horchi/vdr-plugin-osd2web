@@ -497,6 +497,10 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
             cUpdate::messagesIn.push(message);
          else if (activeClient && activeClient == wsi)       // accept data only from active client
             cUpdate::messagesIn.push(message);
+
+         else if (event == evKeyPress && clients[wsi].type == ctFB)
+            cUpdate::messagesIn.push(message);
+
          else if (!activeClient && isHighestViewClient(wsi)) // or no active is available and it is the view clinet with best prio
          {
             tell(2, "Debug: Taking data of view client, prio (%d) [%s]", clients[wsi].tftprio, message);
@@ -692,7 +696,7 @@ void cWebSock::pushMessage(const char* message, lws* wsi)
    {
       for (auto it = clients.begin(); it != clients.end(); ++it)
       {
-         if (it->second.type != ctInactive)
+         if (it->second.type != ctInactive && it->second.type != ctFB)
             it->second.pushMessage(message);
       }
    }

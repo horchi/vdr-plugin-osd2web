@@ -68,7 +68,8 @@ class cOsdService
       {
          ctInactive = na,
          ctInteractive,            // = 0 - for interactive browser session
-         ctView                    // = 1 - e.g. for graphtft display
+         ctView,                   // = 1 - e.g. for graphtft display
+         ctFB                      // = 2 - pure FB (remote control) clients
       };
 
       static const char* toName(Event event);

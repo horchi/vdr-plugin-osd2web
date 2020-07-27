@@ -671,8 +671,11 @@ int cUpdate::performLogin(json_t* oObject)
       cUpdate::pushMessage(oRole, "rolechange", client);
    }
 
-   updateSkinState();
-   forceRefresh();
+   if (type != ctFB)
+   {
+      updateSkinState();
+      forceRefresh();
+   }
 
    return done;
 }
@@ -697,6 +700,7 @@ int cUpdate::performKeyPressRequest(json_t* oRequest)
 
    const char* keyName = getStringFromJson(oRequest, "key", "<null>");
    int repeat = getIntFromJson(oRequest, "repeat");
+   int noFocus = getIntFromJson(oRequest, "focus", yes);
    eKeys key = cKey::FromString(keyName);
 
    lastClientActionAt = time(0);
@@ -709,7 +713,7 @@ int cUpdate::performKeyPressRequest(json_t* oRequest)
 
    // auto attach on menu key
 
-   if (!isDefaultSkin() && !isSkinAttached() && key == kMenu)
+   if (!isDefaultSkin() && !isSkinAttached() && key == kMenu && !noFocus)
       setSkinAttachState(yes);
 
    // process key press
