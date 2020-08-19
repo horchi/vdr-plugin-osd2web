@@ -35,6 +35,8 @@
 
 #define SKIN_NAME "osd2web"
 
+typedef cMutexLock cMyMutexLock;
+
 //***************************************************************************
 // Class OSD Service
 //***************************************************************************
@@ -178,7 +180,7 @@ class cWebSock : public cOsdService
       int init(int aPort, int aTimeout);
       int exit();
 
-      int service(int timeoutMs);
+      int service();
       int performData(MsgType type);
 
       // status callback methods
@@ -214,8 +216,12 @@ class cWebSock : public cOsdService
 
       //
 
-      int port;
+      int port {na};
       lws_protocols protocols[3];
+      lws_http_mount mounts[1];
+#if defined (LWS_LIBRARY_VERSION_MAJOR) && (LWS_LIBRARY_VERSION_MAJOR >= 4)
+      lws_retry_bo_t retry;
+#endif
 
       // statics
 

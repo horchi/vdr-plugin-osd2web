@@ -1,9 +1,7 @@
 /**
- *  osd2web plugin for the Video Disk Recorder
- *
  *  websock.c
  *
- *  (c) 2017-2018 Jörg Wendel
+ *  (c) 2017-2020 Jörg Wendel
  *
  * This code is distributed under the terms and conditions of the
  * GNU GENERAL PUBLIC LICENSE. See the file COPYING for details.
@@ -31,7 +29,6 @@ char* cWebSock::httpPath = 0;
 cWebSock::cWebSock(const char* aHttpPath)
 {
    httpPath = strdup(aHttpPath);
-   port = 4444;
 }
 
 cWebSock::~cWebSock()
@@ -44,10 +41,7 @@ cWebSock::~cWebSock()
 
 int cWebSock::init(int aPort, int aTimeout)
 {
-   struct lws_context_creation_info info;
-   const char* interface = 0;
-   const char* certPath = 0;           // we're not using ssl
-   const char* keyPath = 0;
+   lws_context_creation_info info {0};
 
    lws_set_log_level(wsLogLevel, writeLog);
 
@@ -71,18 +65,44 @@ int cWebSock::init(int aPort, int aTimeout)
    protocols[2].per_session_data_size = 0;
    protocols[2].rx_buffer_size = 0;
 
+   // mounts
+
+   lws_http_mount mount {0};
+
+   mount.mount_next = (lws_http_mount*)nullptr;
+   mount.mountpoint = "/";
+   mount.origin = httpPath;
+   mount.mountpoint_len = 1;
+   mount.cache_max_age = true ? 86400 : 604800;
+   mount.cache_reusable = 1;
+   mount.cache_revalidate = true ? 1 : 0;
+   mount.cache_intermediaries = 1;
+   mount.origin_protocol = LWSMPRO_FILE;
+   mounts[0] = mount;
+
    // setup websocket context info
 
    memset(&info, 0, sizeof(info));
    info.port = port;
-   info.iface = interface;
    info.protocols = protocols;
-   info.ssl_cert_filepath = certPath;
-   info.ssl_private_key_filepath = keyPath;
+#if defined (LWS_LIBRARY_VERSION_MAJOR) && (LWS_LIBRARY_VERSION_MAJOR < 4)
+   info.iface = nullptr;
+#endif
+   info.ssl_cert_filepath = nullptr;
+   info.ssl_private_key_filepath = nullptr;
+
+#if defined (LWS_LIBRARY_VERSION_MAJOR) && (LWS_LIBRARY_VERSION_MAJOR >= 4)
+   retry.secs_since_valid_ping = timeout;
+   retry.secs_since_valid_hangup = timeout + 10;
+   info.retry_and_idle_policy = &retry;
+#else
    info.ws_ping_pong_interval = timeout;
+#endif
+
    info.gid = -1;
    info.uid = -1;
    info.options = 0;
+   info.mounts = mounts;
 
    // create libwebsocket context representing this server
 
@@ -117,9 +137,9 @@ int cWebSock::exit()
 // Service
 //***************************************************************************
 
-int cWebSock::service(int timeoutMs)
+int cWebSock::service()
 {
-   lws_service(context, timeoutMs);
+   lws_service(context, 0);  // timeout parameter is not supported by the lib anymore
    return done;
 }
 
@@ -131,7 +151,7 @@ int cWebSock::performData(MsgType type)
 {
    int count = 0;
 
-   cMutexLock lock(&clientsMutex);
+   cMyMutexLock lock(&clientsMutex);
 
    msgType = type;
 
@@ -158,9 +178,9 @@ const char* getClientInfo(lws* wsi, std::string* clientInfo)
 
    if (wsi)
    {
-      int fd = lws_get_socket_fd(wsi);
+      int fd;
 
-      if (fd)
+      if ((fd = lws_get_socket_fd(wsi)))
          lws_get_peer_addresses(wsi, fd, clientName, sizeof(clientName), clientIp, sizeof(clientIp));
    }
 
@@ -173,11 +193,12 @@ const char* getClientInfo(lws* wsi, std::string* clientInfo)
 // HTTP Callback
 //***************************************************************************
 
-int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
-                           void* in, size_t len)
+int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user, void* in, size_t len)
 {
    SessionData* sessionData = (SessionData*)user;
    std::string clientInfo = "unknown";
+
+   tell(4, "DEBUG: 'callbackHttp' got (%d)", reason);
 
    switch (reason)
    {
@@ -194,7 +215,7 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
          const char* message = (const char*)in;
          int s = lws_hdr_total_length(wsi, WSI_TOKEN_POST_URI);
 
-         tell(0, "DEBUG: Got unecpected LWS_CALLBACK_HTTP_BODY with [%.*s] lws_hdr_total_length is (%d)",
+         tell(1, "DEBUG: Got unecpected LWS_CALLBACK_HTTP_BODY with [%.*s] lws_hdr_total_length is (%d)",
               (int)len+1, message, s);
          break;
       }
@@ -253,7 +274,7 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
 
          memset(sessionData, 0, sizeof(SessionData));
 
-         tell(2, "HTTP: Requested uri: (%ld) '%s'", len, url);
+         tell(1, "HTTP: Requested uri: (%ld) '%s'", (ulong)len, url);
 
          // data or file request ...
 
@@ -273,7 +294,7 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user,
             if (strcmp(url, "/") == 0)
                url = "index.html";
 
-            // security
+            // security, force httpPath path to inhibit access to the whole filesystem
 
             if (!isEmpty(config.scraper2VdrPath) && strncmp(url, config.scraper2VdrPath, strlen(config.scraper2VdrPath)) == 0)
             {
@@ -349,6 +370,8 @@ int cWebSock::serveFile(lws* wsi, const char* path)
    const char* suffix = suffixOf(path ? path : "");
    const char* mime = "text/plain";
 
+   // LogDuration ld("serveFile", 1);
+
    // choose mime type based on the file extension
 
    if (!isEmpty(suffix))
@@ -360,19 +383,22 @@ int cWebSock::serveFile(lws* wsi, const char* path)
       else if (strcmp(suffix, "svg") == 0)   mime = "image/svg+xml";
       else if (strcmp(suffix, "html") == 0)  mime = "text/html";
       else if (strcmp(suffix, "css") == 0)   mime = "text/css";
+      else if (strcmp(suffix, "js") == 0)    mime = "application/javascript";
    }
 
    return lws_serve_http_file(wsi, path, mime, 0, 0);
 }
 
 //***************************************************************************
-// Callback for osd2vdr Protocol
+// Callback for my Protocol
 //***************************************************************************
 
 int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
                               void* user, void* in, size_t len)
 {
    std::string clientInfo = "unknown";
+
+   tell(4, "DEBUG: 'callback' got (%d)", reason);
 
    switch (reason)
    {
@@ -414,8 +440,8 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 
                // mutex lock context
                {
-                  cMutexLock clock(&clientsMutex);
-                  cMutexLock lock(&clients[wsi].messagesOutMutex);
+                  cMyMutexLock clock(&clientsMutex);
+                  cMyMutexLock lock(&clients[wsi].messagesOutMutex);
                   msg = clients[wsi].messagesOut.front();
                   clients[wsi].messagesOut.pop();
                }
@@ -438,7 +464,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 
                strncpy(msgBuffer + sizeLwsPreFrame, msg.c_str(), msgSize);
 
-               tell(3, "DEBUG: Write (%d) <- %.*s -> to '%s' (%p)\n", msgSize, msgSize,
+               tell(2, "DEBUG: Write (%d) -> %.*s -> to '%s' (%p)\n", msgSize, msgSize,
                     msgBuffer+sizeLwsPreFrame, clientInfo.c_str(), (void*)wsi);
 
                res = lws_write(wsi, (unsigned char*)msgBuffer + sizeLwsPreFrame, msgSize, LWS_WRITE_TEXT);
@@ -456,8 +482,6 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
          json_t *oData, *oObject;
          json_error_t error;
          Event event;
-
-         // const char* message = (const char*)in;
 
          tell(3, "DEBUG: 'LWS_CALLBACK_RECEIVE' [%.*s]", (int)len, (const char*)in);
 
@@ -520,9 +544,6 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
 
       case LWS_CALLBACK_ESTABLISHED:                       // someone connecting
       {
-         // if (timeout)
-         //    lws_set_timeout(wsi, PENDING_TIMEOUT_AWAITING_PING, timeout);
-
          tell(1, "Client '%s' connected (%p), ping time set to (%d)", clientInfo.c_str(), (void*)wsi, timeout);
          clients[wsi].wsi = wsi;
          clients[wsi].type = ctInactive;
@@ -546,10 +567,6 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
       case LWS_CALLBACK_RECEIVE_PONG:                      // ping / pong
       {
          tell(2, "DEBUG: Got 'PONG' from client '%s' (%p)", clientInfo.c_str(), (void*)wsi);
-
-         // if (timeout)
-         //    lws_set_timeout(wsi, PENDING_TIMEOUT_AWAITING_PING, timeout);
-
          break;
       }
 
@@ -666,7 +683,7 @@ int cWebSock::getClientCount()
 {
    int count = 0;
 
-   cMutexLock lock(&clientsMutex);
+   cMyMutexLock lock(&clientsMutex);
 
    for (auto it = clients.begin(); it != clients.end(); ++it)
    {
@@ -691,6 +708,8 @@ void cWebSock::pushMessage(const char* message, lws* wsi)
    {
       if (clients.find(wsi) != clients.end())
          clients[wsi].pushMessage(message);
+      else
+         tell(0, "client %ld not found!", (ulong)wsi);
    }
    else
    {

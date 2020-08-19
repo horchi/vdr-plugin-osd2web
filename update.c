@@ -552,7 +552,7 @@ void cUpdate::Action()
 
    while (active)
    {
-      webSock->service(100);
+      webSock->service();
       atMeanwhile();
 
       // data from clients

@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.52"
-#define VERSION_DATE  "21.06.2020"
+#define _VERSION      "0.2.53"
+#define VERSION_DATE  "19.08.2020"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2020-08-18: version 0.2.53 (horchi)
+   - added: Support of libwebsock 4 ans 4.1
 
 2020-06-21: version 0.2.52 (horchi)
    - added: WS client type 'ctFB' for remote control (only) clients
