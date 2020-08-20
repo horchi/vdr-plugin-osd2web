@@ -139,7 +139,12 @@ int cWebSock::exit()
 
 int cWebSock::service()
 {
-   lws_service(context, 0);  // timeout parameter is not supported by the lib anymore
+#if defined (LWS_LIBRARY_VERSION_MAJOR) && (LWS_LIBRARY_VERSION_MAJOR >= 4)
+   lws_service(context, 0);    // timeout parameter is not supported by the lib anymore
+#else
+   lws_service(context, 100);
+#endif
+
    return done;
 }
 
