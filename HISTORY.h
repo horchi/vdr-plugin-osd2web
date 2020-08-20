@@ -20,7 +20,7 @@
  * ------------------------------------
 
 2020-08-18: version 0.2.53 (horchi)
-   - added: Support of libwebsock 4 ans 4.1
+   - added: Support of libwebsock 4 and 4.1
 
 2020-06-21: version 0.2.52 (horchi)
    - added: WS client type 'ctFB' for remote control (only) clients
