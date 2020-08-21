@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.54"
-#define VERSION_DATE  "20.08.2020"
+#define _VERSION      "0.2.55"
+#define VERSION_DATE  "21.08.2020"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -19,8 +19,11 @@
 /*
  * ------------------------------------
 
+2020-08-21: version 0.2.55 (horchi)
+   - change: Improved handling of thread locking
+
 2020-08-20: version 0.2.54 (horchi)
-   - Bugfix: Fixed mem leak of version 0.2.53 and old libwebsock v2.*
+   - Bugfix: Fixed mem leak of version 0.2.53 and old libwebsock v2.x
 
 2020-08-18: version 0.2.53 (horchi)
    - added: Support of libwebsock 4 and 4.1

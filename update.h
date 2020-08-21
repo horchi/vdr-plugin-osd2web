@@ -335,12 +335,15 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
       // static message interface to web thread
 
+      static int pushInMessage(const char* data);
       static int pushMessage(json_t* obj, const char* title, long client = 0);
       static void menuClosed() { menuCloseTrigger = yes; }
       static int isEditable(eMenuCategory category);
       static void updateMenu();
 
       static std::queue<std::string> messagesIn;
+      static cMutex messagesInMutex;
+
       static std::map<int,CategoryConfig> menuMaxLines;
       static int menuCloseTrigger;
       static eMenuCategory menuCategory;

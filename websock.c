@@ -523,17 +523,17 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
             clients[wsi].cleanupMessageQueue();
          }
          else if (event == evChannels)
-            cUpdate::messagesIn.push(message);
+            cUpdate::pushInMessage(message);
          else if (activeClient && activeClient == wsi)       // accept data only from active client
-            cUpdate::messagesIn.push(message);
+            cUpdate::pushInMessage(message);
 
          else if (event == evKeyPress && clients[wsi].type == ctFB)
-            cUpdate::messagesIn.push(message);
+            cUpdate::pushInMessage(message);
 
          else if (!activeClient && isHighestViewClient(wsi)) // or no active is available and it is the view clinet with best prio
          {
             tell(2, "Debug: Taking data of view client, prio (%d) [%s]", clients[wsi].tftprio, message);
-            cUpdate::messagesIn.push(message);
+            cUpdate::pushInMessage(message);
          }
          else
             tell(2, "Debug: Ignoring data of not 'active' client (%p) prio (%d) %s [%s]",
@@ -661,15 +661,15 @@ void cWebSock::atLogin(lws* wsi, const char* message, const char* clientInfo)
    char* p = json_dumps(obj, JSON_PRESERVE_ORDER);
    json_decref(obj);
 
-   cUpdate::messagesIn.push(p);
+   cUpdate::pushInMessage(p);
    free(p);
 }
 
 void cWebSock::atLogout(lws* wsi, const char* message, const char* clientInfo)
 {
-   cMutexLock lock(&clientsMutex);
-
    tell(1, "%s '%s' (%p)", clientInfo, message, (void*)wsi);
+
+   cMutexLock lock(&clientsMutex);
 
    clients.erase(wsi);
 

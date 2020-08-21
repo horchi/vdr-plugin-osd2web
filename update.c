@@ -24,6 +24,8 @@
 #include "config.h"
 
 std::queue<std::string> cUpdate::messagesIn;
+cMutex cUpdate::messagesInMutex;
+
 std::map<int,cUpdate::CategoryConfig> cUpdate::menuMaxLines;
 int cUpdate::menuCloseTrigger = no;
 
@@ -72,9 +74,6 @@ cOsdService::Event cOsdService::toEvent(const char* name)
 
 //***************************************************************************
 // Class cUpdate
-//***************************************************************************
-//***************************************************************************
-// Object
 //***************************************************************************
 
 cUpdate::cUpdate()
@@ -127,6 +126,19 @@ cUpdate::cUpdate()
 cUpdate::~cUpdate()
 {
    delete webSock;
+}
+
+//***************************************************************************
+// Push In Message (from WS to osd2web)
+//***************************************************************************
+
+int cUpdate::pushInMessage(const char* data)
+{
+   cMyMutexLock lock(&messagesInMutex);
+
+   messagesIn.push(data);
+
+   return success;
 }
 
 //***************************************************************************
@@ -582,6 +594,8 @@ int cUpdate::dispatchClientRequest()
    json_error_t error;
    json_t *oData, *oObject;
    Event event = evUnknown;
+
+   cMutexLock lock(&messagesInMutex);
 
    // #TODO loop here while (!messagesIn.empty()) ?
 
