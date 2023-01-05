@@ -1,0 +1,130 @@
+
+:root
+{
+    /* colors */
+
+    --light1: #272727;
+    --light2: lightgray;
+    --light3: #403d3d;
+    --light4: white;
+    --blue: #2177AD;
+    --blueshade: #495b67;
+    --yellow: #fad600;
+    --yellow2: #fffcab;
+    --info: #f9f9ef;
+
+    --borderColor: black;
+}
+
+Body
+{
+    font-family: Helvetica,Arial,sans-serif;
+    font-size: 1.0em;
+    color: white;
+    background-color: black;
+}
+
+.content
+{
+    margin: 2px;
+}
+
+/* ----------------------- */
+/* VDR FB */
+
+.vdrFbContainer
+{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 5px;
+    width: 90%;
+    max-width: 450px;
+}
+
+.vdrFbContainer > div
+{
+    overflow: hidden;
+    width: 31%;
+    margin: 2px;
+}
+
+.vdrButtonColorDiv
+{
+    width: 23% !important;
+    height: 60px;
+    margin: 2px;
+}
+
+.vdrButton
+{
+    border-radius: 15px;
+    border-color: var(--borderColor);
+    background-color: var(--blueshade);
+    color: var(--light4);
+    text-decoration: none;
+    font-size: 5.0vh;
+    height: 100%;
+    width: 100%;
+    padding: 0px;
+}
+
+.vdrButton:active {
+    background-color: var(--caption2);
+    transform: translateY(2px);
+}
+
+.vdrButton:hover
+{
+/*    background-color: var(--caption2); */
+}
+
+.vdrButtonRound
+{
+    border-radius: 100px;
+}
+
+.vdrArrowButton
+{
+    color: lightblue;
+}
+
+.vdrArrowButtonUp
+{
+    border-radius: 100px 100px 15px 15px;
+}
+
+.vdrArrowButtonDown
+{
+    border-radius: 15px 15px 100px 100px;
+}
+
+.vdrArrowButtonLeft
+{
+    border-radius: 100px 15px 15px 100px;
+}
+
+.vdrArrowButtonRight
+{
+    border-radius: 15px 100px 100px 15px;
+}
+
+.vdrColorButtonRed
+{
+    background-color: red;
+}
+
+.vdrColorButtonGreen
+{
+    background-color: green;
+}
+
+.vdrColorButtonYellow
+{
+    background-color: darkgoldenrod;
+}
+
+.vdrColorButtonBlue
+{
+    background-color: darkblue;
+}

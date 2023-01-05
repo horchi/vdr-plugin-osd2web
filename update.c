@@ -27,14 +27,14 @@ std::queue<std::string> cUpdate::messagesIn;
 cMutex cUpdate::messagesInMutex;
 
 std::map<int,cUpdate::CategoryConfig> cUpdate::menuMaxLines;
-int cUpdate::menuCloseTrigger = no;
+int cUpdate::menuCloseTrigger {no};
 
-int cUpdate::updateDiaList = yes;
+int cUpdate::updateDiaList {yes};
 
-eMenuCategory cUpdate::menuCategory = mcUnknown;
-std::string cUpdate::menuTitle = "";
+eMenuCategory cUpdate::menuCategory {mcUnknown};
+std::string cUpdate::menuTitle {""};
 
-pid_t cUpdate::browserPid = 0;
+pid_t cUpdate::browserPid {0};
 
 //***************************************************************************
 // OSD Service
@@ -70,7 +70,6 @@ cOsdService::Event cOsdService::toEvent(const char* name)
 
    return evUnknown;
 }
-
 
 //***************************************************************************
 // Class cUpdate

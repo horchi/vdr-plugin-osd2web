@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.55"
-#define VERSION_DATE  "21.08.2020"
+#define _VERSION      "0.2.56"
+#define VERSION_DATE  "05.01.2023"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,10 @@
 
 /*
  * ------------------------------------
+
+2023-01-05: version 0.2.55 (horchi)
+   - added: Added png fallback on missing svg for channel logos
+   - added: New page for remote control <ip>:<port>/fb.html
 
 2020-08-21: version 0.2.55 (horchi)
    - change: Improved handling of thread locking

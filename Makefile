@@ -53,9 +53,11 @@ LIBS  = $(HLIB)
 LIBS += -lrt -lcrypto
 LIBS += $(shell pkg-config --libs uuid)
 LIBS += $(shell pkg-config --libs tinyxml2)
+#LIBS += $(shell pkg-config --libs libwebsockets_static)
 LIBS += $(shell pkg-config --libs libwebsockets)
 LIBS += $(shell pkg-config --cflags --libs jansson)
 LIBS += $(shell pkg-config libexif --libs)
+LIBS += -lssl
 
 ### The name of the distribution archive:
 
@@ -159,6 +161,7 @@ install-http:
 	   chmod a+rx $(DESTDIR)$(HTTPDEST); \
 	fi
 	cp -r ./client/dist/* $(DESTDIR)$(HTTPDEST)
+	cp -r ./client/src/fb/* $(DESTDIR)$(HTTPDEST)
 	chmod -R a+rX $(DESTDIR)$(HTTPDEST)
 	cp ./scripts/startBrowser.sh $(DESTDIR)$(CONFDEST)
 	cp ./scripts/browser.conf.tmpl $(DESTDIR)$(CONFDEST)/

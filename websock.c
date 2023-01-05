@@ -67,17 +67,22 @@ int cWebSock::init(int aPort, int aTimeout)
 
    // mounts
 
+   bool noStore {false};       // for debugging
    lws_http_mount mount {0};
 
    mount.mount_next = (lws_http_mount*)nullptr;
    mount.mountpoint = "/";
    mount.origin = httpPath;
    mount.mountpoint_len = 1;
-   mount.cache_max_age = true ? 86400 : 604800;
-   mount.cache_reusable = 1;
-   mount.cache_revalidate = true ? 1 : 0;
+   mount.cache_max_age = noStore ? 0 : 86400;
+   mount.cache_reusable = !noStore;       // 0 => no-store
+   mount.cache_revalidate = 1;
    mount.cache_intermediaries = 1;
-   mount.origin_protocol = LWSMPRO_FILE;
+
+#ifdef LWS_FEATURE_MOUNT_NO_CACHE
+   mount.cache_no = noStore ? 0 : 1;
+#endif
+
    mounts[0] = mount;
 
    // setup websocket context info
@@ -279,7 +284,7 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user, vo
 
          memset(sessionData, 0, sizeof(SessionData));
 
-         tell(1, "HTTP: Requested uri: (%ld) '%s'", (ulong)len, url);
+         tell(1, "HTTP: Requested url: (%ld) '%s'", (ulong)len, url);
 
          // data or file request ...
 
@@ -530,7 +535,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
          else if (event == evKeyPress && clients[wsi].type == ctFB)
             cUpdate::pushInMessage(message);
 
-         else if (!activeClient && isHighestViewClient(wsi)) // or no active is available and it is the view clinet with best prio
+         else if (!activeClient && isHighestViewClient(wsi)) // or no active is available and it is the view client with best prio
          {
             tell(2, "Debug: Taking data of view client, prio (%d) [%s]", clients[wsi].tftprio, message);
             cUpdate::pushInMessage(message);
@@ -538,7 +543,7 @@ int cWebSock::callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason,
          else
             tell(2, "Debug: Ignoring data of not 'active' client (%p) prio (%d) %s [%s]",
                  (void*)wsi, clients[wsi].tftprio,
-                 activeClient ? "at least one active clinet is connected" : "", message);
+                 activeClient ? "at least one active client is connected" : "", message);
 
          json_decref(oData);
 
@@ -839,20 +844,26 @@ int cWebSock::doRecordingImg(lws* wsi)
 
 int cWebSock::doChannelLogo(lws* wsi)
 {
-   int result;
-   char* path = 0;
+   int result {success};
+   char* path {};
    char* cnlName = strdup(getStrParameter(wsi, "name=", ""));
    char* cnlId = strdup(getStrParameter(wsi, "id=", ""));
 
    if (!config.logoNotLower)
       toCase(cLower, cnlName);
 
-   asprintf(&path, "%s/%s.%s",
-            config.logoPath,
-            config.logoById ? cnlId : cnlName,
-            config.logoSuffix);
-
+   asprintf(&path, "%s/%s.%s",config.logoPath, config.logoById ? cnlId : cnlName, config.logoSuffix);
    tell(2, "DEBUG: Logo for channel '%s' was requested [%s]", cnlName, path);
+
+   if (!fileExists(path))
+   {
+      free(path);
+      asprintf(&path, "%s/%s.%s", config.logoPath, config.logoById ? cnlId : cnlName, "png");
+      tell(2, "DEBUG: Logo for channel '%s' not found, try fallback to png [%s]", cnlName, path);
+   }
+
+   if (!fileExists(path))
+      tell(2, "DEBUG: Logo for channel '%s' not found [%s]", cnlName, path);
 
    result = serveFile(wsi, path);
 
@@ -873,9 +884,9 @@ int cWebSock::doEnvironment(lws* wsi, SessionData* sessionData)
    unsigned char* p = header + sizeLwsPreFrame;
    unsigned char* e = p + sizeof(header) - sizeLwsPreFrame;
 
-   DIR* dirSkin;
-   int result = 0;
-   char* path = 0;
+   DIR* dirSkin {};
+   int result {0};
+   char* path {};
 
    json_t* obj = json_object();
    json_t* oEnvironment = json_object();
