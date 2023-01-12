@@ -1,17 +1,12 @@
 
 :root
 {
-    /* colors */
-
     --light1: #272727;
     --light2: lightgray;
     --light3: #403d3d;
     --light4: white;
     --blue: #2177AD;
     --blueshade: #495b67;
-    --yellow: #fad600;
-    --yellow2: #fffcab;
-    --info: #f9f9ef;
 
     --borderColor: black;
 }
@@ -31,6 +26,10 @@ Body
 
 /* ----------------------- */
 /* VDR FB */
+
+.vdrContent {
+    text-align: -webkit-center;
+}
 
 .vdrFbContainer
 {
@@ -60,6 +59,7 @@ Body
 {
     border-radius: 15px;
     border-color: var(--borderColor);
+    border-style: solid;
     background-color: var(--blueshade);
     color: var(--light4);
     text-decoration: none;
@@ -70,13 +70,13 @@ Body
 }
 
 .vdrButton:active {
-    background-color: var(--caption2);
+    background-color: var(--blue);
     transform: translateY(2px);
 }
 
 .vdrButton:hover
 {
-/*    background-color: var(--caption2); */
+    /* background-color: var(--blue); */
 }
 
 .vdrButtonRound
@@ -86,45 +86,15 @@ Body
 
 .vdrArrowButton
 {
-    color: lightblue;
+    background-color: var(--light3);
 }
 
-.vdrArrowButtonUp
-{
-    border-radius: 100px 100px 15px 15px;
-}
+.vdrArrowButtonUp    { border-radius: 100px 100px 15px 15px; }
+.vdrArrowButtonDown   { border-radius: 15px 15px 100px 100px; }
+.vdrArrowButtonLeft   { border-radius: 100px 15px 15px 100px; }
+.vdrArrowButtonRight  { border-radius: 15px 100px 100px 15px; }
 
-.vdrArrowButtonDown
-{
-    border-radius: 15px 15px 100px 100px;
-}
-
-.vdrArrowButtonLeft
-{
-    border-radius: 100px 15px 15px 100px;
-}
-
-.vdrArrowButtonRight
-{
-    border-radius: 15px 100px 100px 15px;
-}
-
-.vdrColorButtonRed
-{
-    background-color: red;
-}
-
-.vdrColorButtonGreen
-{
-    background-color: green;
-}
-
-.vdrColorButtonYellow
-{
-    background-color: darkgoldenrod;
-}
-
-.vdrColorButtonBlue
-{
-    background-color: darkblue;
-}
+.vdrColorButtonRed    { background-color: red; }
+.vdrColorButtonGreen  { background-color: green; }
+.vdrColorButtonYellow { background-color: darkgoldenrod; }
+.vdrColorButtonBlue   { background-color: darkblue; }

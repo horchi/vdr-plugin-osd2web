@@ -29,14 +29,7 @@ PLGCFG   = $(call PKGCFG,plgcfg)
 CONFDEST = $(call PKGCFG,configdir)/plugins/$(PLUGIN)
 HTTPDEST = $(CONFDEST)/http
 
-#
-
 TMPDIR ?= /tmp
-
-### The compiler options:
-
-#export CFLAGS   += $(call PKGCFG,cflags)
-#export CXXFLAGS += $(call PKGCFG,cxxflags)
 
 ### The version number of VDR's plugin API:
 

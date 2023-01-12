@@ -97,6 +97,15 @@ function onSocketConnect()
                });
 }
 
+function dispatchMessage(message)
+{
+   var jMessage = JSON.parse(message);
+   var event = jMessage.event;
+
+   console.log("<- event (" + event + ")");
+   // console.log("<- ", message);
+}
+
 function connectWebSocket()
 {
    protocol = "osd2vdr";
@@ -189,10 +198,10 @@ function vdrKeyPress(key)
 
    console.log("sending key", key);
 
-   socket.send({ "event" : "keypress",
-                 "object" : {
-                    "key" : key,
-                    "repeat" : 1
+   socket.send({ 'event' : 'keypress',
+                 'object' : {
+                    'key' : key,
+                    'repeat' : 1
                  }
                });
 }

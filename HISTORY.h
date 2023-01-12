@@ -19,7 +19,7 @@
 /*
  * ------------------------------------
 
-2023-01-05: version 0.2.55 (horchi)
+2023-01-05: version 0.2.56 (horchi)
    - added: Added png fallback on missing svg for channel logos
    - added: New page for remote control <ip>:<port>/fb.html
 
