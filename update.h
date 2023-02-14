@@ -140,19 +140,19 @@ class cWebSock : public cOsdService
 
       struct SessionData
       {
-         char* buffer;
-         int bufferSize;
-         int payloadSize;
-         int dataPending;
+         char* buffer {};
+         int bufferSize {0};
+         int payloadSize {0};
+         int dataPending {no};
       };
 
       struct Client
       {
-         ClientType type;
-         int tftprio;
+         ClientType type {};
+         int tftprio {0};
          std::queue<std::string> messagesOut;
          cMutex messagesOutMutex;
-         void* wsi;
+         void* wsi {};
 
          void pushMessage(const char* p)
          {
@@ -166,8 +166,7 @@ class cWebSock : public cOsdService
 
             // just in case client is not connected and wasted messages are pending
 
-            tell(0, "Info: Flushing (%ld) old 'wasted' messages of client (%p)",
-                 messagesOut.size(), wsi);
+            tell(0, "Info: Flushing (%zu) old 'wasted' messages of client (%p)", messagesOut.size(), wsi);
 
             while (!messagesOut.empty())
                messagesOut.pop();

@@ -263,7 +263,7 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user, vo
             tell(2, "WROTE '%s' (%d)", sessionData->buffer+sizeLwsPreFrame, res);
 
          free(sessionData->buffer);
-         memset(sessionData, 0, sizeof(SessionData));
+         sessionData = {};
 
          if (lws_http_transaction_completed(wsi))
             return -1;
@@ -273,12 +273,11 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user, vo
 
       case LWS_CALLBACK_HTTP:
       {
-         int res;
-         char* file = 0;
+         int res {success};
+         char* file {};
          const char* url = (char*)in;
 
-         memset(sessionData, 0, sizeof(SessionData));
-
+         sessionData = {};
          tell(1, "HTTP: Requested uri: (%ld) '%s'", (ulong)len, url);
 
          // data or file request ...
