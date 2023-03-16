@@ -50,6 +50,7 @@ const char* cOsdService::events[] =
    "maxlines",
    "login",
    "logout",
+   "command",
 
    0
 };
@@ -620,6 +621,7 @@ int cUpdate::dispatchClientRequest()
       case evKeyPress:   status = performKeyPressRequest(oObject);    break;
       case evChannels:   status = performChannelsRequest(oObject);    break;
       case evMaxLines:   status = performMaxLineRequest(oObject);     break;
+      case evCommand:    status = performCommand(oObject);            break;
       case evLogin:      status = performLogin(oObject);              break;
 
       default:
@@ -689,6 +691,10 @@ int cUpdate::performLogin(json_t* oObject)
       updateSkinState();
       forceRefresh();
    }
+
+   json_t* oCommands {};
+   commands2Json(oCommands);
+   cUpdate::pushMessage(oCommands, "commands", lastClient);
 
    return done;
 }
@@ -789,6 +795,29 @@ int cUpdate::performMaxLineRequest(json_t* oRequest)
          /* tell(2, "maxlines for category (%d) now (%d)", */
          /*      category, menuMaxLines[category].maxLines); */
       }
+   }
+
+   return done;
+}
+
+//***************************************************************************
+// Perform Command
+//***************************************************************************
+
+int cUpdate::performCommand(json_t* oRequest)
+{
+   const char* command = getStringFromJson(oRequest, "command");
+
+   tell(0, "Perform command [%s]", command);
+
+   int res;
+
+   if ((res = system(command)) != 0)
+   {
+      if (res == -1)
+         tell(0, "Error: Command '%s' failed, can't fork process, result was (%s)", command, strerror(errno));
+      else
+         tell(0, "Error: Result of command '%s' was (%d)", command, res);
    }
 
    return done;

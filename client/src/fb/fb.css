@@ -69,6 +69,15 @@ Body
     padding: 0px;
 }
 
+.vdrCommandButtonDiv {
+    width: 90% !important;
+    height: 60px;
+}
+
+.vdrCommandButton {
+    font-size: xx-large;
+}
+
 .vdrButton:active {
     background-color: var(--blue);
     transform: translateY(2px);

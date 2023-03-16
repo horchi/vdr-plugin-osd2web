@@ -633,3 +633,33 @@ int squeezeboxTrack2Json(json_t* obj, TrackInfo* trackInfo)
 
    return done;
 }
+
+//***************************************************************************
+// Commands To Json
+//***************************************************************************
+
+int commands2Json(json_t*& obj)
+{
+   const char* file {"/var/lib/vdr/plugins/osd2web/commands.json"};
+   json_error_t error;
+
+   if (fileExists(file))
+   {
+      tell(0, "Loading commands from file '%s'", file);
+
+      if (!(obj = json_load_file(file, 0, &error)))
+      {
+         tell(0, "Error: Ignoring invalid json in '%s'", file);
+         tell(0, "Error decoding json: %s (%s, line %d column %d, position %d)",
+              error.text, error.source, error.line, error.column, error.position);
+
+         obj = json_loads("{}", 0, &error);
+      }
+   }
+   else
+   {
+      obj = json_loads("{}", 0, &error);
+   }
+
+   return done;
+}

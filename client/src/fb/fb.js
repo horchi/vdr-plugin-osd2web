@@ -8,6 +8,9 @@
  *
  */
 
+var rowCount = 9;
+var screenHeight = 0;
+
 window.WebSocketClient = function(opt)
 {
    if (!window.WebSocket)
@@ -91,6 +94,16 @@ var isActive = null;
 
 function onSocketConnect()
 {
+   function autoResizeDiv()
+   {
+      screenHeight = window.innerHeight -20;
+      document.getElementById('content').style.height = screenHeight +'px';
+      // console.log("set height to", screenHeight +'px');
+      resizeButtons();
+   }
+   window.onresize = autoResizeDiv;
+   autoResizeDiv();
+
    socket.send({ "event" : "login", "object" :
                  { "type" : "active",
                    "url" : window.location.href }
@@ -102,8 +115,13 @@ function dispatchMessage(message)
    var jMessage = JSON.parse(message);
    var event = jMessage.event;
 
-   console.log("<- event (" + event + ")");
-   // console.log("<- ", message);
+   // console.log("<- event (" + event + ")");
+
+   if (event == 'commands')
+   {
+      commands = jMessage.object;
+      console.log("commands", JSON.stringify(commands));
+   }
 }
 
 function connectWebSocket()
@@ -136,7 +154,11 @@ function connectWebSocket()
 function initVdr()
 {
    connectWebSocket();
+   initFb();
+}
 
+function initFb()
+{
    document.getElementById("container").innerHTML =
       '<div class="vdrContent">' +
       '  <div id="vdrFbContainer" class="vdrFbContainer">' +
@@ -178,14 +200,23 @@ function initVdr()
       '    <div class="vdrButtonColorDiv"><button class="vdrButton vdrColorButtonYellow" type="button" onclick="vdrKeyPress(\'yellow\')"></button></div>' +
       '    <div class="vdrButtonColorDiv"><button class="vdrButton vdrColorButtonBlue" type="button" onclick="vdrKeyPress(\'blue\')"></button></div>' +
       '    <br/>' +
+      '    <div class="vdrCommandButtonDiv"><button class="vdrButton vdrCommandButton" type="button" onclick="vdrCommands()">Commands</button></div>' +
       '  </div>' +
       '</div>';
 
+   resizeButtons();
+}
+
+function resizeButtons()
+{
    var root = document.getElementById("vdrFbContainer");
    var elements = root.getElementsByClassName("vdrButtonDiv");
+   let buttonHeight = screenHeight / rowCount;
+
+   console.log("set button height to", buttonHeight);
 
    for (var i = 0; i < elements.length; i++) {
-      elements[i].style.height = getComputedStyle(elements[i]).width;
+      elements[i].style.height = buttonHeight + 'px'; // getComputedStyle(elements[i]).width;
       if (elements[i].children[0].innerHTML == '')
          elements[i].style.visibility = 'hidden';
    }
@@ -204,4 +235,29 @@ function vdrKeyPress(key)
                     'repeat' : 1
                  }
                });
+}
+
+function vdrCommandSelect(command)
+{
+   socket.send({ 'event' : 'command',
+                 'object' : {
+                    'command' : command
+                 }
+               });
+}
+
+function vdrCommands()
+{
+   let html = '<div class="vdrContent">' +
+       '  <div id="vdrFbContainer" class="vdrFbContainer">' +
+       '    <div class="vdrCommandButtonDiv"><button class="vdrButton vdrCommandButton" type="button" onclick="initFb()">' + '<<' + '</button></div>';
+
+   for (var key in commands) {
+      html += '    <div class="vdrCommandButtonDiv"><button class="vdrButton vdrCommandButton" type="button" onclick="vdrCommandSelect(\'' + commands[key] + '\')">' + key + '</button></div>';
+   }
+
+   html += '  </div>' +
+      '</div>';
+
+   document.getElementById("container").innerHTML = html;
 }
