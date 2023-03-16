@@ -154,7 +154,7 @@ int cUpdate::scanDiaDir(const char* path) // , int level)
       tell(4, "Info: Added '%s'", f.path.c_str());
    }
 
-   tell(1, "Info: Added (%ld) images of path '%s'", diaImages.size(), path);
+   tell(1, "Info: Added (%zu) images of path '%s'", diaImages.size(), path);
 
    return success;
 }
