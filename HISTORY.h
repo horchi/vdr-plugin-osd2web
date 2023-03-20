@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.2.57"
-#define VERSION_DATE  "16.03.2023"
+#define _VERSION      "0.2.58"
+#define VERSION_DATE  "20.03.2023"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -19,8 +19,13 @@
 /*
  * ------------------------------------
 
+2023-03-20: version 0.2.58 (horchi)
+   - bugfix: Fixed javascript code command service WEBIF
+   - added: Otional color configuration to command service buttons
+   - change: Improved handling of loging level for syslogd
+
 2023-03-16: version 0.2.57 (horchi)
-   - added: command service and minor improvements 
+   - added: command service and minor improvements
 
 2023-01-05: version 0.2.56 (horchi)
    - added: Added png fallback on missing svg for channel logos

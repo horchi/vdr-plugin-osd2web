@@ -51,7 +51,7 @@ const char* getLogPrefix()
 void tell(int eloquence, const char* format, ...)
 {
    enum { sizeBuffer = 100000 };
-   static char buffer[sizeBuffer+100+TB] = "";
+   static char buffer[sizeBuffer+100+TB] {};
 
    if (cConfigBase::loglevel < eloquence)
       return ;
@@ -105,7 +105,16 @@ void tell(int eloquence, const char* format, ...)
       printf("%s %s\n", buf, buffer);
    }
    else
-      syslog(LOG_ERR, "%s", buffer);
+   {
+      switch (eloquence)
+      {
+         case 0:  syslog(LOG_ERR, "%s", buffer);     break;
+         case 1:  syslog(LOG_NOTICE, "%s", buffer);  break;
+         case 2:  syslog(LOG_NOTICE, "%s", buffer);  break;
+         case 3:  syslog(LOG_INFO, "%s", buffer);    break;
+         default: syslog(LOG_DEBUG, "%s", buffer);   break;
+      }
+   }
 
    logMutex.Unlock();
 

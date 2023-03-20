@@ -383,6 +383,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       void updateDiaShow(int force = no);
       void updateCustomData();
       void updateSkinState();
+      void updateCommands();
 
       void forceRefresh();
       int dispatchClientRequest();

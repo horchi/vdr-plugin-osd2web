@@ -237,7 +237,7 @@ int cUpdate::setSkinAttachState(int attach, int bySvdrp)
    if (attach && !isSkinAttached())
    {
       Skins.SetCurrent(SKIN_NAME);
-      tell(0, "Changed skin to '%s'", Skins.Current()->Name());
+      tell(1, "Changed skin to '%s'", Skins.Current()->Name());
    }
 
    // detach ..
@@ -246,7 +246,7 @@ int cUpdate::setSkinAttachState(int attach, int bySvdrp)
    {
       Skins.SetCurrent(Setup.OSDSkin);
       cThemes::Load(Skins.Current()->Name(), Setup.OSDTheme, Skins.Current()->Theme());
-      tell(0, "Changed skin to '%s'", Skins.Current()->Name());
+      tell(1, "Changed skin to '%s'", Skins.Current()->Name());
    }
 
    if (bySvdrp)    // change only if attach is triggert by SVDRP!
@@ -650,11 +650,23 @@ void cUpdate::forceRefresh()
    updateCustomData();
    updateTimers();
    updateRecordings();
+   updateCommands();
 
    if (menuCategory > mcUnknown)
       updateMenu();
 
    triggerForce = no;
+}
+
+//***************************************************************************
+// Update Commands
+//***************************************************************************
+
+void cUpdate::updateCommands()
+{
+   json_t* oCommands {};
+   commands2Json(oCommands);
+   cUpdate::pushMessage(oCommands, "commands");
 }
 
 //***************************************************************************
@@ -691,10 +703,6 @@ int cUpdate::performLogin(json_t* oObject)
       updateSkinState();
       forceRefresh();
    }
-
-   json_t* oCommands {};
-   commands2Json(oCommands);
-   cUpdate::pushMessage(oCommands, "commands", lastClient);
 
    return done;
 }

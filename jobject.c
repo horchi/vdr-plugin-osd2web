@@ -645,7 +645,7 @@ int commands2Json(json_t*& obj)
 
    if (fileExists(file))
    {
-      tell(0, "Loading commands from file '%s'", file);
+      tell(2, "Loading commands from file '%s'", file);
 
       if (!(obj = json_load_file(file, 0, &error)))
       {

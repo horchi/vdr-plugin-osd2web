@@ -10,6 +10,7 @@
 
 var rowCount = 9;
 var screenHeight = 0;
+var commands = {};
 
 window.WebSocketClient = function(opt)
 {
@@ -120,7 +121,6 @@ function dispatchMessage(message)
    if (event == 'commands')
    {
       commands = jMessage.object;
-      console.log("commands", JSON.stringify(commands));
    }
 }
 
@@ -248,16 +248,35 @@ function vdrCommandSelect(command)
 
 function vdrCommands()
 {
-   let html = '<div class="vdrContent">' +
+   let html =
+       '<div class="vdrContent">' +
        '  <div id="vdrFbContainer" class="vdrFbContainer">' +
-       '    <div class="vdrCommandButtonDiv"><button class="vdrButton vdrCommandButton" type="button" onclick="initFb()">' + '<<' + '</button></div>';
-
-   for (var key in commands) {
-      html += '    <div class="vdrCommandButtonDiv"><button class="vdrButton vdrCommandButton" type="button" onclick="vdrCommandSelect(\'' + commands[key] + '\')">' + key + '</button></div>';
-   }
-
-   html += '  </div>' +
-      '</div>';
+       '    <div class="vdrCommandButtonDiv"><button class="vdrButton vdrCommandButton" type="button" onclick="initFb()">' + '<<' + '</button></div>' +
+       '  </div>' +
+       '</div>';
 
    document.getElementById("container").innerHTML = html;
+
+   for (var key in commands) {
+      var div = document.createElement("div");
+      document.getElementById('vdrFbContainer').appendChild(div);
+      div.className = 'vdrCommandButtonDiv';
+
+      var button = document.createElement("button");
+      div.appendChild(button);
+      button.innerHTML = key;
+      button.dataset.key = key;
+      button.className = 'vdrButton vdrCommandButton';
+      button.type = "button";
+      button.addEventListener("click", function(event) {
+         socket.send({ 'event' : 'command',
+                       'object' : {
+                          'command' : commands[this.dataset.key].command
+                       }
+                     });
+      });
+
+      if (commands[key].color)
+         button.style.backgroundColor = commands[key].color;
+   }
 }
