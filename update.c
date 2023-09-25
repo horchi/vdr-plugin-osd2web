@@ -50,6 +50,7 @@ const char* cOsdService::events[] =
    "maxlines",
    "login",
    "logout",
+   "command",
 
    0
 };
@@ -236,7 +237,7 @@ int cUpdate::setSkinAttachState(int attach, int bySvdrp)
    if (attach && !isSkinAttached())
    {
       Skins.SetCurrent(SKIN_NAME);
-      tell(0, "Changed skin to '%s'", Skins.Current()->Name());
+      tell(1, "Changed skin to '%s'", Skins.Current()->Name());
    }
 
    // detach ..
@@ -245,7 +246,7 @@ int cUpdate::setSkinAttachState(int attach, int bySvdrp)
    {
       Skins.SetCurrent(Setup.OSDSkin);
       cThemes::Load(Skins.Current()->Name(), Setup.OSDTheme, Skins.Current()->Theme());
-      tell(0, "Changed skin to '%s'", Skins.Current()->Name());
+      tell(1, "Changed skin to '%s'", Skins.Current()->Name());
    }
 
    if (bySvdrp)    // change only if attach is triggert by SVDRP!
@@ -620,6 +621,7 @@ int cUpdate::dispatchClientRequest()
       case evKeyPress:   status = performKeyPressRequest(oObject);    break;
       case evChannels:   status = performChannelsRequest(oObject);    break;
       case evMaxLines:   status = performMaxLineRequest(oObject);     break;
+      case evCommand:    status = performCommand(oObject);            break;
       case evLogin:      status = performLogin(oObject);              break;
 
       default:
@@ -648,11 +650,23 @@ void cUpdate::forceRefresh()
    updateCustomData();
    updateTimers();
    updateRecordings();
+   updateCommands();
 
    if (menuCategory > mcUnknown)
       updateMenu();
 
    triggerForce = no;
+}
+
+//***************************************************************************
+// Update Commands
+//***************************************************************************
+
+void cUpdate::updateCommands()
+{
+   json_t* oCommands {};
+   commands2Json(oCommands);
+   cUpdate::pushMessage(oCommands, "commands");
 }
 
 //***************************************************************************
@@ -789,6 +803,29 @@ int cUpdate::performMaxLineRequest(json_t* oRequest)
          /* tell(2, "maxlines for category (%d) now (%d)", */
          /*      category, menuMaxLines[category].maxLines); */
       }
+   }
+
+   return done;
+}
+
+//***************************************************************************
+// Perform Command
+//***************************************************************************
+
+int cUpdate::performCommand(json_t* oRequest)
+{
+   const char* command = getStringFromJson(oRequest, "command");
+
+   tell(0, "Perform command [%s]", command);
+
+   int res;
+
+   if ((res = system(command)) != 0)
+   {
+      if (res == -1)
+         tell(0, "Error: Command '%s' failed, can't fork process, result was (%s)", command, strerror(errno));
+      else
+         tell(0, "Error: Result of command '%s' was (%d)", command, res);
    }
 
    return done;

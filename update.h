@@ -62,6 +62,7 @@ class cOsdService
          evMaxLines,
          evLogin,
          evLogout,
+         evCommand,
 
          evCount
       };
@@ -115,6 +116,7 @@ int channels2Json(json_t* obj);
 int getRecordingDetails2Json(json_t* obj, int recId);
 int imagePaths2Json(json_t* obj, const char* path, const char* suffixFilter = "jpg jpeg");
 int squeezeboxTrack2Json(json_t* obj, TrackInfo* trackInfo);
+int commands2Json(json_t*& obj);
 
 //***************************************************************************
 // Class cWebSock
@@ -381,6 +383,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       void updateDiaShow(int force = no);
       void updateCustomData();
       void updateSkinState();
+      void updateCommands();
 
       void forceRefresh();
       int dispatchClientRequest();
@@ -390,6 +393,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
       int performChannelsRequest(json_t* oRequest);
       int performMaxLineRequest(json_t* oRequest);
       int performFocusRequest(json_t* oRequest, int focus);
+      int performCommand(json_t* oRequest);
 
       // VDRs osd status data
 
