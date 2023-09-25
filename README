@@ -10,7 +10,8 @@ Voraussetzung:
   libwebsocket Version >= 2.1.0
   libtinyxml2-dev
   libexif-dev
-  VDR patch of plugin vdr-plugin-pin
+  libjansson-dev
+  VDR patch of plugin vdr-plugin-pin (if used)
 
 Installation:
   git clone git@github.com:horchi/vdr-plugin-osd2web.git
