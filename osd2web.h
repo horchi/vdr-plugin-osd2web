@@ -9,12 +9,7 @@
  * GNU GENERAL PUBLIC LICENSE. See the file COPYING for details.
  */
 
-#ifndef __OSD2WEB__H__
-#define __OSD2WEB__H__
-
-//***************************************************************************
-// Includes
-//***************************************************************************
+#pragma once
 
 #include <vdr/plugin.h>
 #include <vdr/config.h>
@@ -86,19 +81,12 @@ class cPluginOsd2Web : public cPlugin
       void Store();
       void Housekeeping() {}
 
-      const char* MainMenuEntry()
-         { return config.mainmenuVisible ? MAINMENUENTRY : 0; }
+      const char* MainMenuEntry()    { return config.mainmenuVisible ? MAINMENUENTRY : 0; }
       cOsdObject* MainMenuAction()   { return new cOsd2webMenu(MAINMENUENTRY, this); }
       cMenuSetupPage* SetupMenu()    { return 0; }
-
       bool SetupParse(const char* Name, const char* Value);
-
-      cUpdate* update;
 
    private:
 
-      cOsd2WebSkin* skin;
+      cOsd2WebSkin* skin {};
 };
-
-//***************************************************************************
-#endif  // __OSD2WEB__H__

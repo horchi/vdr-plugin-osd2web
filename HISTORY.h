@@ -3,12 +3,12 @@
  * osd2web Plugin - Revision History
  * ----------------------------------------------
  *
- *  (c) 2017-2018 Dirk Hermes, Jörg Wendel
+ *  (c) 2017-2023 Dirk Hermes, Jörg Wendel
  *
  */
 
-#define _VERSION      "0.2.58"
-#define VERSION_DATE  "20.03.2023"
+#define _VERSION      "0.3.0"
+#define VERSION_DATE  "11.10.2023"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2023-10-11: version 0.3.0 (horchi)
+   - change: Improved support of libwebsocket version 4.3
 
 2023-03-20: version 0.2.58 (horchi)
    - bugfix: Fixed javascript code command service WEBIF

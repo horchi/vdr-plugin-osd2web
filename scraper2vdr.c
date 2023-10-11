@@ -38,7 +38,8 @@ cPlugin* getScraperPlugin()
 int getScraperMediaPath(const cEvent* event, const cRecording* recording,
                         std::string& bannerPath, std::string& posterPath)
 {
-   static int envInit = no;
+   static bool envInit {false};
+   static bool scraperNotPresent {false};
 
    ScraperGetPosterBannerV2 call;
    cPlugin* pScraper = getScraperPlugin();
@@ -46,16 +47,20 @@ int getScraperMediaPath(const cEvent* event, const cRecording* recording,
    bannerPath = "";
    posterPath = "";
 
+   if (scraperNotPresent)
+      return fail;
+
    if (!pScraper)
    {
-      tell(2, "Warning: Plugin scraper2vdr not found");
+      scraperNotPresent = true;
+      tell(2, "Info: Plugin scraper2vdr not found");
       return fail;
    }
 
    if (!envInit)
    {
       cEnvironment environment;
-      envInit = yes;
+      envInit = true;
       pScraper->Service("GetEnvironment", &environment);
       config.setScaper2VdrPath(environment.basePath.c_str());
    }

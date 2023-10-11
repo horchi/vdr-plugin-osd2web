@@ -119,7 +119,7 @@ eOSState cMenuPathSelect::ProcessKey(eKeys key)
                config.setDiaPathCurrent(item->getPath());
                cUpdate::updateDiaList = yes;
                plugin->Store();
-               plugin->update->setView(cUpdate::vmDia);
+               update->setView(cUpdate::vmDia);
                return osEnd;
             }
 
@@ -229,7 +229,7 @@ cOsd2webMenu::cOsd2webMenu(const char* title, cPluginOsd2Web* aPlugin)
 
    Add(new cOsdItem(hk(tr("Select Dia Path")), (eOSState)emsDiaPath));
 
-   if (plugin->update->getView() == cUpdate::vmDia)
+   if (update->getView() == cUpdate::vmDia)
       Add(new cOsdItem(hk(tr("Stop Dia Show")), (eOSState)emsDiaStop));
 
    Add(new cOsdItem(hk(tr("Dia Settings")), (eOSState)emsDiaSetup));
@@ -265,8 +265,8 @@ eOSState cOsd2webMenu::ProcessKey(eKeys key)
          return AddSubMenu(new cMenuPathSelect(config.diaPath, plugin));
 
       case emsDiaStop:
-         if (plugin->update->getView() == cUpdate::vmDia)
-            plugin->update->setView(cUpdate::vmNormal);
+         if (update->getView() == cUpdate::vmDia)
+            update->setView(cUpdate::vmNormal);
          return osEnd;
 
       case emsDiaSetup:

@@ -47,7 +47,7 @@ cSkinOsd2WebDisplayChannel::~cSkinOsd2WebDisplayChannel()
    {
       json_t* obj = json_object();
       addToJson(obj, "name", "");
-      cUpdate::pushMessage(obj, "channelgroup");
+      update->pushOutMessage(obj, "channelgroup");
    }
 }
 
@@ -61,14 +61,14 @@ void cSkinOsd2WebDisplayChannel::SetChannel(const cChannel* Channel, int /*Numbe
       visible = yes;
       json_t* obj = json_object();
       addToJson(obj, "name", Channel->Name());
-      cUpdate::pushMessage(obj, "channelgroup");
+      update->pushOutMessage(obj, "channelgroup");
    }
    else if (visible)
    {
       visible = no;
       json_t* obj = json_object();
       addToJson(obj, "name", "");
-      cUpdate::pushMessage(obj, "channelgroup");
+      update->pushOutMessage(obj, "channelgroup");
    }
 }
 
@@ -139,7 +139,7 @@ void cSkinOsd2WebDisplayMenu::Scroll(bool Up, bool Page)
    addToJson(obj, "up", Up);
    addToJson(obj, "page", Page);
 
-   cUpdate::pushMessage(obj, "textscroll");
+   update->pushOutMessage(obj, "textscroll");
 }
 
 int cSkinOsd2WebDisplayMenu::MaxItems()
@@ -163,8 +163,8 @@ void cSkinOsd2WebDisplayMenu::Clear()
    json_t* obj = json_object();
 
    addToJson(obj, "clear", yes);
-   cUpdate::pushMessage(obj, "clearmenu");
-   cUpdate::pushMessage(json_object(), "buttons");  // send empty button object
+   update->pushOutMessage(obj, "clearmenu");
+   update->pushOutMessage(json_object(), "buttons");  // send empty button object
 }
 
 void cSkinOsd2WebDisplayMenu::SetTitle(const char *Title)
@@ -188,7 +188,7 @@ void cSkinOsd2WebDisplayMenu::SetButtons(const char *red, const char *green,
    if (!isEmpty(yellow)) addToJson(buttons, "yellow", yellow);
    if (!isEmpty(blue))   addToJson(buttons, "blue", blue);
 
-   cUpdate::pushMessage(buttons, "buttons");
+   update->pushOutMessage(buttons, "buttons");
 }
 
 void cSkinOsd2WebDisplayMenu::SetMessage(eMessageType Type, const char *Text)
@@ -200,7 +200,7 @@ void cSkinOsd2WebDisplayMenu::SetMessage(eMessageType Type, const char *Text)
    addToJson(obj, "type", Type);
    addToJson(obj, "message", Text);
 
-   cUpdate::pushMessage(obj, "message");
+   update->pushOutMessage(obj, "message");
 }
 
 void cSkinOsd2WebDisplayMenu::SetItem(const char* Text, int Index, bool Current, bool Selectable)
@@ -218,7 +218,7 @@ void cSkinOsd2WebDisplayMenu::SetItem(const char* Text, int Index, bool Current,
    addToJson(oMenuItem, "current", Current);
    addToJson(oMenuItem, "selectable", Selectable);
 
-   cUpdate::pushMessage(oMenuItem, "menuitem");
+   update->pushOutMessage(oMenuItem, "menuitem");
 }
 
 bool cSkinOsd2WebDisplayMenu::SetItemEvent(const cEvent *Event, int Index, bool Current,
@@ -242,7 +242,7 @@ bool cSkinOsd2WebDisplayMenu::SetItemEvent(const cEvent *Event, int Index, bool 
    addToJson(oMenuItem, "withdate", WithDate);
    addToJson(oMenuItem, "event", oEvent);
 
-   cUpdate::pushMessage(oMenuItem, "eventitem");
+   update->pushOutMessage(oMenuItem, "eventitem");
 
    return true;
 }
@@ -266,7 +266,7 @@ bool cSkinOsd2WebDisplayMenu::SetItemChannel(const cChannel* Channel, int Index,
    addToJson(oMenuItem, "withprovider", WithProvider);
    addToJson(oMenuItem, "channel", oChannel);
 
-   cUpdate::pushMessage(oMenuItem, "channelitem");
+   update->pushOutMessage(oMenuItem, "channelitem");
 
    return true;
 }
@@ -294,7 +294,7 @@ bool cSkinOsd2WebDisplayMenu::SetItemRecording(const cRecording* Recording, int 
    addToJson(oMenuItem, "new", New);
    addToJson(oMenuItem, "recording", oRecording);
 
-   cUpdate::pushMessage(oMenuItem, "recordingitem");
+   update->pushOutMessage(oMenuItem, "recordingitem");
 
    return true;
 }
@@ -308,7 +308,7 @@ void cSkinOsd2WebDisplayMenu::SetRecording(const cRecording *Recording)
    GET_TIMERS_READ(timers);
    recording2Json(oRecording, timers, Recording, 0);
 
-   cUpdate::pushMessage(oRecording, "recording");
+   update->pushOutMessage(oRecording, "recording");
 }
 
 bool cSkinOsd2WebDisplayMenu::SetItemTimer(const cTimer *Timer, int Index, bool Current, bool Selectable)
@@ -328,7 +328,7 @@ bool cSkinOsd2WebDisplayMenu::SetItemTimer(const cTimer *Timer, int Index, bool 
    addToJson(oMenuItem, "selectable", Selectable);
    addToJson(oMenuItem, "timer", oTimer);
 
-   cUpdate::pushMessage(oMenuItem, "timeritem");
+   update->pushOutMessage(oMenuItem, "timeritem");
 
    return true;
 }
@@ -342,7 +342,7 @@ void cSkinOsd2WebDisplayMenu::SetScrollbar(int Total, int Offset)
    addToJson(oBar, "Total", Total);
    addToJson(oBar, "Offset", Offset);
 
-   cUpdate::pushMessage(oBar, "scrollbar");
+   update->pushOutMessage(oBar, "scrollbar");
 }
 
 void cSkinOsd2WebDisplayMenu::SetEvent(const cEvent *Event)
@@ -356,7 +356,7 @@ void cSkinOsd2WebDisplayMenu::SetEvent(const cEvent *Event)
    getTimerMatch(timers, Event, &timerMatch);
    event2Json(oEvent, Event, 0, timerMatch, no, cOsdService::osLarge);
 
-   cUpdate::pushMessage(oEvent, "event");
+   update->pushOutMessage(oEvent, "event");
 }
 
 void cSkinOsd2WebDisplayMenu::SetText(const char *Text, bool FixedFont)
@@ -367,7 +367,7 @@ void cSkinOsd2WebDisplayMenu::SetText(const char *Text, bool FixedFont)
 
    addToJson(oMenuText, "text", Text);
 
-   cUpdate::pushMessage(oMenuText, "menutext");
+   update->pushOutMessage(oMenuText, "menutext");
 }
 
 int cSkinOsd2WebDisplayMenu::GetTextAreaWidth() const
@@ -434,7 +434,7 @@ cSkinOsd2WebDisplayVolume::~cSkinOsd2WebDisplayVolume()
 
    addToJson(oVolume, "display", no);
 
-   cUpdate::pushMessage(oVolume, "volume");
+   update->pushOutMessage(oVolume, "volume");
 }
 
 void cSkinOsd2WebDisplayVolume::SetVolume(int Current, int Total, bool Mute)
@@ -448,7 +448,7 @@ void cSkinOsd2WebDisplayVolume::SetVolume(int Current, int Total, bool Mute)
    addToJson(oVolume, "total", Total);
    addToJson(oVolume, "mute", Mute);
 
-   cUpdate::pushMessage(oVolume, "volume");
+   update->pushOutMessage(oVolume, "volume");
 }
 
 //***************************************************************************
@@ -510,7 +510,7 @@ cSkinOsd2WebDisplayMessage::~cSkinOsd2WebDisplayMessage()
 
    addToJson(obj, "message", "");
 
-   cUpdate::pushMessage(obj, "message");
+   update->pushOutMessage(obj, "message");
 }
 
 void cSkinOsd2WebDisplayMessage::SetMessage(eMessageType Type, const char *Text)
@@ -522,7 +522,7 @@ void cSkinOsd2WebDisplayMessage::SetMessage(eMessageType Type, const char *Text)
    addToJson(obj, "type", Type);
    addToJson(obj, "message", Text);
 
-   cUpdate::pushMessage(obj, "message");
+   update->pushOutMessage(obj, "message");
 }
 
 void cSkinOsd2WebDisplayMessage::Flush()

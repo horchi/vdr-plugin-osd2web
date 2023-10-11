@@ -10,8 +10,7 @@
  *
  **/
 
-#ifndef __O2W_CONFIG_H
-#define __O2W_CONFIG_H
+#pragma once
 
 #include "lib/config.h"
 
@@ -68,5 +67,3 @@ struct cOsd2WebConfig : public cConfigBase
 };
 
 extern cOsd2WebConfig config;
-
-#endif // __O2W_CONFIG_H

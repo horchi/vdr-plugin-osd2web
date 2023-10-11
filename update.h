@@ -10,12 +10,7 @@
  *
  **/
 
-#ifndef __UPDATE_H
-#define __UPDATE_H
-
-//***************************************************************************
-// Includes
-//***************************************************************************
+#pragma once
 
 #include <libwebsockets.h>
 
@@ -32,67 +27,11 @@
 
 #include "epg2vdr.h"
 #include "squeezebox.h"
+#include "websock.h"
 
 #define SKIN_NAME "osd2web"
 
 typedef cMutexLock cMyMutexLock;
-
-//***************************************************************************
-// Class OSD Service
-//***************************************************************************
-
-class cOsdService
-{
-   public:
-
-      enum ObjectShape
-      {
-         osText   = 0x01,
-         osSmall  = 0x02,
-         osLarge  = 0x04
-      };
-
-      enum Event
-      {
-         evUnknown,
-         evTakeFocus,
-         evLeaveFocus,
-         evKeyPress,
-         evChannels,
-         evMaxLines,
-         evLogin,
-         evLogout,
-         evCommand,
-
-         evCount
-      };
-
-      enum ClientType
-      {
-         ctInactive = na,
-         ctInteractive,            // = 0 - for interactive browser session
-         ctView,                   // = 1 - e.g. for graphtft display
-         ctFB                      // = 2 - pure FB (remote control) clients
-      };
-
-      static const char* toName(Event event);
-      static Event toEvent(const char* name);
-
-      static const char* events[];
-
-      struct cCutMark
-      {
-         int position;
-         std::string comment;
-      };
-
-      struct cCuttingMarks
-      {
-         cMutex mutex;
-         std::queue<cCutMark> queue;
-         int isSet;
-      };
-};
 
 //***************************************************************************
 // Tools
@@ -117,130 +56,6 @@ int getRecordingDetails2Json(json_t* obj, int recId);
 int imagePaths2Json(json_t* obj, const char* path, const char* suffixFilter = "jpg jpeg");
 int squeezeboxTrack2Json(json_t* obj, TrackInfo* trackInfo);
 int commands2Json(json_t*& obj);
-
-//***************************************************************************
-// Class cWebSock
-//***************************************************************************
-
-class cWebSock : public cOsdService
-{
-   public:
-
-      enum MsgType
-      {
-         mtNone = na,
-         mtPing,    // 0
-         mtData     // 1
-      };
-
-      enum Protokoll
-      {
-         sizeLwsPreFrame  = LWS_SEND_BUFFER_PRE_PADDING,
-         sizeLwsPostFrame = LWS_SEND_BUFFER_POST_PADDING,
-         sizeLwsFrame     = sizeLwsPreFrame + sizeLwsPostFrame
-      };
-
-      struct SessionData
-      {
-         char* buffer {};
-         int bufferSize {0};
-         int payloadSize {0};
-         int dataPending {no};
-      };
-
-      struct Client
-      {
-         ClientType type {};
-         int tftprio {0};
-         std::queue<std::string> messagesOut;
-         cMutex messagesOutMutex;
-         void* wsi {};
-
-         void pushMessage(const char* p)
-         {
-            cMutexLock lock(&messagesOutMutex);
-            messagesOut.push(p);
-         }
-
-         void cleanupMessageQueue()
-         {
-            cMutexLock lock(&messagesOutMutex);
-
-            // just in case client is not connected and wasted messages are pending
-
-            tell(0, "Info: Flushing (%zu) old 'wasted' messages of client (%p)", messagesOut.size(), wsi);
-
-            while (!messagesOut.empty())
-               messagesOut.pop();
-         }
-      };
-
-      cWebSock(const char* aHttpPath);
-      virtual ~cWebSock();
-
-      int init(int aPort, int aTimeout);
-      int exit();
-
-      int service();
-      int performData(MsgType type);
-
-      // status callback methods
-
-      static int wsLogLevel;
-      static int callbackHttp(lws* wsi, lws_callback_reasons reason, void* user, void* in, size_t len);
-      static int callbackOsd2Vdr(lws* wsi, lws_callback_reasons reason, void* user, void* in, size_t len);
-
-      // static interface
-
-      static void activateAvailableClient();
-      static int isHighestViewClient(lws* wsi);
-      static void atLogin(lws* wsi, const char* message, const char* clientInfo);
-      static void atLogout(lws* wsi, const char* message, const char* clientInfo);
-      static int getClientCount();
-
-      static void pushMessage(const char* p, lws* wsi = 0);
-
-      static void writeLog(int level, const char* line);
-
-   private:
-
-      static int serveFile(lws* wsi, const char* path);
-      static int dispatchDataRequest(lws* wsi, SessionData* sessionData, const char* url);
-      static int doEventImg(lws* wsi);
-      static int doRecordingImg(lws* wsi);
-      static int doChannelLogo(lws* wsi);
-      static int doEnvironment(lws* wsi, SessionData* sessionData);
-
-      static const char* methodOf(const char* url);
-      static const char* getStrParameter(lws* wsi, const char* name, const char* def = 0);
-      static int getIntParameter(lws* wsi, const char* name, int def = na);
-
-      //
-
-      int port {na};
-      lws_protocols protocols[3];
-      lws_http_mount mounts[1];
-#if defined (LWS_LIBRARY_VERSION_MAJOR) && (LWS_LIBRARY_VERSION_MAJOR >= 4)
-      lws_retry_bo_t retry;
-#endif
-
-      // statics
-
-      static lws_context* context;
-
-      static char* httpPath;
-      static char* epgImagePath;
-      static int timeout;
-      static void* activeClient;
-      static std::map<void*,Client> clients;
-      static cMutex clientsMutex;
-      static MsgType msgType;
-
-      // only used in callback
-
-      static char* msgBuffer;
-      static int msgBufferSize;
-};
 
 #include <vdr/skins.h>
 
@@ -270,7 +85,7 @@ class cOsd2WebSkin : public cSkin
 // Class cUpdate
 //***************************************************************************
 
-class cUpdate : public cStatus, cThread, public cOsdService
+class cUpdate : public cStatus, cThread, public cOsdService, public cWebInterface
 {
    public:
 
@@ -302,6 +117,7 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
       // interface
 
+      const char* myName() override  { return "osd2vdr"; }
       int init(const char* dev, int port, int startDetached);
 
       int initFileService();
@@ -336,8 +152,10 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
       // static message interface to web thread
 
-      static int pushInMessage(const char* data);
-      static int pushMessage(json_t* obj, const char* title, long client = 0);
+      int pushInMessage(const char* data) override;
+
+      // static int pushInMessage(const char* data);
+      int pushOutMessage(json_t* obj, const char* title, long client = 0);
       static void menuClosed() { menuCloseTrigger = yes; }
       static int isEditable(eMenuCategory category);
       static void updateMenu();
@@ -388,7 +206,6 @@ class cUpdate : public cStatus, cThread, public cOsdService
       void forceRefresh();
       int dispatchClientRequest();
       int performLogin(json_t* oObject);
-      int performPing();
       int performKeyPressRequest(json_t* oRequest);
       int performChannelsRequest(json_t* oRequest);
       int performMaxLineRequest(json_t* oRequest);
@@ -408,16 +225,16 @@ class cUpdate : public cStatus, cThread, public cOsdService
 
       // trigger
 
-      time_t nextPing;
-      time_t nextPresentUpdateAt;
-      int pingTime;
+      time_t nextPing {0};
+      time_t nextPresentUpdateAt {0};
+      int pingTime {60};
 
       // ...
 
-      int attachedBySvdrp;
-      time_t lastClientActionAt;
-      int epg2vdrIsLoaded;
-      cWebSock* webSock;
+      int attachedBySvdrp {0};
+      time_t lastClientActionAt {0};
+      int epg2vdrIsLoaded {0};
+      cWebSock* webSock {};
       bool active;
       int actualClientCount;
       ViewMode viewMode;
@@ -457,5 +274,4 @@ class cUpdate : public cStatus, cThread, public cOsdService
       std::vector<ImageFile>::iterator itCurrentDiaImage;
 };
 
-//***************************************************************************
-#endif // __UPDATE_H
+extern cUpdate* update;

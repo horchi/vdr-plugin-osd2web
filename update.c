@@ -10,10 +10,6 @@
  *
  **/
 
-//***************************************************************************
-// Includes
-//***************************************************************************
-
 #include <sys/wait.h>
 #include <signal.h>
 
@@ -22,6 +18,8 @@
 
 #include "update.h"
 #include "config.h"
+
+cUpdate* update {};
 
 std::queue<std::string> cUpdate::messagesIn;
 cMutex cUpdate::messagesInMutex;
@@ -120,7 +118,7 @@ cUpdate::cUpdate()
    if (!config.diaPath)
       asprintf(&config.diaPath, "%s/dia/", config.httpPath);
 
-   webSock = new cWebSock(config.httpPath);
+   webSock = new cWebSock(this, config.httpPath);
 }
 
 cUpdate::~cUpdate()
@@ -145,7 +143,7 @@ int cUpdate::pushInMessage(const char* data)
 // Push Message
 //***************************************************************************
 
-int cUpdate::pushMessage(json_t* oContents, const char* title, long client)
+int cUpdate::pushOutMessage(json_t* oContents, const char* title, long client)
 {
    json_t* obj = json_object();
 
@@ -155,10 +153,11 @@ int cUpdate::pushMessage(json_t* oContents, const char* title, long client)
    char* p = json_dumps(obj, JSON_PRESERVE_ORDER);
    json_decref(obj);
 
-   cWebSock::pushMessage(p, (lws*)client);
-
+   webSock->pushOutMessage(p, (lws*)client);
    tell(4, "DEBUG: PushMessage [%s]", p);
    free(p);
+
+   webSock->performData(cWebSock::mtData);
 
    return done;
 }
@@ -541,7 +540,7 @@ void cUpdate::Action()
 
    // init web socket
 
-   while ((state = webSock->init(config.webPort, pingTime)) != success)
+   while ((state = webSock->init(config.webPort, pingTime, "", false)) != success)
    {
       tell(0, "Retrying in 2 seconds");
       sleep(2);
@@ -564,18 +563,14 @@ void cUpdate::Action()
 
    while (active)
    {
-      webSock->service();
       atMeanwhile();
 
       // data from clients
 
       dispatchClientRequest();
+      usleep(5000);
 
-      // data to client(s)
-
-      webSock->performData(cWebSock::mtData);
-
-      performPing();
+      // webSock->performData(cWebSock::mtData);       // data to client(s)
    }
 
    stopBrowser();
@@ -666,7 +661,7 @@ void cUpdate::updateCommands()
 {
    json_t* oCommands {};
    commands2Json(oCommands);
-   cUpdate::pushMessage(oCommands, "commands");
+   pushOutMessage(oCommands, "commands");
 }
 
 //***************************************************************************
@@ -686,7 +681,7 @@ int cUpdate::performLogin(json_t* oObject)
       json_t* oRole = json_object();
       addToJson(oRole, "role", "passive");
       addToJson(oRole, "havelogos", folderExists(config.logoPath));
-      cUpdate::pushMessage(oRole, "rolechange", lastClient);
+      pushOutMessage(oRole, "rolechange", lastClient);
    }
 
    // and for 'new' client ...
@@ -695,7 +690,7 @@ int cUpdate::performLogin(json_t* oObject)
       json_t* oRole = json_object();
       addToJson(oRole, "role", type == ctInteractive ? "active" : "passive");
       addToJson(oRole, "havelogos", folderExists(config.logoPath));
-      cUpdate::pushMessage(oRole, "rolechange", client);
+      pushOutMessage(oRole, "rolechange", client);
    }
 
    if (type != ctFB)
@@ -765,7 +760,7 @@ int cUpdate::performChannelsRequest(json_t* oRequest)
    json_t* oChannels = json_array();
 
    if (channels2Json(oChannels) == success)
-      pushMessage(oChannels, "channels");
+      pushOutMessage(oChannels, "channels");
 
    return done;
 }
@@ -832,21 +827,6 @@ int cUpdate::performCommand(json_t* oRequest)
 }
 
 //***************************************************************************
-// Perform Ping
-//***************************************************************************
-
-int cUpdate::performPing()
-{
-   if (nextPing < time(0))
-   {
-      webSock->performData(cWebSock::mtPing);
-      nextPing = time(0) + pingTime-5;
-   }
-
-   return done;
-}
-
-//***************************************************************************
 // Update Dia Show
 //***************************************************************************
 
@@ -860,7 +840,7 @@ void cUpdate::updateDiaShow(int force)
       {
          json_t* oDiaShow = json_object();
          addToJson(oDiaShow, "active", no);
-         cUpdate::pushMessage(oDiaShow, "diashow");
+         pushOutMessage(oDiaShow, "diashow");
       }
 
       return;
@@ -897,5 +877,5 @@ void cUpdate::updateDiaShow(int force)
    addToJson(oDiaShow, "landscape", file->landscape);
 
    tell(0, "Update diashow image to '%s'", file->path.c_str());
-   cUpdate::pushMessage(oDiaShow, "diashow");
+   pushOutMessage(oDiaShow, "diashow");
 }

@@ -216,7 +216,7 @@ void cUpdate::updatePresentFollowing()
    if (oFollowing)
       json_object_set_new(obj, "following", oFollowing);
 
-   cUpdate::pushMessage(obj, "actual");
+   pushOutMessage(obj, "actual");
 }
 
 //***************************************************************************
@@ -252,7 +252,7 @@ void cUpdate::updateTimers()
             delete timer;
          }
 
-         cUpdate::pushMessage(oTimers, "timers");
+         pushOutMessage(oTimers, "timers");
       }
    }
 
@@ -284,7 +284,7 @@ void cUpdate::updateTimers()
 #if defined (APIVERSNUM) && (APIVERSNUM >= 20301)
       stateKey.Remove();
 #endif
-      cUpdate::pushMessage(oTimers, "timers");
+      pushOutMessage(oTimers, "timers");
    }
 
    triggerTimerUpdate = no;
@@ -332,7 +332,7 @@ void cUpdate::updateRecordings()
       json_array_append_new(oRecordings, oRecording);
    }
 
-   cUpdate::pushMessage(oRecordings, "recordings");
+   pushOutMessage(oRecordings, "recordings");
 }
 
 //***************************************************************************
@@ -348,7 +348,7 @@ void cUpdate::updateReplay(int force)
    if (!activeControl)
    {
       addToJson(oRecording, "active", no);
-      cUpdate::pushMessage(oRecording, "replay");
+      pushOutMessage(oRecording, "replay");
       updateReplayControl(force);
       return;
    }
@@ -374,7 +374,7 @@ void cUpdate::updateReplay(int force)
       addToJson(oRecording, "filename", activeReplayFile.c_str());
    }
 
-   cUpdate::pushMessage(oRecording, "replay");
+   pushOutMessage(oRecording, "replay");
    updateReplayControl(force);
 }
 
@@ -392,15 +392,14 @@ void cUpdate::updateReplayControl(int force)
    force |= triggerReplayControlUpdate;
    triggerReplayControlUpdate = no;
 
-   json_t* oControl = json_object();
-
    if (!activeControl)
    {
       if (force || lactive)
       {
+         json_t* oControl = json_object();
          lactive = no;
          addToJson(oControl, "active", lactive);
-         cUpdate::pushMessage(oControl, "replaycontrol");
+         pushOutMessage(oControl, "replaycontrol");
       }
 
       return;
@@ -429,6 +428,8 @@ void cUpdate::updateReplayControl(int force)
    // ltotal = total;
    lactive = yes;
 
+   json_t* oControl = json_object();
+
    addToJson(oControl, "active", lactive);
    addToJson(oControl, "play", play);
    addToJson(oControl, "speed", speed);
@@ -436,7 +437,7 @@ void cUpdate::updateReplayControl(int force)
    addToJson(oControl, "current", current / activeControlFps);
    addToJson(oControl, "total", total / activeControlFps);
 
-   cUpdate::pushMessage(oControl, "replaycontrol");
+   pushOutMessage(oControl, "replaycontrol");
 }
 
 //***************************************************************************
@@ -473,7 +474,7 @@ void cUpdate::updateCustomData()
       addToJson(obj, file.c_str(), oFile);
    }
 
-   cUpdate::pushMessage(obj, "customdata");
+   pushOutMessage(obj, "customdata");
 }
 
 //***************************************************************************
@@ -484,7 +485,7 @@ void cUpdate::updateSkinState()
 {
    json_t* obj = json_object();
    addToJson(obj, "attached", isSkinAttached());
-   cUpdate::pushMessage(obj, "skinstate");
+   pushOutMessage(obj, "skinstate");
 }
 
 //***************************************************************************
@@ -499,5 +500,5 @@ void cUpdate::updateMenu()
    addToJson(oMenu, "title", menuTitle.c_str());
    addToJson(oMenu, "editable", isEditable(menuCategory));
 
-   cUpdate::pushMessage(oMenu, "menu");
+   update->pushOutMessage(oMenu, "menu");
 }

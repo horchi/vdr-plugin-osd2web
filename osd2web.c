@@ -148,7 +148,7 @@ bool cPluginOsd2Web::Service(const char* id, void* data)
       if (trackInfo)
       {
          squeezeboxTrack2Json(oSqueezebox, trackInfo);
-         cUpdate::pushMessage(oSqueezebox, "squeeze-track");
+         update->pushOutMessage(oSqueezebox, "squeeze-track");
       }
 
       return true;
