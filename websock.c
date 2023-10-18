@@ -347,7 +347,7 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user, vo
             tell(2, "WROTE '%s' (%d)", sessionData->buffer+sizeLwsPreFrame, res);
 
          free(sessionData->buffer);
-         sessionData = {};
+         *sessionData = {};
 
          if (lws_http_transaction_completed(wsi))
             return -1;
@@ -360,7 +360,7 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user, vo
          int res {success};
          char* file {};
          const char* url {(char*)in};
-         sessionData = {};
+         *sessionData = {};
 
          tell(1, "HTTP: Requested uri: (%ld) '%s'", (ulong)len, url);
 
@@ -989,13 +989,19 @@ int cWebSock::doChannelLogo(lws* wsi)
 
 int cWebSock::doEnvironment(lws* wsi, SessionData* sessionData)
 {
+   if (!sessionData)
+   {
+      tell(0, "Fatal: Missing session data, aborting");
+      return fail;
+   }
+
    static unsigned char header[4096+sizeLwsFrame];
    unsigned char* p = header + sizeLwsPreFrame;
    unsigned char* e = p + sizeof(header) - sizeLwsPreFrame;
 
-   DIR* dirSkin;
-   int result = 0;
-   char* path = 0;
+   DIR* dirSkin {};
+   int result {0};
+   char* path {};
 
    json_t* obj = json_object();
    json_t* oEnvironment = json_object();
@@ -1013,31 +1019,33 @@ int cWebSock::doEnvironment(lws* wsi, SessionData* sessionData)
    tell(2, "Scanning '%s' for skins", path);
 
 #ifndef HAVE_READDIR_R
-   dirent* pSkinEntry;
+   dirent* pSkinEntry {};
 
    while ((pSkinEntry = readdir(dirSkin)))
 #else
    dirent skinEntry;
-   dirent* pSkinEntry = &skinEntry;
-   dirent* skinRes;
+   dirent* pSkinEntry {&skinEntry};
+   dirent* skinRes {};
 
    // deprecated but the only reentrant with old libc!
 
    while (readdir_r(dirSkin, pSkinEntry, &skinRes) == 0 && skinRes)
 #endif
    {
-      char* themePath = 0;
-      DIR* dirTheme;
-
-      tell(4, "Checking '%s'", pSkinEntry->d_name);
+      char* themePath {};
+      DIR* dirTheme {};
 
       if (dirTypeOf(path, pSkinEntry) != DT_DIR || pSkinEntry->d_name[0] == '.')
          continue;
 
-      json_t* oSkin = json_object();
-      json_t* oThemes = json_array();
+      tell(4, "Checking '%s'", pSkinEntry->d_name);
+
+      json_t* oSkin {json_object()};
+      json_t* oThemes {json_array()};
 
       asprintf(&themePath, "%s/skins/%s/themes/", config.httpPath, pSkinEntry->d_name);
+
+      tell(4, "DDD: Open theme path '%s'", themePath);
 
       if (!(dirTheme = opendir(themePath)))
       {
@@ -1046,15 +1054,15 @@ int cWebSock::doEnvironment(lws* wsi, SessionData* sessionData)
          continue;
       }
 
-      tell(3, "Scanning '%s' for themes", themePath);
+      tell(4, "Scanning '%s' for themes", themePath);
 
 #ifndef HAVE_READDIR_R
-      dirent* pThemeEntry;
+      dirent* pThemeEntry {};
 
       while ((pThemeEntry = readdir(dirTheme)))
 #else
       dirent themeEntry;
-      dirent* pThemeEntry = &themeEntry;
+      dirent* pThemeEntry {&themeEntry};
       dirent* themeRes {};
 
       // deprecated but the only reentrant with old libc!
@@ -1062,14 +1070,13 @@ int cWebSock::doEnvironment(lws* wsi, SessionData* sessionData)
       while (readdir_r(dirTheme, pThemeEntry, &themeRes) == 0 && themeRes)
 #endif
       {
-         tell(4, "Checking '%s'", pThemeEntry->d_name);
-
          if (dirTypeOf(themePath, pThemeEntry) != DT_REG || pThemeEntry->d_name[0] == '.')
             continue;
 
          if (rep(pThemeEntry->d_name, ".css$") != success)
             continue;
 
+         tell(3, "Appending '%s' to array", pThemeEntry->d_name);
          json_array_append_new(oThemes, json_string(strReplace(".css", "", pThemeEntry->d_name).c_str()));
       }
 

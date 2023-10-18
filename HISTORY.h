@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.3.0"
-#define VERSION_DATE  "11.10.2023"
+#define _VERSION      "0.3.1"
+#define VERSION_DATE  "18.10.2023"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2023-10-18: version 0.3.1 (horchi)
+   - bugfix: Fixed crash on environment request
 
 2023-10-11: version 0.3.0 (horchi)
    - change: Improved support of libwebsocket version 4.3
