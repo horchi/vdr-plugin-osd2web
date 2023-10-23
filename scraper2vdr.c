@@ -28,6 +28,9 @@ cPlugin* getScraperPlugin()
 {
    static cPlugin* pScraper = cPluginManager::GetPlugin("scraper2vdr");
 
+   if (!pScraper)
+      pScraper = cPluginManager::GetPlugin("tvscraper");
+
    return pScraper;
 }
 

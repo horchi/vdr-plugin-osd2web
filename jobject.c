@@ -369,7 +369,7 @@ int recording2Json(json_t* obj, const cTimers* timers, const cRecording* recordi
       addToJson(obj, "event", oEvent);
    }
 
-   if (cuttingMarks->isSet)
+   if (cuttingMarks && cuttingMarks->isSet)
    {
       json_t* oMarks = json_array();
       cMutexLock lock(&cuttingMarks->mutex);

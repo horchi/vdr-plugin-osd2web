@@ -297,15 +297,14 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user, vo
       {
          getClientInfo(wsi, &clientInfo);
 
-         tell(2, "DEBUG: Got unecpected LWS_CALLBACK_CLOSED for client '%s' (%p)",
-              clientInfo.c_str(), (void*)wsi);
+         tell(2, "DEBUG: Got unexpected LWS_CALLBACK_CLOSED for client '%s' (%p)", clientInfo.c_str(), (void*)wsi);
          break;
       }
       case LWS_CALLBACK_HTTP_BODY:
       {
          const char* message {(const char*)in};
          int s {lws_hdr_total_length(wsi, WSI_TOKEN_POST_URI)};
-         tell(1, "DEBUG: Got unecpected LWS_CALLBACK_HTTP_BODY with [%.*s] lws_hdr_total_length is (%d)", (int)len+1, message, s);
+         tell(1, "DEBUG: Got unexpected LWS_CALLBACK_HTTP_BODY with [%.*s] lws_hdr_total_length is (%d)", (int)len+1, message, s);
          break;
       }
 
@@ -323,7 +322,7 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user, vo
 
          // data to write?
 
-         if (!sessionData->dataPending)
+         if (!sessionData || !sessionData->dataPending)
          {
             tell(1, "Info: No more session data pending");
             return -1;
@@ -1120,15 +1119,13 @@ int cWebSock::doEnvironment(lws* wsi, SessionData* sessionData)
       result = 1;
    }
 
-   if (!result && lws_add_http_header_by_token(wsi, WSI_TOKEN_HTTP_SERVER,
-                                               (unsigned char*)"osd2web", 7, &p, e))
+   if (!result && lws_add_http_header_by_token(wsi, WSI_TOKEN_HTTP_SERVER, (unsigned char*)"osd2web", 7, &p, e))
    {
       tell(0, "Error lws_add_http_header_by_token");
       result = 1;
    }
 
-   if (!result && lws_add_http_header_by_token(wsi, WSI_TOKEN_HTTP_CONTENT_TYPE,
-                                               (unsigned char*)"application/json", 16, &p, e))
+   if (!result && lws_add_http_header_by_token(wsi, WSI_TOKEN_HTTP_CONTENT_TYPE, (unsigned char*)"application/json", 16, &p, e))
    {
       tell(0, "Error lws_add_http_header_by_token");
       result = 1;

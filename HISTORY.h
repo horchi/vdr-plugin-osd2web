@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.3.1"
-#define VERSION_DATE  "18.10.2023"
+#define _VERSION      "0.3.2"
+#define VERSION_DATE  "22.10.2023"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2023-10-22 version 0.3.2 (horchi)
+   - bugfix: Added support of tvscraper (thx MarkusE)
 
 2023-10-18: version 0.3.1 (horchi)
    - bugfix: Fixed crash on environment request
