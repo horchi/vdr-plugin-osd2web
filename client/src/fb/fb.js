@@ -118,9 +118,11 @@ function dispatchMessage(message)
 
    // console.log("<- event (" + event + ")");
 
-   if (event == 'commands')
-   {
+   if (event == 'commands') {
       commands = jMessage.object;
+   }
+   else if (event == 'actual') {
+      // console.log("actual " + JSON.stringify(jMessage.object, undefined, 4));
    }
 }
 
