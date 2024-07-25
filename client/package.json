@@ -9,7 +9,7 @@
     "build": "rimraf dist && webpack -p --progress --hide-modules"
   },
   "dependencies": {
-    "bootstrap": "~>4.1.2",
+    "bootstrap": "~>4.3.1",
     "intl": "^1.2.5",
     "jquery": "^3.0.0",
     "popper.js": "^1.14.4",
