@@ -8,9 +8,8 @@
  *
  */
 
-var rowCount = 9;
-var screenHeight = 0;
 var commands = {};
+var actual = null;
 
 window.WebSocketClient = function(opt)
 {
@@ -95,16 +94,6 @@ var isActive = null;
 
 function onSocketConnect()
 {
-   function autoResizeDiv()
-   {
-      screenHeight = window.innerHeight -20;
-      document.getElementById('content').style.height = screenHeight +'px';
-      // console.log("set height to", screenHeight +'px');
-      resizeButtons();
-   }
-   window.onresize = autoResizeDiv;
-   autoResizeDiv();
-
    socket.send({ "event" : "login", "object" :
                  { "type" : "active",
                    "url" : window.location.href }
@@ -122,7 +111,8 @@ function dispatchMessage(message)
       commands = jMessage.object;
    }
    else if (event == 'actual') {
-      // console.log("actual " + JSON.stringify(jMessage.object, undefined, 4));
+      actual = jMessage.object;
+      showActual(actual);
    }
 }
 
@@ -163,65 +153,135 @@ function initFb()
 {
    document.getElementById("container").innerHTML =
       '<div class="vdrContent">' +
-      '  <div id="vdrFbContainer" class="vdrFbContainer">' +
-      '    <div class="vdrButtonDiv"><button class="vdrButton" type="button" onclick="vdrKeyPress(\'1\')">1</button></div>' +
-      '    <div class="vdrButtonDiv"><button class="vdrButton" type="button" onclick="vdrKeyPress(\'2\')">2</button></div>' +
-      '    <div class="vdrButtonDiv"><button class="vdrButton" type="button" onclick="vdrKeyPress(\'3\')">3</button></div>' +
-      '    <br/>' +
-      '    <div class="vdrButtonDiv"><button class="vdrButton" type="button" onclick="vdrKeyPress(\'4\')">4</button></div>' +
-      '    <div class="vdrButtonDiv"><button class="vdrButton" type="button" onclick="vdrKeyPress(\'5\')">5</button></div>' +
-      '    <div class="vdrButtonDiv"><button class="vdrButton" type="button" onclick="vdrKeyPress(\'6\')">6</button></div>' +
-      '    <br/>' +
-      '    <div class="vdrButtonDiv"><button class="vdrButton" type="button" onclick="vdrKeyPress(\'7\')">7</button></div>' +
-      '    <div class="vdrButtonDiv"><button class="vdrButton" type="button" onclick="vdrKeyPress(\'8\')">8</button></div>' +
-      '    <div class="vdrButtonDiv"><button class="vdrButton" type="button" onclick="vdrKeyPress(\'9\')">9</button></div>' +
-
-      '    <br/>' +
-      '    <div class="vdrButtonDiv"><button class="vdrButton vdrButtonRound glyphicon glyphicon-volume-up" type="button" onclick="vdrKeyPress(\'volume-\')">🔉</button></div>' +
-      '    <div class="vdrButtonDiv"><button class="vdrButton" type="button" onclick="vdrKeyPress(\'0\')">0</button></div>' +
-      '    <div class="vdrButtonDiv"><button class="vdrButton vdrButtonRound" type="button" onclick="vdrKeyPress(\'volume+\')">🔊</button></div>' +
-
-      '    <br/>' +
-      '    <div class="vdrButtonDiv"><button class="vdrButton vdrButtonRound" type="button" onclick="vdrKeyPress(\'menu\')">&#9776;</button></div>' +
-      '    <div class="vdrButtonDiv"><button class="vdrButton vdrArrowButton vdrArrowButtonUp" type="button" onclick="vdrKeyPress(\'up\')">&uparrow;</button></div>' +
-      '    <div class="vdrButtonDiv"><button class="vdrButton vdrButtonRound" type="button" onclick="vdrKeyPress(\'back\')">↵</button></div>' +
-      '    <br/>' +
-
-      '    <div class="vdrButtonDiv"><button class="vdrButton vdrArrowButton vdrArrowButtonLeft" type="button" onclick="vdrKeyPress(\'left\')">&leftarrow;</button></div>' +
-      '    <div class="vdrButtonDiv"><button class="vdrButton vdrArrowButton vdrButtonRound" type="button" onclick="vdrKeyPress(\'ok\')">ok</button></div>' +
-      '    <div class="vdrButtonDiv"><button class="vdrButton vdrArrowButton vdrArrowButtonRight" type="button" onclick="vdrKeyPress(\'right\')">&rightarrow;</button></div>' +
-      '    <br/>' +
-
-      '    <div class="vdrButtonDiv"><button class="vdrButton vdrButtonRound" type="button" onclick="vdrKeyPress(\'mute\')">🔇</button></div>' +
-      '    <div class="vdrButtonDiv"><button class="vdrButton vdrArrowButton vdrArrowButtonDown" type="button" onclick="vdrKeyPress(\'down\')">&downarrow;</button></div>' +
-      '    <div class="vdrButtonDiv"><button class="vdrButton vdrButtonRound" type="button" onclick="vdrKeyPress(\'info\')">ℹ</button></div>' +
-      '    <br/>' +
-
-      '    <div class="vdrButtonColorDiv"><button class="vdrButton vdrColorButtonRed" type="button" onclick="vdrKeyPress(\'red\')"></button></div>' +
-      '    <div class="vdrButtonColorDiv"><button class="vdrButton vdrColorButtonGreen" type="button" onclick="vdrKeyPress(\'green\')"></button></div>' +
-      '    <div class="vdrButtonColorDiv"><button class="vdrButton vdrColorButtonYellow" type="button" onclick="vdrKeyPress(\'yellow\')"></button></div>' +
-      '    <div class="vdrButtonColorDiv"><button class="vdrButton vdrColorButtonBlue" type="button" onclick="vdrKeyPress(\'blue\')"></button></div>' +
-      '    <br/>' +
-      '    <div class="vdrCommandButtonDiv"><button class="vdrButton vdrCommandButton" type="button" onclick="vdrCommands()">Commands</button></div>' +
+      '  <div class="vdrPresent rounded-border">' +
+      '    <div class="vdrChannel">' +
+      '      <img id="vdrChannelLogo" class="vdrChannelLogo" style="display:none;" onerror="this.style.display=\'none\'" onload="this.style.display=\'\'"/>' +
+      '      <div id="vdrChannel"></div>' +
+      '    </div>' +
+      '    <div>' +
+      '      <span id="vdrStartTime" class="vdrTime"></span>' +
+      '      <span id="vdrTitle"></span>' +
+      '      <div id="vdrShorttext"></div>' +
+      '      <span id="vdrStartTimeNext" class="vdrTime"></span>' +
+      '      <span id="vdrTitleNext"></span>' +
+      '      <div id="vdrShorttextNext"></div>' +
+      '    </div>' +
       '  </div>' +
+      '  <div id="vdrFbContainer" class="vdrFbContainer">' +
+      '    <div>' +
+      '       <div>' +
+      '         <div class="vdrButtonDiv"><button class="vdrButton" type="button" onclick="vdrKeyPress(\'1\')">1</button></div>' +
+      '         <div class="vdrButtonDiv"><button class="vdrButton" type="button" onclick="vdrKeyPress(\'2\')">2</button></div>' +
+      '         <div class="vdrButtonDiv"><button class="vdrButton" type="button" onclick="vdrKeyPress(\'3\')">3</button></div>' +
+      '       </div>' +
+      '       <div>' +
+      '         <div class="vdrButtonDiv"><button class="vdrButton" type="button" onclick="vdrKeyPress(\'4\')">4</button></div>' +
+      '         <div class="vdrButtonDiv"><button class="vdrButton" type="button" onclick="vdrKeyPress(\'5\')">5</button></div>' +
+      '         <div class="vdrButtonDiv"><button class="vdrButton" type="button" onclick="vdrKeyPress(\'6\')">6</button></div>' +
+      '       </div>' +
+      '       <div>' +
+      '         <div class="vdrButtonDiv"><button class="vdrButton" type="button" onclick="vdrKeyPress(\'7\')">7</button></div>' +
+      '         <div class="vdrButtonDiv"><button class="vdrButton" type="button" onclick="vdrKeyPress(\'8\')">8</button></div>' +
+      '         <div class="vdrButtonDiv"><button class="vdrButton" type="button" onclick="vdrKeyPress(\'9\')">9</button></div>' +
+      '       </div>' +
+      '    </div>' +
+      '    <div>' +
+      '       <div>' +
+      '         <div class="vdrButtonDiv"><button class="vdrButton vdrButtonRound" type="button" onclick="vdrKeyPress(\'menu\')">&#9776;</button></div>' +
+      '         <div class="vdrButtonDiv"><button class="vdrButton vdrArrowButton vdrArrowButtonUp" type="button" onclick="vdrKeyPress(\'up\')">&uparrow;</button></div>' +
+      '         <div class="vdrButtonDiv"><button class="vdrButton vdrButtonRound" type="button" onclick="vdrKeyPress(\'back\')">↵</button></div>' +
+      '       </div>' +
+      '       <div>' +
+      '         <div class="vdrButtonDiv"><button class="vdrButton vdrArrowButton vdrArrowButtonLeft" type="button" onclick="vdrKeyPress(\'left\')">&leftarrow;</button></div>' +
+      '         <div class="vdrButtonDiv"><button class="vdrButton vdrArrowButton vdrButtonRound" type="button" onclick="vdrKeyPress(\'ok\')">ok</button></div>' +
+      '         <div class="vdrButtonDiv"><button class="vdrButton vdrArrowButton vdrArrowButtonRight" type="button" onclick="vdrKeyPress(\'right\')">&rightarrow;</button></div>' +
+      '       </div>' +
+      '       <div>' +
+      '         <div class="vdrButtonDiv"><button class="vdrButton vdrButtonRound" type="button" onclick="vdrKeyPress(\'mute\')">🔇</button></div>' +
+      '         <div class="vdrButtonDiv"><button class="vdrButton vdrArrowButton vdrArrowButtonDown" type="button" onclick="vdrKeyPress(\'down\')">&downarrow;</button></div>' +
+      '         <div class="vdrButtonDiv"><button class="vdrButton vdrButtonRound" type="button" onclick="vdrKeyPress(\'info\')">ℹ</button></div>' +
+      '       </div>' +
+      '    </div>' +
+      '    <div>' +
+      '       <div>' +
+      '         <div><button class="vdrButton vdrButtonRound" type="button" onclick="vdrKeyPress(\'volume-\')">🔉</button></div>' +
+      '         <div><button class="vdrButton" type="button" onclick="vdrKeyPress(\'0\')">0</button></div>' +
+      '         <div><button class="vdrButton vdrButtonRound" type="button" onclick="vdrKeyPress(\'volume+\')">🔊</button></div>' +
+      '       </div>' +
+      '       <div>' +
+      '         <div class="vdrButtonColorDiv"><button class="vdrButton vdrColorButtonRed" type="button" onclick="vdrKeyPress(\'red\')"></button></div>' +
+      '         <div class="vdrButtonColorDiv"><button class="vdrButton vdrColorButtonGreen" type="button" onclick="vdrKeyPress(\'green\')"></button></div>' +
+      '         <div class="vdrButtonColorDiv"><button class="vdrButton vdrColorButtonYellow" type="button" onclick="vdrKeyPress(\'yellow\')"></button></div>' +
+      '         <div class="vdrButtonColorDiv"><button class="vdrButton vdrColorButtonBlue" type="button" onclick="vdrKeyPress(\'blue\')"></button></div>' +
+      '       </div>' +
+      '       <div>' +
+      '         <div class="vdrCommandButtonDiv"><button class="vdrButton vdrCommandButton" type="button" onclick="vdrCommands()">Commands</button></div>' +
+      '       </div>' +
+      '    </div>' +
+      '  </div>' +  // vdrFbContainer
       '</div>';
 
-   resizeButtons();
+   if (actual)
+      showActual(actual);
 }
 
-function resizeButtons()
+function timeOf(starttime)
 {
-   var root = document.getElementById("vdrFbContainer");
-   var elements = root.getElementsByClassName("vdrButtonDiv");
-   let buttonHeight = screenHeight / rowCount;
+   if (!starttime)
+      return '';
 
-   console.log("set button height to", buttonHeight);
+   const date = new Date(starttime * 1000);
+   const ten = function(i) { return (i < 10 ? '0' : '') + i; };
 
-   for (var i = 0; i < elements.length; i++) {
-      elements[i].style.height = buttonHeight + 'px'; // getComputedStyle(elements[i]).width;
-      if (elements[i].children[0].innerHTML == '')
-         elements[i].style.visibility = 'hidden';
+   return ten(date.getHours()) + ':' + ten(date.getMinutes());
+}
+
+function setHtml(id, html)
+{
+   let elem = document.getElementById(id);
+
+   if (elem)
+      elem.innerHTML = html || '';
+}
+
+function showActual(actual)
+{
+   const channel = actual.channel || {};
+   const present = actual.present || {};
+   const following = actual.following || {};
+
+   setHtml('vdrChannel', channel.channelname);
+   vdrSetChannelLogo(channel);
+
+   setHtml('vdrStartTime', timeOf(present.starttime));
+   setHtml('vdrTitle', present.title);
+   setHtml('vdrShorttext', present.shorttext);
+
+   setHtml('vdrStartTimeNext', timeOf(following.starttime));
+   setHtml('vdrTitleNext', following.title);
+   setHtml('vdrShorttextNext', following.shorttext);
+}
+
+function vdrSetChannelLogo(channel)
+{
+   // osd2web serves the logos by HTTP on the port of its websocket (same origin as this page)
+
+   let logo = document.getElementById('vdrChannelLogo');
+
+   if (!logo)
+      return;
+
+   if (!channel || !channel.channelname) {
+      logo.removeAttribute('src');
+      logo.style.display = 'none';
+      return;
    }
+
+   const src = '/data/channellogo?name=' + encodeURIComponent(channel.channelname) +
+      '&id=' + encodeURIComponent(channel.channelid || '');
+
+   if (logo.getAttribute('src') != src)
+      logo.setAttribute('src', src);
 }
 
 function vdrKeyPress(key)
@@ -252,7 +312,7 @@ function vdrCommands()
 {
    let html =
        '<div class="vdrContent">' +
-       '  <div id="vdrFbContainer" class="vdrFbContainer">' +
+       '  <div id="vdrCommandContainer" class="vdrCommandContainer">' +
        '    <div class="vdrCommandButtonDiv"><button class="vdrButton vdrCommandButton" type="button" onclick="initFb()">' + '<<' + '</button></div>' +
        '  </div>' +
        '</div>';
@@ -261,7 +321,7 @@ function vdrCommands()
 
    for (var key in commands) {
       var div = document.createElement("div");
-      document.getElementById('vdrFbContainer').appendChild(div);
+      document.getElementById('vdrCommandContainer').appendChild(div);
       div.className = 'vdrCommandButtonDiv';
 
       var button = document.createElement("button");

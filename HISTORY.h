@@ -3,12 +3,12 @@
  * osd2web Plugin - Revision History
  * ----------------------------------------------
  *
- *  (c) 2017-2023 Dirk Hermes, Jörg Wendel
+ *  (c) 2017-2026 Dirk Hermes, Jörg Wendel
  *
  */
 
-#define _VERSION      "0.3.2"
-#define VERSION_DATE  "22.10.2023"
+#define _VERSION      "0.3.3"
+#define VERSION_DATE  "09.11.2026"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,11 @@
 
 /*
  * ------------------------------------
+
+2026-11-09: version 0.3.3 (horchi)
+   - change: Remote control (fb) with new layout, channel logo and present/following
+   - change: Client build: replaced node-sass by sass (dart sass) to support current node versions
+   - bugfix: Client build: added missing rimraf dependency and .npmrc (legacy-peer-deps)
 
 2023-10-22 version 0.3.2 (horchi)
    - bugfix: Added support of tvscraper (thx MarkusE)

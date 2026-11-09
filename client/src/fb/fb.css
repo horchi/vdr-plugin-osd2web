@@ -1,14 +1,12 @@
 
 :root
 {
-    --light1: #272727;
-    --light2: lightgray;
-    --light3: #403d3d;
     --light4: white;
-    --blue: #2177AD;
-    --blueshade: #495b67;
-
-    --borderColor: black;
+    --neutral2: #545454;
+    --background: #001129d1;
+    --borderColor: #001129;
+    --borderRadius: 3px;
+    --containerPadding: 10px;
 }
 
 Body
@@ -17,6 +15,7 @@ Body
     font-size: 1.0em;
     color: white;
     background-color: black;
+    margin: 0px;
 }
 
 .content
@@ -24,11 +23,52 @@ Body
     margin: 2px;
 }
 
+.rounded-border
+{
+    border-radius: var(--borderRadius);
+    border-color: var(--borderColor);
+    border-style: none;
+    border-width: 1px;
+}
+
 /* ----------------------- */
 /* VDR FB */
 
-.vdrContent {
-    text-align: -webkit-center;
+.vdrContent
+{
+    margin: 0px 5px 0px 5px;
+}
+
+.vdrPresent
+{
+    display: flex;
+    padding: var(--containerPadding);
+    background-color: var(--background);
+}
+
+.vdrChannel
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0px 30px 0px 0px;
+    font-weight: bold;
+    color: #ede800;
+}
+
+.vdrChannelLogo
+{
+    max-height: 60px;
+    max-width: 120px;
+    margin-bottom: 4px;
+    object-fit: contain;
+}
+
+.vdrTime
+{
+    font-weight: bold;
+    color: #ede800;
 }
 
 .vdrFbContainer
@@ -37,30 +77,56 @@ Body
     flex-wrap: wrap;
     justify-content: center;
     margin: 5px;
-    width: 90%;
-    max-width: 450px;
 }
 
 .vdrFbContainer > div
 {
+    display: block;
     overflow: hidden;
     width: 31%;
+    height: 80vh;
     margin: 2px;
 }
 
-.vdrButtonColorDiv
+@media only screen and (orientation:portrait)
 {
-    width: 23% !important;
-    height: 60px;
+    .vdrFbContainer > div { width: 99%; height: 25vh; }
+}
+
+.vdrFbContainer > div > div
+{
+    display: flex;
+    height: 32%;
+}
+
+.vdrFbContainer > div > div > div
+{
+    display: block;
     margin: 2px;
+    width: 32% !important;
+}
+
+@media only screen and (orientation:landscape)
+{
+    .vdrFbContainer > div > div > div { width: 32%; }
+    .vdrButtonColorDiv { width: 23% !important; }
+}
+
+@media only screen and (orientation:portrait)
+{
+    .vdrButtonColorDiv { width: 10% !important; }
+}
+
+.vdrFbContainer > div > div > div.vdrCommandButtonDiv
+{
+    width: 98% !important;
 }
 
 .vdrButton
 {
     border-radius: 15px;
     border-color: var(--borderColor);
-    border-style: solid;
-    background-color: var(--blueshade);
+    background-color: var(--background);
     color: var(--light4);
     text-decoration: none;
     font-size: 5.0vh;
@@ -69,23 +135,10 @@ Body
     padding: 0px;
 }
 
-.vdrCommandButtonDiv {
-    width: 90% !important;
-    height: 60px;
-}
-
-.vdrCommandButton {
-    font-size: xx-large;
-}
-
-.vdrButton:active {
-    background-color: var(--blue);
-    transform: translateY(2px);
-}
-
-.vdrButton:hover
+.vdrButton:active
 {
-    /* background-color: var(--blue); */
+    background-color: var(--neutral2);
+    transform: translateY(2px);
 }
 
 .vdrButtonRound
@@ -95,10 +148,10 @@ Body
 
 .vdrArrowButton
 {
-    background-color: var(--light3);
+    color: lightblue;
 }
 
-.vdrArrowButtonUp    { border-radius: 100px 100px 15px 15px; }
+.vdrArrowButtonUp     { border-radius: 100px 100px 15px 15px; }
 .vdrArrowButtonDown   { border-radius: 15px 15px 100px 100px; }
 .vdrArrowButtonLeft   { border-radius: 100px 15px 15px 100px; }
 .vdrArrowButtonRight  { border-radius: 15px 100px 100px 15px; }
@@ -107,3 +160,28 @@ Body
 .vdrColorButtonGreen  { background-color: green; }
 .vdrColorButtonYellow { background-color: darkgoldenrod; }
 .vdrColorButtonBlue   { background-color: darkblue; }
+
+/* ----------------------- */
+/* Commands */
+
+.vdrCommandContainer
+{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 5px auto;
+    width: 90%;
+    max-width: 450px;
+}
+
+.vdrCommandContainer > .vdrCommandButtonDiv
+{
+    height: 60px;
+    width: 100%;
+    margin: 2px;
+}
+
+.vdrCommandButton
+{
+    font-size: xx-large;
+}
