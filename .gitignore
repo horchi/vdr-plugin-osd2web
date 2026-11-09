@@ -1,6 +1,7 @@
 *~
 *.a
 *.o
+*.d
 *.so
 *.log
 .dependencies
