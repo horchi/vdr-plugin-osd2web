@@ -211,6 +211,8 @@ class cUpdate : public cStatus, cThread, public cOsdService, public cWebInterfac
       int performMaxLineRequest(json_t* oRequest);
       int performFocusRequest(json_t* oRequest, int focus);
       int performCommand(json_t* oRequest);
+      int performEpgRequest(json_t* oRequest);
+      int performSwitchRequest(json_t* oRequest);
 
       // VDRs osd status data
 

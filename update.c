@@ -49,6 +49,8 @@ const char* cOsdService::events[] =
    "login",
    "logout",
    "command",
+   "epg",
+   "switch",
 
    0
 };
@@ -618,6 +620,8 @@ int cUpdate::dispatchClientRequest()
       case evMaxLines:   status = performMaxLineRequest(oObject);     break;
       case evCommand:    status = performCommand(oObject);            break;
       case evLogin:      status = performLogin(oObject);              break;
+      case evEpg:        status = performEpgRequest(oObject);         break;
+      case evSwitch:     status = performSwitchRequest(oObject);      break;
 
       default:
          tell(0, "Error: Received unexpected client request '%s' at [%s]",
@@ -763,6 +767,147 @@ int cUpdate::performChannelsRequest(json_t* oRequest)
       pushOutMessage(oChannels, "channels");
 
    return done;
+}
+
+//***************************************************************************
+// Perform EPG Request
+//***************************************************************************
+
+int cUpdate::performEpgRequest(json_t* oRequest)
+{
+   // what's on now (present event of all channels):
+   //   { "event" : "epg", "object" : { "mode" : "now" } }
+   //   -> { "event" : "epg", "object" : { "mode" : "now", "events" : [ { <event incl. "channel">, ... } ] } }
+   //
+   // schedule of one channel (from the present event on, default is the current channel):
+   //   { "event" : "epg", "object" : { "mode" : "schedule", "channelid" : "S19.2E-1-1019-10301", "count" : 30 } }
+   //   -> { "event" : "epg", "object" : { "mode" : "schedule", "channel" : { ... }, "events" : [ { <event>, ... } ] } }
+
+   const char* mode = getStringFromJson(oRequest, "mode", "now");
+   const char* channelId = getStringFromJson(oRequest, "channelid", "");
+   int count = getIntFromJson(oRequest, "count", 0);
+   long client = getLongFromJson(oRequest, "client");
+   int scheduleMode = strcmp(mode, "schedule") == 0;
+
+   if (!scheduleMode && strcmp(mode, "now") != 0)
+   {
+      tell(0, "Error: Unexpected epg mode '%s'", mode);
+      return fail;
+   }
+
+   json_t* oResult = json_object();
+   json_t* oEvents = json_array();
+   addToJson(oResult, "mode", scheduleMode ? "schedule" : "now");
+
+   {
+      GET_TIMERS_READ(timers);
+      GET_CHANNELS_READ(channels);
+      GET_SCHEDULES_READ(schedules);
+
+      auto addEvent = [&](const cEvent* event, const cChannel* channel)
+      {
+         eTimerMatch timerMatch;
+         json_t* oEvent = json_object();
+
+         getTimerMatch(timers, event, &timerMatch);
+         event2Json(oEvent, event, channel, timerMatch, no, cOsdService::osSmall);
+         json_object_del(oEvent, "components");    // not needed for lists
+         json_array_append_new(oEvents, oEvent);
+      };
+
+      if (scheduleMode)
+      {
+         const cChannel* channel = !isEmpty(channelId)
+            ? channels->GetByChannelID(tChannelID::FromString(channelId))
+            : channels->GetByNumber(currentChannelNr);
+
+         if (!channel)
+         {
+            tell(0, "Error: Can't get channel '%s' for epg request", channelId);
+            json_decref(oEvents);
+            json_decref(oResult);
+            return fail;
+         }
+
+         json_t* oChannel = json_object();
+         channel2Json(oChannel, channel);
+         json_object_set_new(oResult, "channel", oChannel);
+
+         const cSchedule* schedule = schedules ? schedules->GetSchedule(channel) : 0;
+
+         if (schedule)
+         {
+            const cEvent* event = schedule->GetPresentEvent();
+
+            if (!event)                        // no present event, start with the next one
+            {
+               time_t now = time(0);
+
+               for (event = schedule->Events()->First(); event && event->EndTime() <= now; )
+                  event = schedule->Events()->Next(event);
+            }
+
+            for (int n = 0; event && (!count || n < count); event = schedule->Events()->Next(event), n++)
+               addEvent(event, 0);
+         }
+      }
+      else
+      {
+         int n = 0;
+
+         for (const cChannel* channel = channels->First(); channel && (!count || n < count); channel = channels->Next(channel))
+         {
+            if (channel->GroupSep())
+               continue;
+
+            const cSchedule* schedule = schedules ? schedules->GetSchedule(channel) : 0;
+            const cEvent* present = schedule ? schedule->GetPresentEvent() : 0;
+
+            if (present)
+            {
+               addEvent(present, channel);
+               n++;
+            }
+         }
+      }
+   }
+
+   json_object_set_new(oResult, "events", oEvents);
+   pushOutMessage(oResult, "epg", client);
+
+   return done;
+}
+
+//***************************************************************************
+// Perform Switch Request
+//***************************************************************************
+
+int cUpdate::performSwitchRequest(json_t* oRequest)
+{
+   // { "event" : "switch", "object" : { "channelid" : "S19.2E-1-1019-10301" } }
+
+   const char* channelId = getStringFromJson(oRequest, "channelid", "");
+
+   lastClientActionAt = time(0);
+
+   GET_CHANNELS_READ(channels);
+   const cChannel* channel = channels->GetByChannelID(tChannelID::FromString(channelId));
+
+   if (!channel)
+   {
+      tell(0, "Error: Can't switch to unknown channel '%s'", channelId);
+      return fail;
+   }
+
+   tell(1, "Switch to channel (%d) '%s'", channel->Number(), channel->Name());
+
+   if (!cDevice::PrimaryDevice()->SwitchChannel(channel, true))
+   {
+      tell(0, "Error: Switching to channel '%s' failed", channel->Name());
+      return fail;
+   }
+
+   return success;
 }
 
 //***************************************************************************

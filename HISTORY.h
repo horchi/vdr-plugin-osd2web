@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.3.3"
-#define VERSION_DATE  "09.11.2026"
+#define _VERSION      "0.3.4"
+#define VERSION_DATE  "16.11.2026"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2026-11-16: version 0.3.4 (horchi)
+   - added: Requests 'epg' (what's on now / schedule of a channel) and 'switch' (switch to channel)
 
 2026-11-09: version 0.3.3 (horchi)
    - change: Remote control (fb) with new layout, channel logo and present/following

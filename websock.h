@@ -38,6 +38,8 @@ class cOsdService
          evLogin,
          evLogout,
          evCommand,
+         evEpg,
+         evSwitch,
 
          evCount
       };

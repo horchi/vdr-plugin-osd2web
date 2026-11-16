@@ -646,10 +646,26 @@ int cWebSock::callbackWs(lws* wsi, lws_callback_reasons reason, void* user, void
          }
          else if (event == evChannels)
             singleton->pushInMessage(message);
+         else if (event == evEpg)                          // { "event" : "epg", "object" : { ... } }
+         {
+            // add the requesting client, the answer goes only to him
+
+            if (!oObject || !json_is_object(oObject))
+            {
+               oObject = json_object();
+               json_object_set_new(oData, "object", oObject);
+            }
+
+            addToJson(oObject, "client", (long)wsi);
+
+            char* p = json_dumps(oData, JSON_PRESERVE_ORDER);
+            singleton->pushInMessage(p);
+            free(p);
+         }
          else if (activeClient && activeClient == wsi)       // accept data only from active client
             singleton->pushInMessage(message);
 
-         else if (event == evKeyPress && clients[wsi].type == ctFB)
+         else if ((event == evKeyPress || event == evSwitch) && clients[wsi].type == ctFB)
             singleton->pushInMessage(message);
 
          else if (!activeClient && isHighestViewClient(wsi)) // or no active is available and it is the view clinet with best prio
