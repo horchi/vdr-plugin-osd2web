@@ -7,7 +7,7 @@
  *
  */
 
-#define _VERSION      "0.3.4"
+#define _VERSION      "0.3.5"
 #define VERSION_DATE  "16.11.2026"
 
 #ifdef GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2026-11-16: version 0.3.5 (horchi)
+   - change: Remote control (fb.html) with the new layout of homectld, EPG list with channel switch
 
 2026-11-16: version 0.3.4 (horchi)
    - added: Requests 'epg' (what's on now / schedule of a channel) and 'switch' (switch to channel)
