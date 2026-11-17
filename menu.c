@@ -146,7 +146,11 @@ int cMenuPathSelect::refresh()
 
    cSkinDisplay::Current()->SetMessage(mtInfo, tr("Collecting Data ..."));
    cSkinDisplay::Current()->Flush();
+#if defined (APIVERSNUM) && (APIVERSNUM >= 20402)
+   cStatus::MsgOsdStatusMessage(mtInfo, tr("Collecting Data ..."));
+#else
    cStatus::MsgOsdStatusMessage(tr("Collecting Data ..."));
+#endif
 
    // Skins.Message(mtInfo, tr("Collecting Data ..."));
 
@@ -166,7 +170,11 @@ int cMenuPathSelect::refresh()
    }
 
    cSkinDisplay::Current()->SetMessage(mtInfo, 0);
+#if defined (APIVERSNUM) && (APIVERSNUM >= 20402)
+   cStatus::MsgOsdStatusMessage(mtInfo, 0);
+#else
    cStatus::MsgOsdStatusMessage(0);
+#endif
 
    Display();
 

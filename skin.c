@@ -282,9 +282,9 @@ bool cSkinOsd2WebDisplayMenu::SetItemRecording(const cRecording* Recording, int 
    json_t* oMenuItem = json_object();
    json_t* oRecording = json_object();
 
-   GET_TIMERS_READ(timers);
+   // VDR calls this with LOCK_RECORDINGS_READ held -> don't lock Timers here (wrong lock sequence)
 
-   recording2Json(oRecording, timers, Recording, 0);
+   recording2Json(oRecording, 0, Recording, 0);
 
    addToJson(oMenuItem, "index", Index);
    addToJson(oMenuItem, "current", Current);
@@ -347,14 +347,13 @@ void cSkinOsd2WebDisplayMenu::SetScrollbar(int Total, int Offset)
 
 void cSkinOsd2WebDisplayMenu::SetEvent(const cEvent *Event)
 {
-   eTimerMatch timerMatch;
    tell(4, "DEB: Skin:cSkinOsd2WebDisplayMenu::SetEvent()");
 
-   GET_TIMERS_READ(timers);
+   // VDR calls this with LOCK_SCHEDULES_READ held -> don't lock Timers here (wrong lock sequence)
+   //   'hastimer' is still delivered by event2Json()
 
    json_t* oEvent = json_object();
-   getTimerMatch(timers, Event, &timerMatch);
-   event2Json(oEvent, Event, 0, timerMatch, no, cOsdService::osLarge);
+   event2Json(oEvent, Event, 0, tmNone, no, cOsdService::osLarge);
 
    update->pushOutMessage(oEvent, "event");
 }

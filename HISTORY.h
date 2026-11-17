@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.3.5"
-#define VERSION_DATE  "16.11.2026"
+#define _VERSION      "0.3.6"
+#define VERSION_DATE  "17.11.2026"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,10 @@
 
 /*
  * ------------------------------------
+
+2026-11-17: version 0.3.6 (horchi)
+   - bugfix: Fixed invalid VDR lock sequence in skin (SetItemRecording, SetEvent locked Timers
+             while VDR already holds the Recordings/Schedules lock)
 
 2026-11-16: version 0.3.5 (horchi)
    - change: Remote control (fb.html) with the new layout of homectld, EPG list with channel switch
