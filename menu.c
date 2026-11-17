@@ -146,7 +146,7 @@ int cMenuPathSelect::refresh()
 
    cSkinDisplay::Current()->SetMessage(mtInfo, tr("Collecting Data ..."));
    cSkinDisplay::Current()->Flush();
-#if defined (APIVERSNUM) && (APIVERSNUM >= 20402)
+#if defined (APIVERSNUM) && (APIVERSNUM >= 20700)
    cStatus::MsgOsdStatusMessage(mtInfo, tr("Collecting Data ..."));
 #else
    cStatus::MsgOsdStatusMessage(tr("Collecting Data ..."));
@@ -170,7 +170,7 @@ int cMenuPathSelect::refresh()
    }
 
    cSkinDisplay::Current()->SetMessage(mtInfo, 0);
-#if defined (APIVERSNUM) && (APIVERSNUM >= 20402)
+#if defined (APIVERSNUM) && (APIVERSNUM >= 20700)
    cStatus::MsgOsdStatusMessage(mtInfo, 0);
 #else
    cStatus::MsgOsdStatusMessage(0);
