@@ -118,7 +118,7 @@ bool cPluginOsd2Web::Service(const char* id, void* data)
       Osd2Web_Port_v1_0* req = (Osd2Web_Port_v1_0*)data;
 
       if (!req)
-         return false;
+         return true;         // query if the service is supported
 
       req->webPort = config.webPort;
       return true;

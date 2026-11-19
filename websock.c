@@ -380,6 +380,8 @@ int cWebSock::callbackHttp(lws* wsi, lws_callback_reasons reason, void* user, vo
 
             if (strcmp(url, "/") == 0)
                url = "index.html";
+            else if (strcmp(url, "/fb") == 0)
+               url = "fb.html";           // remote control
 
             // security, force httpPath path to inhibit access to the whole filesystem
 

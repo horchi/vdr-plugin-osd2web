@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.3.6"
-#define VERSION_DATE  "17.11.2026"
+#define _VERSION      "0.3.7"
+#define VERSION_DATE  "19.11.2026"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,11 @@
 
 /*
  * ------------------------------------
+
+2026-11-19: version 0.3.7 (horchi)
+   - bugfix: Service 'osd2web-WebPortService-v1.0' answered the support query (data == 0) with false,
+             therefore epg2vdr never stored the web port in the vdrs table (OSD2WEBP)
+   - added:  Remote control also available at <ip>:<port>/fb, link to it on the overview page
 
 2026-11-17: version 0.3.6 (horchi)
    - bugfix: Fixed invalid VDR lock sequence in skin (SetItemRecording, SetEvent locked Timers
