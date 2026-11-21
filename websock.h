@@ -192,7 +192,7 @@ class cWebSock : public cOsdService
       static void atLogout(lws* wsi, const char* message, const char* clientInfo);
       static int getClientCount();
 
-      static void pushOutMessage(const char* p, lws* wsi = 0);
+      static void pushOutMessage(const char* p, lws* wsi = 0, int toFbToo = no);
       static void writeLog(int level, const char* line);
 
    private:

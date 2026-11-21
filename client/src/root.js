@@ -211,6 +211,12 @@ export var root = {
                 label: '',
                 on: false,
                 icon: 'skinfocus',
+                isDefault: false,   // osd2web is the default VDR skin -> button not needed
+                isHidden: function () { return this.isDefault; },
+                hint: function () {
+                    return this.on ? 'OSD wieder an den TV zurückgeben (osd2web-Skin abhängen)'
+                                   : 'OSD in den Browser holen (osd2web-Skin anhängen), solange gibt es am TV kein OSD';
+                },
                 func: function (navComp) {
                     navComp.$root.$emit("send", {
                         "event": (this.on ? "leavefocus" : "takefocus")
@@ -220,6 +226,7 @@ export var root = {
             this.$on("skinstate", (data) => {
                 this.skinAttached = data.attached == 1;
                 this.$root.$set(skinMenuItem, "on", this.skinAttached);
+                this.$root.$set(skinMenuItem, "isDefault", data["default"] == 1);
             })
 
             this.$socket = new WebSocketClient({

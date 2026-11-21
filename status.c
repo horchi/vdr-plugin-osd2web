@@ -485,6 +485,7 @@ void cUpdate::updateSkinState()
 {
    json_t* obj = json_object();
    addToJson(obj, "attached", isSkinAttached());
+   addToJson(obj, "default", isDefaultSkin());     // osd2web is the configured VDR skin
    pushOutMessage(obj, "skinstate");
 }
 

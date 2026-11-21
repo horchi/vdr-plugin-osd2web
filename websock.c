@@ -842,7 +842,7 @@ int cWebSock::getClientCount()
 // Push Message
 //***************************************************************************
 
-void cWebSock::pushOutMessage(const char* message, lws* wsi)
+void cWebSock::pushOutMessage(const char* message, lws* wsi, int toFbToo)
 {
    cMutexLock lock(&clientsMutex);
 
@@ -857,8 +857,10 @@ void cWebSock::pushOutMessage(const char* message, lws* wsi)
    {
       for (auto it = clients.begin(); it != clients.end(); ++it)
       {
-         if (it->second.type != ctInactive && it->second.type != ctFB)
-            it->second.pushMessage(message);
+         if (it->second.type == ctInactive || (it->second.type == ctFB && !toFbToo))
+            continue;
+
+         it->second.pushMessage(message);
       }
    }
 }

@@ -10,12 +10,12 @@
         <div class="collapse navbar-collapse" id="navbar">
             <ul class="navbar-nav mr-auto">
                 <li v-for="item in items" @click="handleSelect(item)" v-if="!isHidden(item)" class="nav-item" :class="{'active':item.on}">
-                    <a class="nav-link" href="#"><icon v-if="item.icon" :name="item.icon" /><span v-html="renderLabel(item)"></span></a>
+                    <a class="nav-link" href="#" :title="itemHint(item)"><icon v-if="item.icon" :name="item.icon" /><span v-html="renderLabel(item)"></span></a>
                 </li>
             </ul>
             <ul class="navbar-nav ml-auto" v-if="$root.isActive">
                 <li v-for="item in itemsRight" @click="handleSelect(item)" v-if="!isHidden(item)" class="nav-item" :class="{'active':item.on}">
-                    <a class="nav-link" href="#"><icon v-if="item.icon" :name="item.icon" /><span v-html="renderLabel(item)"></span></a>
+                    <a class="nav-link" href="#" :title="itemHint(item)"><icon v-if="item.icon" :name="item.icon" /><span v-html="renderLabel(item)"></span></a>
                 </li>
             </ul>
         </div>
@@ -48,6 +48,9 @@ export default {
                 else if (item.key)
                     this.$root.sendKey(item.key);
             }
+        },
+        itemHint(item) {
+            return typeof item.hint == "function" ? item.hint.call(item, this) : item.hint;
         },
         renderLabel(item) {
             let key = null;

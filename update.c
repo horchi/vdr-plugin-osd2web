@@ -155,7 +155,11 @@ int cUpdate::pushOutMessage(json_t* oContents, const char* title, long client)
    char* p = json_dumps(obj, JSON_PRESERVE_ORDER);
    json_decref(obj);
 
-   webSock->pushOutMessage(p, (lws*)client);
+   // remote control (FB) clients only need the actual channel/event and the commands
+
+   int toFbToo = strcmp(title, "actual") == 0 || strcmp(title, "commands") == 0;
+
+   webSock->pushOutMessage(p, (lws*)client, toFbToo);
    tell(4, "DEBUG: PushMessage [%s]", p);
    free(p);
 
@@ -237,6 +241,10 @@ int cUpdate::setSkinAttachState(int attach, int bySvdrp)
 
    if (attach && !isSkinAttached())
    {
+      // restart the client OSD timeout, otherwise we get detached
+      //   immediately if the last key action is older than clientOsdTimeout
+
+      lastClientActionAt = time(0);
       Skins.SetCurrent(SKIN_NAME);
       tell(1, "Changed skin to '%s'", Skins.Current()->Name());
    }
@@ -702,6 +710,11 @@ int cUpdate::performLogin(json_t* oObject)
       updateSkinState();
       forceRefresh();
    }
+   else
+   {
+      updatePresentFollowing();
+      updateCommands();
+   }
 
    return done;
 }
@@ -726,7 +739,7 @@ int cUpdate::performKeyPressRequest(json_t* oRequest)
 
    const char* keyName = getStringFromJson(oRequest, "key", "<null>");
    int repeat = getIntFromJson(oRequest, "repeat");
-   int noFocus = getIntFromJson(oRequest, "focus", yes);
+   int focus = getIntFromJson(oRequest, "focus", yes);  // "focus" : 0 -> don't attach skin on menu key
    eKeys key = cKey::FromString(keyName);
 
    lastClientActionAt = time(0);
@@ -739,7 +752,7 @@ int cUpdate::performKeyPressRequest(json_t* oRequest)
 
    // auto attach on menu key
 
-   if (!isDefaultSkin() && !isSkinAttached() && key == kMenu && !noFocus)
+   if (!isDefaultSkin() && !isSkinAttached() && key == kMenu && focus)
       setSkinAttachState(yes);
 
    // process key press

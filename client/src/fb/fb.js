@@ -37,6 +37,11 @@ var vdrOnline = false;
 var vdrProgressTimer = null;
 var vdrEpgView = null;         // open overlay { mode: 'now'|'schedule'|'commands', channelid }
 
+// embedded in the osd2web web frontend (fb.html?embedded) -> the menu key brings the OSD into
+//   the browser, standalone it's a remote control for the TV and must not attach the osd2web skin
+
+var vdrEmbedded = /[?&]embedded/.test(location.search);
+
 //***************************************************************************
 // Web Socket Client
 //***************************************************************************
@@ -114,7 +119,7 @@ function connectWebSocket()
          vdrOnline = true;
          vdrUpdateState();
          vdrSocket.send({ "event" : "login", "object" :
-                          { "type" : "active",
+                          { "type" : 2,       // ctFB -> pure remote control client
                             "url" : window.location.href }
                         });
       },
@@ -224,6 +229,9 @@ function vdrKey(key, content, cls, repeat, title)
 function initVdr()
 {
    let num = '';
+
+   if (vdrEmbedded)
+      document.documentElement.classList.add('vdrEmbedded');
 
    for (const k of ['1','2','3','4','5','6','7','8','9'])
       num += vdrKey(k, k, 'vdrNumKey');
@@ -379,7 +387,7 @@ function vdrKeyPress(key)
    if (key == undefined || key == "" || !vdrSocket || !vdrOnline)
       return;
 
-   vdrSocket.send({ "event": "keypress", "object": { "key": key, "repeat": 1 } });
+   vdrSocket.send({ "event": "keypress", "object": { "key": key, "repeat": 1, "focus": vdrEmbedded ? 1 : 0 } });
 }
 
 //***************************************************************************

@@ -42,6 +42,7 @@ export default {
     created() {
         let menuItem= {
             label: '_O_SD',
+            hint: 'VDR-Menü öffnen und im Browser bedienen (Taste Menü, Alt+O)',
             isHidden: function(navComp){
                 return !navComp.$root.isActive
             },

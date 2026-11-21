@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.3.7"
-#define VERSION_DATE  "19.11.2026"
+#define _VERSION      "0.3.8"
+#define VERSION_DATE  "21.11.2026"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,14 @@
 
 /*
  * ------------------------------------
+
+2026-11-21: version 0.3.8 (horchi)
+   - bugfix: Skin was detached immediately after attach by the client OSD timeout
+   - bugfix: OSD button (menu key) now attaches the osd2web skin as intended
+   - change: Remote control image replaced by the embedded (scaled) fb.html
+   - change: fb.html logs in as remote control client (ctFB), no longer steals the active role
+   - added:  Mouse hints for the OSD, skin and remote control buttons
+   - change: Skin (monitor) button hidden if osd2web is the default VDR skin
 
 2026-11-19: version 0.3.7 (horchi)
    - bugfix: Service 'osd2web-WebPortService-v1.0' answered the support query (data == 0) with false,
