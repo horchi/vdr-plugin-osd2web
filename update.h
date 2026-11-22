@@ -20,6 +20,7 @@
 #include <vdr/thread.h>
 #include <vdr/status.h>
 #include <vdr/skins.h>
+#include <vdr/plugin.h>
 
 #include "lib/json.h"
 #include "lib/common.h"
@@ -213,6 +214,29 @@ class cUpdate : public cStatus, cThread, public cOsdService, public cWebInterfac
       int performCommand(json_t* oRequest);
       int performEpgRequest(json_t* oRequest);
       int performSwitchRequest(json_t* oRequest);
+      int performOutputRequest(json_t* oRequest);
+
+      // output plugin (attach / detach), states are the reply codes of its SVDRP command STAT
+
+      enum OutputState
+      {
+         osExternal  = 909,
+         osAttached  = 910,
+         osSuspended = 911,
+         osDetached  = 912
+      };
+
+      static const char* outputPluginNames[];
+      static int hasSvdrpCommand(cPlugin* plugin, const char* command);
+      static int queryOutputState(cPlugin* plugin);
+      static const char* toOutputStateName(int state);
+      void detectOutputPlugin();
+      void updateOutputState(int force = no);
+
+      cPlugin* outputPlugin {};
+      int outputDetected {no};
+      int outputState {na};
+      time_t nextOutputCheckAt {0};
 
       // VDRs osd status data
 

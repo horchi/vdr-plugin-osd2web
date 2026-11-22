@@ -40,6 +40,7 @@ class cOsdService
          evCommand,
          evEpg,
          evSwitch,
+         evOutput,
 
          evCount
       };

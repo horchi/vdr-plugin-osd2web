@@ -51,6 +51,7 @@ const char* cOsdService::events[] =
    "command",
    "epg",
    "switch",
+   "output",
 
    0
 };
@@ -157,7 +158,8 @@ int cUpdate::pushOutMessage(json_t* oContents, const char* title, long client)
 
    // remote control (FB) clients only need the actual channel/event and the commands
 
-   int toFbToo = strcmp(title, "actual") == 0 || strcmp(title, "commands") == 0;
+   int toFbToo = strcmp(title, "actual") == 0 || strcmp(title, "commands") == 0 ||
+      strcmp(title, "outputstate") == 0;
 
    webSock->pushOutMessage(p, (lws*)client, toFbToo);
    tell(4, "DEBUG: PushMessage [%s]", p);
@@ -352,6 +354,8 @@ void cUpdate::atMeanwhile()
          updateReplay();   // calls updateReplayControl()
       else
          updateReplayControl();
+
+      updateOutputState();
    }
 
    if (menuCloseTrigger)
@@ -628,6 +632,7 @@ int cUpdate::dispatchClientRequest()
       case evLogin:      status = performLogin(oObject);              break;
       case evEpg:        status = performEpgRequest(oObject);         break;
       case evSwitch:     status = performSwitchRequest(oObject);      break;
+      case evOutput:     status = performOutputRequest(oObject);      break;
 
       default:
          tell(0, "Error: Received unexpected client request '%s' at [%s]",
@@ -713,6 +718,8 @@ int cUpdate::performLogin(json_t* oObject)
       updatePresentFollowing();
       updateCommands();
    }
+
+   updateOutputState(yes);
 
    return done;
 }
@@ -919,6 +926,190 @@ int cUpdate::performSwitchRequest(json_t* oRequest)
    }
 
    return success;
+}
+
+//***************************************************************************
+// Output Plugin (attach / detach of the video output)
+//   To avoid using a plugin only because it knows SVDRP commands with these
+//   names, a plugin is used only if
+//    - its name is one of the known output plugins (softhddevice and its forks)
+//    - it offers the SVDRP commands STAT, ATTA and DETA
+//    - STAT answers with the reply code (909-912) and text of the softhddevice
+//      protocol ("SuspendMode is ...")
+//***************************************************************************
+
+const char* cUpdate::outputPluginNames[] =
+{
+   "softhddevice",
+   "softhdcuvid",
+   "softhdvaapi",
+   "softhddrm",
+   "softhdodroid",
+
+   nullptr
+};
+
+int cUpdate::hasSvdrpCommand(cPlugin* plugin, const char* command)
+{
+   const char** pages = plugin->SVDRPHelpPages();
+   size_t len = strlen(command);
+
+   for (int i = 0; pages && pages[i]; i++)
+   {
+      if (strncasecmp(pages[i], command, len) == 0 &&
+          (pages[i][len] == ' ' || pages[i][len] == '\n' || pages[i][len] == '\t' || pages[i][len] == '\0'))
+         return yes;
+   }
+
+   return no;
+}
+
+//***************************************************************************
+// Query Output State
+//   returns the STAT reply code (osExternal .. osDetached) or na
+//***************************************************************************
+
+int cUpdate::queryOutputState(cPlugin* plugin)
+{
+   int code = 900;
+   cString reply = plugin->SVDRPCommand("STAT", "", code);
+
+   if (code < osExternal || code > osDetached || !startswith(*reply, "SuspendMode is "))
+      return na;
+
+   return code;
+}
+
+const char* cUpdate::toOutputStateName(int state)
+{
+   switch (state)
+   {
+      case osExternal:  return "external";
+      case osAttached:  return "attached";
+      case osSuspended: return "suspended";
+      case osDetached:  return "detached";
+   }
+
+   return "unknown";
+}
+
+void cUpdate::detectOutputPlugin()
+{
+   outputDetected = yes;
+
+   for (int i = 0; cPlugin* plugin = cPluginManager::GetPlugin(i); i++)
+   {
+      int known = no;
+
+      for (int n = 0; outputPluginNames[n]; n++)
+         if (strcmp(plugin->Name(), outputPluginNames[n]) == 0)
+            known = yes;
+
+      if (!known)
+         continue;
+
+      if (!hasSvdrpCommand(plugin, "STAT") || !hasSvdrpCommand(plugin, "ATTA") || !hasSvdrpCommand(plugin, "DETA"))
+      {
+         tell(0, "Info: Output plugin '%s' ignored, it lacks the SVDRP commands STAT, ATTA or DETA", plugin->Name());
+         continue;
+      }
+
+      if (queryOutputState(plugin) == na)
+      {
+         tell(0, "Info: Output plugin '%s' ignored, unexpected reply to STAT", plugin->Name());
+         continue;
+      }
+
+      tell(0, "Info: Using output plugin '%s' for attach/detach", plugin->Name());
+      outputPlugin = plugin;
+      return;
+   }
+}
+
+//***************************************************************************
+// Update Output State
+//   polled since the state is changed also by SVDRP or the OSD of the plugin
+//***************************************************************************
+
+void cUpdate::updateOutputState(int force)
+{
+   if (!force && (time(0) < nextOutputCheckAt || !webSock->getClientCount()))
+      return;
+
+   nextOutputCheckAt = time(0) + 3;
+
+   if (!outputDetected)
+      detectOutputPlugin();
+
+   int state = outputPlugin ? queryOutputState(outputPlugin) : na;
+
+   if (!force && state == outputState)
+      return;
+
+   outputState = state;
+
+   json_t* obj = json_object();
+   addToJson(obj, "available", state != na);
+
+   if (state != na)
+   {
+      addToJson(obj, "plugin", outputPlugin->Name());
+      addToJson(obj, "state", toOutputStateName(state));
+   }
+
+   pushOutMessage(obj, "outputstate");
+}
+
+//***************************************************************************
+// Perform Output Request
+//***************************************************************************
+
+int cUpdate::performOutputRequest(json_t* oRequest)
+{
+   // { "event" : "output", "object" : { "action" : "toggle" } }   - toggle, attach or detach
+
+   const char* action = getStringFromJson(oRequest, "action", "toggle");
+
+   if (!outputPlugin)
+   {
+      tell(0, "Error: Output request '%s' ignored, no output plugin with attach/detach found", action);
+      return fail;
+   }
+
+   int state = queryOutputState(outputPlugin);
+   int attach = no;
+
+   if (strcmp(action, "attach") == 0)
+      attach = yes;
+   else if (strcmp(action, "detach") == 0)
+      attach = no;
+   else if (strcmp(action, "toggle") == 0)
+      attach = state != osAttached;
+   else
+   {
+      tell(0, "Error: Unexpected output request '%s'", action);
+      return fail;
+   }
+
+   const char* command = nullptr;
+
+   if (attach && state == osDetached)
+      command = "ATTA";
+   else if (attach && state == osSuspended)
+      command = "RESU";
+   else if (!attach && state == osAttached)
+      command = "DETA";
+
+   if (command)
+   {
+      int code = 900;
+      cString reply = outputPlugin->SVDRPCommand(command, "", code);
+      tell(0, "Output plugin '%s': %s -> %s", outputPlugin->Name(), command, *reply);
+   }
+
+   updateOutputState(yes);
+
+   return done;
 }
 
 //***************************************************************************

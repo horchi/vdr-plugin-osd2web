@@ -808,6 +808,28 @@ body
 
 .vdrRemote:not([data-state="online"]) .vdrCmdKey { opacity: .45; }
 
+/* TV output (attach / detach of the output plugin), the color shows the state */
+
+.vdrHeadKeys
+{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.vdrOutputKey
+{
+    flex: none;
+    width: clamp(38px, 12vmin, 48px);
+    color: var(--neutral3);
+}
+
+.vdrOutputKey[data-output="attached"]  { color: var(--green); }
+.vdrOutputKey[data-output="suspended"] { color: var(--orange); }
+.vdrOutputKey[data-output="external"]  { opacity: .45; cursor: default; }
+
+.vdrRemote:not([data-state="online"]) .vdrOutputKey { opacity: .45; }
+
 .vdrCommands
 {
     display: flex;

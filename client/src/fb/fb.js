@@ -25,6 +25,7 @@ const vdrIcons = {
    close: '<path d="M6 6l12 12M18 6L6 18"/>',
    timer: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/>',
    cmd:   '<path d="M5 7l5 5-5 5"/><path d="M12 17h7"/>',
+   tv:    '<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/>',
    num:   '<circle cx="6" cy="6" r="1.3"/><circle cx="12" cy="6" r="1.3"/><circle cx="18" cy="6" r="1.3"/>' +
           '<circle cx="6" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="18" cy="12" r="1.3"/>' +
           '<circle cx="6" cy="18" r="1.3"/><circle cx="12" cy="18" r="1.3"/><circle cx="18" cy="18" r="1.3"/>'
@@ -37,6 +38,7 @@ var vdrOnline = false;
 var vdrProgressTimer = null;
 var vdrEpgView = null;         // open overlay { mode: 'now'|'schedule'|'commands', channelid }
 var vdrScheduleCount = 100;    // max events of the schedule of a channel (the full schedule is large and slow on small devices)
+var vdrOutput = null;          // state of the output plugin { available, plugin, state: attached|suspended|detached|external }
 
 // embedded in the osd2web web frontend (fb.html?embedded) -> the menu key brings the OSD into
 //   the browser, standalone it's a remote control for the TV and must not attach the osd2web skin
@@ -152,6 +154,10 @@ function dispatchMessage(jMessage)
    else if (event == 'epg') {
       vdrEpgShow(jMessage.object);
    }
+   else if (event == 'outputstate') {
+      vdrOutput = jMessage.object;
+      vdrShowOutput();
+   }
 }
 
 //***************************************************************************
@@ -259,7 +265,10 @@ function initVdr()
       '        <span id="vdrState" class="vdrState"></span>' +
       '        <span class="vdrName">' + vdrEscape(location.hostname) + '</span>' +
       '      </span>' +
-      '      <button type="button" id="vdrCmdKey" class="vdrKey vdrRound vdrCmdKey" title="Befehle" style="display:none;" onclick="vdrCommandsOpen()">' + vdrIcon('cmd') + '</button>' +
+      '      <span class="vdrHeadKeys">' +
+      '        <button type="button" id="vdrOutputKey" class="vdrKey vdrRound vdrOutputKey" style="display:none;" onclick="vdrOutputToggle()">' + vdrIcon('tv') + '</button>' +
+      '        <button type="button" id="vdrCmdKey" class="vdrKey vdrRound vdrCmdKey" title="Befehle" style="display:none;" onclick="vdrCommandsOpen()">' + vdrIcon('cmd') + '</button>' +
+      '      </span>' +
       '    </div>' +
       '    <div class="vdrFnRow">' +
              vdrKey('Menu', vdrIcon('menu'), 'vdrRound', false, 'Menü') +
@@ -335,8 +344,42 @@ function vdrUpdateState()
    remote.dataset.state = vdrOnline ? 'online' : 'offline';
    $el('vdrState').title = vdrOnline ? 'verbunden' : 'nicht verbunden';
 
-   if (!vdrOnline)
+   if (!vdrOnline) {
       vdrEpgClose();
+      vdrOutput = null;     // the state is sent again after the login
+      vdrShowOutput();
+   }
+}
+
+//***************************************************************************
+// Output Plugin (softhddevice & co) - attach / detach the TV output
+//***************************************************************************
+
+function vdrShowOutput()
+{
+   const key = $el('vdrOutputKey');
+
+   if (!key)
+      return;
+
+   const available = vdrOutput && vdrOutput.available;
+   const names = { attached: 'an', suspended: 'pausiert', detached: 'aus', external: 'extern belegt' };
+
+   $show('vdrOutputKey', available);
+   key.dataset.output = available ? vdrOutput.state : '';
+
+   if (available)
+      key.title = 'TV-Ausgabe ' + (names[vdrOutput.state] || vdrOutput.state) + ' (' + vdrOutput.plugin + ')' +
+         (vdrOutput.state == 'attached' ? ' - ausschalten' : vdrOutput.state == 'external' ? '' : ' - einschalten');
+}
+
+function vdrOutputToggle()
+{
+   if (!vdrSocket || !vdrOnline || !vdrOutput || !vdrOutput.available || vdrOutput.state == 'external')
+      return;
+
+   vdrHaptic();
+   vdrSocket.send({ "event": "output", "object": { "action": "toggle" } });
 }
 
 // pointer handling: send on press, keys with data-repeat repeat while hold

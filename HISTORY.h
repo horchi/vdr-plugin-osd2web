@@ -7,7 +7,7 @@
  *
  */
 
-#define _VERSION      "0.3.9"
+#define _VERSION      "0.3.10"
 #define VERSION_DATE  "22.11.2026"
 
 #ifdef GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2026-11-22: version 0.3.10 (horchi)
+   - added:  Remote control, button to switch the TV output (softhddevice & co) on/off, shows its state
 
 2026-11-22: version 0.3.9 (horchi)
    - bugfix: Large messages (e.g. EPG lists) were sent very slowly
