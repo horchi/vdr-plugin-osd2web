@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.3.8"
-#define VERSION_DATE  "21.11.2026"
+#define _VERSION      "0.3.9"
+#define VERSION_DATE  "22.11.2026"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,11 @@
 
 /*
  * ------------------------------------
+
+2026-11-22: version 0.3.9 (horchi)
+   - bugfix: Large messages (e.g. EPG lists) were sent very slowly
+   - change: Remote control, schedule of the channel limited to 100 events
+   - change: Remote control, click on the channel logo shows its schedule, on the event what's on now
 
 2026-11-21: version 0.3.8 (horchi)
    - bugfix: Skin was detached immediately after attach by the client OSD timeout

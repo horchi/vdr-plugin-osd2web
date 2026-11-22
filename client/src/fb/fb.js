@@ -36,6 +36,7 @@ var vdrSocket = null;
 var vdrOnline = false;
 var vdrProgressTimer = null;
 var vdrEpgView = null;         // open overlay { mode: 'now'|'schedule'|'commands', channelid }
+var vdrScheduleCount = 100;    // max events of the schedule of a channel (the full schedule is large and slow on small devices)
 
 // embedded in the osd2web web frontend (fb.html?embedded) -> the menu key brings the OSD into
 //   the browser, standalone it's a remote control for the TV and must not attach the osd2web skin
@@ -240,8 +241,8 @@ function initVdr()
 
    $el("container").innerHTML =
       '<div class="vdrContent">' +
-      '  <div class="vdrPresent" onclick="vdrEpgOpen(\'schedule\')" title="Programm des Kanals">' +
-      '    <div class="vdrChannel">' +
+      '  <div class="vdrPresent" onclick="vdrEpgOpen(\'now\')" title="Was läuft jetzt">' +
+      '    <div class="vdrChannel" onclick="event.stopPropagation(); vdrEpgOpen(\'schedule\')" title="Programm des Kanals">' +
       '      <img id="vdrChannelLogo" class="vdrChannelLogo" style="display:none;" onerror="this.style.display=\'none\'" onload="this.style.display=\'\'"/>' +
       '      <div id="vdrChannel" class="vdrChannelName"></div>' +
       '    </div>' +
@@ -481,6 +482,9 @@ function vdrEpgOpen(mode, channelid)
 
    if (mode == 'schedule' && channelid)
       request.channelid = channelid;
+
+   if (mode == 'schedule')
+      request.count = vdrScheduleCount;
 
    vdrSocket.send({ "event": "epg", "object": request });
 }

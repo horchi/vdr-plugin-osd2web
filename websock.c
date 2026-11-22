@@ -246,7 +246,7 @@ int cWebSock::performData(MsgType type)
 
    for (auto it = clients.begin(); it != clients.end(); ++it)
    {
-      if (it->second.type != ctInactive && !it->second.messagesOut.empty())
+      if (it->second.type != ctInactive && (!it->second.messagesOut.empty() || it->second.msgBufferDataPending()))
          count++;
    }
 
@@ -522,7 +522,10 @@ int cWebSock::callbackWs(lws* wsi, lws_callback_reasons reason, void* user, void
             if (!clients[wsi].msgBufferDataPending() && clients[wsi].messagesOut.empty())
                return 0;
             if (lws_send_pipe_choked(wsi))
+            {
+               lws_callback_on_writable(wsi);      // continue as soon as the socket is writable again
                return 0;
+            }
 
             if (!clients[wsi].msgBufferDataPending() && !clients[wsi].messagesOut.empty())
             {
@@ -863,6 +866,11 @@ void cWebSock::pushOutMessage(const char* message, lws* wsi, int toFbToo)
          it->second.pushMessage(message);
       }
    }
+
+   // wake up the service thread (lws_service() of libwebsockets >= 4 has no timeout),
+   //   it requests the writeable callback for the pending messages
+
+   lws_cancel_service(context);
 }
 
 //***************************************************************************

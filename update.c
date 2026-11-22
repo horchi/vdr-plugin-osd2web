@@ -163,8 +163,6 @@ int cUpdate::pushOutMessage(json_t* oContents, const char* title, long client)
    tell(4, "DEBUG: PushMessage [%s]", p);
    free(p);
 
-   webSock->performData(cWebSock::mtData);
-
    return done;
 }
 
