@@ -949,6 +949,10 @@ const char* cUpdate::outputPluginNames[] =
    nullptr
 };
 
+// the command is expected at the begin of a not indented line of a help page,
+//   not only at the begin of the page since some plugins (e.g. softhdodroid) miss
+//   commas in their help array and the compiler joins several pages to one
+
 int cUpdate::hasSvdrpCommand(cPlugin* plugin, const char* command)
 {
    const char** pages = plugin->SVDRPHelpPages();
@@ -956,9 +960,15 @@ int cUpdate::hasSvdrpCommand(cPlugin* plugin, const char* command)
 
    for (int i = 0; pages && pages[i]; i++)
    {
-      if (strncasecmp(pages[i], command, len) == 0 &&
-          (pages[i][len] == ' ' || pages[i][len] == '\n' || pages[i][len] == '\t' || pages[i][len] == '\0'))
-         return yes;
+      for (const char* line = pages[i]; line; line = strchr(line, '\n'))
+      {
+         if (*line == '\n')
+            line++;
+
+         if (strncasecmp(line, command, len) == 0 &&
+             (line[len] == ' ' || line[len] == '\n' || line[len] == '\t' || line[len] == '\0'))
+            return yes;
+      }
    }
 
    return no;
