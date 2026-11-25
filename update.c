@@ -1189,6 +1189,10 @@ int cUpdate::performMaxLineRequest(json_t* oRequest)
 int cUpdate::performCommand(json_t* oRequest)
 {
    const char* command = getStringFromJson(oRequest, "command");
+   long client = getLongFromJson(oRequest, "client");
+
+   if (isEmpty(command))
+      return fail;
 
    tell(0, "Perform command [%s]", command);
 
@@ -1200,6 +1204,17 @@ int cUpdate::performCommand(json_t* oRequest)
          tell(0, "Error: Command '%s' failed, can't fork process, result was (%s)", command, strerror(errno));
       else
          tell(0, "Error: Result of command '%s' was (%d)", command, res);
+   }
+
+   // feedback to the requesting remote control (FB)
+
+   if (client)
+   {
+      json_t* oResult = json_object();
+      addToJson(oResult, "key", getStringFromJson(oRequest, "key", ""));
+      addToJson(oResult, "success", (long)(res == 0));
+      addToJson(oResult, "result", (long)(res == -1 ? -1 : WIFEXITED(res) ? WEXITSTATUS(res) : res));
+      pushOutMessage(oResult, "commandresult", client);
    }
 
    return done;

@@ -33,6 +33,7 @@ const vdrIcons = {
 };
 
 var commands = {};
+var vdrCommandState = {};       // feedback of the command buttons { key: { state: 'busy'|'ok'|'fail', timer } }
 var vdrActual = null;
 var vdrSocket = null;
 var vdrOnline = false;
@@ -162,6 +163,9 @@ function dispatchMessage(jMessage)
    else if (event == 'outputstate') {
       vdrOutput = jMessage.object;
       vdrShowOutput();
+   }
+   else if (event == 'commandresult') {
+      vdrCommandResult(jMessage.object);
    }
 }
 
@@ -771,7 +775,8 @@ function vdrCommandsOpen()
 
    for (const key in commands)
       html += '<button type="button" class="vdrCommand" data-command="' + vdrEscape(key) + '"' +
-         (commands[key].color ? ' style="--cmdColor:' + vdrEscape(commands[key].color) + ';"' : '') + '>' +
+         (commands[key].color ? ' style="--cmdColor:' + vdrEscape(commands[key].color) + ';"' : '') +
+         (vdrCommandState[key] ? ' data-state="' + vdrCommandState[key].state + '"' : '') + '>' +
          vdrEscape(key) + '</button>';
 
    setHtml('vdrEpgRows', '<div class="vdrCommands">' + (html || '<div class="vdrEpgInfo">keine Befehle</div>') + '</div>');
@@ -783,6 +788,46 @@ function vdrCommandExecute(key)
    if (!commands[key] || !vdrSocket || !vdrOnline)
       return;
 
+   if (vdrCommandState[key] && vdrCommandState[key].state == 'busy')
+      return;
+
    vdrHaptic();
-   vdrSocket.send({ "event": "command", "object": { "command": commands[key].command } });
+   vdrCommandSetState(key, 'busy', 60000);    // no answer (e.g. older plugin) -> reset after a minute
+   vdrSocket.send({ "event": "command", "object": { "command": commands[key].command, "key": key } });
+}
+
+// answer of the plugin after the command has finished
+
+function vdrCommandResult(result)
+{
+   if (!result || !vdrCommandState[result.key])
+      return;
+
+   if (!result.success && navigator.vibrate)
+      navigator.vibrate([30, 60, 30]);
+
+   vdrCommandSetState(result.key, result.success ? 'ok' : 'fail', 2000);
+}
+
+function vdrCommandSetState(key, state, duration)
+{
+   if (vdrCommandState[key])
+      clearTimeout(vdrCommandState[key].timer);
+
+   if (state)
+      vdrCommandState[key] = { state: state, timer: setTimeout(function() { vdrCommandSetState(key, null); }, duration) };
+   else
+      delete vdrCommandState[key];
+
+   for (const button of document.querySelectorAll('#vdrEpgRows .vdrCommand')) {
+      if (button.dataset.command != key)
+         continue;
+
+      if (state)
+         button.dataset.state = state;
+      else
+         delete button.dataset.state;
+
+      button.title = state == 'fail' ? 'Fehler' : state == 'ok' ? 'OK' : '';
+   }
 }

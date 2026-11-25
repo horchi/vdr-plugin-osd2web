@@ -7,7 +7,7 @@
  *
  */
 
-#define _VERSION      "0.3.11"
+#define _VERSION      "0.3.12"
 #define VERSION_DATE  "25.11.2026"
 
 #ifdef GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2026-11-25: version 0.3.12 (horchi)
+   - added:  Remote control, feedback of the command buttons (running, success, failure)
 
 2026-11-25: version 0.3.11 (horchi)
    - added:  Remote control, button to show and operate the OSD in the browser (skin 'default', osdOnly)
