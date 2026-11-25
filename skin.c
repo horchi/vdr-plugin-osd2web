@@ -112,6 +112,7 @@ class cSkinOsd2WebDisplayMenu : public cSkinDisplayMenu
 
 cSkinOsd2WebDisplayMenu::cSkinOsd2WebDisplayMenu()
 {
+   cUpdate::menuOpen = yes;
 }
 
 cSkinOsd2WebDisplayMenu::~cSkinOsd2WebDisplayMenu()
@@ -122,6 +123,7 @@ cSkinOsd2WebDisplayMenu::~cSkinOsd2WebDisplayMenu()
       cUpdate::menuClosed();
 
    cUpdate::menuCategory = mcUnknown;
+   cUpdate::menuOpen = no;
 }
 
 void cSkinOsd2WebDisplayMenu::SetMenuCategory(eMenuCategory MenuCategory)

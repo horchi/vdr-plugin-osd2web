@@ -26,6 +26,7 @@ const vdrIcons = {
    timer: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/>',
    cmd:   '<path d="M5 7l5 5-5 5"/><path d="M12 17h7"/>',
    tv:    '<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/>',
+   osd:   '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h10M7 17h6"/>',
    num:   '<circle cx="6" cy="6" r="1.3"/><circle cx="12" cy="6" r="1.3"/><circle cx="18" cy="6" r="1.3"/>' +
           '<circle cx="6" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="18" cy="12" r="1.3"/>' +
           '<circle cx="6" cy="18" r="1.3"/><circle cx="12" cy="18" r="1.3"/><circle cx="18" cy="18" r="1.3"/>'
@@ -39,6 +40,10 @@ var vdrProgressTimer = null;
 var vdrEpgView = null;         // open overlay { mode: 'now'|'schedule'|'commands', channelid }
 var vdrScheduleCount = 100;    // max events of the schedule of a channel (the full schedule is large and slow on small devices)
 var vdrOutput = null;          // state of the output plugin { available, plugin, state: attached|suspended|detached|external }
+var vdrOsdOpen = false;        // the OSD (osd2web skin 'default') is shown in the browser
+var vdrOsdShown = false;       // the OSD view got a menu already (closing it closes the view)
+var vdrOsdFocusTimer = null;   // fallback if the OSD view doesn't report its login
+var vdrOsdCloseTimer = null;   // the menu is cleared shortly while switching to a sub menu -> close delayed
 
 // embedded in the osd2web web frontend (fb.html?embedded) -> the menu key brings the OSD into
 //   the browser, standalone it's a remote control for the TV and must not attach the osd2web skin
@@ -266,6 +271,8 @@ function initVdr()
       '        <span class="vdrName">' + vdrEscape(location.hostname) + '</span>' +
       '      </span>' +
       '      <span class="vdrHeadKeys">' +
+      (vdrEmbedded ? '' :
+      '        <button type="button" id="vdrOsdKey" class="vdrKey vdrRound vdrOsdKey" title="OSD in den Browser holen" onclick="vdrOsdOpenView()">' + vdrIcon('osd') + '</button>') +
       '        <button type="button" id="vdrOutputKey" class="vdrKey vdrRound vdrOutputKey" style="display:none;" onclick="vdrOutputToggle()">' + vdrIcon('tv') + '</button>' +
       '        <button type="button" id="vdrCmdKey" class="vdrKey vdrRound vdrCmdKey" title="Befehle" style="display:none;" onclick="vdrCommandsOpen()">' + vdrIcon('cmd') + '</button>' +
       '      </span>' +
@@ -317,6 +324,14 @@ function initVdr()
       '    </div>' +
       '    <div id="vdrEpgRows" class="vdrEpgRows"></div>' +
       '  </div>' +
+      '  <div id="vdrOsd" class="vdrOsd" style="display:none;">' +
+      '    <div class="vdrEpgHead">' +
+      '      <button type="button" class="vdrKey vdrRound vdrOsdOkKey" title="OK (z.B. Einstellungen speichern)" onclick="vdrHaptic(); vdrKeyPress(\'Ok\')">OK</button>' +
+      '      <div class="vdrEpgTitle">OSD</div>' +
+      '      <button type="button" class="vdrKey vdrRound" title="Schließen, OSD an den TV zurückgeben" onclick="vdrOsdClose()">' + vdrIcon('close') + '</button>' +
+      '    </div>' +
+      '    <div id="vdrOsdFrame" class="vdrOsdFrame"></div>' +
+      '  </div>' +
       '</div>';
 
    $el('vdrEpgRows').addEventListener('click', vdrEpgClick);
@@ -324,6 +339,31 @@ function initVdr()
    vdrUpdateState();
 
    vdrProgressTimer = setInterval(vdrUpdateProgress, 30000);
+
+   // page closed with open OSD -> give the skin back to the VDR (osd2web also detaches by its timeout)
+
+   // menu at the VDR closed (Back in the main menu, timeout, ...) -> close the OSD view too
+
+   window.addEventListener('message', function(ev) {
+      if (ev.origin == location.origin && ev.data && ev.data.osd2web == 'role') {
+         if (ev.data.role == 'active')
+            vdrOsdTakeFocus();
+      }
+      else if (ev.origin == location.origin && ev.data && ev.data.osd2web == 'curView') {
+         clearTimeout(vdrOsdCloseTimer);
+         vdrOsdCloseTimer = null;
+
+         if (ev.data.view == 'osd')
+            vdrOsdShown = true;
+         else if (vdrOsdShown)
+            vdrOsdCloseTimer = setTimeout(vdrOsdClose, 1500);
+      }
+   });
+
+   window.addEventListener('pagehide', function() {
+      if (vdrOsdOpen && vdrSocket && vdrOnline)
+         vdrSocket.send({ "event": "leavefocus" });
+   });
 
    connectWebSocket();
 }
@@ -346,9 +386,69 @@ function vdrUpdateState()
 
    if (!vdrOnline) {
       vdrEpgClose();
+      vdrOsdClose();
       vdrOutput = null;     // the state is sent again after the login
       vdrShowOutput();
    }
+}
+
+//***************************************************************************
+// OSD in the browser
+//   shows the OSD of the osd2web web frontend (skin 'default', osdOnly), takefocus attaches the
+//   osd2web skin and opens the VDR menu (if not already open), at close (leavefocus) the menu
+//   is closed and the skin given back to the VDR - except osd2web is the default skin
+//***************************************************************************
+
+function vdrOsdOpenView()
+{
+   if (!vdrSocket || !vdrOnline || vdrOsdOpen)
+      return;
+
+   vdrHaptic();
+   vdrEpgClose();
+   vdrOsdOpen = true;
+   vdrOsdShown = false;
+
+   // relative -> also via the proxy of epghttpd (data/osd2web/<uuid>/)
+
+   const frame = document.createElement('iframe');
+   frame.src = 'skins/default/index.html?osdOnly';
+   frame.title = 'OSD';
+   $el('vdrOsdFrame').appendChild(frame);
+   $show('vdrOsd', true);
+
+   // the menu is opened after the login of the OSD view (vdrOsdTakeFocus), it gets the menu
+   //   items only while the VDR draws the menu
+
+   vdrOsdFocusTimer = setTimeout(vdrOsdTakeFocus, 5000);
+}
+
+function vdrOsdTakeFocus()
+{
+   if (!vdrOsdFocusTimer)
+      return;              // already done (or the view is closed)
+
+   clearTimeout(vdrOsdFocusTimer);
+   vdrOsdFocusTimer = null;
+
+   if (vdrOsdOpen && vdrSocket && vdrOnline)
+      vdrSocket.send({ "event": "takefocus", "object": { "menu": 1 } });
+}
+
+function vdrOsdClose()
+{
+   if (!vdrOsdOpen)
+      return;
+
+   vdrOsdOpen = false;
+   clearTimeout(vdrOsdFocusTimer);
+   clearTimeout(vdrOsdCloseTimer);
+   vdrOsdFocusTimer = vdrOsdCloseTimer = null;
+   $show('vdrOsd', false);
+   setHtml('vdrOsdFrame', '');     // closes the websocket of the web frontend
+
+   if (vdrSocket && vdrOnline)
+      vdrSocket.send({ "event": "leavefocus" });
 }
 
 //***************************************************************************

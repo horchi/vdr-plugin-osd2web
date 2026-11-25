@@ -217,6 +217,13 @@ body
     width: 38px;
 }
 
+.vdrOsdOkKey
+{
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
 .vdrEpgTitle
 {
     flex: 1;
@@ -807,6 +814,49 @@ body
 }
 
 .vdrRemote:not([data-state="online"]) .vdrCmdKey { opacity: .45; }
+
+/* OSD in the browser (osd2web web frontend in an iframe) */
+
+.vdrOsdKey
+{
+    flex: none;
+    width: clamp(38px, 12vmin, 48px);
+}
+
+.vdrRemote:not([data-state="online"]) .vdrOsdKey { opacity: .45; }
+
+.vdrOsd
+{
+    position: absolute;
+    inset: 0px;
+    z-index: 6;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 900px;
+    margin: 0px auto;
+    box-sizing: border-box;
+    border-radius: 16px;
+    overflow: hidden;
+    background-color: var(--background);
+    color: var(--fontColor);
+    box-shadow: 0px 10px 30px rgba(0,0,0,.45);
+}
+
+.vdrOsdFrame
+{
+    flex: 1;
+    min-height: 0;
+}
+
+.vdrOsdFrame iframe
+{
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0px;
+    background-color: black;
+}
 
 /* TV output (attach / detach of the output plugin), the color shows the state */
 

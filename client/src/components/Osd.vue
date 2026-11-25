@@ -1,6 +1,6 @@
 <template>
   <div class="row dataarea">
-    <div id="eventarea" class="eventarea col-12 col-md-9">
+    <div id="eventarea" class="eventarea col-12" :class="{ 'col-md-9': !$root.isOsdOnly }">
       <div class="menutitle" id="osdTitle" @click="$root.sendKey('Back')">
           <icon v-if="!$root.isOnlyView" name="osd-back"></icon>
           {{ title }}
@@ -10,12 +10,12 @@
       <o2w-textarea />
       <o2w-osdbuttons />
     </div>
-    <div class="rightarea pr-2 col-12 col-md-3">
+    <div v-if="!$root.isOsdOnly" class="rightarea pr-2 col-12 col-md-3">
       <o2w-timer class="timerarea" />
       <o2w-customdata class="customarea" />
       <o2w-recording class="recordingarea" />
     </div>
-    <o2w-statusbar />
+    <o2w-statusbar v-if="!$root.isOsdOnly" />
   </div>
 </template>
 

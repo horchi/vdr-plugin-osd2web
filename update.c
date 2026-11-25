@@ -30,6 +30,7 @@ int cUpdate::menuCloseTrigger {no};
 int cUpdate::updateDiaList {yes};
 
 eMenuCategory cUpdate::menuCategory {mcUnknown};
+int cUpdate::menuOpen {no};
 std::string cUpdate::menuTitle {""};
 
 pid_t cUpdate::browserPid {0};
@@ -730,7 +731,28 @@ int cUpdate::performLogin(json_t* oObject)
 
 int cUpdate::performFocusRequest(json_t* oRequest, int focus)
 {
-   return setSkinAttachState(focus);
+   // leave: the menu shown by osd2web stays open (invisible at the TV) after the detach
+   //   or if osd2web is the default skin -> close it
+
+   if (!focus && menuOpen && isSkinAttached() && !attachedBySvdrp)
+      cRemote::Put(kMenu);
+
+   int status = setSkinAttachState(focus);
+
+   // take with "menu" : 1 -> open the main menu, an already open one is closed and opened again
+   //   since the items are sent only while drawing the menu (the requesting client missed them)
+
+   if (focus && getIntFromJson(oRequest, "menu"))
+   {
+      lastClientActionAt = time(0);
+
+      if (menuOpen)
+         cRemote::Put(kMenu);
+
+      cRemote::Put(kMenu);
+   }
+
+   return status;
 }
 
 //***************************************************************************

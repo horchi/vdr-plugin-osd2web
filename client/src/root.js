@@ -27,6 +27,7 @@ Vue.component('o2w-osdbuttons', require('OsdButtons'))
 export var root = {
     data: {
         isOnlyView: /[?&]onlyView/.test(location.search),   // reine Anzeige ohne direkte Interaktion über den Client
+        isOsdOnly: /[?&]osdOnly/.test(location.search),     // nur das OSD (ohne Navigation und Übersicht), z.B. in der Fernbedienung (fb.html)
         tftPrio: location.search.match(/[?&]tftPrio=([0-9]+(;[0-9]+)?)/i),
         isActive: false,                                    // ist der Client am VDR als aktive angemeldet
         skinAttached: false,
@@ -193,16 +194,28 @@ export var root = {
 
     },
     created() {
+        // nur OSD (z.B. in der Fernbedienung) -> eigene Optik passend zur fb.html (siehe Theme)
+        if (this.isOsdOnly)
+            document.documentElement.classList.add('o2wOsdOnly');
+
         try {
             // Globale Nachrichten verarbeiten
             this.$on("rolechange", (data) => {
                 this.isActive = data.role == 'active';
+
+                // eingebettet in fb.html -> sie öffnet das Menü erst, wenn wir angemeldet sind (sonst fehlen uns die Zeilen)
+                if (this.isOsdOnly && window.parent !== window)
+                    window.parent.postMessage({ "osd2web": "role", "role": data.role }, location.origin);
                 this.hasChannelLogos = data.havelogos == 1;
             })
 
             // Interne Nachrichten verarbeiten
             this.$on("curView", (data) => {
                 this.curView= data || "actual";
+
+                // eingebettet in fb.html -> sie schließt das OSD, wenn das Menü am VDR geschlossen wurde
+                if (this.isOsdOnly && window.parent !== window)
+                    window.parent.postMessage({ "osd2web": "curView", "view": this.curView }, location.origin);
                 //document.getElementById('o2wContent').style.display= data.active ? "none" : '';
             });
 

@@ -8,3 +8,247 @@
     text-align:center;
     padding: 0;
 }
+
+// ------------------------------------------------------------------
+// OSD only (?osdOnly, e.g. embedded in the remote control fb.html)
+//   look and colors like the remote control (fb.css)
+
+$o2wBackground: #1b1b1b;
+$o2wNeutral0:   #333333;
+$o2wNeutral1:   #454545;
+$o2wNeutral3:   #696969;
+$o2wFont:       #ffffff;
+$o2wYellow:     #fad600;
+$o2wRed:        #ff5757;
+$o2wGreen:      #4caf50;
+$o2wOrange:     #f0a04b;
+
+@mixin o2wKey($color) {
+    border: none;
+    color: $o2wFont;
+    background: linear-gradient(180deg, mix(white, $color, 12%), $color);
+    box-shadow: 0px 3px 6px rgba(0,0,0,.35), inset 0px 1px 0px rgba(255,255,255,.10);
+    font-weight: bold;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform .08s, background .08s, box-shadow .08s;
+
+    &:hover, &:focus { color: $o2wFont; box-shadow: 0px 3px 6px rgba(0,0,0,.35), inset 0px 1px 0px rgba(255,255,255,.10); }
+    &:active         { transform: scale(.95); background: $o2wNeutral3; box-shadow: 0px 1px 2px rgba(0,0,0,.35); }
+}
+
+html.o2wOsdOnly {
+    height: 100%;
+    background-color: $o2wBackground;
+    scrollbar-width: thin;
+    scrollbar-color: $o2wNeutral3 transparent;
+
+    body {
+        min-height: 100%;
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 15px;
+        color: $o2wFont;
+        background-color: $o2wBackground;
+        overscroll-behavior: none;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
+    #o2wContainer { padding: 0px; }
+    .dataarea     { margin: 0px; }
+
+    .eventarea {
+        padding: 0px 0px 64px 0px;     // space for the fixed color buttons
+    }
+
+    // title (click -> Back)
+
+    .menutitle {
+        position: sticky;
+        top: 0px;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-height: 48px;
+        padding: 6px 12px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-size: 17px;
+        font-weight: bold;
+        color: $o2wYellow;
+        background-color: $o2wBackground;
+        border-bottom: 1px solid rgba(255,255,255,.15);
+        cursor: pointer;
+
+        .fa-icon {
+            flex: none;
+            box-sizing: content-box;
+            width: 12px;
+            height: 16px;
+            padding: 10px 12px 10px 10px;
+            border-radius: 50%;
+            color: $o2wFont;
+            fill: currentColor;
+            background: linear-gradient(180deg, mix(white, $o2wNeutral1, 12%), $o2wNeutral1);
+            box-shadow: 0px 3px 6px rgba(0,0,0,.35), inset 0px 1px 0px rgba(255,255,255,.10);
+        }
+
+        &:active .fa-icon { background: $o2wNeutral3; }
+    }
+
+    // menu items
+
+    .table.textmenu {
+        margin: 0px;
+        color: $o2wFont;
+        background-color: transparent;
+
+        td {
+            padding: 11px 12px;
+            vertical-align: middle;
+            border-top: none;
+            border-bottom: 1px solid rgba(255,255,255,.08);
+        }
+
+        tr { cursor: pointer; }
+        tr:hover    { color: $o2wFont; background-color: rgba(255,255,255,.04); }
+        tr:active   { background-color: rgba(255,255,255,.12); }
+
+        tr.textmenu-current {
+            background-color: rgba($o2wYellow, .12);
+            box-shadow: inset 4px 0px 0px $o2wYellow;
+
+            td:first-child { font-weight: bold; }
+        }
+
+        // value of the current item while editing
+
+        td.bg-warning {
+            color: $o2wYellow;
+            font-weight: bold;
+            background-color: rgba($o2wYellow, .10) !important;
+        }
+
+        // edit buttons (left, up, down, right)
+
+        td.btn-group {
+            display: table-cell;
+            width: 1%;
+            white-space: nowrap;
+            text-align: right;
+
+            .btn {
+                @include o2wKey($o2wNeutral1);
+                width: 38px;
+                height: 38px;
+                margin-left: 6px;
+                padding: 0px;
+                border-radius: 50% !important;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+
+                .fa-icon { height: 18px; fill: currentColor; }
+            }
+        }
+    }
+
+    // event, text
+
+    .card.textmenu {
+        margin: 10px;
+        border: none;
+        border-radius: 16px;
+        color: $o2wFont;
+        background-color: $o2wNeutral0;
+        box-shadow: 0px 6px 16px rgba(0,0,0,.35);
+        user-select: text;
+        -webkit-user-select: text;
+
+        .card-body  { padding: 14px 16px; }
+        .card-title { font-size: 18px; font-weight: bold; color: $o2wYellow; }
+        .card-text  { margin-bottom: 8px; opacity: .75; }
+        hr          { margin: 0px 16px; border-top-color: rgba(255,255,255,.15); }
+
+        .progress {
+            height: 3px;
+            margin: 8px 0px;
+            border-radius: 2px;
+            background-color: rgba(255,255,255,.18);
+        }
+
+        .progress-bar {
+            font-size: 0px;
+            background-color: $o2wYellow;
+        }
+
+        .carousel-item img { max-width: 100%; border-radius: 10px; }
+    }
+
+    // color keys and page up / down
+
+    .osdbuttons {
+        display: flex;
+        gap: 8px;
+        padding: 10px 10px calc(10px + env(safe-area-inset-bottom));
+        background: linear-gradient(180deg, rgba($o2wBackground, 0), $o2wBackground 30%);
+
+        .btn {
+            @include o2wKey($o2wNeutral1);
+            flex: 1;
+            min-width: 0;
+            height: 42px;
+            margin: 0px !important;
+            padding: 0px 6px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            border-radius: 15px !important;
+            font-size: 14px;
+
+            &.btn-secondary { flex: none; width: 42px; border-radius: 50% !important; }
+            .fa-icon { height: 18px; fill: currentColor; }
+        }
+
+        .but-red    { @include o2wKey(#d32f2f); }
+        .but-green  { @include o2wKey(#2e7d32); }
+        .but-yellow { @include o2wKey(#f9a825); color: #222; &:hover, &:focus { color: #222; } }
+        .but-blue   { @include o2wKey(#1565c0); }
+    }
+
+    // messages of the VDR
+
+    .alert {
+        margin: 10px;
+        border: none;
+        border-radius: 14px;
+        color: $o2wFont;
+        background-color: $o2wNeutral1;
+        box-shadow: inset 4px 0px 0px $o2wYellow, 0px 6px 16px rgba(0,0,0,.35);
+
+        p     { margin: 0px; }
+        .close { color: $o2wFont; text-shadow: none; opacity: .7; }
+    }
+
+    .alert-success { box-shadow: inset 4px 0px 0px $o2wGreen,  0px 6px 16px rgba(0,0,0,.35); }
+    .alert-warning { box-shadow: inset 4px 0px 0px $o2wOrange, 0px 6px 16px rgba(0,0,0,.35); }
+    .alert-danger  { box-shadow: inset 4px 0px 0px $o2wRed,    0px 6px 16px rgba(0,0,0,.35); }
+
+    // no menu open
+
+    .o2wNoOsd {
+        padding-top: 40px !important;
+        opacity: .9;
+
+        p { opacity: .65; }
+
+        .btn {
+            @include o2wKey($o2wNeutral1);
+            min-height: 46px;
+            padding: 8px 22px;
+            border-radius: 14px;
+        }
+    }
+}

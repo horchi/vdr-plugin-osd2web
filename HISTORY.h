@@ -7,8 +7,8 @@
  *
  */
 
-#define _VERSION      "0.3.10"
-#define VERSION_DATE  "22.11.2026"
+#define _VERSION      "0.3.11"
+#define VERSION_DATE  "25.11.2026"
 
 #ifdef GIT_REV
 #  define VERSION _VERSION "-GIT" GIT_REV
@@ -18,6 +18,9 @@
 
 /*
  * ------------------------------------
+
+2026-11-25: version 0.3.11 (horchi)
+   - added:  Remote control, button to show and operate the OSD in the browser (skin 'default', osdOnly)
 
 2026-11-22: version 0.3.10 (horchi)
    - added:  Remote control, button to switch the TV output (softhddevice & co) on/off, shows its state

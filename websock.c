@@ -670,7 +670,8 @@ int cWebSock::callbackWs(lws* wsi, lws_callback_reasons reason, void* user, void
          else if (activeClient && activeClient == wsi)       // accept data only from active client
             singleton->pushInMessage(message);
 
-         else if ((event == evKeyPress || event == evSwitch || event == evOutput) && clients[wsi].type == ctFB)
+         else if ((event == evKeyPress || event == evSwitch || event == evOutput || event == evCommand ||
+                   event == evTakeFocus || event == evLeaveFocus) && clients[wsi].type == ctFB)
             singleton->pushInMessage(message);
 
          else if (!activeClient && isHighestViewClient(wsi)) // or no active is available and it is the view clinet with best prio

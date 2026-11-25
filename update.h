@@ -167,6 +167,7 @@ class cUpdate : public cStatus, cThread, public cOsdService, public cWebInterfac
       static std::map<int,CategoryConfig> menuMaxLines;
       static int menuCloseTrigger;
       static eMenuCategory menuCategory;
+      static int menuOpen;                  // a menu is displayed by the osd2web skin
       static std::string menuTitle;
 
       static int updateDiaList;
